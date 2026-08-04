@@ -153,6 +153,31 @@
   }
 
   /* ---------- 護盾 ---------- */
+  /**
+   * 護盾是靜靜生效的（rollDay 裡扣掉），不講的話使用者根本不知道自己被救了 —
+   * 那 40 顆寶石就白花了。回報一次就把計數歸零。
+   */
+  function noticeShield() {
+    var g = State.data.g;
+    if (!g.shieldUsedN) return false;
+    var n = g.shieldUsedN;
+    g.shieldUsedN = 0;
+    State.save(true);
+    if (global.UI) {
+      UI.modal(
+        '<div class="center">' +
+        '<div style="font-size:4rem">🛡️</div>' +
+        '<h2>護盾幫你擋下來了</h2>' +
+        '<p class="muted">你有 ' + n + ' 天沒出現，連續 ' + g.streak + ' 天原本會歸零。' +
+        '護盾用掉 ' + n + ' 個，還剩 ' + g.freeze + ' 個。</p>' +
+        '<p class="small muted">今天達成目標，火苗就會繼續。</p>' +
+        '<button class="btn btn-primary btn-lg mt16" data-modal-close>知道了</button>' +
+        '</div>'
+      );
+    }
+    return true;
+  }
+
   function buyFreeze(cost) {
     cost = cost || 40;
     if (State.data.g.freeze >= 3) { UI.toast('護盾最多存 3 個', 'bad'); return false; }
@@ -221,7 +246,7 @@
     xpForLevel: xpForLevel, levelInfo: levelInfo,
     addXP: addXP, addGems: addGems, spendGems: spendGems,
     touchStreak: touchStreak, goalMet: goalMet,
-    finishLesson: finishLesson, buyFreeze: buyFreeze,
+    finishLesson: finishLesson, buyFreeze: buyFreeze, noticeShield: noticeShield,
     has: has, grant: grant, check: check, earned: earned
   };
 

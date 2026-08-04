@@ -106,6 +106,8 @@
   /* ---------- 啟動 ---------- */
   function boot() {
     State.load();
+    State.data.total.sessions++;      // 開啟次數，設定頁的資料摘要會顯示
+    State.save();
     UI.applyTheme();
     UI.refreshChips();
     State.startClock();
@@ -118,7 +120,7 @@
 
     // 分頁切回來時檢查有沒有跨日
     document.addEventListener('visibilitychange', function () {
-      if (!document.hidden) { State.rollDay(); UI.refreshChips(); }
+      if (!document.hidden) { State.rollDay(); UI.refreshChips(); Gamify.noticeShield(); }
     });
 
     global.addEventListener('hashchange', route);
@@ -126,7 +128,9 @@
     if (!location.hash) location.hash = '#/home';
     route();
 
+    // 第一次來的人不會有護盾，兩個彈窗不會撞在一起
     if (!State.data.g.welcomed) setTimeout(welcome, 350);
+    else setTimeout(Gamify.noticeShield, 350);
 
     // 內容檢查：資料檔沒載到時給清楚的訊息，而不是整頁空白
     var c = Content.counts();

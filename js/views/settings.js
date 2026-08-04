@@ -114,6 +114,7 @@
       '<tr><td>學過的單字</td><td class="right bold">' + st.seen + '</td></tr>' +
       '<tr><td>通關數</td><td class="right bold">' + units + '</td></tr>' +
       '<tr><td>紀錄天數</td><td class="right bold">' + Object.keys(d.hist).length + '</td></tr>' +
+      '<tr><td>開啟次數</td><td class="right bold">' + (d.total.sessions || 0) + '</td></tr>' +
       '<tr><td>存檔大小</td><td class="right bold">' + (bytes ? (bytes / 1024).toFixed(1) + ' KB' : '—') + '</td></tr>' +
       '</tbody></table>';
   }
