@@ -16,11 +16,14 @@
 
 ## 打包
 
-`build.ps1`（Windows PowerShell）將 css/js 全部內嵌成單檔 `English-Learning.html`，供手機離線使用。
+把 css/js 全部內嵌成單檔 `English-Learning.html`，供手機離線使用。兩支腳本產出完全相同的結果：
 
-**改動任何 css/js/data 後必須重新打包**，否則單檔版落後於多檔版（曾經發生過，且無聲上線）。無 PowerShell 時以等價轉換重跑：同樣的 link/script regex、區塊標頭 `/* ===== 相對路徑 ===== */`、`</script>` 轉義為 `<\/script>`、UTF-8 無 BOM、`<body>` 後插入時間戳。
+- `node tools/build.js` —— 跨平台，CI 與非 Windows 環境用這支。
+- `build.ps1` —— Windows PowerShell，不需要 Node。
 
-驗證同步：用區塊標頭把單檔版拆回各區塊，逐一與原始檔比對。這是唯一能抓到漂移的方法 —— 檔案大小與時間戳都看不出來。
+**改動任何 css/js/data 後必須重新打包**，否則單檔版落後於多檔版（曾經發生過，且無聲上線）。兩邊的轉換規則必須一致：同樣的 link/script regex、區塊標頭 `/* ===== 相對路徑 ===== */`、`</script>` 轉義為 `<\/script>`、UTF-8 無 BOM、`<body>` 後插入時間戳。
+
+驗證同步：`node tools/verify-bundle.js`。它用區塊標頭把單檔版拆回各區塊逐一與原始檔比對，這是唯一能抓到漂移的方法 —— 檔案大小與時間戳都看不出來。CI 每次 push 都會跑。
 
 ## 架構
 
@@ -40,7 +43,9 @@
 
 `Ex[type] = { scored: bool, render(q, host, api) }`。api：`ready(fn)` 設定檢查行為、`enableCheck(bool)`、`result(ok, opts)` 送出批改、`setContinue(text)` 供不計分卡片用、`onCleanup(fn)`。完整說明見 `exercises/common.js` 檔頭。
 
-現有 12 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular。
+現有 14 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond。
+
+`photo`（多益 Part 1 看圖聽描述）與 `respond`（Part 2 應答）在 `exercises/toeic.js`，共用一個「只靠耳朵作答」的骨架：選項文字預設 `display:none`，按「顯示英文」或作答後才出現。用 `display:none` 而非 `visibility:hidden` 是因為後者會保留折行高度，長選項的框變高等於用看的就知道哪個最長。沒有 TTS 語音時自動顯示文字，否則整題無法作答。
 
 自由作答題（fix／trans／cloze／dictate）用 `ExUtil.matchAny()` 比對，已忽略大小寫、標點、彎引號與**縮寫**（I'm≡I am、don't≡do not）。`'s` 與 `'d` 有歧義故不展開。因此 `alt` 只需寫「真正不同的說法」，不必列縮寫或標點變體。
 
@@ -48,15 +53,19 @@
 
 `data/curriculum.js` 定義 Stage 0–6 共 75 關。關卡的 `plan` 只描述「出哪些題、各幾題」，挑哪些字句由 `scheduler.js` 決定。
 
-`Content.isReady(uid)` = `stage.ready` && 有 `plan` && 有 vocab 或 grammar。缺一即鎖住並顯示「製作中」。
+`Content.isReady(uid)` = `stage.ready` && 有 `plan` && **自己**有內容（vocab／grammar／reading／photo／respond 任一）。缺一即鎖住並顯示「製作中」。
 
-資料 id 前綴必須互斥（vocab `v####`、grammar `g####`、reading `r####`、irregular `i####`）—— 共用同一個 `byId` 索引。
+五種都要算進去，因為關卡的形態差很多：純聽力關（Part 1／Part 2）沒有單字也沒有文法；魔王關相反，題目全靠 `*UpTo()` 往前借，只有自己的短文。
+
+`stage.ready` 只代表階段開放，**關卡可以分批補**：沒有 `plan` 的關卡顯示「製作中」，同階段其他關卡照常可玩。但解鎖是一條鏈（前一關至少一星才開下一關），所以可玩的關卡必須從頭連續 —— 中間空一關，後面的就永遠解不開。
+
+資料 id 前綴必須互斥（vocab `v####`、grammar `g####`、reading `r####`、irregular `i####`、Part 1 `p####`、Part 2 `q####`）—— 共用同一個 `byId` 索引。
 
 不規則動詞不綁關卡，用 `t` 分 A／B／C 三型（三態同形／過去式＝過去分詞／三態都不同）。關卡設 `irregular: true` 會得到一張教學卡，plan 加 `['irregular', n]` 會出三態練習。
 
 ## 弱點怪獸
 
-四種型別記的都是**來源**而非個別題目：
+六種型別記的都是**來源**而非個別題目：
 
 | type | 記的 id | 複習時出什麼 | 消滅條件 |
 |---|---|---|---|
@@ -64,8 +73,10 @@
 | grammar | 文法點 | 從該點題庫抽一題，優先 mc／cloze | 答對 |
 | reading | 文章 | 整篇重讀 | 所有小題全對 |
 | irregular | 動詞 | 再問一次過去式或過去分詞 | 答對 |
+| photo | 照片 | 同一張再聽一次四個描述 | 答對 |
+| respond | 問句 | 同一句再聽一次三個回應 | 答對 |
 
-`scheduler.weakQuestion()` 負責型別→題目的映射。**新增型別必須同步改它**，否則怪獸進得了清單卻永遠出不了題、也永遠消不掉。
+`scheduler.weakQuestion()` 負責型別→題目的映射。**新增型別必須同步改它**，否則怪獸進得了清單卻永遠出不了題、也永遠消不掉。`test-logic.js` 會掃 `SRS.addWeak()` 的字串參數比對 `weakQuestion` 有沒有接 —— 所以呼叫時型別要寫**字面值**，包在變數裡就掃不到了（見 `toeic.js` 把評分交回各題型做的原因）。
 
 複習佇列中怪獸佔 40% 額度，以**實際排進去的題數**計算（出不了題的不佔名額）；依答錯次數排序；閱讀排在最後且每次至多一篇。
 
@@ -86,15 +97,32 @@
 ## 慣例
 
 - 註解與 commit 訊息用繁體中文；註解說明「為什麼」而非「做什麼」。
-- 無測試框架（刻意維持零依賴）。驗證方式：node `vm` 載入模組測邏輯，Playwright + Chromium 開 `file://` 測端對端；測試腳本不進 repo。
+- 無測試框架（刻意維持零依賴）。`node tools/test-logic.js` 用內建 `vm` 把 data 與引擎載進假的 window，驗語法、資料完整性與組題邏輯；提交前連同 `node tools/verify-bundle.js` 一起跑。
+- 端對端（Playwright + Chromium 開 `file://`）仍是手動、腳本不進 repo —— 那會引入 npm 依賴。
+
+## 測試
+
+`tools/` 底下三支腳本，都只用 Node 內建模組：
+
+| 指令 | 檢查什麼 |
+|---|---|
+| `node tools/build.js` | 重新打包（`--check` 只驗不寫檔） |
+| `node tools/verify-bundle.js` | 單檔版與原始檔逐區塊比對 |
+| `node tools/test-logic.js` | `node --check`、ES5 語法、資料完整性、組題、弱點怪獸對映、SRS 範圍、`matchAny` |
+
+新增檢查時請一併確認「它真的會失敗」—— 故意改壞一個地方跑一次，不會紅的檢查沒有價值。
 
 ## 現況
 
-- 可玩的是 Stage 0–1 共 25 關（890 單字、20 文法點／292 題、39 篇短文、63 個不規則動詞）。
-- Stage 2–6 共 50 關僅有標題，無 `plan` 與內容，`ready: false`。
+- 可玩的是 Stage 0–2 共 35 關（1028 單字、27 文法點、54 篇短文、63 個不規則動詞、14 題 Part 1、22 題 Part 2）。Stage 2 已完整。
+- Stage 3–6 共 40 關僅有標題，`ready: false`。
 
 ## 下一步 TODO
 
-1. **Stage 2 的 10 關**。使用者打完第 25 關就撞牆，這是產品的關鍵路徑。除了補 vocab／grammar／reading，Part 1（看圖聽描述）與 Part 2（應答）需要新的 `Ex` 模組與圖片資產 —— 不是補資料就能解決。
-2. **擋住打包漂移與回歸**。`build.ps1` 只能在 Windows 跑，且沒有任何自動檢查，漂移已經無聲上線過一次。做法：改成跨平台建置腳本，加 CI 跑 `node --check` 與上述的單檔／原始碼同步比對，並把目前一次性的驗證腳本收進 repo。
+1. **起步偏好（A1＋A2）**。Stage 0 的前五關全是發音（s0u1–s0u5），而解鎖是一條鏈，所以「想快點學會句子」的人必須先走完五關才碰得到第一個句子。分兩批做：
+   - **A1**：`profile.track`（`'phonics'` / `'vocab'`）+ onboarding 問一題 + 設定頁可切換；依取向調整發音關卡的 `plan` 配方，讓體感從「上發音課」變成「學單字順便帶發音」。**不動解鎖鏈。**
+   - **A2**：發音關卡加「跳關測驗」，通過就用既有的星數機制（`State.unit(id).s = 1`）解鎖下一關。使用者不是跳過，是證明不需要 —— 一樣不碰 `isUnlocked`。
+   - 刻意不做：第二條獨立解鎖鏈、hearts（與「保護連續天數」的設計方向相反）。
+2. **Stage 3 的 10 關**（被動語態、商務字彙、Part 5 詞性判斷、Part 3/4 長對話）。Part 3/4 需要新的 `Ex` 模組（一段長音檔配多題），不是補資料就能解決。
 3. **驗證口說的自動評分**。所有既有驗證都跑在 `file://`，而那裡瀏覽器擋麥克風，等於 `Speech.listen()` 與 `scoreSpeech()` 這條路從未被實際執行過。要走 Vercel preview 才驗得到。
+4. **端對端測試進 CI**。目前 CI 只驗語法、資料與組題邏輯，畫面層（`views/*`、`exercises/*` 的 render）沒有任何自動檢查。要納入就得引入 Playwright，與零依賴衝突，得先想清楚值不值得。

@@ -1,0 +1,25 @@
+# 唯一的目的：擋住「改了 css/js/data 卻沒重新打包」與明顯的邏輯/資料回歸。
+# 打包漂移曾經無聲上線過一次 —— 檔案大小與時間戳都看不出來，只有逐區塊比對抓得到。
+# 全程只用 Node 內建模組，不裝任何套件（維持零依賴）。
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 語法、資料與組題邏輯
+        run: node tools/test-logic.js
+
+      - name: 單檔版是否與原始檔同步
+        run: node tools/verify-bundle.js

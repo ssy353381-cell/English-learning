@@ -79,6 +79,9 @@
     if (doneN) cls += ' done';
     else if (isCur && unlocked) cls += ' current';
     if (!unlocked) cls += ' locked';
+    // 階段可以分批開放，所以同一個階段裡「還沒解鎖」和「根本還沒做」會並存。
+    // 兩者都畫成鎖頭的話，使用者會一路練上去撞牆卻不知道是撞到什麼。
+    if (!ready) cls += ' wip';
 
     var crown = rec && rec.lv ? '<span class="node-crown">' +
       (rec.lv >= 5 ? '👑' : '⭐'.repeat(Math.min(3, rec.s || 1))) + '</span>' : '';
@@ -88,8 +91,9 @@
     var learned = vocabTotal - unseen;
 
     return '<button class="' + cls + '" data-unit="' + u.id + '" ' +
-      (unlocked ? '' : 'disabled ') + 'title="' + esc(u.title) + '">' +
-      (unlocked ? (u.icon || '📘') : '🔒') + crown +
+      (unlocked ? '' : 'disabled ') +
+      'title="' + esc(u.title) + (ready ? '' : '（製作中）') + '">' +
+      (unlocked ? (u.icon || '📘') : (ready ? '🔒' : '🚧')) + crown +
       '<span class="node-label">' + u.n + '. ' + esc(shortTitle(u.title)) +
       (vocabTotal && unlocked ? '　<span class="tiny faint">' + learned + '/' + vocabTotal + '字</span>' : '') +
       '</span>' +
