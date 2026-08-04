@@ -269,25 +269,70 @@
   /* ==========================================================================
      每日複習佇列（首頁「暖身」與複習頁共用）
      ========================================================================== */
+  /**
+   * 把一隻弱點怪獸變成一題。三種怪獸各有各的問法：
+   *   vocab   → 中英互選
+   *   grammar 記的是「文法點」，從它底下的題庫裡抽一題重問
+   *   reading 記的是「文章」，整篇重讀一次
+   * 內容已經被移除（例如改版換了 id）就回傳 null。
+   */
+  function weakQuestion(w) {
+    var it = Content.item(w.r);
+    if (!it) return null;
+
+    if (w.t === 'vocab') {
+      return { type: 'recall', ref: it, dir: Math.random() < .5 ? 'en2zh' : 'zh2en',
+               unitId: w.u, weak: w.k };
+    }
+
+    if (w.t === 'grammar') {
+      var qs = it.qs || [];
+      if (!qs.length) return null;
+      // 複習要短，優先抽選擇題與填空；沒有的話再退回改錯／翻譯
+      var quick = qs.filter(function (q) { return q.k === 'mc' || q.k === 'cloze'; });
+      var q = PICK(quick.length ? quick : qs);
+      return { type: q.k === 'cloze' ? 'cloze' : 'grammar', ref: q, g: it,
+               unitId: w.u || it.u, weak: w.k };
+    }
+
+    if (w.t === 'reading') {
+      return { type: 'read', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
+    return null;
+  }
+
   function buildReview(limit) {
     limit = limit || 20;
     var out = [];
+    var tail = [];   // 閱讀放最後，跟關卡一樣當收尾
 
-    // 1) 弱點怪獸優先
-    SRS.weakList().slice(0, Math.ceil(limit * 0.4)).forEach(function (w) {
-      var it = Content.item(w.r);
-      if (!it) return;
-      if (w.t === 'vocab') {
-        out.push({ type: 'recall', ref: it, dir: Math.random() < .5 ? 'en2zh' : 'zh2en', unitId: w.u, weak: w.k });
-      }
-    });
+    function taken() { return out.length + tail.length; }
+    function hasRef(id) {
+      return out.concat(tail).some(function (o) { return o.ref && o.ref.id === id; });
+    }
+
+    // 1) 弱點怪獸優先：錯最多次的先排。
+    //    額度是用「真的排進去的題數」算的 — 出不了題的怪獸不該白佔名額。
+    var budget = Math.ceil(limit * 0.4);
+    SRS.weakList()
+      .sort(function (a, b) { return b.n - a.n; })
+      .forEach(function (w) {
+        if (taken() >= budget) return;
+        // 一篇文章要讀好幾分鐘，一次複習最多夾一篇
+        if (w.t === 'reading' && tail.length) return;
+        var q = weakQuestion(w);
+        if (!q) return;
+        if (q.type === 'read') tail.push(q);
+        else out.push(q);
+      });
 
     // 2) SRS 到期單字
     SRS.dueIds(limit).forEach(function (id) {
-      if (out.length >= limit) return;
+      if (taken() >= limit) return;
       var v = Content.item(id);
       if (!v || !v.w) return;
-      if (out.some(function (o) { return o.ref && o.ref.id === id; })) return;
+      if (hasRef(id)) return;
       var spellable = v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w);
       var r = Math.random();
       if (r < 0.3) out.push({ type: 'recall', ref: v, dir: 'en2zh', unitId: v.u, srs: true });
@@ -296,6 +341,7 @@
       else out.push({ type: 'spell', ref: v, unitId: v.u, srs: true });
     });
 
+    out = out.concat(tail);
     out.forEach(function (q, i) { q.i = i; });
     return out;
   }
