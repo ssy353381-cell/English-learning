@@ -49,7 +49,7 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'She ___ the monthly report. (prepare)', a:'prepares', zh:'她負責準備月報。', why:'第三人稱單數加 -s。' },
     { k:'cloze', q:'They ___ in the same building. (work)', a:'work', zh:'他們在同一棟大樓工作。', why:'複數用原形。' },
     { k:'cloze', q:'The bus ___ at eight every morning. (arrive)', a:'arrives', zh:'公車每天早上八點到。', why:'The bus 是單數。' },
-    { k:'trans', zh:'他每天走路上班。', a:'He walks to work every day.', why:'He + walks（加 -s）。' },
+    { k:'trans', zh:'他每天走路上班。', a:'He walks to work every day.', alt:['Every day he walks to work.'], why:'He + walks（加 -s）。' },
     { k:'trans', zh:'我們每個月開一次會。', a:'We meet once a month.', alt:['We have a meeting once a month.'], why:'We 用原形 meet。' }
   ]
 },
@@ -101,7 +101,7 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'___ they need more samples?', a:'Do', zh:'他們需要更多樣品嗎？', why:'they 用 Do。' },
     { k:'cloze', q:'The printer ___ work.', a:'doesn\'t', alt:['does not'], zh:'印表機不能用。', why:'The printer 是單數。' },
     { k:'trans', zh:'她不喜歡開長會。', a:'She doesn\'t like long meetings.', why:'doesn\'t + 原形 like。' },
-    { k:'trans', zh:'你有我的電話號碼嗎？', a:'Do you have my phone number?', why:'一般動詞疑問句用 Do。' }
+    { k:'trans', zh:'你有我的電話號碼嗎？', a:'Do you have my phone number?', alt:['Have you got my phone number?'], why:'一般動詞疑問句用 Do。' }
   ]
 },
 
@@ -200,7 +200,7 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'The meeting ___ very long.', a:'was', zh:'會議很長。', why:'The meeting 是單數。' },
     { k:'cloze', q:'They ___ not available last week.', a:'were', zh:'他們上週沒空。', why:'They 用 were。' },
     { k:'cloze', q:'There ___ a problem with the invoice.', a:'was', zh:'發票出了問題。', why:'a problem 單數。' },
-    { k:'trans', zh:'昨天交通很糟。', a:'The traffic was bad yesterday.', why:'traffic 不可數，視為單數用 was。' },
+    { k:'trans', zh:'昨天交通很糟。', a:'The traffic was bad yesterday.', alt:['Yesterday the traffic was bad.','The traffic was terrible yesterday.'], why:'traffic 不可數，視為單數用 was。' },
     { k:'trans', zh:'我們上週不在辦公室。', a:'We were not in the office last week.', alt:['We weren\'t in the office last week.'], why:'We + were not。' }
   ]
 },
@@ -265,7 +265,7 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'They ___ (find) the error in the invoice.', a:'found', zh:'他們找到發票的錯誤了。', why:'find → found。' },
     { k:'cloze', q:'She ___ (study) the contract carefully.', a:'studied', zh:'她仔細研究了合約。', why:'子音 + y → ied。' },
     { k:'cloze', q:'The machine ___ (stop) suddenly.', a:'stopped', zh:'機器突然停了。', why:'短母音 + 單子音，重複 p。' },
-    { k:'trans', zh:'我昨天打了兩次給供應商。', a:'I called the supplier twice yesterday.', why:'call → called。' },
+    { k:'trans', zh:'我昨天打了兩次給供應商。', a:'I called the supplier twice yesterday.', alt:['Yesterday I called the supplier twice.'], why:'call → called。' },
     { k:'trans', zh:'他們沒有準時完成專案。', a:'They didn\'t finish the project on time.', why:'didn\'t + 原形 finish。' }
   ]
 },
@@ -316,7 +316,7 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'I ___ get back to you shortly.', a:'will', zh:'我會盡快回覆您。', why:'商務常用句。' },
     { k:'cloze', q:'They are ___ to postpone the launch.', a:'going', zh:'他們打算把發表會延期。', why:'be going to + 原形。' },
     { k:'trans', zh:'我下週會寄合約給你。', a:'I will send you the contract next week.', alt:['I will send the contract to you next week.'], why:'will + 原形。' },
-    { k:'trans', zh:'他們打算換供應商。', a:'They are going to change suppliers.', why:'早已計畫用 be going to。' }
+    { k:'trans', zh:'他們打算換供應商。', a:'They are going to change suppliers.', alt:['They are going to change their supplier.'], why:'早已計畫用 be going to。' }
   ]
 },
 
@@ -373,8 +373,8 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'The files are ___ the cabinet.', a:'in', zh:'檔案在櫃子裡。', why:'在容器內用 in。' },
     { k:'cloze', q:'The printer is next ___ the door.', a:'to', zh:'印表機在門旁邊。', why:'固定用法 next to。' },
     { k:'cloze', q:'A picture is hanging ___ the wall.', a:'on', zh:'一幅畫掛在牆上。', why:'貼在表面用 on。' },
-    { k:'trans', zh:'停車場在大樓後面。', a:'The parking lot is behind the building.', why:'behind = 在…後面。' },
-    { k:'trans', zh:'我的桌子在她對面。', a:'My desk is across from hers.', why:'across from = 在…對面。' }
+    { k:'trans', zh:'停車場在大樓後面。', a:'The parking lot is behind the building.', alt:['The car park is behind the building.'], why:'behind = 在…後面。' },
+    { k:'trans', zh:'我的桌子在她對面。', a:'My desk is across from hers.', alt:['My desk is opposite hers.'], why:'across from = 在…對面。' }
   ]
 },
 
@@ -432,7 +432,7 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'He worked at the factory ___ five years.', a:'for', zh:'他在工廠工作了五年。', why:'持續一段時間用 for。' },
     { k:'cloze', q:'She called ___ the meeting.', a:'during', zh:'她在會議中打來。', why:'在某段期間內用 during。' },
     { k:'trans', zh:'請在中午前回覆我。', a:'Please reply to me by noon.', alt:['Please reply by noon.'], why:'期限用 by。' },
-    { k:'trans', zh:'我們通常星期五開會。', a:'We usually meet on Friday.', why:'頻率副詞放在一般動詞前面。' }
+    { k:'trans', zh:'我們通常星期五開會。', a:'We usually meet on Friday.', alt:['We usually meet on Fridays.','We usually have a meeting on Friday.'], why:'頻率副詞放在一般動詞前面。' }
   ]
 },
 
@@ -544,7 +544,7 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'This supplier is ___ (cheap) than the last one.', a:'cheaper', zh:'這家供應商比上一家便宜。', why:'單音節加 -er。' },
     { k:'cloze', q:'This is the ___ (good) option we have.', a:'best', zh:'這是我們最好的選擇。', why:'good → best。' },
     { k:'cloze', q:'The report is ___ (important) than the meeting.', a:'more important', zh:'報告比會議重要。', why:'長形容詞用 more。' },
-    { k:'trans', zh:'新辦公室比舊的大。', a:'The new office is bigger than the old one.', why:'big → bigger（重複 g）。' },
+    { k:'trans', zh:'新辦公室比舊的大。', a:'The new office is bigger than the old one.', alt:['The new office is larger than the old one.'], why:'big → bigger（重複 g）。' },
     { k:'trans', zh:'這是我們最暢銷的產品。', a:'This is our best-selling product.', alt:['This is our most popular product.'], why:'最高級表達。' }
   ]
 },
@@ -594,12 +594,12 @@ window.DATA_GRAMMAR_S1 = [
     { k:'mc', q:'___ it rained, we went out.', opts:['Although','But','So','Because of'], a:0, zh:'雖然下雨，我們還是出門了。', why:'「雖然」用 Although 接句子。' },
     { k:'mc', q:'The plan is good. ___, it costs too much.', opts:['However','But','Although','Because'], a:0, zh:'計畫不錯，然而太貴了。', why:'放句首、後接逗號的是 However。' },
     { k:'mc', q:'Call me ___ you arrive.', opts:['as soon as','so','but','because of'], a:0, zh:'你一到就打給我。', why:'「一…就」用 as soon as。' },
-    { k:'fix', q:'Although it rained, but we went out.', a:'Although it rained, we went out.', zh:'雖然下雨，我們還是出門了。', hint:'中文兩個都要，英文只留一個', why:'Although 和 but 不能同時出現。' },
-    { k:'fix', q:'We canceled the trip because of the weather was bad.', a:'We canceled the trip because the weather was bad.', zh:'我們因為天氣不好取消了行程。', hint:'後面是完整句子', why:'接句子要用 because。' },
+    { k:'fix', q:'Although it rained, but we went out.', a:'Although it rained, we went out.', alt:['It rained, but we went out.'], zh:'雖然下雨，我們還是出門了。', hint:'中文兩個都要，英文只留一個', why:'Although 和 but 不能同時出現，留哪一個都可以。' },
+    { k:'fix', q:'We canceled the trip because of the weather was bad.', a:'We canceled the trip because the weather was bad.', alt:['We canceled the trip because of the bad weather.'], zh:'我們因為天氣不好取消了行程。', hint:'後面是完整句子', why:'because 接句子，because of 接名詞 — 改哪一邊都可以。' },
     { k:'cloze', q:'I called ___ left a message.', a:'and', zh:'我打了電話並留言。', why:'兩個並列動作用 and。' },
     { k:'cloze', q:'You can call ___ email me.', a:'or', zh:'你可以打給我或寄信。', why:'二選一用 or。' },
     { k:'cloze', q:'Costs rose. ___, prices increased.', a:'Therefore', zh:'成本上升，因此價格調漲。', why:'表示結果的正式說法。' },
-    { k:'trans', zh:'我很累，但我還是完成了報告。', a:'I was tired, but I finished the report.', why:'語意相反用 but。' },
+    { k:'trans', zh:'我很累，但我還是完成了報告。', a:'I was tired, but I finished the report.', alt:['I was tired, but I still finished the report.'], why:'語意相反用 but。' },
     { k:'trans', zh:'因為下雨，會議延期了。', a:'The meeting was postponed because of the rain.', alt:['Because of the rain, the meeting was postponed.'], why:'後面接名詞用 because of。' }
   ]
 },
@@ -651,8 +651,8 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'___ ___ no available seats.', a:'There are', zh:'沒有空位了。', why:'seats 複數。' },
     { k:'cloze', q:'We have ___ little time before the deadline.', a:'a', zh:'離截止日還有一點時間。', why:'a little = 還有一點（正面）。' },
     { k:'cloze', q:'How ___ orders came in today?', a:'many', zh:'今天進了幾筆訂單？', why:'orders 可數用 many。' },
-    { k:'trans', zh:'會議室裡有二十個座位。', a:'There are twenty seats in the meeting room.', why:'複數用 There are。' },
-    { k:'trans', zh:'我們沒有足夠的時間。', a:'We don\'t have enough time.', why:'擁有用 have。' }
+    { k:'trans', zh:'會議室裡有二十個座位。', a:'There are twenty seats in the meeting room.', alt:['There are 20 seats in the meeting room.'], why:'複數用 There are。' },
+    { k:'trans', zh:'我們沒有足夠的時間。', a:'We don\'t have enough time.', alt:['We haven\'t got enough time.'], why:'擁有用 have。' }
   ]
 },
 
@@ -769,7 +769,7 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'___ start with the budget.（我們來…）', a:'Let\'s', zh:'我們從預算開始吧。', why:'提議用 Let\'s。' },
     { k:'cloze', q:'Please ___ out this form.', a:'fill', zh:'請填這張表。', why:'fill out = 填寫。' },
     { k:'trans', zh:'我們何不改成星期五？', a:'Why don\'t we change it to Friday?', alt:['How about Friday?'], why:'提議句型。' },
-    { k:'trans', zh:'離開時請關燈。', a:'Please turn off the lights when you leave.', why:'祈使句 + when 子句。' }
+    { k:'trans', zh:'離開時請關燈。', a:'Please turn off the lights when you leave.', alt:['Please turn the lights off when you leave.'], why:'祈使句 + when 子句。' }
   ]
 },
 
@@ -825,7 +825,7 @@ window.DATA_GRAMMAR_S1 = [
     { k:'cloze', q:'She ___ (send) the samples yesterday.', a:'sent', zh:'她昨天寄了樣品。', why:'send → sent。' },
     { k:'cloze', q:'They ___ (be) not available last week.', a:'were', zh:'他們上週沒空。', why:'They 的過去 be 動詞是 were。' },
     { k:'cloze', q:'We ___ (open) a branch next year.（計畫）', a:'are going to open', alt:['will open'], zh:'我們明年要開分公司。', why:'計畫好的未來用 be going to。' },
-    { k:'trans', zh:'我昨天寄了報告給客戶。', a:'I sent the report to the client yesterday.', why:'過去式 sent。' },
+    { k:'trans', zh:'我昨天寄了報告給客戶。', a:'I sent the report to the client yesterday.', alt:['I sent the client the report yesterday.','Yesterday I sent the report to the client.'], why:'過去式 sent。' },
     { k:'trans', zh:'她現在正在會議室開會。', a:'She is having a meeting in the meeting room now.', alt:['She is in a meeting in the meeting room now.'], why:'現在進行式。' },
     { k:'trans', zh:'我們必須在星期五前完成這個專案。', a:'We have to finish the project by Friday.', alt:['We must finish the project by Friday.'], why:'have to + 原形，期限用 by。' }
   ]

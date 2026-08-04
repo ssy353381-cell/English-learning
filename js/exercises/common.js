@@ -123,9 +123,30 @@
   }
 
   /* ---------- 文字比對（寫作/聽寫用） ---------- */
+  /**
+   * 縮寫展開成完整寫法：I'm 和 I am、don't 和 do not 只是寫法不同，不該判錯。
+   * 輸入與答案都會過這一關，所以只會讓比對更寬鬆，不會把對的判成錯的。
+   * 's 與 'd 刻意不處理 — 它們有歧義（is/has、would/had），
+   * 展開反而可能把 He's got 和 He has got 判成不一樣。
+   */
+  function expandContractions(s) {
+    return s
+      .replace(/\bwon't\b/g, 'will not')
+      .replace(/\bcan't\b/g, 'can not')
+      .replace(/\bcannot\b/g, 'can not')
+      .replace(/\bshan't\b/g, 'shall not')
+      .replace(/n't\b/g, ' not')
+      .replace(/\blet's\b/g, 'let us')
+      .replace(/'m\b/g, ' am')
+      .replace(/'re\b/g, ' are')
+      .replace(/'ll\b/g, ' will')
+      .replace(/'ve\b/g, ' have');
+  }
+
   function normalizeAns(s) {
-    return String(s || '').toLowerCase()
-      .replace(/[’‘]/g, "'").replace(/[“”]/g, '"')
+    return expandContractions(
+      String(s || '').toLowerCase()
+        .replace(/[’‘]/g, "'").replace(/[“”]/g, '"'))
       .replace(/[.,!?;:]/g, '')
       .replace(/\s+/g, ' ')
       .trim();
@@ -170,7 +191,8 @@
   global.ExUtil = {
     options: options, bindKeys: bindKeys, prompt: prompt,
     exampleHTML: exampleHTML, wordCardHTML: wordCardHTML,
-    normalizeAns: normalizeAns, sameText: sameText, matchAny: matchAny,
+    normalizeAns: normalizeAns, expandContractions: expandContractions,
+    sameText: sameText, matchAny: matchAny,
     nearMiss: nearMiss, tokenize: tokenize,
     gradeVocab: gradeVocab, gradeGrammar: gradeGrammar
   };
