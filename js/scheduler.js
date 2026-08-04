@@ -233,16 +233,17 @@
     }
 
     /* --- 9.5 多益 Part 1／Part 2：題目自成一體，不從單字庫抽 --- */
+    // 這一關沒有自己的題目就往前借（魔王關就是靠這個混考前面所有的 Part 1／Part 2）
     if (plan.photo) {
       var pics = Content.photoOf(unitId);
-      if (!pics.length) pics = Content.photoOf(Content.prevUnitId(unitId) || '');
+      if (!pics.length) pics = Content.photoUpTo(unitId);
       SAMPLE(pics, plan.photo).forEach(function (p) {
         body.push({ type: 'photo', ref: p, unitId: unitId });
       });
     }
     if (plan.respond) {
       var reps = Content.respondOf(unitId);
-      if (!reps.length) reps = Content.respondOf(Content.prevUnitId(unitId) || '');
+      if (!reps.length) reps = Content.respondUpTo(unitId);
       SAMPLE(reps, plan.respond).forEach(function (r) {
         body.push({ type: 'respond', ref: r, unitId: unitId });
       });

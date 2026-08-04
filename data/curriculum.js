@@ -167,14 +167,43 @@ window.DATA_CURRICULUM = {
         goal:'看到 yesterday 就用過去式、看到 since 就用完成式 —— 多益 Part 5 的常客',
         plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
               ['cloze',4],['dictate',3],['photo',2],['respond',3],['read',1]] },
-      { id:'s2u3', n:28, title:'不定詞 to V', icon:'🎯' },
-      { id:'s2u4', n:29, title:'動名詞 Ving', icon:'🔁' },
-      { id:'s2u5', n:30, title:'to V 還是 Ving？', icon:'🤔', boss:true },
-      { id:'s2u6', n:31, title:'關係代名詞 who / which / that', icon:'🪢' },
-      { id:'s2u7', n:32, title:'間接問句', icon:'💭' },
-      { id:'s2u8', n:33, title:'多益 Part 1：看圖聽描述', icon:'🖼️' },
-      { id:'s2u9', n:34, title:'多益 Part 2：應答問題', icon:'🎧' },
-      { id:'s2u10', n:35, title:'Stage 2 魔王測驗', icon:'👑', boss:true }
+      { id:'s2u3', n:28, title:'不定詞 to V', icon:'🎯',
+        goal:'搞懂哪些動詞後面要接 to V，以及「為了…」怎麼說',
+        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+              ['cloze',4],['build',3],['read',1]] },
+
+      { id:'s2u4', n:29, title:'動名詞 Ving', icon:'🔁',
+        goal:'記住接 Ving 的動詞，並學會「介系詞後面一律 Ving」這條鐵則',
+        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+              ['cloze',4],['build',3],['read',1]] },
+
+      { id:'s2u5', n:30, title:'to V 還是 Ving？', icon:'🤔', boss:true,
+        goal:'兩種用法混在一起考，包括 remember／forget／stop／try 換意思的陷阱',
+        plan:[['intro',1],['flashcard',10],['recall',6],['grammar',9],['cloze',5],
+              ['build',4],['dictate',3],['read',1]] },
+
+      { id:'s2u6', n:31, title:'關係代名詞 who / which / that', icon:'🪢',
+        goal:'用 who／which 把兩個短句合成一個長句，並且不要重複放代名詞',
+        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+              ['cloze',4],['build',4],['read',2]] },
+
+      { id:'s2u7', n:32, title:'間接問句', icon:'💭',
+        goal:'把問句包進 Could you tell me… 之後，語序要變回主詞＋動詞',
+        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+              ['cloze',4],['build',3],['respond',2],['read',2]] },
+
+      { id:'s2u8', n:33, title:'多益 Part 1：看圖聽描述', icon:'🖼️',
+        goal:'八張照片連續作答，訓練「只靠耳朵判斷動作與對象」',
+        plan:[['photo',8],['recall',4],['listen',4]] },
+
+      { id:'s2u9', n:34, title:'多益 Part 2：應答問題', icon:'🎧',
+        goal:'聽開頭的疑問詞就決定答案，並認出 Yes/No 與同字陷阱',
+        plan:[['respond',10],['recall',4],['listen',4]] },
+
+      { id:'s2u10', n:35, title:'Stage 2 魔王測驗', icon:'👑', boss:true,
+        goal:'完成式、不定詞、動名詞、關係代名詞、間接問句與 Part 1／Part 2 全部混合',
+        plan:[['grammar',10],['cloze',6],['build',4],['listen',5],['dictate',4],
+              ['photo',2],['respond',3],['read',2],['recall',8]] }
     ]
   },
   {

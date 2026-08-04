@@ -16,7 +16,7 @@
 
   var VOCAB   = cat(global.DATA_VOCAB_S0,
                     global.DATA_VOCAB_S1A, global.DATA_VOCAB_S1B, global.DATA_VOCAB_S1C,
-                    global.DATA_VOCAB_S2);
+                    global.DATA_VOCAB_S2, global.DATA_VOCAB_S2B);
   var GRAMMAR = cat(global.DATA_GRAMMAR_S0, global.DATA_GRAMMAR_S1, global.DATA_GRAMMAR_S2);
   var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2);
   var PHOTO   = cat(global.DATA_PHOTO_S2);      // 多益 Part 1：看圖聽描述
@@ -93,6 +93,17 @@
     return out;
   }
 
+  /* 魔王關自己沒有 Part 1／Part 2 題目，要能往前把所有學過的都收進來 */
+  function upTo(byUnit, all, uid) {
+    var idx = unitOrder.indexOf(uid);
+    if (idx < 0) return all.slice();
+    var out = [];
+    for (var i = 0; i <= idx; i++) out = out.concat(byUnit[unitOrder[i]] || []);
+    return out;
+  }
+  function photoUpTo(uid)   { return upTo(photoByUnit, PHOTO, uid); }
+  function respondUpTo(uid) { return upTo(respondByUnit, RESPOND, uid); }
+
   /* ---------- 關卡順序與解鎖 ---------- */
   function orderedUnitIds() { return unitOrder.slice(); }
 
@@ -107,9 +118,11 @@
     if (!u) return false;
     var st = stageOfUnit[uid];
     if (!st || !st.ready || !u.plan || !u.plan.length) return false;
-    // 純聽力關卡（多益 Part 1／Part 2）沒有單字也沒有文法，一樣算有內容
+    // 有任何一種自己的內容就算數：純聽力關卡（Part 1／Part 2）沒有單字也沒有文法，
+    // 魔王關則相反 —— 題目全往前借，只有自己的短文。
     var hasContent = (vocabByUnit[uid] && vocabByUnit[uid].length) ||
                      (grammarByUnit[uid] && grammarByUnit[uid].length) ||
+                     (readingByUnit[uid] && readingByUnit[uid].length) ||
                      (photoByUnit[uid] && photoByUnit[uid].length) ||
                      (respondByUnit[uid] && respondByUnit[uid].length);
     return !!hasContent;
@@ -185,6 +198,7 @@
     vocabOf: vocabOf, grammarOf: grammarOf, readingOf: readingOf,
     photoOf: photoOf, respondOf: respondOf,
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
+    photoUpTo: photoUpTo, respondUpTo: respondUpTo,
     phonics: phonics, irregulars: irregulars,
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,
