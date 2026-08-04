@@ -32,7 +32,9 @@
 
 `Ex[type] = { scored: bool, render(q, host, api) }`。api：`ready(fn)` 設定檢查行為、`enableCheck(bool)`、`result(ok, opts)` 送出批改、`setContinue(text)` 供不計分卡片用、`onCleanup(fn)`。完整說明見 `exercises/common.js` 檔頭。
 
-現有 11 種：intro flashcard recall spell listen dictate speak grammar build cloze read。
+現有 12 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular。
+
+自由作答題（fix／trans／cloze／dictate）用 `ExUtil.matchAny()` 比對，已忽略大小寫、標點、彎引號與**縮寫**（I'm≡I am、don't≡do not）。`'s` 與 `'d` 有歧義故不展開。因此 `alt` 只需寫「真正不同的說法」，不必列縮寫或標點變體。
 
 ## 內容模型
 
@@ -40,17 +42,20 @@
 
 `Content.isReady(uid)` = `stage.ready` && 有 `plan` && 有 vocab 或 grammar。缺一即鎖住並顯示「製作中」。
 
-資料 id 前綴必須互斥（vocab `v####`、grammar `g####`、reading `r####`）—— 三者共用同一個 `byId` 索引。
+資料 id 前綴必須互斥（vocab `v####`、grammar `g####`、reading `r####`、irregular `i####`）—— 共用同一個 `byId` 索引。
+
+不規則動詞不綁關卡，用 `t` 分 A／B／C 三型（三態同形／過去式＝過去分詞／三態都不同）。關卡設 `irregular: true` 會得到一張教學卡，plan 加 `['irregular', n]` 會出三態練習。
 
 ## 弱點怪獸
 
-三種型別記的都是**來源**而非個別題目：
+四種型別記的都是**來源**而非個別題目：
 
 | type | 記的 id | 複習時出什麼 | 消滅條件 |
 |---|---|---|---|
 | vocab | 單字 | 中英互選 | 答對 |
 | grammar | 文法點 | 從該點題庫抽一題，優先 mc／cloze | 答對 |
 | reading | 文章 | 整篇重讀 | 所有小題全對 |
+| irregular | 動詞 | 再問一次過去式或過去分詞 | 答對 |
 
 `scheduler.weakQuestion()` 負責型別→題目的映射。**新增型別必須同步改它**，否則怪獸進得了清單卻永遠出不了題、也永遠消不掉。
 
@@ -58,7 +63,7 @@
 
 ## SRS 範圍
 
-間隔重複**僅涵蓋單字**。文法與閱讀不寫入 `State.data.srs`，只透過弱點怪獸清單回鍋。
+間隔重複**僅涵蓋單字**。文法、閱讀、不規則動詞不寫入 `State.data.srs`（`buildReview` 的到期迴圈要求項目有 `.w`），只透過弱點怪獸清單回鍋。
 
 ## 存檔
 
@@ -75,7 +80,6 @@
 
 ## 現況
 
-- 可玩的是 Stage 0–1 共 25 關（890 單字、20 文法點／292 題、39 篇短文）。
+- 可玩的是 Stage 0–1 共 25 關（890 單字、20 文法點／292 題、39 篇短文、63 個不規則動詞）。
 - Stage 2–6 共 50 關僅有標題，無 `plan` 與內容，`ready: false`。
 - 多益題型（Part 1–7、模考）除補資料外，還需新的 `Ex` 模組與計時／分段機制。
-- fix／trans 共 87 題，其中 65 題未填 `alt`；判分為嚴格比對，其他合理寫法會被判錯。
