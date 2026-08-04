@@ -8,6 +8,12 @@
 - **ES5 語法**，IIFE 掛全域：`State` `Content` `SRS` `Scheduler` `Gamify` `Sfx` `Speech` `UI` `Ex` `ExUtil` `Views`。
 - `index.html` 的 script 順序即相依順序（data → 引擎 → 題型 → 畫面 → app.js）。新增檔案要手動加進去。
 
+## 部署
+
+除了 `file://` 與單檔版，這個 repo 還零設定部署在 Vercel（無 `vercel.json`，直接送根目錄靜態檔），PR 會產生 preview URL。
+
+因此有兩條交付路徑，**兩條都要能動**。差別在於瀏覽器權限：`file://` 下部分瀏覽器擋麥克風，口說題會降級成錄音自評；HTTPS 下語音辨識才能真的自動評分。要驗口說功能得走部署版。
+
 ## 打包
 
 `build.ps1`（Windows PowerShell）將 css/js 全部內嵌成單檔 `English-Learning.html`，供手機離線使用。
