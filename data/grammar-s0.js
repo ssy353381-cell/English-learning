@@ -261,6 +261,7 @@ window.DATA_GRAMMAR_S0 = [
     { k:'mc', q:'Our company has five ___.', opts:['citys','cities','citys\'','city'], a:1,
       zh:'我們公司有五個據點城市。', why:'子音 + y 結尾，y 改成 ies。' },
     { k:'fix', q:'I have a informations for you.', a:'I have some information for you.',
+      alt:['I have information for you.'],
       zh:'我有一些資訊要給你。', hint:'information 可以數嗎？', why:'information 不可數，不能用 a，也不加 s。' },
     { k:'fix', q:'There are three childs in the room.', a:'There are three children in the room.',
       zh:'房間裡有三個小孩。', hint:'child 的複數是不規則的', why:'child → children。' },
@@ -469,6 +470,8 @@ window.DATA_GRAMMAR_S0 = [
     { k:'cloze', q:'The client arrives ___ Friday morning.', a:'on',
       zh:'客戶星期五早上到。', why:'指定某天的早上，用 on。' },
     { k:'trans', zh:'會議在星期一早上十點。', a:'The meeting is at ten on Monday morning.',
+      alt:['The meeting is at 10 on Monday morning.',
+           'The meeting is at ten o\'clock on Monday morning.'],
       why:'at 配鐘點，on 配星期。' },
     { k:'trans', zh:'請在星期五之前回覆我。', a:'Please reply to me by Friday.', alt:['Please reply by Friday.'],
       why:'「之前完成」用 by。' }

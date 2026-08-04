@@ -2,8 +2,10 @@
    curriculum.js — 課程總表：Stage 0–6、關卡、解鎖規則、練習配方
    --------------------------------------------------------------------------
    unit.plan 說明（每個關卡要出哪些題、各幾題）：
-     intro     教學卡（發音表 / 文法概念，不計分）
-     flashcard 單字卡學習（新字）
+     intro     教學卡（發音表 / 不規則動詞表 / 文法概念，不計分）
+               發音表看 unit.phonics，不規則動詞表看 unit.irregular
+     flashcard 單字卡學習（新字）。有這一項就會自動配拼字題，不必另外寫
+     irregular 不規則動詞三態（原形 → 過去式 / 過去分詞）
      recall    看中文選英文 / 看英文選中文
      listen    聽音辨義
      dictate   聽寫填空
@@ -97,8 +99,9 @@ window.DATA_CURRICULUM = {
         plan:[['intro',1],['flashcard',8],['grammar',6],['cloze',5],['build',3],['listen',3],['read',1]] },
 
       { id:'s1u5', n:15, title:'過去式與不規則動詞', icon:'📜', boss:true,
-        goal:'規則加 -ed，不規則的 60 個只能背 — 這關是第一道真正的門檻',
-        plan:[['intro',1],['flashcard',10],['grammar',8],['cloze',6],['dictate',4],['build',4],['read',1]] },
+        goal:'規則加 -ed，不規則的 63 個只能背 — 這關是第一道真正的門檻',
+        irregular:true,
+        plan:[['intro',1],['flashcard',10],['irregular',8],['grammar',8],['cloze',6],['dictate',4],['build',4],['read',1]] },
 
       { id:'s1u6', n:16, title:'未來式 will / be going to', icon:'🔮', boss:false,
         goal:'兩種未來的差別：臨時決定 vs 早就計畫好',

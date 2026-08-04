@@ -55,7 +55,8 @@
       g: {
         xp: 0, lvl: 1, gems: 0,
         streak: 0, bestStreak: 0, freeze: 0,
-        lastDay: '', shieldUsedOn: '', doubleDay: ''
+        // shieldUsedN 是「還沒告訴使用者」的擋刀次數，Gamify.noticeShield() 報過就歸零
+        lastDay: '', shieldUsedOn: '', shieldUsedN: 0, doubleDay: ''
       },
       // 今日
       today: {
@@ -146,6 +147,7 @@
         if (data.g.freeze >= missed) {
           data.g.freeze -= missed;                   // 護盾擋掉
           data.g.shieldUsedOn = now;
+          data.g.shieldUsedN = (data.g.shieldUsedN || 0) + missed;
         } else {
           data.g.streak = 0;                         // 斷了
         }

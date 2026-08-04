@@ -108,11 +108,15 @@
     }
     var rows = list.sort(function (a, b) { return b.n - a.n; }).map(function (w) {
       var it = Content.item(w.r);
-      var label = it ? (it.w || it.title || it.id) : w.r;
-      var sub = it ? (it.zh || (it.title ? '閱讀理解' : '文法題')) : '';
-      var typeTag = { vocab: '單字', grammar: '文法', reading: '閱讀' }[w.t] || w.t;
+      var word = it && (it.w || it.v);
+      var label = it ? (word || it.title || it.id) : w.r;
+      var sub = it
+        ? (it.v ? it.v + ' → ' + it.p + ' → ' + it.pp
+                : (it.zh || (it.title ? '閱讀理解' : '文法題')))
+        : '';
+      var typeTag = { vocab: '單字', grammar: '文法', reading: '閱讀', irregular: '動詞三態' }[w.t] || w.t;
       return '<div class="list-row">' +
-        (it && it.w ? Speech.btn(it.w) : '<span style="font-size:1.4rem">👾</span>') +
+        (word ? Speech.btn(word) : '<span style="font-size:1.4rem">👾</span>') +
         '<div class="grow"><div class="sentence-en">' + esc(label) + '</div>' +
         '<div class="sentence-zh">' + esc(sub) + '</div></div>' +
         '<div class="right"><span class="tag red">錯 ' + w.n + ' 次</span>' +

@@ -38,6 +38,8 @@
     byId[r.id] = r;
     (readingByUnit[r.u] = readingByUnit[r.u] || []).push(r);
   });
+  // 不規則動詞不綁關卡，但要能用 id 查回來（弱點怪獸需要）
+  IRREG.forEach(function (iv) { byId[iv.id] = iv; });
 
   CUR.stages.forEach(function (st) {
     (st.units || []).forEach(function (u) {

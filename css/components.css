@@ -358,6 +358,8 @@ html[data-theme="dark"] .badge.got { background: linear-gradient(180deg, #3a3115
 
 /* ============ 彈窗 ============ */
 .modal-root { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; }
+/* display 會蓋掉瀏覽器內建的 [hidden]，少了這行，關掉的彈窗會留在畫面上擋住點擊 */
+.modal-root[hidden] { display: none; }
 .modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.5); }
 .modal-box {
   position: relative; z-index: 1; width: 100%; max-width: 460px;

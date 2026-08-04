@@ -331,6 +331,7 @@
     var rows = s.missed.slice(0, 8).map(function (q) {
       var label = '', sub = '';
       if (q.ref && q.ref.w) { label = q.ref.w; sub = q.ref.pos + ' ' + q.ref.zh; }
+      else if (q.ref && q.ref.v) { label = q.ref.v; sub = q.ref.v + ' → ' + q.ref.p + ' → ' + q.ref.pp; }
       else if (q.ref && q.ref.en) { label = q.ref.en; sub = q.ref.zh || ''; }
       else if (q.ref && q.ref.q) { label = String(q.ref.q).slice(0, 46); sub = q.ref.why ? String(q.ref.why).replace(/<[^>]+>/g, '').slice(0, 40) : ''; }
       else if (q.ref && q.ref.title) { label = q.ref.title; sub = '閱讀理解'; }
