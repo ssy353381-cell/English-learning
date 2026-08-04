@@ -16,11 +16,14 @@
 
 ## 打包
 
-`build.ps1`（Windows PowerShell）將 css/js 全部內嵌成單檔 `English-Learning.html`，供手機離線使用。
+把 css/js 全部內嵌成單檔 `English-Learning.html`，供手機離線使用。兩支腳本產出完全相同的結果：
 
-**改動任何 css/js/data 後必須重新打包**，否則單檔版落後於多檔版（曾經發生過，且無聲上線）。無 PowerShell 時以等價轉換重跑：同樣的 link/script regex、區塊標頭 `/* ===== 相對路徑 ===== */`、`</script>` 轉義為 `<\/script>`、UTF-8 無 BOM、`<body>` 後插入時間戳。
+- `node tools/build.js` —— 跨平台，CI 與非 Windows 環境用這支。
+- `build.ps1` —— Windows PowerShell，不需要 Node。
 
-驗證同步：用區塊標頭把單檔版拆回各區塊，逐一與原始檔比對。這是唯一能抓到漂移的方法 —— 檔案大小與時間戳都看不出來。
+**改動任何 css/js/data 後必須重新打包**，否則單檔版落後於多檔版（曾經發生過，且無聲上線）。兩邊的轉換規則必須一致：同樣的 link/script regex、區塊標頭 `/* ===== 相對路徑 ===== */`、`</script>` 轉義為 `<\/script>`、UTF-8 無 BOM、`<body>` 後插入時間戳。
+
+驗證同步：`node tools/verify-bundle.js`。它用區塊標頭把單檔版拆回各區塊逐一與原始檔比對，這是唯一能抓到漂移的方法 —— 檔案大小與時間戳都看不出來。CI 每次 push 都會跑。
 
 ## 架構
 
@@ -86,7 +89,20 @@
 ## 慣例
 
 - 註解與 commit 訊息用繁體中文；註解說明「為什麼」而非「做什麼」。
-- 無測試框架（刻意維持零依賴）。驗證方式：node `vm` 載入模組測邏輯，Playwright + Chromium 開 `file://` 測端對端；測試腳本不進 repo。
+- 無測試框架（刻意維持零依賴）。`node tools/test-logic.js` 用內建 `vm` 把 data 與引擎載進假的 window，驗語法、資料完整性與組題邏輯；提交前連同 `node tools/verify-bundle.js` 一起跑。
+- 端對端（Playwright + Chromium 開 `file://`）仍是手動、腳本不進 repo —— 那會引入 npm 依賴。
+
+## 測試
+
+`tools/` 底下三支腳本，都只用 Node 內建模組：
+
+| 指令 | 檢查什麼 |
+|---|---|
+| `node tools/build.js` | 重新打包（`--check` 只驗不寫檔） |
+| `node tools/verify-bundle.js` | 單檔版與原始檔逐區塊比對 |
+| `node tools/test-logic.js` | `node --check`、ES5 語法、資料完整性、組題、弱點怪獸對映、SRS 範圍、`matchAny` |
+
+新增檢查時請一併確認「它真的會失敗」—— 故意改壞一個地方跑一次，不會紅的檢查沒有價值。
 
 ## 現況
 
@@ -96,5 +112,5 @@
 ## 下一步 TODO
 
 1. **Stage 2 的 10 關**。使用者打完第 25 關就撞牆，這是產品的關鍵路徑。除了補 vocab／grammar／reading，Part 1（看圖聽描述）與 Part 2（應答）需要新的 `Ex` 模組與圖片資產 —— 不是補資料就能解決。
-2. **擋住打包漂移與回歸**。`build.ps1` 只能在 Windows 跑，且沒有任何自動檢查，漂移已經無聲上線過一次。做法：改成跨平台建置腳本，加 CI 跑 `node --check` 與上述的單檔／原始碼同步比對，並把目前一次性的驗證腳本收進 repo。
-3. **驗證口說的自動評分**。所有既有驗證都跑在 `file://`，而那裡瀏覽器擋麥克風，等於 `Speech.listen()` 與 `scoreSpeech()` 這條路從未被實際執行過。要走 Vercel preview 才驗得到。
+2. **驗證口說的自動評分**。所有既有驗證都跑在 `file://`，而那裡瀏覽器擋麥克風，等於 `Speech.listen()` 與 `scoreSpeech()` 這條路從未被實際執行過。要走 Vercel preview 才驗得到。
+3. **端對端測試進 CI**。目前 CI 只驗語法、資料與組題邏輯，畫面層（`views/*`、`exercises/*` 的 render）沒有任何自動檢查。要納入就得引入 Playwright，與零依賴衝突，得先想清楚值不值得。
