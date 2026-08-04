@@ -804,7 +804,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 </style>
 </head>
 <body>
-<!-- 單檔打包版 build: 2026-08-04 21:52 -->
+<!-- 單檔打包版 build: 2026-08-04 22:07 -->
 
 <!-- ===== 頂部狀態列 ===== -->
 <header id="topbar" class="topbar">
@@ -1161,6 +1161,7 @@ window.DATA_CURRICULUM = {
   /* ---------- 過關標準 ---------- */
   rules: {
     passRate: 0.7,        // 正確率 70% 以上才算過關
+    skipPass: 0.85,       // 跳關測驗的及格線：要證明「這關不用上」就得比過關更嚴（8 題只能錯 1 題）
     star2: 0.85,          // 2 星
     star3: 1.0,           // 3 星（全對）
     xpPerCorrect: 4,
@@ -5884,6 +5885,7 @@ window.DATA_ACHIEVEMENTS = [
         showKK: true          // 顯示 KK 音標
       },
       // 關卡進度： { 's0u1': { s:2, best:0.92, n:3, at:'2026-08-04' } }  s=星數
+      // skip=1 代表這顆星是跳關測驗換來的，關卡內容其實沒上過
       units: {},
       // 間隔重複： { 's0_001': { ef:2.5, iv:1, rep:2, due:'2026-08-06', lap:0 } }
       srs: {},
@@ -6058,7 +6060,7 @@ window.DATA_ACHIEVEMENTS = [
 
   /* ---------- 常用小工具 ---------- */
   function unit(id) {
-    if (!data.units[id]) data.units[id] = { s: 0, lv: 0, best: 0, n: 0, at: '' };
+    if (!data.units[id]) data.units[id] = { s: 0, lv: 0, best: 0, n: 0, at: '', skip: 0 };
     if (data.units[id].lv === undefined) data.units[id].lv = data.units[id].s > 0 ? 1 : 0;
     return data.units[id];
   }
@@ -6647,6 +6649,43 @@ window.DATA_ACHIEVEMENTS = [
     };
   }
 
+  /* ---------- 跳關測驗結算 ---------- */
+  /**
+   * 通過就給一顆星 —— 星數本來就是解鎖條件，所以 isUnlocked 一行都不用改。
+   * 但不給皇冠、不算通關次數：這一關的內容使用者確實沒上過，之後回來打還是第一次教。
+   * 記 rec.skip 是為了讓地圖照實說，而不是假裝這一關上過了。
+   */
+  function finishSkipTest(unitId, correct, total) {
+    var R = Content.rules();
+    var rate = total > 0 ? correct / total : 0;
+    var passed = correct >= Scheduler.skipPassCount(total);
+
+    if (passed) {
+      var rec = State.unit(unitId);
+      if (!rec.s) {
+        rec.s = 1;
+        rec.skip = 1;
+        rec.best = Math.max(rec.best || 0, rate);
+        rec.at = State.dayStr();
+      }
+    }
+
+    // 答的題數照算（這是真的在學習），但不算一堂課
+    State.data.today.correct += correct;
+    State.data.today.total += total;
+    State.data.total.correct += correct;
+    State.data.total.answered += total;
+    State.save(true);
+
+    var xp = correct * R.xpPerCorrect;
+    addXP(xp);
+    var streakFired = false;
+    if (goalMet()) streakFired = touchStreak();
+    check();
+
+    return { passed: passed, stars: passed ? 1 : 0, rate: rate, xp: xp, gems: 0, streakFired: streakFired };
+  }
+
   /* ---------- 護盾 ---------- */
   /**
    * 護盾是靜靜生效的（rollDay 裡扣掉），不講的話使用者根本不知道自己被救了 —
@@ -6741,7 +6780,8 @@ window.DATA_ACHIEVEMENTS = [
     xpForLevel: xpForLevel, levelInfo: levelInfo,
     addXP: addXP, addGems: addGems, spendGems: spendGems,
     touchStreak: touchStreak, goalMet: goalMet,
-    finishLesson: finishLesson, buyFreeze: buyFreeze, noticeShield: noticeShield,
+    finishLesson: finishLesson, finishSkipTest: finishSkipTest,
+    buyFreeze: buyFreeze, noticeShield: noticeShield,
     has: has, grant: grant, check: check, earned: earned
   };
 
@@ -7536,6 +7576,62 @@ window.DATA_ACHIEVEMENTS = [
   }
 
   /* ==========================================================================
+     跳關測驗：證明「這一關不用上」
+     發音關是解鎖鏈上最容易卡住已經有底子的人的地方。與其開第二條鏈，不如讓他
+     直接考一次 —— 過了就拿既有的一顆星，解鎖鏈自己往前推。
+     ========================================================================== */
+  var SKIP_N = 8;
+
+  function skipTestable(unitId) {
+    var u = Content.unit(unitId);
+    if (!u || !u.phonics) return false;                          // 只有發音關需要
+    if (!Content.isReady(unitId) || !Content.isUnlocked(unitId)) return false;
+    if (State.isUnitDone(unitId)) return false;                  // 已經過了就沒得跳
+    return Content.vocabOf(unitId).length >= SKIP_N;
+  }
+
+  /**
+   * 只出「聽得懂、拼得出、認得意思」三種題，而且全部來自這一關自己的單字。
+   * 沒有教學卡也沒有單字卡 —— 先被教一次再答對，證明不了任何事。
+   * 答對答錯照樣進 SRS 與弱點怪獸（題型模組自己會做），跳掉的關卡才不會變成黑洞。
+   */
+  function buildSkipTest(unitId) {
+    if (!skipTestable(unitId)) return [];
+
+    var pool = Content.vocabOf(unitId);
+    var used = {}, out = [];
+
+    function take(list, n, make) {
+      SAMPLE(list.filter(function (v) { return !used[v.id]; }), n).forEach(function (v) {
+        used[v.id] = 1;
+        out.push(make(v, out.length));
+      });
+    }
+
+    take(pool, 3, function (v) {
+      return { type: 'listen', mode: 'word', ref: v, unitId: unitId };
+    });
+    take(pool.filter(function (v) {
+      return v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w);
+    }), 3, function (v) {
+      return { type: 'spell', ref: v, unitId: unitId };
+    });
+    // 可拼的字不夠就用中英互選補滿：題數固定，及格線才有一致的意義
+    take(pool, SKIP_N - out.length, function (v, i) {
+      return { type: 'recall', ref: v, dir: i % 2 ? 'zh2en' : 'en2zh', unitId: unitId };
+    });
+
+    out = S(out);
+    out.forEach(function (q, i) { q.i = i; });
+    return out;
+  }
+
+  /** 及格要答對幾題（結算畫面與說明文字都用它，才不會兩邊講的數字不一樣） */
+  function skipPassCount(total) {
+    return Math.ceil(total * (Content.rules().skipPass || 0.85));
+  }
+
+  /* ==========================================================================
      每日複習佇列（首頁「暖身」與複習頁共用）
      ========================================================================== */
   /**
@@ -7703,6 +7799,16 @@ window.DATA_ACHIEVEMENTS = [
         hash: '#/lesson/' + cur, cta: lv > 0 ? '再打一次' : '開始學習'
       });
     }
+    // 跳關測驗只推給「先學單字」的人。選「先練發音」的是自己要求練發音的，
+    // 不該在首頁被慫恿跳過 —— 地圖上兩種取向都找得到。
+    if (State.data.profile.track === 'vocab' && skipTestable(cur)) {
+      items.push({
+        key: 'skip', icon: '⏭️', title: '跳關測驗',
+        desc: '已經會了？' + SKIP_N + ' 題證明給我看，直接解鎖下一關',
+        hint: '約 2 分鐘',
+        hash: '#/lesson/' + cur + '?skip=1', cta: '我要跳關'
+      });
+    }
     if (weak > 0) {
       items.push({
         key: 'weak', icon: '👾', title: '弱點怪獸',
@@ -7727,6 +7833,10 @@ window.DATA_ACHIEVEMENTS = [
     buildLesson: buildLesson,
     buildReview: buildReview,
     buildChallenge: buildChallenge,
+    buildSkipTest: buildSkipTest,
+    skipTestable: skipTestable,
+    skipPassCount: skipPassCount,
+    SKIP_N: SKIP_N,
     todayPlan: todayPlan,
     unseenOf: unseenOf,
     sentencesFrom: sentencesFrom
@@ -9766,16 +9876,28 @@ window.DATA_ACHIEVEMENTS = [
         '<h2 class="mt8">第 ' + u.n + ' 關　' + esc(u.title) + '</h2>' +
         (u.goal ? '<p class="muted">' + esc(u.goal) + '</p>' : '') +
         (rec.s ? '<div style="font-size:1.5rem;letter-spacing:3px">' + UI.stars(rec.s) + '</div>' +
-          '<p class="small muted">最佳成績 ' + Math.round(rec.best * 100) + '%　・　皇冠 Lv.' + (rec.lv || 0) + '</p>' : '') +
+          // 測驗換來的星要照實說，不然使用者會以為自己上過這一關
+          (rec.skip
+            ? '<p class="small muted">⏭️ 跳關測驗通過 ' + Math.round(rec.best * 100) + '%　・　這一關的內容還沒上過</p>'
+            : '<p class="small muted">最佳成績 ' + Math.round(rec.best * 100) + '%　・　皇冠 Lv.' + (rec.lv || 0) + '</p>') : '') +
         (total ? '<div class="mt8">' + UI.pbar((total - unseen) / total) +
           '<div class="small muted mt8">單字 ' + (total - unseen) + ' / ' + total +
           (unseen ? '　（這次會教 ' + Math.min(unseen, planCount(u)) + ' 個新字）' : '　新字已學完') +
           '</div></div>' : '') +
         '<button class="btn btn-primary btn-lg mt16" id="go">' +
           (rec.s ? '再打一次' : '開始這一關') + '</button>' +
+        (Scheduler.skipTestable(id)
+          ? '<button class="btn btn-ghost btn-lg mt8" id="skiptest">⏭️ 跳關測驗</button>' +
+            '<p class="tiny muted mt8 mb0">已經會了？' + Scheduler.SKIP_N + ' 題答對 ' +
+            Scheduler.skipPassCount(Scheduler.SKIP_N) + ' 題就解鎖下一關。' +
+            '這一關的單字還是可以隨時回來學。</p>'
+          : '') +
       '</div>'
     );
     UI.$('#go').onclick = function () { UI.closeModal(); location.hash = '#/lesson/' + id; };
+
+    var skip = UI.$('#skiptest');
+    if (skip) skip.onclick = function () { UI.closeModal(); location.hash = '#/lesson/' + id + '?skip=1'; };
   });
 
   function planCount(u) {
@@ -9807,13 +9929,23 @@ window.DATA_ACHIEVEMENTS = [
 
   /* ==========================================================================
      進入關卡
-     mode: 'unit' | 'review' | 'challenge'
+     mode: 'unit' | 'review' | 'challenge' | 'skip'
      ========================================================================== */
   function start(mode, unitId, opts) {
     opts = opts || {};
     var queue, title, sub;
 
-    if (mode === 'challenge') {
+    if (mode === 'skip') {
+      if (!Scheduler.skipTestable(unitId)) {
+        UI.toast(State.isUnitDone(unitId) ? '這一關已經過了，不用再測驗' : '這一關沒有跳關測驗', 'bad');
+        location.hash = '#/map';
+        return;
+      }
+      queue = Scheduler.buildSkipTest(unitId);
+      var tu = Content.unit(unitId);
+      title = '跳關測驗　第 ' + tu.n + ' 關';
+      sub = '答對 ' + Scheduler.skipPassCount(queue.length) + ' / ' + queue.length + ' 題就解鎖下一關';
+    } else if (mode === 'challenge') {
       queue = Scheduler.buildChallenge();
       if (!queue || !queue.length) {
         UI.toast('先學一些單字再來挑戰吧', 'bad');
@@ -9850,7 +9982,9 @@ window.DATA_ACHIEVEMENTS = [
     session = {
       mode: mode, unitId: unitId, queue: queue, idx: 0,
       correct: 0, total: 0, missed: [], startedAt: Date.now(),
-      title: title, sub: sub, cleanup: []
+      title: title, sub: sub, cleanup: [],
+      // 答錯重排是課堂的補救機制，在測驗裡等於直接送答案
+      noRetry: mode === 'skip'
     };
 
     document.body.classList.add('in-lesson');
@@ -9882,7 +10016,7 @@ window.DATA_ACHIEVEMENTS = [
   function exit() {
     cleanup();
     document.body.classList.remove('in-lesson');
-    var back = session && session.mode === 'unit' ? '#/map' : '#/home';
+    var back = session && (session.mode === 'unit' || session.mode === 'skip') ? '#/map' : '#/home';
     session = null;
     location.hash = back;
   }
@@ -9975,7 +10109,7 @@ window.DATA_ACHIEVEMENTS = [
           if (!o.neutral) {
             session.missed.push(q);
             // 答錯的題排到最後再問一次（同一題最多重來一次）
-            if (!q.retry) {
+            if (!q.retry && !session.noRetry) {
               var copy = {};
               for (var k in q) copy[k] = q[k];
               copy.retry = true;
@@ -10045,6 +10179,8 @@ window.DATA_ACHIEVEMENTS = [
     var res;
     if (s.mode === 'unit') {
       res = Gamify.finishLesson(s.unitId, s.correct, s.total);
+    } else if (s.mode === 'skip') {
+      res = Gamify.finishSkipTest(s.unitId, s.correct, s.total);
     } else {
       // 複習與挑戰：直接給 XP，不動關卡星等
       var xp = s.correct * 3 + (s.mode === 'challenge' ? 15 : 8);
@@ -10065,20 +10201,30 @@ window.DATA_ACHIEVEMENTS = [
 
     document.body.classList.remove('in-lesson');
 
-    var u = s.mode === 'unit' ? Content.unit(s.unitId) : null;
+    var isSkip = s.mode === 'skip';
+    var u = (s.mode === 'unit' || isSkip) ? Content.unit(s.unitId) : null;
     var view = UI.$('#view');
 
     view.innerHTML =
       '<div class="center mt24 anim-pop">' +
-        '<div style="font-size:4.4rem">' + (res.passed ? (res.stars === 3 ? '🏆' : '🎉') : '💪') + '</div>' +
-        '<h1>' + (res.passed ? '過關！' : '再挑戰一次') + '</h1>' +
+        '<div style="font-size:4.4rem">' +
+          (isSkip ? (res.passed ? '⏭️' : '💪') : (res.passed ? (res.stars === 3 ? '🏆' : '🎉') : '💪')) +
+        '</div>' +
+        '<h1>' + (isSkip
+          ? (res.passed ? '測驗通過' : '這一關還是值得上')
+          : (res.passed ? '過關！' : '再挑戰一次')) + '</h1>' +
         (s.mode === 'unit'
           ? '<div style="font-size:1.8rem;letter-spacing:4px">' + UI.stars(res.stars) + '</div>' +
             (bestStars(s.unitId) > res.stars
               ? '<div class="small muted">本次成績（這一關的最佳紀錄是 ' + UI.stars(bestStars(s.unitId)) + '）</div>'
               : '') +
             (res.crownUp ? '<div class="tag gold mt8">👑 皇冠 Lv.' + res.crown + '</div>' : '')
-          : '<p class="muted">' + esc(s.title) + '</p>') +
+          : isSkip
+            ? '<p class="muted">' + (res.passed
+                ? '第 ' + u.n + ' 關算你會了，下一關已經解鎖。'
+                : '答對 ' + s.correct + ' / ' + s.total + ' 題，' +
+                  '要 ' + Scheduler.skipPassCount(s.total) + ' 題才能跳。') + '</p>'
+            : '<p class="muted">' + esc(s.title) + '</p>') +
       '</div>' +
 
       '<div class="kpi-grid mt24">' +
@@ -10100,7 +10246,14 @@ window.DATA_ACHIEVEMENTS = [
                 '<button class="btn btn-ghost btn-lg" id="again">再打一次（學更多新字）</button>'
               : '<button class="btn btn-primary btn-lg" id="again">再挑戰一次</button>' +
                 '<button class="btn btn-ghost btn-lg" data-nav="#/map">回到地圖</button>')
-          : '<button class="btn btn-primary btn-lg" data-nav="#/home">回到今日</button>') +
+          : isSkip
+            // 通過了也留一個入口回來上這一關：跳過的是課，不是裡面的單字
+            ? (res.passed
+                ? '<button class="btn btn-primary btn-lg" data-nav="#/map">回到地圖</button>' +
+                  '<button class="btn btn-ghost btn-lg" id="again">還是想上這一關</button>'
+                : '<button class="btn btn-primary btn-lg" id="again">開始上這一關</button>' +
+                  '<button class="btn btn-ghost btn-lg" data-nav="#/map">回到地圖</button>')
+            : '<button class="btn btn-primary btn-lg" data-nav="#/home">回到今日</button>') +
       '</div>';
 
     UI.countUp(UI.$('#k-acc'), Math.round(rate * 100), 700);
@@ -10149,6 +10302,7 @@ window.DATA_ACHIEVEMENTS = [
     var id = params.id;
     if (id === 'challenge') return start('challenge');
     if (id === 'review') return start('review', null, params);
+    if (params.skip) return start('skip', id);      // #/lesson/s0u1?skip=1
     return start('unit', id);
   };
 

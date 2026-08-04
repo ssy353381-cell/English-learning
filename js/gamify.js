@@ -152,6 +152,43 @@
     };
   }
 
+  /* ---------- 跳關測驗結算 ---------- */
+  /**
+   * 通過就給一顆星 —— 星數本來就是解鎖條件，所以 isUnlocked 一行都不用改。
+   * 但不給皇冠、不算通關次數：這一關的內容使用者確實沒上過，之後回來打還是第一次教。
+   * 記 rec.skip 是為了讓地圖照實說，而不是假裝這一關上過了。
+   */
+  function finishSkipTest(unitId, correct, total) {
+    var R = Content.rules();
+    var rate = total > 0 ? correct / total : 0;
+    var passed = correct >= Scheduler.skipPassCount(total);
+
+    if (passed) {
+      var rec = State.unit(unitId);
+      if (!rec.s) {
+        rec.s = 1;
+        rec.skip = 1;
+        rec.best = Math.max(rec.best || 0, rate);
+        rec.at = State.dayStr();
+      }
+    }
+
+    // 答的題數照算（這是真的在學習），但不算一堂課
+    State.data.today.correct += correct;
+    State.data.today.total += total;
+    State.data.total.correct += correct;
+    State.data.total.answered += total;
+    State.save(true);
+
+    var xp = correct * R.xpPerCorrect;
+    addXP(xp);
+    var streakFired = false;
+    if (goalMet()) streakFired = touchStreak();
+    check();
+
+    return { passed: passed, stars: passed ? 1 : 0, rate: rate, xp: xp, gems: 0, streakFired: streakFired };
+  }
+
   /* ---------- 護盾 ---------- */
   /**
    * 護盾是靜靜生效的（rollDay 裡扣掉），不講的話使用者根本不知道自己被救了 —
@@ -246,7 +283,8 @@
     xpForLevel: xpForLevel, levelInfo: levelInfo,
     addXP: addXP, addGems: addGems, spendGems: spendGems,
     touchStreak: touchStreak, goalMet: goalMet,
-    finishLesson: finishLesson, buyFreeze: buyFreeze, noticeShield: noticeShield,
+    finishLesson: finishLesson, finishSkipTest: finishSkipTest,
+    buyFreeze: buyFreeze, noticeShield: noticeShield,
     has: has, grant: grant, check: check, earned: earned
   };
 

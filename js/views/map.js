@@ -126,16 +126,28 @@
         '<h2 class="mt8">第 ' + u.n + ' 關　' + esc(u.title) + '</h2>' +
         (u.goal ? '<p class="muted">' + esc(u.goal) + '</p>' : '') +
         (rec.s ? '<div style="font-size:1.5rem;letter-spacing:3px">' + UI.stars(rec.s) + '</div>' +
-          '<p class="small muted">最佳成績 ' + Math.round(rec.best * 100) + '%　・　皇冠 Lv.' + (rec.lv || 0) + '</p>' : '') +
+          // 測驗換來的星要照實說，不然使用者會以為自己上過這一關
+          (rec.skip
+            ? '<p class="small muted">⏭️ 跳關測驗通過 ' + Math.round(rec.best * 100) + '%　・　這一關的內容還沒上過</p>'
+            : '<p class="small muted">最佳成績 ' + Math.round(rec.best * 100) + '%　・　皇冠 Lv.' + (rec.lv || 0) + '</p>') : '') +
         (total ? '<div class="mt8">' + UI.pbar((total - unseen) / total) +
           '<div class="small muted mt8">單字 ' + (total - unseen) + ' / ' + total +
           (unseen ? '　（這次會教 ' + Math.min(unseen, planCount(u)) + ' 個新字）' : '　新字已學完') +
           '</div></div>' : '') +
         '<button class="btn btn-primary btn-lg mt16" id="go">' +
           (rec.s ? '再打一次' : '開始這一關') + '</button>' +
+        (Scheduler.skipTestable(id)
+          ? '<button class="btn btn-ghost btn-lg mt8" id="skiptest">⏭️ 跳關測驗</button>' +
+            '<p class="tiny muted mt8 mb0">已經會了？' + Scheduler.SKIP_N + ' 題答對 ' +
+            Scheduler.skipPassCount(Scheduler.SKIP_N) + ' 題就解鎖下一關。' +
+            '這一關的單字還是可以隨時回來學。</p>'
+          : '') +
       '</div>'
     );
     UI.$('#go').onclick = function () { UI.closeModal(); location.hash = '#/lesson/' + id; };
+
+    var skip = UI.$('#skiptest');
+    if (skip) skip.onclick = function () { UI.closeModal(); location.hash = '#/lesson/' + id + '?skip=1'; };
   });
 
   function planCount(u) {

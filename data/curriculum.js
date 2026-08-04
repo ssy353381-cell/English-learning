@@ -298,6 +298,7 @@ window.DATA_CURRICULUM = {
   /* ---------- 過關標準 ---------- */
   rules: {
     passRate: 0.7,        // 正確率 70% 以上才算過關
+    skipPass: 0.85,       // 跳關測驗的及格線：要證明「這關不用上」就得比過關更嚴（8 題只能錯 1 題）
     star2: 0.85,          // 2 星
     star3: 1.0,           // 3 星（全對）
     xpPerCorrect: 4,
