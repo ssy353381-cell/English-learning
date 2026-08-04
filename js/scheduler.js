@@ -96,7 +96,8 @@
      ========================================================================== */
   function buildLesson(unitId) {
     var u = Content.unit(unitId);
-    if (!u || !u.plan) return [];
+    var recipe = Content.planOf(unitId);   // 起步取向可能會換掉發音關卡的配方
+    if (!u || !recipe) return [];
 
     var queue = [];
     var intro = [];
@@ -106,7 +107,7 @@
 
     var focus = [];   // 這關新教的字，其他題型優先用它們
     var plan = {};
-    u.plan.forEach(function (p) { plan[p[0]] = p[1]; });
+    recipe.forEach(function (p) { plan[p[0]] = p[1]; });
 
     // 有教新字的關卡就自動配拼字題（課表沒特別指定時）。
     // 「認得出來」和「拼得出來」是兩件事，後者才撐得住寫作與聽寫。

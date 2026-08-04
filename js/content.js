@@ -112,6 +112,19 @@
     return i > 0 ? unitOrder[i - 1] : null;
   }
 
+  /**
+   * 關卡實際採用的配方。
+   * 發音關卡另外備了一份「單字優先」的 planVocab：解鎖是一條鏈，想快點學句子的人
+   * 一樣得走完 s0u1–s0u5，所以能換的只有同一關裡出哪些題。沒有 planVocab 就用 plan。
+   */
+  function planOf(uid) {
+    var u = unitById[uid];
+    if (!u) return null;
+    var track = (State.data.profile && State.data.profile.track) || 'phonics';
+    if (track === 'vocab' && u.planVocab && u.planVocab.length) return u.planVocab;
+    return (u.plan && u.plan.length) ? u.plan : null;
+  }
+
   /** 關卡可玩的條件：階段開放、有課表，而且真的有內容可出題 */
   function isReady(uid) {
     var u = unitById[uid];
@@ -200,7 +213,7 @@
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
     photoUpTo: photoUpTo, respondUpTo: respondUpTo,
     phonics: phonics, irregulars: irregulars,
-    orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId,
+    orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,
     shuffle: shuffle, sample: sample, pick: pick, distractors: distractors,
     counts: counts

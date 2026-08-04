@@ -804,7 +804,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 </style>
 </head>
 <body>
-<!-- 單檔打包版 build: 2026-08-04 21:41 -->
+<!-- 單檔打包版 build: 2026-08-04 21:52 -->
 
 <!-- ===== 頂部狀態列 ===== -->
 <header id="topbar" class="topbar">
@@ -880,6 +880,11 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
      photo     多益 Part 1：看圖聽描述（題目在 data/toeic-p1-*.js）
      respond   多益 Part 2：應答問題（題目在 data/toeic-p2-*.js）
    --------------------------------------------------------------------------
+   unit.planVocab 是「單字優先」取向（profile.track = 'vocab'）改用的配方，
+   目前只有 Stage 0 的五個發音關需要：解鎖是一條鏈，想快點學句子的人也得先走完
+   s0u1–s0u5，所以換的不是關卡順序而是同一關裡出哪些題 —— 新字加倍、提早出現排句，
+   聽力與跟讀砍半。沒寫 planVocab 的關卡兩種取向都用 plan。
+   --------------------------------------------------------------------------
    stage.ready = true 只代表「這一階段開放了」，關卡本身要有 plan 與內容才可玩；
    沒有 plan 的關卡會顯示「製作中」並鎖住，所以階段可以分批開放。
    ========================================================================== */
@@ -898,27 +903,32 @@ window.DATA_CURRICULUM = {
       { id:'s0u1', n:1, title:'字母 A–Z', icon:'🔤', boss:false,
         goal:'認得 26 個字母的名字，以及它們各自發什麼音',
         phonics:'alphabet',
-        plan:[['intro',1],['flashcard',6],['listen',6],['recall',4],['speak',2]] },
+        plan:[['intro',1],['flashcard',6],['listen',6],['recall',4],['speak',2]],
+        planVocab:[['intro',1],['flashcard',9],['recall',5],['build',2],['listen',2],['speak',1]] },
 
       { id:'s0u2', n:2, title:'短母音 a e i o u', icon:'🅰️', boss:false,
         goal:'看到 cat / pen / sit / dog / cup 就能直接拼出聲音',
         phonics:'shortVowels',
-        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',2],['recall',4]] },
+        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',2],['recall',4]],
+        planVocab:[['intro',1],['flashcard',11],['recall',5],['build',3],['listen',3],['dictate',2],['speak',1]] },
 
       { id:'s0u3', n:3, title:'子音組合 sh ch th ph ck', icon:'🔊', boss:false,
         goal:'兩個字母黏在一起會變成新的音，這關把五組最常見的搞定',
         phonics:'digraphs',
-        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]] },
+        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]],
+        planVocab:[['intro',1],['flashcard',11],['recall',5],['build',3],['listen',3],['dictate',2],['speak',1]] },
 
       { id:'s0u4', n:4, title:'長母音與魔法 e', icon:'✨', boss:false,
         goal:'cap → cape、hop → hope：字尾多一個 e，母音就唸自己的名字',
         phonics:'magicE',
-        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]] },
+        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]],
+        planVocab:[['intro',1],['flashcard',11],['recall',5],['build',3],['listen',3],['dictate',2],['speak',1]] },
 
       { id:'s0u5', n:5, title:'KK 音標與重音', icon:'📖', boss:true,
         goal:'看得懂字典裡的 [ ] 音標，並知道重音要放哪裡',
         phonics:'kk',
-        plan:[['intro',1],['flashcard',6],['listen',8],['recall',6],['speak',3],['dictate',4]] },
+        plan:[['intro',1],['flashcard',6],['listen',8],['recall',6],['speak',3],['dictate',4]],
+        planVocab:[['intro',1],['flashcard',11],['recall',6],['build',3],['listen',4],['dictate',2],['speak',1]] },
 
       { id:'s0u6', n:6, title:'詞性入門：名詞・動詞・形容詞', icon:'🧩', boss:false,
         goal:'知道一個英文字在句子裡「扮演什麼角色」，這是全部文法的地基',
@@ -5863,6 +5873,9 @@ window.DATA_ACHIEVEMENTS = [
       profile: {
         nickname: '',
         goalMin: 40,          // 每日目標分鐘數：20 / 40 / 60
+        // 起步取向：phonics 先把發音練穩 / vocab 先衝單字與句子。
+        // 只換發音關卡的出題配方，不動解鎖鏈 —— 舊存檔補進來會拿到 phonics，體感不變。
+        track: 'phonics',
         rate: 0.85,           // TTS 語速
         voice: '',            // 指定的語音名稱（空 = 自動挑）
         theme: 'auto',        // auto / light / dark
@@ -6223,6 +6236,19 @@ window.DATA_ACHIEVEMENTS = [
     return i > 0 ? unitOrder[i - 1] : null;
   }
 
+  /**
+   * 關卡實際採用的配方。
+   * 發音關卡另外備了一份「單字優先」的 planVocab：解鎖是一條鏈，想快點學句子的人
+   * 一樣得走完 s0u1–s0u5，所以能換的只有同一關裡出哪些題。沒有 planVocab 就用 plan。
+   */
+  function planOf(uid) {
+    var u = unitById[uid];
+    if (!u) return null;
+    var track = (State.data.profile && State.data.profile.track) || 'phonics';
+    if (track === 'vocab' && u.planVocab && u.planVocab.length) return u.planVocab;
+    return (u.plan && u.plan.length) ? u.plan : null;
+  }
+
   /** 關卡可玩的條件：階段開放、有課表，而且真的有內容可出題 */
   function isReady(uid) {
     var u = unitById[uid];
@@ -6311,7 +6337,7 @@ window.DATA_ACHIEVEMENTS = [
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
     photoUpTo: photoUpTo, respondUpTo: respondUpTo,
     phonics: phonics, irregulars: irregulars,
-    orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId,
+    orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,
     shuffle: shuffle, sample: sample, pick: pick, distractors: distractors,
     counts: counts
@@ -7308,7 +7334,8 @@ window.DATA_ACHIEVEMENTS = [
      ========================================================================== */
   function buildLesson(unitId) {
     var u = Content.unit(unitId);
-    if (!u || !u.plan) return [];
+    var recipe = Content.planOf(unitId);   // 起步取向可能會換掉發音關卡的配方
+    if (!u || !recipe) return [];
 
     var queue = [];
     var intro = [];
@@ -7318,7 +7345,7 @@ window.DATA_ACHIEVEMENTS = [
 
     var focus = [];   // 這關新教的字，其他題型優先用它們
     var plan = {};
-    u.plan.forEach(function (p) { plan[p[0]] = p[1]; });
+    recipe.forEach(function (p) { plan[p[0]] = p[1]; });
 
     // 有教新字的關卡就自動配拼字題（課表沒特別指定時）。
     // 「認得出來」和「拼得出來」是兩件事，後者才撐得住寫作與聽寫。
@@ -9753,7 +9780,7 @@ window.DATA_ACHIEVEMENTS = [
 
   function planCount(u) {
     var n = 0;
-    (u.plan || []).forEach(function (p) { if (p[0] === 'flashcard') n = p[1]; });
+    (Content.planOf(u.id) || []).forEach(function (p) { if (p[0] === 'flashcard') n = p[1]; });
     return n;
   }
 })(window);
@@ -10509,6 +10536,22 @@ window.DATA_ACHIEVEMENTS = [
         '<p class="small muted mt8 mb0">目標換算成 ' + (p.goalMin * 3) + ' XP。達標當天連續天數才會 +1。</p>' +
       '</div>' +
 
+      /* ---- 起步取向 ---- */
+      '<div class="card">' +
+        '<div class="card-title">🧭 起步取向</div>' +
+        '<div class="seg" id="trackseg">' +
+          [['phonics', '先練發音'], ['vocab', '先學單字']].map(function (t) {
+            return '<button data-track="' + t[0] + '" class="' + (p.track === t[0] ? 'on' : '') + '">' +
+              t[1] + '</button>';
+          }).join('') +
+        '</div>' +
+        '<p class="small muted mt8 mb0">' +
+          (p.track === 'vocab'
+            ? '第 1–5 關會多教新字、提早出排句題，聽音與跟讀減半。'
+            : '第 1–5 關以聽音、跟讀、聽寫為主，新字少一點，把發音底子打穩。') +
+          '關卡順序與解鎖條件兩邊完全一樣，隨時可以換。</p>' +
+      '</div>' +
+
       /* ---- 語音 ---- */
       '<div class="card">' +
         '<div class="card-title">🔊 語音</div>' +
@@ -10609,6 +10652,13 @@ window.DATA_ACHIEVEMENTS = [
       b.onclick = function () {
         p.goalMin = +b.getAttribute('data-goal');
         State.save(true); UI.refreshChips(); Views.settings();
+      };
+    });
+
+    UI.$$('#trackseg [data-track]').forEach(function (b) {
+      b.onclick = function () {
+        p.track = b.getAttribute('data-track');
+        State.save(true); Views.settings();
       };
     });
 
@@ -10891,6 +10941,15 @@ window.DATA_ACHIEVEMENTS = [
         '</div>' +
         '<p class="small muted mt8 mb0">之後可以在設定裡改。</p>' +
       '</div>' +
+      '<div class="card">' +
+        '<div class="card-title">你想從哪裡下手？</div>' +
+        '<div class="seg" id="wtrack">' +
+          '<button data-t="phonics" class="on">先練發音</button>' +
+          '<button data-t="vocab">先學單字</button>' +
+        '</div>' +
+        '<p class="small muted mt8 mb0">兩邊走的是同一條路、同樣的關卡，' +
+        '差別只在前五關一堂課裡練幾題發音、學幾個新字。之後可以在設定裡改。</p>' +
+      '</div>' +
       '<p class="center small muted">目前內容：' + c.vocab + ' 個單字　・　' +
         c.units + ' 個可玩關卡</p>' +
       '<button class="btn btn-primary btn-lg" id="wstart">開始第一關</button>'
@@ -10903,6 +10962,15 @@ window.DATA_ACHIEVEMENTS = [
         State.data.profile.goalMin = +b.getAttribute('data-g');
         State.save(true);
         UI.refreshChips();
+      };
+    });
+
+    UI.$$('#wtrack [data-t]').forEach(function (b) {
+      b.onclick = function () {
+        UI.$$('#wtrack [data-t]').forEach(function (x) { x.classList.remove('on'); });
+        b.classList.add('on');
+        State.data.profile.track = b.getAttribute('data-t');
+        State.save(true);
       };
     });
 

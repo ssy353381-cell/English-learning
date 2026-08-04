@@ -140,7 +140,7 @@
 
   function planCount(u) {
     var n = 0;
-    (u.plan || []).forEach(function (p) { if (p[0] === 'flashcard') n = p[1]; });
+    (Content.planOf(u.id) || []).forEach(function (p) { if (p[0] === 'flashcard') n = p[1]; });
     return n;
   }
 })(window);

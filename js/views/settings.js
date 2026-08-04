@@ -26,6 +26,22 @@
         '<p class="small muted mt8 mb0">目標換算成 ' + (p.goalMin * 3) + ' XP。達標當天連續天數才會 +1。</p>' +
       '</div>' +
 
+      /* ---- 起步取向 ---- */
+      '<div class="card">' +
+        '<div class="card-title">🧭 起步取向</div>' +
+        '<div class="seg" id="trackseg">' +
+          [['phonics', '先練發音'], ['vocab', '先學單字']].map(function (t) {
+            return '<button data-track="' + t[0] + '" class="' + (p.track === t[0] ? 'on' : '') + '">' +
+              t[1] + '</button>';
+          }).join('') +
+        '</div>' +
+        '<p class="small muted mt8 mb0">' +
+          (p.track === 'vocab'
+            ? '第 1–5 關會多教新字、提早出排句題，聽音與跟讀減半。'
+            : '第 1–5 關以聽音、跟讀、聽寫為主，新字少一點，把發音底子打穩。') +
+          '關卡順序與解鎖條件兩邊完全一樣，隨時可以換。</p>' +
+      '</div>' +
+
       /* ---- 語音 ---- */
       '<div class="card">' +
         '<div class="card-title">🔊 語音</div>' +
@@ -126,6 +142,13 @@
       b.onclick = function () {
         p.goalMin = +b.getAttribute('data-goal');
         State.save(true); UI.refreshChips(); Views.settings();
+      };
+    });
+
+    UI.$$('#trackseg [data-track]').forEach(function (b) {
+      b.onclick = function () {
+        p.track = b.getAttribute('data-track');
+        State.save(true); Views.settings();
       };
     });
 

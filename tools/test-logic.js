@@ -11,6 +11,7 @@
      · id 前綴互斥：四種資料共用同一個 byId 索引，撞號會直接蓋掉
      · 課表宣稱 ready 卻沒內容：關卡會鎖住並顯示「製作中」
      · plan 出現 scheduler 不認得的題型：靜靜地少出題
+     · 起步取向（profile.track）換掉配方後組不出題：只有選那個取向的人會遇到
      · 弱點怪獸新型別沒同步改 weakQuestion：怪獸進得了清單卻永遠消不掉
      · SRS 只涵蓋單字：文法/閱讀/不規則動詞寫進 srs 會讓複習佇列壞掉
 
@@ -322,11 +323,21 @@ var handled = {};
 var unknownPlan = {};
 Content.stages().forEach(function (st) {
   (st.units || []).forEach(function (u) {
-    (u.plan || []).forEach(function (p) { if (!handled[p[0]]) unknownPlan[p[0]] = 1; });
+    (u.plan || []).concat(u.planVocab || []).forEach(function (p) { if (!handled[p[0]]) unknownPlan[p[0]] = 1; });
   });
 });
 ok(Object.keys(unknownPlan).length === 0,
    'plan 的題型 scheduler 都處理得到' + (Object.keys(unknownPlan).length ? '：' + Object.keys(unknownPlan).join('、') + ' 沒人接' : ''));
+
+// planVocab 只是同一關的另一種配方。isReady 看的是 plan，只寫 planVocab 的關卡會被當成「製作中」
+var vocabOnly = [];
+Content.stages().forEach(function (st) {
+  (st.units || []).forEach(function (u) {
+    if (u.planVocab && u.planVocab.length && !(u.plan && u.plan.length)) vocabOnly.push(u.id);
+  });
+});
+ok(vocabOnly.length === 0, '有 planVocab 的關卡也有 plan' +
+   (vocabOnly.length ? '：' + vocabOnly.join('、') + ' 只寫了 planVocab，會顯示「製作中」' : ''));
 
 /* ==========================================================================
    5. 組題
@@ -343,14 +354,28 @@ listJs('js/exercises').forEach(function (rel) {
 });
 eq(Object.keys(exTypes).length, 14, '註冊了 14 種題型');
 
+// 兩種起步取向都要組得出題 —— planVocab 只有選「先學單字」的人會走到，壞了不會有人發現
 var emptyLesson = [], badType = [];
-readyUnits.forEach(function (uid) {
-  var q = Scheduler.buildLesson(uid);
-  if (!q.length) emptyLesson.push(uid);
-  q.forEach(function (item) { if (!exTypes[item.type]) badType.push(uid + ' 出現 ' + item.type); });
+['phonics', 'vocab'].forEach(function (track) {
+  State.data.profile.track = track;
+  readyUnits.forEach(function (uid) {
+    var q = Scheduler.buildLesson(uid);
+    if (!q.length) emptyLesson.push(uid + '（' + track + '）');
+    q.forEach(function (item) { if (!exTypes[item.type]) badType.push(uid + ' 出現 ' + item.type); });
+  });
 });
-ok(emptyLesson.length === 0, '每個可玩關卡都組得出題目' + (emptyLesson.length ? '：' + emptyLesson.join('、') : ''));
+ok(emptyLesson.length === 0, '兩種取向下每個可玩關卡都組得出題目' + (emptyLesson.length ? '：' + emptyLesson.join('、') : ''));
 ok(badType.length === 0, '出的題都有對應的 Ex 模組' + (badType.length ? '：' + badType.slice(0, 5).join('、') : ''));
+
+// 取向換的是配方而不是關卡：發音關要真的多教新字，沒有 planVocab 的關卡則完全不受影響
+function cardsOf(uid, track) {
+  State.data.profile.track = track;
+  return Scheduler.buildLesson(uid).filter(function (q) { return q.type === 'flashcard'; }).length;
+}
+var pCards = cardsOf('s0u1', 'phonics'), vCards = cardsOf('s0u1', 'vocab');
+ok(vCards > pCards, '「先學單字」在發音關教更多新字（' + pCards + ' → ' + vCards + '）');
+eq(cardsOf('s0u6', 'vocab'), cardsOf('s0u6', 'phonics'), '沒有 planVocab 的關卡不受取向影響');
+State.data.profile.track = 'phonics';
 
 // 教學卡不計分，但關卡不能只有教學卡
 var onlyIntro = readyUnits.filter(function (uid) {

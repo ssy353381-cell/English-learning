@@ -38,6 +38,9 @@
       profile: {
         nickname: '',
         goalMin: 40,          // 每日目標分鐘數：20 / 40 / 60
+        // 起步取向：phonics 先把發音練穩 / vocab 先衝單字與句子。
+        // 只換發音關卡的出題配方，不動解鎖鏈 —— 舊存檔補進來會拿到 phonics，體感不變。
+        track: 'phonics',
         rate: 0.85,           // TTS 語速
         voice: '',            // 指定的語音名稱（空 = 自動挑）
         theme: 'auto',        // auto / light / dark
