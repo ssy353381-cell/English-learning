@@ -1,0 +1,99 @@
+/* ==========================================================================
+   responsive.css — 行動優先，往上放大到桌機
+   ========================================================================== */
+
+/* ---------- 小手機（375px 以下也要能用） ---------- */
+@media (max-width: 400px) {
+  body { font-size: 15px; }
+  .view { padding: 12px 12px 28px; }
+  .brand-name { display: none; }
+  .chip { padding: 4px 6px; font-size: .86rem; }
+  .word-main { font-size: 1.7rem; }
+  .word-icon { font-size: 3rem; }
+  .q-prompt { font-size: 1.05rem; }
+  .opts.grid2 { gap: 8px; }
+  .opt { padding: 12px 12px; }
+  .opt-emoji { font-size: 2.2rem; }
+  .checkbar { margin-left: -12px; margin-right: -12px; }
+
+  /* 小螢幕把節點縮小，偏移量本身已由 clamp() 依 vw 自動縮放 */
+  .node { width: 66px; height: 60px; font-size: 1.7rem; }
+  .node.boss { width: 74px; height: 68px; font-size: 1.95rem; }
+}
+
+/* ---------- 一般手機／小平板 ---------- */
+@media (max-width: 560px) {
+  .badges { grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 9px; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .modal-box { padding: 18px 16px; }
+}
+
+/* ---------- 桌機：導覽移到左側，內容置中 ---------- */
+@media (min-width: 900px) {
+  :root { --nav-h: 0px; }
+
+  body { padding-bottom: 32px; }
+
+  .bottomnav {
+    top: var(--topbar-h); bottom: 0; left: 0; right: auto;
+    width: 190px; height: auto; padding-bottom: 0;
+    flex-direction: column; justify-content: flex-start;
+    border-top: none; border-right: 2px solid var(--border);
+    padding-top: 14px; gap: 4px;
+  }
+  .navbtn {
+    flex: none; flex-direction: row; justify-content: flex-start;
+    gap: 12px; padding: 12px 18px; font-size: .95rem;
+    border-top: none; border-left: 4px solid transparent; margin-top: 0;
+    border-radius: 0 999px 999px 0; margin-right: 14px;
+  }
+  .navbtn.active { border-top-color: transparent; border-left-color: var(--green); background: var(--green-soft); }
+  .navicon { font-size: 1.25rem; }
+  .navtext { font-size: .92rem; }
+
+  .view { margin-left: 190px; padding: 24px 28px 48px; max-width: calc(var(--maxw) + 60px); }
+  .topbar-inner { max-width: 1100px; }
+
+  .toast-root { bottom: 28px; left: calc(50% + 95px); }
+  .checkbar { position: sticky; bottom: 0; margin-left: -28px; margin-right: -28px; }
+
+  /* 桌機有鍵盤 → 顯示數字快捷鍵提示 */
+  .opt-kbd { display: inline-grid; }
+}
+
+@media (max-width: 899px) {
+  .opt-kbd { display: none; }
+}
+
+/* ---------- 寬螢幕：課程內容不要拉太寬 ---------- */
+@media (min-width: 1200px) {
+  .view { margin-left: 190px; margin-right: auto; }
+}
+
+/* ---------- 橫向手機：壓縮垂直空間 ---------- */
+@media (max-height: 480px) and (orientation: landscape) {
+  .word-icon { font-size: 2.2rem; margin-bottom: 2px; }
+  .wordcard { padding: 12px; }
+  .mic-btn { width: 68px; height: 68px; font-size: 1.9rem; }
+  .path-row { min-height: 74px; }
+}
+
+/* ---------- 觸控裝置：加大點擊區 ---------- */
+@media (hover: none) {
+  .btn { padding: 14px 20px; }
+  .opt { padding: 15px 16px; }
+  .tok { padding: 10px 15px; }
+  .w:hover { background: transparent; }
+  /* 頂部狀態列的數字本身很小，把可點範圍撐到手指按得到的高度 */
+  .chip { min-height: 40px; padding-top: 8px; padding-bottom: 8px; }
+  .chip-goal { min-height: 40px; }
+  .speak-btn { min-width: 44px; min-height: 44px; }
+}
+
+/* ---------- 列印（單字表可印出來背） ---------- */
+@media print {
+  .topbar, .bottomnav, .checkbar, .toast-root, .speak-btn, .btn { display: none !important; }
+  body { padding: 0; }
+  .view { margin: 0; max-width: none; }
+  .card, .wordcard, .article { break-inside: avoid; border-color: #ccc; }
+}

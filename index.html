@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#58cc02">
+<title>English Quest — 多益滿分之路</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- ===== 頂部狀態列 ===== -->
+<header id="topbar" class="topbar">
+  <div class="topbar-inner">
+    <div class="brand" data-nav="#/map">
+      <span class="brand-logo">🚀</span>
+      <span class="brand-name">English Quest</span>
+    </div>
+    <div class="stat-chips">
+      <button class="chip chip-streak" data-nav="#/stats" title="連續學習天數">
+        <span class="chip-icon">🔥</span><span id="chip-streak">0</span>
+      </button>
+      <button class="chip chip-gem" data-nav="#/shop" title="寶石">
+        <span class="chip-icon">💎</span><span id="chip-gems">0</span>
+      </button>
+      <button class="chip chip-xp" data-nav="#/stats" title="今日經驗值">
+        <span class="chip-icon">⚡</span><span id="chip-xp">0</span>
+      </button>
+      <button class="chip chip-goal" data-nav="#/stats" title="今日目標">
+        <svg class="ring" viewBox="0 0 36 36" aria-hidden="true">
+          <circle class="ring-bg" cx="18" cy="18" r="15.5"></circle>
+          <circle id="goal-ring" class="ring-fg" cx="18" cy="18" r="15.5"></circle>
+        </svg>
+        <span id="chip-goal-pct" class="ring-label">0%</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== 主畫面容器 ===== -->
+<main id="view" class="view" role="main"></main>
+
+<!-- ===== 底部導覽 ===== -->
+<nav id="bottomnav" class="bottomnav">
+  <button class="navbtn" data-nav="#/home"><span class="navicon">🏠</span><span class="navtext">今日</span></button>
+  <button class="navbtn" data-nav="#/map"><span class="navicon">🗺️</span><span class="navtext">地圖</span></button>
+  <button class="navbtn" data-nav="#/review"><span class="navicon">🗂️</span><span class="navtext">複習</span></button>
+  <button class="navbtn" data-nav="#/stats"><span class="navicon">📈</span><span class="navtext">統計</span></button>
+  <button class="navbtn" data-nav="#/settings"><span class="navicon">⚙️</span><span class="navtext">設定</span></button>
+</nav>
+
+<!-- ===== 全域彈窗 ===== -->
+<div id="modal-root" class="modal-root" hidden>
+  <div class="modal-backdrop" data-modal-close></div>
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <button class="modal-x" data-modal-close aria-label="關閉">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ===== 浮動提示 ===== -->
+<div id="toast-root" class="toast-root" aria-live="polite"></div>
+
+<!-- ===== 資料層（file:// 相容：一律用 window.DATA_* 全域指派，不使用 fetch）===== -->
+<script src="data/curriculum.js"></script>
+<script src="data/phonics.js"></script>
+<script src="data/irregular-verbs.js"></script>
+<script src="data/vocab-s0.js"></script>
+<script src="data/vocab-s1a.js"></script>
+<script src="data/vocab-s1b.js"></script>
+<script src="data/vocab-s1c.js"></script>
+<script src="data/grammar-s0.js"></script>
+<script src="data/grammar-s1.js"></script>
+<script src="data/reading-s0.js"></script>
+<script src="data/reading-s1.js"></script>
+<script src="data/achievements.js"></script>
+
+<!-- ===== 引擎層 ===== -->
+<script src="js/state.js"></script>
+<script src="js/content.js"></script>
+<script src="js/srs.js"></script>
+<script src="js/gamify.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/scheduler.js"></script>
+
+<!-- ===== 練習題型 ===== -->
+<script src="js/exercises/common.js"></script>
+<script src="js/exercises/intro.js"></script>
+<script src="js/exercises/flashcard.js"></script>
+<script src="js/exercises/spell.js"></script>
+<script src="js/exercises/listening.js"></script>
+<script src="js/exercises/speaking.js"></script>
+<script src="js/exercises/reading.js"></script>
+<script src="js/exercises/writing.js"></script>
+<script src="js/exercises/grammar.js"></script>
+
+<!-- ===== 畫面層 ===== -->
+<script src="js/views/home.js"></script>
+<script src="js/views/map.js"></script>
+<script src="js/views/lesson.js"></script>
+<script src="js/views/review.js"></script>
+<script src="js/views/stats.js"></script>
+<script src="js/views/settings.js"></script>
+<script src="js/views/shop.js"></script>
+
+<!-- ===== 啟動 ===== -->
+<!-- build: stage0 -->
+
+<script src="js/app.js"></script>
+</body>
+</html>

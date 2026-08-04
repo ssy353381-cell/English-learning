@@ -1,0 +1,403 @@
+/* ==========================================================================
+   scheduler.js — 組裝題目佇列
+   關卡的 plan 只描述「要出哪些題、各幾題」，真正挑哪些單字/句子在這裡決定。
+   原則：新字優先教、舊字混進來複習、句子從例句庫抽。
+   ========================================================================== */
+(function (global) {
+  'use strict';
+
+  var S = Content.shuffle, SAMPLE = Content.sample, PICK = Content.pick;
+
+  /* ---------- 挑單字 ---------- */
+
+  /** 這一關還沒學過（沒進 SRS）的字 */
+  function unseenOf(unitId) {
+    return Content.vocabOf(unitId).filter(function (v) { return !SRS.has(v.id); });
+  }
+
+  /** 挑 n 個「這關要新教」的字：先給沒學過的，沒了就挑最生疏的回鍋 */
+  function newWords(unitId, n) {
+    var unseen = unseenOf(unitId);
+    if (unseen.length >= n) return unseen.slice(0, n);
+
+    var rest = Content.vocabOf(unitId)
+      .filter(function (v) { return SRS.has(v.id); })
+      .sort(function (a, b) { return SRS.levelOf(a.id) - SRS.levelOf(b.id); });
+    return unseen.concat(rest.slice(0, n - unseen.length));
+  }
+
+  /** 練習用字：這關的字 + 一部分舊字（讓複習自然發生） */
+  function practicePool(unitId, focus) {
+    var here = Content.vocabOf(unitId);
+    var older = Content.vocabUpTo(unitId).filter(function (v) { return v.u !== unitId && SRS.has(v.id); });
+    var due = older.filter(function (v) { return State.data.srs[v.id].due <= State.dayStr(); });
+    return (focus || []).concat(here, SAMPLE(due, 8), SAMPLE(older, 6));
+  }
+
+  function dedupe(list) {
+    var seen = {}, out = [];
+    list.forEach(function (v) { if (v && !seen[v.id]) { seen[v.id] = 1; out.push(v); } });
+    return out;
+  }
+
+  /* ---------- 挑句子 ---------- */
+
+  /** 從單字例句庫抽句子。回傳 {en, zh, from} */
+  function sentencesFrom(vocabList, opts) {
+    opts = opts || {};
+    var out = [];
+    vocabList.forEach(function (v) {
+      (v.ex || []).forEach(function (pair, i) {
+        var en = pair[0], zh = pair[1];
+        var wc = en.split(/\s+/).length;
+        if (opts.maxWords && wc > opts.maxWords) return;
+        if (opts.minWords && wc < opts.minWords) return;
+        out.push({ en: en, zh: zh, from: v.id, kind: i === 0 ? 'daily' : 'work' });
+      });
+    });
+    return out;
+  }
+
+  /** 文法點自帶的練習句 */
+  function grammarSentences(unitId) {
+    var out = [];
+    Content.grammarOf(unitId).forEach(function (g) {
+      (g.sents || []).forEach(function (p) {
+        out.push({ en: p[0], zh: p[1], from: g.id, kind: 'grammar' });
+      });
+    });
+    return out;
+  }
+
+  /** 文法題（依 k 種類過濾） */
+  function grammarQuestions(unitId, kinds, n) {
+    var pool = [];
+    Content.grammarOf(unitId).forEach(function (g) {
+      (g.qs || []).forEach(function (q) {
+        if (!kinds || kinds.indexOf(q.k) >= 0) {
+          pool.push({ g: g, q: q });
+        }
+      });
+    });
+    // 這關的題不夠就往前面的關卡借
+    if (pool.length < n) {
+      Content.grammarUpTo(unitId).forEach(function (g) {
+        if (g.u === unitId) return;
+        (g.qs || []).forEach(function (q) {
+          if (!kinds || kinds.indexOf(q.k) >= 0) pool.push({ g: g, q: q });
+        });
+      });
+    }
+    return SAMPLE(pool, n);
+  }
+
+  /* ==========================================================================
+     組裝關卡佇列
+     ========================================================================== */
+  function buildLesson(unitId) {
+    var u = Content.unit(unitId);
+    if (!u || !u.plan) return [];
+
+    var queue = [];
+    var intro = [];
+    var cards = [];
+    var body = [];
+    var tail = [];
+
+    var focus = [];   // 這關新教的字，其他題型優先用它們
+    var plan = {};
+    u.plan.forEach(function (p) { plan[p[0]] = p[1]; });
+
+    // 有教新字的關卡就自動配拼字題（課表沒特別指定時）。
+    // 「認得出來」和「拼得出來」是兩件事，後者才撐得住寫作與聽寫。
+    if (plan.flashcard && plan.spell === undefined) {
+      plan.spell = Math.max(2, Math.round(plan.flashcard / 3));
+    }
+
+    /* --- 1. 教學卡 --- */
+    if (plan.intro) {
+      if (u.phonics && Content.phonics(u.phonics)) {
+        intro.push({ type: 'intro', kind: 'phonics', ref: Content.phonics(u.phonics), unitId: unitId });
+      }
+      Content.grammarOf(unitId).forEach(function (g) {
+        if (g.teach) intro.push({ type: 'intro', kind: 'grammar', ref: g, unitId: unitId });
+      });
+    }
+
+    /* --- 2. 單字卡（新字） --- */
+    if (plan.flashcard) {
+      focus = newWords(unitId, plan.flashcard);
+      focus.forEach(function (v) {
+        cards.push({ type: 'flashcard', ref: v, unitId: unitId });
+      });
+    }
+
+    var pool = dedupe(practicePool(unitId, focus));
+    var focusOrPool = focus.length ? focus : pool;
+
+    /* --- 3. 單字回想（中英互選） --- */
+    if (plan.recall) {
+      var rc = SAMPLE(pool, plan.recall);
+      // 不足就從新字補
+      while (rc.length < plan.recall && focusOrPool.length) rc.push(PICK(focusOrPool));
+      rc.forEach(function (v, i) {
+        body.push({ type: 'recall', ref: v, dir: i % 2 ? 'zh2en' : 'en2zh', unitId: unitId });
+      });
+    }
+
+    /* --- 3.5 字母銀行拼字：認得 → 拼得出來 --- */
+    if (plan.spell) {
+      // 優先拼「剛學過但還不熟」的字，長度 3–10 才適合拼
+      var spellPool = pool.filter(function (v) {
+        return v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w) && SRS.levelOf(v.id) < 3;
+      });
+      if (!spellPool.length) spellPool = focusOrPool;
+      SAMPLE(spellPool, plan.spell).forEach(function (v) {
+        body.push({ type: 'spell', ref: v, unitId: unitId });
+      });
+    }
+
+    /* --- 4. 聽力：聽單字或句子選意思 --- */
+    if (plan.listen) {
+      var half = Math.ceil(plan.listen / 2);
+      SAMPLE(pool, half).forEach(function (v) {
+        body.push({ type: 'listen', mode: 'word', ref: v, unitId: unitId });
+      });
+      var sPool = grammarSentences(unitId).concat(sentencesFrom(focusOrPool, { maxWords: 12 }));
+      SAMPLE(sPool, plan.listen - half).forEach(function (s) {
+        body.push({ type: 'listen', mode: 'sentence', ref: s, unitId: unitId });
+      });
+    }
+
+    /* --- 5. 聽寫填空 --- */
+    if (plan.dictate) {
+      var dPool = sentencesFrom(focusOrPool, { maxWords: 11 }).concat(grammarSentences(unitId));
+      SAMPLE(dPool, plan.dictate).forEach(function (s) {
+        body.push({ type: 'dictate', ref: s, unitId: unitId });
+      });
+    }
+
+    /* --- 6. 跟讀 --- */
+    if (plan.speak) {
+      var kPool = sentencesFrom(focusOrPool, { maxWords: 10 });
+      if (u.phonics) {
+        // 發音關卡直接跟讀單字
+        kPool = focusOrPool.map(function (v) { return { en: v.w, zh: v.zh, from: v.id, kind: 'word' }; }).concat(kPool);
+      }
+      SAMPLE(kPool, plan.speak).forEach(function (s) {
+        body.push({ type: 'speak', ref: s, unitId: unitId });
+      });
+    }
+
+    /* --- 7. 文法題 --- */
+    if (plan.grammar) {
+      grammarQuestions(unitId, ['mc', 'fix', 'trans'], plan.grammar).forEach(function (x) {
+        body.push({ type: 'grammar', ref: x.q, g: x.g, unitId: unitId });
+      });
+    }
+
+    /* --- 8. 句子填空 --- */
+    if (plan.cloze) {
+      var cz = grammarQuestions(unitId, ['cloze'], plan.cloze);
+      cz.forEach(function (x) {
+        body.push({ type: 'cloze', ref: x.q, g: x.g, unitId: unitId });
+      });
+      // 文法題庫不夠時，用例句自動挖空
+      var need = plan.cloze - cz.length;
+      if (need > 0) {
+        SAMPLE(sentencesFrom(focusOrPool, { minWords: 4, maxWords: 12 }), need).forEach(function (s) {
+          body.push({ type: 'cloze', ref: autoCloze(s), g: null, unitId: unitId });
+        });
+      }
+    }
+
+    /* --- 9. 拖曳排句 --- */
+    if (plan.build) {
+      var bPool = grammarSentences(unitId).concat(sentencesFrom(focusOrPool, { minWords: 4, maxWords: 10 }));
+      SAMPLE(bPool, plan.build).forEach(function (s) {
+        body.push({ type: 'build', ref: s, unitId: unitId });
+      });
+    }
+
+    /* --- 10. 閱讀（放最後，當作這關的收尾） --- */
+    if (plan.read) {
+      var arts = Content.readingOf(unitId);
+      if (!arts.length) arts = Content.readingOf(Content.prevUnitId(unitId) || '');
+      SAMPLE(arts, plan.read).forEach(function (a) {
+        tail.push({ type: 'read', ref: a, unitId: unitId });
+      });
+    }
+
+    /* --- 交錯：單字卡之間夾一題練習，比較不無聊 --- */
+    queue = intro.slice();
+    var shuffledBody = S(body);
+    var bi = 0;
+    cards.forEach(function (c, i) {
+      queue.push(c);
+      if (i % 2 === 1 && bi < shuffledBody.length) queue.push(shuffledBody[bi++]);
+    });
+    while (bi < shuffledBody.length) queue.push(shuffledBody[bi++]);
+    queue = queue.concat(tail);
+
+    queue.forEach(function (q, i) { q.i = i; });
+    return queue;
+  }
+
+  /** 把句子裡挑一個「有意義」的字挖掉 */
+  function autoCloze(s) {
+    var toks = s.en.split(/(\s+)/);
+    var idxs = [];
+    for (var i = 0; i < toks.length; i++) {
+      var clean = toks[i].replace(/[^A-Za-z']/g, '');
+      if (clean.length >= 3) idxs.push(i);
+    }
+    var pickIdx = idxs.length ? PICK(idxs) : 0;
+    var answer = toks[pickIdx].replace(/[^A-Za-z']/g, '');
+    var punct = toks[pickIdx].replace(/[A-Za-z']/g, '');
+    toks[pickIdx] = '___' + punct;
+    return {
+      k: 'cloze',
+      q: toks.join(''),
+      a: answer,
+      zh: s.zh,
+      why: '',
+      _auto: true,
+      _full: s.en
+    };
+  }
+
+  /* ==========================================================================
+     每日複習佇列（首頁「暖身」與複習頁共用）
+     ========================================================================== */
+  function buildReview(limit) {
+    limit = limit || 20;
+    var out = [];
+
+    // 1) 弱點怪獸優先
+    SRS.weakList().slice(0, Math.ceil(limit * 0.4)).forEach(function (w) {
+      var it = Content.item(w.r);
+      if (!it) return;
+      if (w.t === 'vocab') {
+        out.push({ type: 'recall', ref: it, dir: Math.random() < .5 ? 'en2zh' : 'zh2en', unitId: w.u, weak: w.k });
+      }
+    });
+
+    // 2) SRS 到期單字
+    SRS.dueIds(limit).forEach(function (id) {
+      if (out.length >= limit) return;
+      var v = Content.item(id);
+      if (!v || !v.w) return;
+      if (out.some(function (o) { return o.ref && o.ref.id === id; })) return;
+      var spellable = v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w);
+      var r = Math.random();
+      if (r < 0.3) out.push({ type: 'recall', ref: v, dir: 'en2zh', unitId: v.u, srs: true });
+      else if (r < 0.55) out.push({ type: 'recall', ref: v, dir: 'zh2en', unitId: v.u, srs: true });
+      else if (r < 0.8 || !spellable) out.push({ type: 'listen', mode: 'word', ref: v, unitId: v.u, srs: true });
+      else out.push({ type: 'spell', ref: v, unitId: v.u, srs: true });
+    });
+
+    out.forEach(function (q, i) { q.i = i; });
+    return out;
+  }
+
+  /* ==========================================================================
+     每日挑戰：混合舊內容的隨機小考
+     ========================================================================== */
+  function buildChallenge(size) {
+    size = size || 10;
+    var learned = Content.allVocab().filter(function (v) { return SRS.has(v.id); });
+    if (learned.length < 6) return null;
+
+    var out = [];
+
+    // 文法題：從所有「已解鎖且有題目」的關卡抽，早期關卡沒文法時才不會湊不滿
+    var gPool = [];
+    Content.orderedUnitIds().forEach(function (uid) {
+      if (!Content.isReady(uid) || !State.isUnitDone(uid)) return;
+      Content.grammarOf(uid).forEach(function (g) {
+        (g.qs || []).forEach(function (q) {
+          if (q.k === 'mc' || q.k === 'cloze') gPool.push({ g: g, q: q, u: uid });
+        });
+      });
+    });
+    SAMPLE(gPool, Math.min(4, Math.floor(size * 0.4))).forEach(function (x) {
+      out.push({ type: x.q.k === 'cloze' ? 'cloze' : 'grammar', ref: x.q, g: x.g, unitId: x.u, challenge: true });
+    });
+
+    // 剩下的名額用單字題填滿，三種型態輪替
+    var kinds = ['recall-en', 'listen', 'spell', 'recall-zh'];
+    SAMPLE(learned, size - out.length).forEach(function (v, i) {
+      var k = kinds[i % kinds.length];
+      var spellable = v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w);
+      if (k === 'spell' && !spellable) k = 'listen';
+      if (k === 'listen') out.push({ type: 'listen', mode: 'word', ref: v, unitId: v.u, challenge: true });
+      else if (k === 'spell') out.push({ type: 'spell', ref: v, unitId: v.u, challenge: true });
+      else out.push({ type: 'recall', ref: v, dir: k === 'recall-zh' ? 'zh2en' : 'en2zh', unitId: v.u, challenge: true });
+    });
+
+    out = S(out);
+    out.forEach(function (q, i) { q.i = i; });
+    return out;
+  }
+
+  /* ==========================================================================
+     今日建議：首頁用
+     ========================================================================== */
+  function todayPlan() {
+    var due = SRS.dueCount();
+    var weak = SRS.weakCount();
+    var cur = Content.currentUnitId();
+    var u = Content.unit(cur);
+    var goalXP = State.goalXP();
+    var pct = State.goalPct();
+
+    var items = [];
+    if (due > 0) {
+      items.push({
+        key: 'review', icon: '🔥', title: '暖身複習',
+        desc: due + ' 個單字今天到期',
+        hint: '大約 ' + Math.max(2, Math.round(due * 0.25)) + ' 分鐘',
+        hash: '#/review', cta: '開始複習'
+      });
+    }
+    if (u) {
+      var rec = State.data.units[cur];
+      var lv = (rec && rec.lv) || 0;
+      var unseen = unseenOf(cur).length;
+      items.push({
+        key: 'lesson', icon: u.icon || '📘',
+        title: (Content.stageOf(cur) ? Content.stageOf(cur).name + '　' : '') + '第 ' + u.n + ' 關',
+        desc: u.title + (unseen ? '（還有 ' + unseen + ' 個新字）' : '（新字已學完，這關可再刷熟練度）'),
+        hint: lv > 0 ? '皇冠 Lv.' + lv : '首次挑戰',
+        hash: '#/lesson/' + cur, cta: lv > 0 ? '再打一次' : '開始學習'
+      });
+    }
+    if (weak > 0) {
+      items.push({
+        key: 'weak', icon: '👾', title: '弱點怪獸',
+        desc: '有 ' + weak + ' 隻怪獸還沒被打倒',
+        hint: '答對就消滅',
+        hash: '#/review?weak=1', cta: '去打怪'
+      });
+    }
+    if (!State.data.today.challenge) {
+      items.push({
+        key: 'challenge', icon: '🎲', title: '每日挑戰',
+        desc: '10 題隨機小考，完成拿 💎',
+        hint: '約 3 分鐘',
+        hash: '#/lesson/challenge', cta: '接受挑戰'
+      });
+    }
+
+    return { items: items, pct: pct, goalXP: goalXP, due: due, weak: weak, currentUnit: cur };
+  }
+
+  global.Scheduler = {
+    buildLesson: buildLesson,
+    buildReview: buildReview,
+    buildChallenge: buildChallenge,
+    todayPlan: todayPlan,
+    unseenOf: unseenOf,
+    sentencesFrom: sentencesFrom
+  };
+})(window);
