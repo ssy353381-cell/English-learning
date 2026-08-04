@@ -69,16 +69,47 @@
     }).join('');
   }
 
+  /** 不規則動詞表：從資料現組一張教學卡，依詞型分三組呈現 */
+  var IRREG_GROUPS = [
+    { t: 'A', h: 'A 型：三態同形', p: '最好背的一組 — 三個形態長得一模一樣。' },
+    { t: 'B', h: 'B 型：過去式＝過去分詞', p: '只要記兩個形態，數量最多。' },
+    { t: 'C', h: 'C 型：三態都不同', p: '最容易錯的一組，多益也考最兇。' }
+  ];
+
+  function irregularTeach(list) {
+    return {
+      title: '不規則動詞 ' + list.length + ' 個',
+      lead: '規則動詞加 -ed 就好，這些不行。但它們不是亂長的 — 按變化形態分成三組，要背的量立刻少一半。',
+      sections: IRREG_GROUPS.map(function (g) {
+        var rows = list.filter(function (iv) { return iv.t === g.t; })
+          .map(function (iv) { return [iv.v, iv.p, iv.pp, iv.zh]; });
+        return {
+          h: g.h + '（' + rows.length + ' 個）',
+          p: g.p,
+          table: { head: ['原形', '過去式', '過去分詞', '中文'], rows: rows, speak: true }
+        };
+      })
+    };
+  }
+
+  var TAGS = {
+    grammar:   ['blue',  '文法'],
+    irregular: ['gold',  '不規則動詞'],
+    phonics:   ['green', '發音']
+  };
+
   Ex.intro = {
     scored: false,
     render: function (q, host, api) {
       var d = q.ref;
-      var teach = q.kind === 'grammar' ? d.teach : d;
+      var teach = q.kind === 'grammar' ? d.teach
+                : q.kind === 'irregular' ? irregularTeach(d)
+                : d;
       var title = teach.title || d.title || '學習重點';
+      var tag = TAGS[q.kind] || TAGS.phonics;
 
       host.innerHTML =
-        '<div class="tag ' + (q.kind === 'grammar' ? 'blue' : 'green') + '">' +
-          (q.kind === 'grammar' ? '文法' : '發音') + '</div>' +
+        '<div class="tag ' + tag[0] + '">' + tag[1] + '</div>' +
         '<h2 class="mt8">' + esc(title) + '</h2>' +
         (teach.lead ? '<p class="muted">' + teach.lead + '</p>' : '') +
         '<div class="card">' + renderSections(teach.sections) + '</div>';

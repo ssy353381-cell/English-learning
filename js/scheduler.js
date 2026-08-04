@@ -119,6 +119,9 @@
       if (u.phonics && Content.phonics(u.phonics)) {
         intro.push({ type: 'intro', kind: 'phonics', ref: Content.phonics(u.phonics), unitId: unitId });
       }
+      if (u.irregular && Content.irregulars().length) {
+        intro.push({ type: 'intro', kind: 'irregular', ref: Content.irregulars(), unitId: unitId });
+      }
       Content.grammarOf(unitId).forEach(function (g) {
         if (g.teach) intro.push({ type: 'intro', kind: 'grammar', ref: g, unitId: unitId });
       });
@@ -154,6 +157,16 @@
       if (!spellPool.length) spellPool = focusOrPool;
       SAMPLE(spellPool, plan.spell).forEach(function (v) {
         body.push({ type: 'spell', ref: v, unitId: unitId });
+      });
+    }
+
+    /* --- 3.6 不規則動詞三態 --- */
+    if (plan.irregular) {
+      // 先問沒被問倒過的，答錯過的交給弱點怪獸帶回來
+      SAMPLE(Content.irregulars(), plan.irregular).forEach(function (iv, i) {
+        // 三態同形的字問過去分詞沒有鑑別度，一律問過去式
+        var ask = (iv.t !== 'A' && i % 3 === 2) ? 'pp' : 'p';
+        body.push({ type: 'irregular', ref: iv, ask: ask, unitId: unitId });
       });
     }
 
@@ -270,10 +283,11 @@
      每日複習佇列（首頁「暖身」與複習頁共用）
      ========================================================================== */
   /**
-   * 把一隻弱點怪獸變成一題。三種怪獸各有各的問法：
-   *   vocab   → 中英互選
-   *   grammar 記的是「文法點」，從它底下的題庫裡抽一題重問
-   *   reading 記的是「文章」，整篇重讀一次
+   * 把一隻弱點怪獸變成一題。四種怪獸各有各的問法：
+   *   vocab     → 中英互選
+   *   grammar   記的是「文法點」，從它底下的題庫裡抽一題重問
+   *   reading   記的是「文章」，整篇重讀一次
+   *   irregular 記的是「動詞」，再問一次三態
    * 內容已經被移除（例如改版換了 id）就回傳 null。
    */
   function weakQuestion(w) {
@@ -297,6 +311,11 @@
 
     if (w.t === 'reading') {
       return { type: 'read', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
+    if (w.t === 'irregular') {
+      return { type: 'irregular', ref: it, ask: (it.t !== 'A' && Math.random() < .4) ? 'pp' : 'p',
+               unitId: w.u, weak: w.k };
     }
 
     return null;
