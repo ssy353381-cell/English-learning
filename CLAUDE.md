@@ -43,7 +43,9 @@
 
 `Ex[type] = { scored: bool, render(q, host, api) }`。api：`ready(fn)` 設定檢查行為、`enableCheck(bool)`、`result(ok, opts)` 送出批改、`setContinue(text)` 供不計分卡片用、`onCleanup(fn)`。完整說明見 `exercises/common.js` 檔頭。
 
-現有 12 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular。
+現有 14 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond。
+
+`photo`（多益 Part 1 看圖聽描述）與 `respond`（Part 2 應答）在 `exercises/toeic.js`，共用一個「只靠耳朵作答」的骨架：選項文字預設 `display:none`，按「顯示英文」或作答後才出現。用 `display:none` 而非 `visibility:hidden` 是因為後者會保留折行高度，長選項的框變高等於用看的就知道哪個最長。沒有 TTS 語音時自動顯示文字，否則整題無法作答。
 
 自由作答題（fix／trans／cloze／dictate）用 `ExUtil.matchAny()` 比對，已忽略大小寫、標點、彎引號與**縮寫**（I'm≡I am、don't≡do not）。`'s` 與 `'d` 有歧義故不展開。因此 `alt` 只需寫「真正不同的說法」，不必列縮寫或標點變體。
 
@@ -51,15 +53,17 @@
 
 `data/curriculum.js` 定義 Stage 0–6 共 75 關。關卡的 `plan` 只描述「出哪些題、各幾題」，挑哪些字句由 `scheduler.js` 決定。
 
-`Content.isReady(uid)` = `stage.ready` && 有 `plan` && 有 vocab 或 grammar。缺一即鎖住並顯示「製作中」。
+`Content.isReady(uid)` = `stage.ready` && 有 `plan` && 有內容（vocab／grammar／photo／respond 任一）。缺一即鎖住並顯示「製作中」。
 
-資料 id 前綴必須互斥（vocab `v####`、grammar `g####`、reading `r####`、irregular `i####`）—— 共用同一個 `byId` 索引。
+`stage.ready` 只代表階段開放，**關卡可以分批補**：沒有 `plan` 的關卡顯示「製作中」，同階段其他關卡照常可玩。但解鎖是一條鏈（前一關至少一星才開下一關），所以可玩的關卡必須從頭連續 —— 中間空一關，後面的就永遠解不開。
+
+資料 id 前綴必須互斥（vocab `v####`、grammar `g####`、reading `r####`、irregular `i####`、Part 1 `p####`、Part 2 `q####`）—— 共用同一個 `byId` 索引。
 
 不規則動詞不綁關卡，用 `t` 分 A／B／C 三型（三態同形／過去式＝過去分詞／三態都不同）。關卡設 `irregular: true` 會得到一張教學卡，plan 加 `['irregular', n]` 會出三態練習。
 
 ## 弱點怪獸
 
-四種型別記的都是**來源**而非個別題目：
+六種型別記的都是**來源**而非個別題目：
 
 | type | 記的 id | 複習時出什麼 | 消滅條件 |
 |---|---|---|---|
@@ -67,8 +71,10 @@
 | grammar | 文法點 | 從該點題庫抽一題，優先 mc／cloze | 答對 |
 | reading | 文章 | 整篇重讀 | 所有小題全對 |
 | irregular | 動詞 | 再問一次過去式或過去分詞 | 答對 |
+| photo | 照片 | 同一張再聽一次四個描述 | 答對 |
+| respond | 問句 | 同一句再聽一次三個回應 | 答對 |
 
-`scheduler.weakQuestion()` 負責型別→題目的映射。**新增型別必須同步改它**，否則怪獸進得了清單卻永遠出不了題、也永遠消不掉。
+`scheduler.weakQuestion()` 負責型別→題目的映射。**新增型別必須同步改它**，否則怪獸進得了清單卻永遠出不了題、也永遠消不掉。`test-logic.js` 會掃 `SRS.addWeak()` 的字串參數比對 `weakQuestion` 有沒有接 —— 所以呼叫時型別要寫**字面值**，包在變數裡就掃不到了（見 `toeic.js` 把評分交回各題型做的原因）。
 
 複習佇列中怪獸佔 40% 額度，以**實際排進去的題數**計算（出不了題的不佔名額）；依答錯次數排序；閱讀排在最後且每次至多一篇。
 
@@ -106,11 +112,12 @@
 
 ## 現況
 
-- 可玩的是 Stage 0–1 共 25 關（890 單字、20 文法點／292 題、39 篇短文、63 個不規則動詞）。
-- Stage 2–6 共 50 關僅有標題，無 `plan` 與內容，`ready: false`。
+- 可玩的是 Stage 0–2 共 27 關（938 單字、22 文法點、43 篇短文、63 個不規則動詞、6 題 Part 1、10 題 Part 2）。
+- Stage 2 只開了 U26–U27，`ready: true` 但 U28–U35 還沒有 `plan`，顯示「製作中」。
+- Stage 3–6 共 40 關僅有標題，`ready: false`。
 
 ## 下一步 TODO
 
-1. **Stage 2 的 10 關**。使用者打完第 25 關就撞牆，這是產品的關鍵路徑。除了補 vocab／grammar／reading，Part 1（看圖聽描述）與 Part 2（應答）需要新的 `Ex` 模組與圖片資產 —— 不是補資料就能解決。
+1. **Stage 2 剩下的 8 關**（U28–U35：不定詞、動名詞、關係代名詞、間接問句，以及 Part 1／Part 2 的專門關卡與魔王測驗）。題型模組與資料格式都已經跑通，剩下是內容量產：照著 `data/vocab-s2.js`／`grammar-s2.js`／`toeic-p1-s2.js` 的格式往下加就好。**U28 沒補之前，U29 之後都解不開**（解鎖是一條鏈）。
 2. **驗證口說的自動評分**。所有既有驗證都跑在 `file://`，而那裡瀏覽器擋麥克風，等於 `Speech.listen()` 與 `scoreSpeech()` 這條路從未被實際執行過。要走 Vercel preview 才驗得到。
 3. **端對端測試進 CI**。目前 CI 只驗語法、資料與組題邏輯，畫面層（`views/*`、`exercises/*` 的 render）沒有任何自動檢查。要納入就得引入 Playwright，與零依賴衝突，得先想清楚值不值得。

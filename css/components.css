@@ -161,6 +161,10 @@ body.in-lesson { padding-bottom: 0; }
 .node.boss    { background: var(--purple); border-bottom-color: var(--purple-dark); width: 84px; height: 78px; font-size: 2.2rem; }
 .node.boss.done { background: var(--gold); border-bottom-color: var(--gold-dark); }
 .node.locked  { filter: grayscale(1); opacity: .55; cursor: not-allowed; }
+/* 還沒做的關卡：虛線 + 🚧，和「做好了但還沒解鎖」的 🔒 區分開來。
+   關卡之間的垂直間距很緊，額外加文字標籤會疊到上一關的標題，所以只用圖示；
+   「製作中」三個字放在 title 屬性裡。 */
+.node.wip { border-style: dashed; border-width: 2px; opacity: .45; }
 .node-label {
   position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
   margin-top: 6px; white-space: nowrap;
@@ -447,3 +451,54 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 .tbl th, .tbl td { padding: 7px 8px; border-bottom: 2px solid var(--border); text-align: left; font-size: .9rem; }
 .tbl th { font-weight: 800; color: var(--text-soft); font-size: .78rem; }
 .tbl td.en { font-family: var(--font-en); font-weight: 700; }
+
+/* ===== 多益 Part 1 / Part 2 ===== */
+
+/* 照片本身自帶背景色 —— 它是「照片」，不該跟著深色主題翻轉 */
+.photo-frame {
+  border: 2px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; margin: 10px 0; line-height: 0;
+}
+.photo-frame svg { width: 100%; height: auto; display: block; }
+
+.ask-card {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: var(--blue-soft); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin: 10px 0;
+}
+.ask-label {
+  font-size: .72rem; font-weight: 800; color: var(--blue-dark);
+  border: 2px solid var(--blue); border-radius: 999px; padding: 2px 9px;
+}
+.ask-card .sentence-en { flex: 1 1 100%; }
+
+/* 選項編號改用 A–D；鍵盤快捷仍是 1–4，只是數字不顯示 */
+.opts-lettered .opt-kbd { display: none; }
+.opt-letter {
+  display: inline-grid; place-items: center; width: 26px; height: 26px;
+  border: 2px solid var(--border-strong); border-radius: 999px;
+  font-family: var(--font-en); font-weight: 800; font-size: .8rem;
+  color: var(--text-soft); margin-right: 10px; vertical-align: middle;
+}
+.opt.correct .opt-letter { border-color: var(--green-dark); color: var(--green-dark); }
+.opt.wrong .opt-letter   { border-color: var(--red-dark); color: var(--red-dark); }
+
+/* 正在朗讀的選項 */
+.opt-playing { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+
+/* 只靠耳朵作答：選項文字預設收起來。
+   這裡用 display:none 而不是 visibility:hidden —— 後者會保留「折行後的高度」，
+   長句子的選項就變得比較高，等於用眼睛就看得出哪個選項最長。 */
+.opt-say { display: inline-block; vertical-align: middle; min-height: 1.5em; }
+.opt-text.is-hidden,
+.ask-text.is-hidden { display: none; }
+
+/* 作答後的四選項對照 */
+.opt-review { display: grid; gap: 8px; margin: 4px 0 8px; }
+.opt-review-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 10px; border-radius: var(--radius-sm); background: var(--bg-alt);
+}
+.opt-review-row.is-answer { background: var(--green-soft); }
+.opt-review-row.is-ask { background: var(--blue-soft); margin-bottom: 8px; }
+.opt-review-row .opt-letter { margin-right: 0; flex: 0 0 auto; }

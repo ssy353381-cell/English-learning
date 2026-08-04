@@ -356,6 +356,10 @@ body.in-lesson { padding-bottom: 0; }
 .node.boss    { background: var(--purple); border-bottom-color: var(--purple-dark); width: 84px; height: 78px; font-size: 2.2rem; }
 .node.boss.done { background: var(--gold); border-bottom-color: var(--gold-dark); }
 .node.locked  { filter: grayscale(1); opacity: .55; cursor: not-allowed; }
+/* 還沒做的關卡：虛線 + 🚧，和「做好了但還沒解鎖」的 🔒 區分開來。
+   關卡之間的垂直間距很緊，額外加文字標籤會疊到上一關的標題，所以只用圖示；
+   「製作中」三個字放在 title 屬性裡。 */
+.node.wip { border-style: dashed; border-width: 2px; opacity: .45; }
 .node-label {
   position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
   margin-top: 6px; white-space: nowrap;
@@ -643,6 +647,57 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 .tbl th { font-weight: 800; color: var(--text-soft); font-size: .78rem; }
 .tbl td.en { font-family: var(--font-en); font-weight: 700; }
 
+/* ===== 多益 Part 1 / Part 2 ===== */
+
+/* 照片本身自帶背景色 —— 它是「照片」，不該跟著深色主題翻轉 */
+.photo-frame {
+  border: 2px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; margin: 10px 0; line-height: 0;
+}
+.photo-frame svg { width: 100%; height: auto; display: block; }
+
+.ask-card {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: var(--blue-soft); border-radius: var(--radius-sm);
+  padding: 12px 14px; margin: 10px 0;
+}
+.ask-label {
+  font-size: .72rem; font-weight: 800; color: var(--blue-dark);
+  border: 2px solid var(--blue); border-radius: 999px; padding: 2px 9px;
+}
+.ask-card .sentence-en { flex: 1 1 100%; }
+
+/* 選項編號改用 A–D；鍵盤快捷仍是 1–4，只是數字不顯示 */
+.opts-lettered .opt-kbd { display: none; }
+.opt-letter {
+  display: inline-grid; place-items: center; width: 26px; height: 26px;
+  border: 2px solid var(--border-strong); border-radius: 999px;
+  font-family: var(--font-en); font-weight: 800; font-size: .8rem;
+  color: var(--text-soft); margin-right: 10px; vertical-align: middle;
+}
+.opt.correct .opt-letter { border-color: var(--green-dark); color: var(--green-dark); }
+.opt.wrong .opt-letter   { border-color: var(--red-dark); color: var(--red-dark); }
+
+/* 正在朗讀的選項 */
+.opt-playing { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-soft); }
+
+/* 只靠耳朵作答：選項文字預設收起來。
+   這裡用 display:none 而不是 visibility:hidden —— 後者會保留「折行後的高度」，
+   長句子的選項就變得比較高，等於用眼睛就看得出哪個選項最長。 */
+.opt-say { display: inline-block; vertical-align: middle; min-height: 1.5em; }
+.opt-text.is-hidden,
+.ask-text.is-hidden { display: none; }
+
+/* 作答後的四選項對照 */
+.opt-review { display: grid; gap: 8px; margin: 4px 0 8px; }
+.opt-review-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 10px; border-radius: var(--radius-sm); background: var(--bg-alt);
+}
+.opt-review-row.is-answer { background: var(--green-soft); }
+.opt-review-row.is-ask { background: var(--blue-soft); margin-bottom: 8px; }
+.opt-review-row .opt-letter { margin-right: 0; flex: 0 0 auto; }
+
 </style>
 <style>
 /* ===== css/responsive.css ===== */
@@ -749,7 +804,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 </style>
 </head>
 <body>
-<!-- 單檔打包版 build: 2026-08-04 15:12 -->
+<!-- 單檔打包版 build: 2026-08-04 16:16 -->
 
 <!-- ===== 頂部狀態列 ===== -->
 <header id="topbar" class="topbar">
@@ -822,6 +877,11 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
      build     拖曳單字排句
      cloze     句子填空
      read      短文閱讀 + 理解題
+     photo     多益 Part 1：看圖聽描述（題目在 data/toeic-p1-*.js）
+     respond   多益 Part 2：應答問題（題目在 data/toeic-p2-*.js）
+   --------------------------------------------------------------------------
+   stage.ready = true 只代表「這一階段開放了」，關卡本身要有 plan 與內容才可玩；
+   沒有 plan 的關卡會顯示「製作中」並鎖住，所以階段可以分批開放。
    ========================================================================== */
 window.DATA_CURRICULUM = {
 
@@ -953,16 +1013,23 @@ window.DATA_CURRICULUM = {
     ]
   },
 
-  /* ============ STAGE 2–6（骨架，內容後續批次補上） ============ */
+  /* ============ STAGE 2（開放中：U26–27 已完成，其餘製作中） ============ */
   {
     id: 's2', n: 2, name: '生活溝通', icon: '💬', color: 'purple',
     sub: '完成式・不定詞/動名詞・關係代名詞',
     level: '約 TOEIC 500–600',
     desc: '開始處理比較長的句子：現在完成式、to V 與 Ving 的取捨、用 who/which 把兩句合成一句。多益 Part 1、Part 2 正式登場。',
-    ready: false,
+    ready: true,
     units: [
-      { id:'s2u1', n:26, title:'現在完成式 have + p.p.', icon:'✅' },
-      { id:'s2u2', n:27, title:'完成式 vs 過去式', icon:'⚖️' },
+      { id:'s2u1', n:26, title:'現在完成式 have + p.p.', icon:'✅',
+        goal:'搞懂「做完了」和「做過了」差在哪，並且會用 already / yet / just / ever',
+        plan:[['intro',1],['flashcard',10],['recall',6],['listen',5],['grammar',6],
+              ['cloze',4],['build',3],['photo',2],['respond',2],['read',1]] },
+
+      { id:'s2u2', n:27, title:'完成式 vs 過去式', icon:'⚖️',
+        goal:'看到 yesterday 就用過去式、看到 since 就用完成式 —— 多益 Part 5 的常客',
+        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+              ['cloze',4],['dictate',3],['photo',2],['respond',3],['read',1]] },
       { id:'s2u3', n:28, title:'不定詞 to V', icon:'🎯' },
       { id:'s2u4', n:29, title:'動名詞 Ving', icon:'🔁' },
       { id:'s2u5', n:30, title:'to V 還是 Ving？', icon:'🤔', boss:true },
@@ -2372,6 +2439,69 @@ window.DATA_VOCAB_S1C = [
 
 </script>
 <script>
+/* ===== data/vocab-s2.js ===== */
+/* ==========================================================================
+   vocab-s2.js — Stage 2 單字（Unit 26–27：現在完成式、完成式 vs 過去式）
+   例句刻意大量使用完成式，讓單字與該關文法互相撐住。
+   ========================================================================== */
+window.DATA_VOCAB_S2 = [
+
+/* ===================== U26　現在完成式 have + p.p. ===================== */
+{id:'v0891',w:'already',kk:'ɔlˈrɛdɪ',pos:'adv.',zh:'已經',ic:'✅',u:'s2u1',ex:[['I have already eaten lunch.','我已經吃過午餐了。'],['We have already sent the invoice.','我們已經把發票寄出去了。']]},
+{id:'v0892',w:'yet',kk:'jɛt',pos:'adv.',zh:'還（沒）・尚未',ic:'⏳',u:'s2u1',ex:[['She has not called me yet.','她還沒打電話給我。'],['Has the shipment arrived yet?','貨到了嗎？']]},
+{id:'v0893',w:'ever',kk:'ˈɛvɚ',pos:'adv.',zh:'曾經',ic:'🕰️',u:'s2u1',ex:[['Have you ever tried Thai food?','你吃過泰國菜嗎？'],['Have you ever worked with this supplier?','你和這家供應商合作過嗎？']]},
+{id:'v0894',w:'just',kk:'dʒʌst',pos:'adv.',zh:'剛剛・只是',ic:'⏱️',u:'s2u1',ex:[['I have just finished my homework.','我剛寫完功課。'],['The manager has just left the office.','經理剛離開辦公室。']]},
+{id:'v0895',w:'receive',kk:'rɪˈsiv',pos:'v.',zh:'收到',ic:'📬',u:'s2u1',ex:[['I have received your message.','我收到你的訊息了。'],['We have not received the payment yet.','我們還沒收到款項。']]},
+{id:'v0896',w:'arrange',kk:'əˈrendʒ',pos:'v.',zh:'安排',ic:'🗂️',u:'s2u1',ex:[['She has arranged a dinner for us.','她幫我們安排了晚餐。'],['I have arranged a meeting with the client.','我已經和客戶約好會議了。']]},
+{id:'v0897',w:'approve',kk:'əˈpruv',pos:'v.',zh:'核准',ic:'✔️',u:'s2u1',ex:[['My parents have approved the plan.','我爸媽同意這個計畫了。'],['The manager has approved your leave.','經理已經核准你的假了。']]},
+{id:'v0898',w:'remind',kk:'rɪˈmaɪnd',pos:'v.',zh:'提醒',ic:'🔔',u:'s2u1',ex:[['Please remind me to buy milk.','請提醒我買牛奶。'],['I have reminded him about the deadline twice.','我已經提醒他期限兩次了。']]},
+{id:'v0899',w:'progress',kk:'ˈprɑgrɛs',pos:'n.',zh:'進度・進展',ic:'📈',u:'s2u1',ex:[['You have made great progress in English.','你的英文進步很多。'],['We have made little progress on the report.','報告的進度沒什麼進展。']]},
+{id:'v0900',w:'decision',kk:'dɪˈsɪʒən',pos:'n.',zh:'決定',ic:'⚖️',u:'s2u1',ex:[['I have made my decision.','我已經決定了。'],['The board has not made a decision yet.','董事會還沒做出決定。']]},
+{id:'v0901',w:'announcement',kk:'əˈnaʊnsmənt',pos:'n.',zh:'公告',ic:'📢',u:'s2u1',ex:[['Did you hear the announcement?','你聽到廣播了嗎？'],['The company has posted an announcement online.','公司已經在網路上公告了。']]},
+{id:'v0902',w:'reservation',kk:'ˌrɛzɚˈveʃən',pos:'n.',zh:'預訂',ic:'🎫',u:'s2u1',ex:[['I have made a reservation for two.','我訂了兩個人的位子。'],['Has she confirmed the hotel reservation?','她確認飯店訂房了嗎？']]},
+{id:'v0903',w:'invitation',kk:'ˌɪnvəˈteʃən',pos:'n.',zh:'邀請・邀請函',ic:'💌',u:'s2u1',ex:[['Thank you for the invitation.','謝謝你的邀請。'],['We have sent the invitations to all clients.','我們已經把邀請函寄給所有客戶了。']]},
+{id:'v0904',w:'application',kk:'ˌæpləˈkeʃən',pos:'n.',zh:'申請・申請書',ic:'📝',u:'s2u1',ex:[['I have sent my application already.','我已經把申請寄出去了。'],['We have received over fifty applications.','我們收到超過五十份申請。']]},
+{id:'v0905',w:'achieve',kk:'əˈtʃiv',pos:'v.',zh:'達成',ic:'🏆',u:'s2u1',ex:[['She has achieved her goal.','她達成目標了。'],['The team has achieved its sales target.','團隊達成業績目標了。']]},
+{id:'v0906',w:'manage',kk:'ˈmænɪdʒ',pos:'v.',zh:'設法做到・管理',ic:'🧭',u:'s2u1',ex:[['I have managed to fix the bike.','我設法把腳踏車修好了。'],['She manages a team of ten people.','她管理一個十人的團隊。']]},
+{id:'v0907',w:'accept',kk:'əkˈsɛpt',pos:'v.',zh:'接受',ic:'🤝',u:'s2u1',ex:[['He has accepted my apology.','他接受我的道歉了。'],['We have accepted their offer.','我們已經接受他們的條件了。']]},
+{id:'v0908',w:'refuse',kk:'rɪˈfjuz',pos:'v.',zh:'拒絕',ic:'🙅',u:'s2u1',ex:[['She has refused to answer.','她拒絕回答。'],['The client has refused our first offer.','客戶拒絕了我們的第一次報價。']]},
+{id:'v0909',w:'mention',kk:'ˈmɛnʃən',pos:'v.',zh:'提到',ic:'💬',u:'s2u1',ex:[['You have never mentioned that before.','你以前從來沒提過這件事。'],['He mentioned the problem in the meeting.','他在會議上提到了這個問題。']]},
+{id:'v0910',w:'admit',kk:'ədˈmɪt',pos:'v.',zh:'承認',ic:'🙋',u:'s2u1',ex:[['He has admitted his mistake.','他承認自己的錯了。'],['She admitted that the data was wrong.','她承認資料有誤。']]},
+{id:'v0911',w:'realize',kk:'ˈriəˌlaɪz',pos:'v.',zh:'意識到',ic:'💡',u:'s2u1',ex:[['I have just realized my error.','我剛發現我弄錯了。'],['We did not realize the deadline had passed.','我們沒意識到期限已經過了。']]},
+{id:'v0912',w:'recognize',kk:'ˈrɛkəgˌnaɪz',pos:'v.',zh:'認出',ic:'👀',u:'s2u1',ex:[['I did not recognize you with short hair!','你剪短髮我認不出來了！'],['She recognized his voice on the phone.','她在電話裡認出他的聲音。']]},
+{id:'v0913',w:'succeed',kk:'səkˈsid',pos:'v.',zh:'成功',ic:'🎉',u:'s2u1',ex:[['He has succeeded at last.','他終於成功了。'],['The product has succeeded in the Asian market.','這個產品在亞洲市場成功了。']]},
+{id:'v0914',w:'fail',kk:'fel',pos:'v.',zh:'失敗・未能',ic:'❌',u:'s2u1',ex:[['I have failed twice, but I will try again.','我已經失敗兩次，但我會再試。'],['The supplier failed to deliver on time.','供應商未能準時交貨。']]},
+
+/* ===================== U27　完成式 vs 過去式 ===================== */
+{id:'v0915',w:'period',kk:'ˈpɪrɪəd',pos:'n.',zh:'期間',ic:'📆',u:'s2u2',ex:[['I lived there for a short period.','我在那裡住過一小段時間。'],['Sales rose during that period.','業績在那段期間成長。']]},
+{id:'v0916',w:'career',kk:'kəˈrɪr',pos:'n.',zh:'職涯',ic:'🧗',u:'s2u2',ex:[['She has had a long career in music.','她的音樂生涯很長。'],['He started his career at a small firm.','他的職涯從一家小公司開始。']]},
+{id:'v0917',w:'abroad',kk:'əˈbrɔd',pos:'adv.',zh:'在國外',ic:'🌍',u:'s2u2',ex:[['Have you ever studied abroad?','你出國念過書嗎？'],['She went abroad for training last year.','她去年出國受訓。']]},
+{id:'v0918',w:'overseas',kk:'ˈovɚˈsiz',pos:'adj./adv.',zh:'海外（的）',ic:'🛫',u:'s2u2',ex:[['My cousin lives overseas.','我表哥住在海外。'],['We opened an overseas office in 2020.','我們在 2020 年開了海外辦公室。']]},
+{id:'v0919',w:'previous',kk:'ˈprivɪəs',pos:'adj.',zh:'先前的',ic:'⏮️',u:'s2u2',ex:[['I forgot my previous password.','我忘記之前的密碼了。'],['Her previous job was in Taichung.','她上一份工作在台中。']]},
+{id:'v0920',w:'former',kk:'ˈfɔrmɚ',pos:'adj.',zh:'前任的',ic:'🕴️',u:'s2u2',ex:[['He is a former classmate of mine.','他是我以前的同學。'],['Our former manager moved to Japan.','我們的前任經理搬去日本了。']]},
+{id:'v0921',w:'current',kk:'ˈkɝənt',pos:'adj.',zh:'目前的',ic:'📍',u:'s2u2',ex:[['What is your current address?','你目前住哪裡？'],['The current contract ends in June.','目前的合約六月到期。']]},
+{id:'v0922',w:'moment',kk:'ˈmomənt',pos:'n.',zh:'片刻・時刻',ic:'⏲️',u:'s2u2',ex:[['Wait a moment, please.','請等一下。'],['He has just stepped out for a moment.','他剛出去一下。']]},
+{id:'v0923',w:'journey',kk:'ˈdʒɝnɪ',pos:'n.',zh:'旅程',ic:'🧳',u:'s2u2',ex:[['The journey took six hours.','這趟路花了六小時。'],['It has been a long journey for our team.','對我們團隊來說這是一段漫長的過程。']]},
+{id:'v0924',w:'graduate',kk:'ˈgrædʒuˌet',pos:'v.',zh:'畢業',ic:'🎓',u:'s2u2',ex:[['I graduated in 2018.','我 2018 年畢業。'],['She has graduated from a business school.','她從商學院畢業了。']]},
+{id:'v0925',w:'retire',kk:'rɪˈtaɪr',pos:'v.',zh:'退休',ic:'🌇',u:'s2u2',ex:[['My father retired last year.','我爸爸去年退休了。'],['Our founder has retired from the board.','我們的創辦人已經從董事會退休。']]},
+{id:'v0926',w:'transfer',kk:'trænsˈfɝ',pos:'v.',zh:'調職・轉乘・轉帳',ic:'🔀',u:'s2u2',ex:[['Transfer to the blue line at this station.','在這站換藍線。'],['He has been transferred to the Tainan branch.','他被調到台南分公司了。']]},
+{id:'v0927',w:'promote',kk:'prəˈmot',pos:'v.',zh:'升遷・推廣',ic:'⬆️',u:'s2u2',ex:[['She has been promoted twice this year.','她今年升遷兩次了。'],['We promoted the new product on social media.','我們在社群上推廣新產品。']]},
+{id:'v0928',w:'resign',kk:'rɪˈzaɪn',pos:'v.',zh:'辭職',ic:'📤',u:'s2u2',ex:[['He resigned last Friday.','他上星期五辭職了。'],['Two engineers have resigned this month.','這個月有兩位工程師辭職。']]},
+{id:'v0929',w:'expand',kk:'ɪkˈspænd',pos:'v.',zh:'擴展',ic:'📊',u:'s2u2',ex:[['The city has expanded a lot.','這座城市擴大了不少。'],['We expanded into Vietnam in 2019.','我們在 2019 年拓展到越南。']]},
+{id:'v0930',w:'conversation',kk:'ˌkɑnvɚˈseʃən',pos:'n.',zh:'對話',ic:'🗨️',u:'s2u2',ex:[['We had a long conversation last night.','我們昨晚聊了很久。'],['I have had a short conversation with the client.','我和客戶簡短談過了。']]},
+{id:'v0931',w:'discussion',kk:'dɪˈskʌʃən',pos:'n.',zh:'討論',ic:'🧑‍🤝‍🧑',u:'s2u2',ex:[['The discussion lasted two hours.','討論持續了兩小時。'],['After a long discussion, we chose the second plan.','經過長時間討論，我們選了第二個方案。']]},
+{id:'v0932',w:'condition',kk:'kənˈdɪʃən',pos:'n.',zh:'狀況・條件',ic:'🩺',u:'s2u2',ex:[['The car is in good condition.','這台車狀況良好。'],['We accepted the contract on one condition.','我們接受合約，但有一個條件。']]},
+{id:'v0933',w:'purpose',kk:'ˈpɝpəs',pos:'n.',zh:'目的',ic:'🎯',u:'s2u2',ex:[['What is the purpose of your visit?','你此行的目的是什麼？'],['The purpose of the meeting was to review costs.','會議的目的是檢討成本。']]},
+{id:'v0934',w:'effort',kk:'ˈɛfɚt',pos:'n.',zh:'努力',ic:'💪',u:'s2u2',ex:[['Thank you for your effort.','謝謝你的付出。'],['The team has put a lot of effort into this project.','團隊在這個專案上投入很多心力。']]},
+{id:'v0935',w:'attention',kk:'əˈtɛnʃən',pos:'n.',zh:'注意',ic:'👁️',u:'s2u2',ex:[['May I have your attention, please?','請大家注意一下。'],['The issue has received a lot of attention.','這個問題受到很多關注。']]},
+{id:'v0936',w:'pressure',kk:'ˈprɛʃɚ',pos:'n.',zh:'壓力',ic:'😰',u:'s2u2',ex:[['I felt a lot of pressure before the exam.','考試前我壓力很大。'],['She works well under pressure.','她在壓力下表現很好。']]},
+{id:'v0937',w:'describe',kk:'dɪˈskraɪb',pos:'v.',zh:'描述',ic:'🖊️',u:'s2u2',ex:[['Can you describe the man you saw?','你能描述看到的那個人嗎？'],['He described the process step by step.','他一步一步描述了流程。']]},
+{id:'v0938',w:'continue',kk:'kənˈtɪnju',pos:'v.',zh:'繼續',ic:'▶️',u:'s2u2',ex:[['The rain continued all night.','雨下了一整晚。'],['Sales have continued to grow since March.','業績從三月起持續成長。']]}
+
+];
+
+</script>
+<script>
 /* ===== data/grammar-s0.js ===== */
 /* ==========================================================================
    grammar-s0.js — Stage 0 文法點
@@ -3695,6 +3825,132 @@ window.DATA_GRAMMAR_S1 = [
 
 </script>
 <script>
+/* ===== data/grammar-s2.js ===== */
+/* ==========================================================================
+   grammar-s2.js — Stage 2 文法點（Unit 26–27）
+   完成式是中文母語者的第一個大坎：中文沒有這個時態，只能靠「這件事跟現在
+   有沒有關係」來判斷，所以教學卡把重點放在時間軸而不是公式。
+   ========================================================================== */
+window.DATA_GRAMMAR_S2 = [
+
+/* ================================================== U26 現在完成式 */
+{
+  id:'g2601', u:'s2u1', title:'現在完成式 have / has + p.p.',
+  teach:{
+    title:'現在完成式：過去發生，但重點在現在',
+    lead:'中文沒有完成式，所以這個時態不能用翻譯來記。判斷方法只有一個：這件事「跟現在還有沒有關係」。有關係就用完成式，純粹講過去就用過去式。',
+    sections:[
+      { formula:'have / has ＋ 過去分詞（p.p.）',
+        formulaNote:'I / You / We / They ＋ have　　He / She / It ＋ has' },
+      { h:'三種一定用完成式的情況',
+        list:['<b>剛剛完成、現在還看得到結果</b>：I <b>have lost</b> my key.（鑰匙現在還沒找到）',
+              '<b>從過去到現在的經驗</b>：She <b>has worked</b> here for five years.（現在還在這裡）',
+              '<b>問「有沒有做過」</b>：<b>Have</b> you <b>ever been</b> to Japan?'],
+        ex:[['I have finished the report.','我把報告做完了。（現在可以交了）'],
+            ['She has worked here since 2020.','她從 2020 年就在這裡工作。（現在還在）'],
+            ['Have you ever tried oysters?','你吃過牡蠣嗎？']] },
+      { h:'配套的四個字（多益必考）',
+        table:{ head:['字','位置','意思','例句'],
+          rows:[['already','have 之後','已經（比預期早）','I have <b>already</b> sent it.'],
+                ['yet','句尾','還沒 / 了嗎（否定與疑問）','She hasn\'t called <b>yet</b>.'],
+                ['just','have 之後','剛剛','He has <b>just</b> left.'],
+                ['ever','have 之後','曾經（用在疑問句）','Have you <b>ever</b> flown business class?']] } },
+      { h:'for 還是 since？',
+        table:{ head:['','接什麼','例子'],
+          rows:[['for','一段時間長度','for three years、for two hours、for a long time'],
+                ['since','起點的時間點','since 2020、since March、since I was ten']] },
+        ex:[['I have studied English for six years.','我學英文六年了。'],
+            ['I have studied English since 2019.','我從 2019 年開始學英文。']] },
+      { warn:'完成式後面接的是<b>過去分詞</b>，不是過去式。<b>I have went.</b> ❌ → <b>I have gone.</b> ✅　go-went-gone 的第三格，這就是為什麼上一階段要背不規則動詞三態。' },
+      { tip:'has 只跟 he / she / it 走。主詞是 my manager、the company、everyone 這種單數名詞時，一樣用 has。' }
+    ]
+  },
+  sents:[['I have finished my work.','我做完工作了。'],
+         ['She has just left the office.','她剛離開辦公室。'],
+         ['We have already received your email.','我們已經收到你的信了。'],
+         ['They have not replied yet.','他們還沒回覆。'],
+         ['Have you ever worked abroad?','你在國外工作過嗎？'],
+         ['He has lived here for ten years.','他在這裡住了十年。'],
+         ['The manager has approved the plan.','經理核准這個計畫了。'],
+         ['I have made a reservation for two.','我訂了兩個人的位子。']],
+  qs:[
+    { k:'mc', q:'I ___ already sent the invitation.', opts:['have','has','am','did'], a:0, zh:'我已經把邀請函寄出去了。', why:'主詞 I 用 <b>have</b>。' },
+    { k:'mc', q:'She ___ just finished the report.', opts:['have','has','is','was'], a:1, zh:'她剛把報告做完。', why:'主詞 She 是第三人稱單數，用 <b>has</b>。' },
+    { k:'mc', q:'We have ___ the payment already.', opts:['receive','received','receiving','receives'], a:1, zh:'我們已經收到款項了。', why:'have 後面要接過去分詞 received。' },
+    { k:'mc', q:'They have not ___ a decision yet.', opts:['make','made','makes','making'], a:1, zh:'他們還沒做出決定。', why:'make-made-made，過去分詞是 made。' },
+    { k:'mc', q:'Have you ___ been to Japan?', opts:['already','ever','yet','just'], a:1, zh:'你去過日本嗎？', why:'問經驗用 <b>ever</b>；already 用在肯定句、yet 放句尾。' },
+    { k:'mc', q:'The shipment has not arrived ___.', opts:['already','ever','yet','just'], a:2, zh:'貨還沒到。', why:'否定句講「還沒」用 <b>yet</b>，而且放句尾。' },
+    { k:'mc', q:'He has worked here ___ 2020.', opts:['for','since','from','in'], a:1, zh:'他從 2020 年就在這裡工作。', why:'2020 是時間點，用 <b>since</b>。' },
+    { k:'mc', q:'She has studied English ___ six years.', opts:['for','since','from','at'], a:0, zh:'她學英文六年了。', why:'six years 是一段長度，用 <b>for</b>。' },
+    { k:'mc', q:'My manager ___ approved my leave.', opts:['have','has','are','were'], a:1, zh:'我的經理已經核准我的假了。', why:'My manager 是單數，用 has。' },
+    { k:'fix', q:'I have went to the bank already.', a:'I have gone to the bank already.', zh:'我已經去過銀行了。', hint:'go 的第三格是哪一個？', why:'go-went-<b>gone</b>，完成式要用過去分詞 gone。' },
+    { k:'fix', q:'She have just left the office.', a:'She has just left the office.', zh:'她剛離開辦公室。', hint:'主詞是第三人稱單數', why:'She 要配 <b>has</b>。' },
+    { k:'fix', q:'Have you finished the report yet ?', a:'Have you finished the report yet?', zh:'你報告做完了嗎？', hint:'看看標點', why:'問號前面不空格；yet 放句尾是對的。' },
+    { k:'cloze', q:'We ___ ___ received your application. (already)', a:'have already', zh:'我們已經收到你的申請了。', why:'already 夾在 have 和過去分詞中間。' },
+    { k:'cloze', q:'He ___ just ___ the office. (leave)', a:'has left', zh:'他剛離開辦公室。', why:'He 配 has；leave 的過去分詞是 left。' },
+    { k:'trans', q:'', a:'I have already sent the email.', alt:['I have sent the email already.'], zh:'我已經把那封信寄出去了。', why:'already 放 have 之後或句尾都可以。' },
+    { k:'trans', q:'', a:'Have you ever worked abroad?', alt:['Have you ever worked overseas?'], zh:'你在國外工作過嗎？', why:'問經驗：Have + 主詞 + ever + p.p.' }
+  ]
+},
+
+/* ================================================== U27 完成式 vs 過去式 */
+{
+  id:'g2701', u:'s2u2', title:'現在完成式 vs 過去簡單式',
+  teach:{
+    title:'完成式 vs 過去式：看句子裡有沒有「結案的時間」',
+    lead:'兩個時態講的都是過去發生的事，差別只有一個：句子裡有沒有指明「那件事已經結束在某個時間點」。有明確的過去時間 → 過去式；沒有、或還連著現在 → 完成式。',
+    sections:[
+      { formula:'yesterday / last week / in 2019 / ago　→　過去式<br>since / for / already / yet / just / ever　→　完成式',
+        formulaNote:'看到這些字，時態幾乎就決定了' },
+      { h:'同一件事，兩種說法',
+        table:{ speak:true, head:['句子','時態','言下之意'],
+          rows:[['I lost my key yesterday.','過去式','昨天弄丟了（可能後來找到了）'],
+                ['I have lost my key.','完成式','弄丟了，<b>現在還沒找到</b>'],
+                ['She worked here for five years.','過去式','她<b>已經離職了</b>'],
+                ['She has worked here for five years.','完成式','她<b>現在還在職</b>']] } },
+      { h:'最常見的組合：先完成式開場，再過去式補細節',
+        list:['A: <b>Have</b> you <b>been</b> to Japan?（有沒有這個經驗）',
+              'B: Yes, I <b>went</b> there last spring.（講到確切時間，換過去式）'],
+        ex:[['I have visited Tokyo three times.','我去過東京三次。'],
+            ['I visited Tokyo in 2019.','我 2019 年去了東京。'],
+            ['Our company has expanded a lot.','我們公司擴展了很多。'],
+            ['Our company expanded into Vietnam in 2019.','我們公司 2019 年拓展到越南。']] },
+      { warn:'有明確過去時間就<b>不能</b>用完成式：<b>I have finished it yesterday.</b> ❌ → <b>I finished it yesterday.</b> ✅　這是多益 Part 5 最愛的陷阱。' },
+      { tip:'ago 一定配過去式（three days ago），lately / recently 一定配完成式。看到 ago 就別想完成式了。' }
+    ]
+  },
+  sents:[['I finished the report yesterday.','我昨天把報告做完了。'],
+         ['I have finished the report.','我把報告做完了。'],
+         ['She resigned last month.','她上個月辭職了。'],
+         ['She has resigned.','她辭職了。'],
+         ['He graduated in 2018.','他 2018 年畢業。'],
+         ['He has graduated from a business school.','他從商學院畢業了。'],
+         ['We expanded overseas three years ago.','我們三年前拓展到海外。'],
+         ['Sales have continued to grow since March.','業績從三月起持續成長。']],
+  qs:[
+    { k:'mc', q:'I ___ the report yesterday.', opts:['finish','finished','have finished','has finished'], a:1, zh:'我昨天把報告做完了。', why:'有 yesterday 這個明確的過去時間，用<b>過去式</b>。' },
+    { k:'mc', q:'I ___ the report, so you can read it now.', opts:['finish','finished','have finished','had finish'], a:2, zh:'我把報告做完了，你現在可以看。', why:'沒有過去時間點，而且跟現在有關 → 完成式。' },
+    { k:'mc', q:'She ___ for this company since 2020.', opts:['works','worked','has worked','is working'], a:2, zh:'她從 2020 年起在這家公司上班。', why:'since + 完成式，表示現在還在職。' },
+    { k:'mc', q:'He ___ his previous job three years ago.', opts:['leaves','left','has left','have left'], a:1, zh:'他三年前離開了上一份工作。', why:'ago 一定配過去式。' },
+    { k:'mc', q:'Our manager ___ to Tainan last April.', opts:['transfers','transferred','has transferred','have transferred'], a:1, zh:'我們經理去年四月調到台南。', why:'last April 是明確過去時間。' },
+    { k:'mc', q:'Sales ___ a lot lately.', opts:['improve','improved','have improved','improves'], a:2, zh:'業績最近改善很多。', why:'lately / recently 配完成式。' },
+    { k:'mc', q:'A: Have you ever been to Kyoto?　B: Yes, I ___ there in 2022.', opts:['go','went','have gone','has been'], a:1, zh:'A：你去過京都嗎？B：有，我 2022 年去的。', why:'問經驗用完成式，回答講到年份就換<b>過去式</b>。' },
+    { k:'mc', q:'The company ___ overseas offices since 2019.', opts:['opens','opened','has opened','open'], a:2, zh:'這家公司從 2019 年起陸續開設海外辦公室。', why:'since 起點到現在還在延續 → 完成式。' },
+    { k:'mc', q:'I ___ my keys. I still can\'t find them.', opts:['lose','lost','have lost','had lost'], a:2, zh:'我把鑰匙弄丟了，到現在還找不到。', why:'「現在還沒找到」是結果延續到現在 → 完成式。' },
+    { k:'fix', q:'I have finished the project last Friday.', a:'I finished the project last Friday.', zh:'我上週五把專案做完了。', hint:'句子裡有明確的過去時間', why:'last Friday 是結案時間，不能用完成式。' },
+    { k:'fix', q:'She has resigned two months ago.', a:'She resigned two months ago.', zh:'她兩個月前辭職了。', hint:'ago 要配什麼時態？', why:'ago 一律配過去式。' },
+    { k:'fix', q:'He works here since 2020.', a:'He has worked here since 2020.', zh:'他從 2020 年起在這裡工作。', hint:'since 要配什麼時態？', why:'since 要配現在完成式。' },
+    { k:'cloze', q:'We ___ our overseas office in 2019. (open)', a:'opened', zh:'我們 2019 年開了海外辦公室。', why:'in 2019 是明確過去時間 → 過去式。' },
+    { k:'cloze', q:'Sales ___ ___ since March. (grow)', a:'have grown', zh:'業績從三月起成長。', why:'since 配現在完成式，grow-grew-grown。' },
+    { k:'trans', q:'', a:'She resigned last month.', alt:['She quit last month.'], zh:'她上個月辭職了。', why:'last month 是明確過去時間 → 過去式。' },
+    { k:'trans', q:'', a:'I have worked here for five years.', alt:['I have worked here for 5 years.'], zh:'我在這裡工作五年了。', why:'for + 一段時間，配現在完成式表示現在還在。' }
+  ]
+}
+
+];
+
+</script>
+<script>
 /* ===== data/reading-s0.js ===== */
 /* ==========================================================================
    reading-s0.js — Stage 0 短文（20–45 字，全部只用已學過的句型）
@@ -4138,6 +4394,398 @@ window.DATA_READING_S1 = [
 
 </script>
 <script>
+/* ===== data/reading-s2.js ===== */
+/* ==========================================================================
+   reading-s2.js — Stage 2 短文（70–110 字）
+   句型集中在完成式與過去式的對比，主題全面轉向職場。
+   ========================================================================== */
+window.DATA_READING_S2 = [
+
+/* ---------------- U26 現在完成式 ---------------- */
+{
+  id:'r2601', u:'s2u1', title:'A Quick Update',
+  text:'Hi Jason,\nI have finished the sales report and sent it to the printer. I have already emailed a copy to Ms. Chen, so you do not need to forward it. I have not received the numbers from the Tainan branch yet, so page four is still empty. I have reminded them twice this week. If they reply today, I will update the file before the meeting.\nThanks,\nWendy',
+  zh:'嗨，Jason：\n我已經完成業績報告並送印了。我也已經寄了一份給陳女士，所以你不用再轉寄。台南分公司的數字我還沒收到，所以第四頁還是空的。我這週已經提醒他們兩次了。如果他們今天回覆，我會在會議前更新檔案。\n謝謝，\nWendy',
+  qs:[
+    { q:'What has Wendy already done?', opts:['She has visited the Tainan branch.','She has emailed a copy to Ms. Chen.','She has cancelled the meeting.','She has printed page four.'], a:1, why:'I have already emailed a copy to Ms. Chen.' },
+    { q:'Why is page four still empty?', opts:['The printer is broken.','Ms. Chen has not approved it.','The Tainan numbers have not arrived.','Jason forgot to send it.'], a:2, why:'I have not received the numbers from the Tainan branch yet.' },
+    { q:'How many times has Wendy reminded the branch?', opts:['Once','Twice','Three times','She has not reminded them.'], a:1, why:'I have reminded them twice this week.' }
+  ]
+},
+{
+  id:'r2602', u:'s2u1', title:'The New Coffee Machine',
+  text:'The office has bought a new coffee machine. It has been in the break room since Monday. Some people have already used it, but many have not tried it yet. The instructions are on the wall. Please do not put milk in the water tank. Someone has done that twice, and we have had to clean the machine both times. If you have any questions, ask Peter. He has read the whole manual.',
+  zh:'公司買了一台新咖啡機。它從星期一起就放在茶水間。有些人已經用過了，但很多人還沒試過。使用說明貼在牆上。請不要把牛奶倒進水箱。已經有人這樣做了兩次，我們兩次都得清洗機器。如果有問題，請找 Peter，他已經把整本手冊讀完了。',
+  qs:[
+    { q:'When did the machine arrive?', opts:['On Monday','On Friday','This morning','Last month'], a:0, why:'It has been in the break room since Monday.' },
+    { q:'What should people NOT do?', opts:['Read the instructions','Ask Peter','Put milk in the water tank','Use the machine'], a:2, why:'Please do not put milk in the water tank.' },
+    { q:'Why should you ask Peter?', opts:['He bought the machine.','He has read the whole manual.','He cleans the break room.','He wrote the instructions.'], a:1, why:'He has read the whole manual.' }
+  ]
+},
+
+/* ---------------- U27 完成式 vs 過去式 ---------------- */
+{
+  id:'r2701', u:'s2u2', title:'From Intern to Manager',
+  text:'Alice joined the company as an intern in 2016. She worked in the sales department for two years, and then she transferred to marketing. In 2021 she was promoted to team leader. She has led the team since then. Under her, the team has expanded from four people to eleven. Last month the company opened an overseas office, and Alice has just accepted an offer to run it. She will move to Singapore in August.',
+  zh:'愛麗絲 2016 年以實習生身分進入公司。她在業務部待了兩年，然後轉調行銷部。2021 年她升為組長，從那時起就一直帶領這個團隊。在她手下，團隊從四人擴編到十一人。上個月公司開了海外辦公室，愛麗絲剛接受了去負責那裡的職務。她八月會搬到新加坡。',
+  qs:[
+    { q:'What did Alice do after the sales department?', opts:['She resigned.','She moved to marketing.','She became an intern.','She went to Singapore.'], a:1, why:'then she transferred to marketing.' },
+    { q:'How large is her team now?', opts:['Four people','Two people','Eleven people','Sixteen people'], a:2, why:'the team has expanded from four people to eleven.' },
+    { q:'What has Alice just accepted?', opts:['A job in the overseas office','An internship','A transfer to sales','A pay cut'], a:0, why:'Alice has just accepted an offer to run it.' }
+  ]
+},
+{
+  id:'r2702', u:'s2u2', title:'Two Very Different Years',
+  text:'Our shop opened in 2019, and the first year was hard. We lost money for eight months and almost closed. Things changed after we moved next to the station. Since then, sales have grown every quarter. We have added six new items to the menu this year, and we have hired three part-time staff. Last week a food magazine visited us. The article has not come out yet, but the writer said she liked our coffee.',
+  zh:'我們的店 2019 年開幕，第一年很辛苦。我們虧損了八個月，差點就收了。搬到車站旁邊之後情況改變了。從那時起，業績每一季都在成長。今年我們在菜單上加了六樣新品，也請了三位兼職員工。上週有家美食雜誌來採訪。報導還沒出來，但那位記者說她喜歡我們的咖啡。',
+  qs:[
+    { q:'What happened during the first year?', opts:['Sales grew every quarter.','The shop lost money.','They hired three staff.','A magazine visited.'], a:1, why:'We lost money for eight months.' },
+    { q:'What changed the situation?', opts:['A new menu','A magazine article','Moving next to the station','Hiring part-time staff'], a:2, why:'Things changed after we moved next to the station.' },
+    { q:'What has NOT happened yet?', opts:['The article has not come out.','They have not hired anyone.','The shop has not moved.','Sales have not grown.'], a:0, why:'The article has not come out yet.' }
+  ]
+}
+
+];
+
+</script>
+<script>
+/* ===== data/toeic-p1-s2.js ===== */
+/* ==========================================================================
+   toeic-p1-s2.js — 多益 Part 1：看圖聽描述（Stage 2）
+   --------------------------------------------------------------------------
+   圖片直接以 SVG 內嵌在資料裡，不走外部檔案：
+     · file:// 下沒有 fetch，外部圖片路徑在單檔版也會斷掉
+     · 內嵌 SVG 跟著打包一起走，離線也看得到
+   場景刻意畫得簡單，但「誰在做什麼」必須一眼分辨得出來 —— 那正是 Part 1
+   要考的能力。四個選項的差異都落在動作或對象上，不是字彙難度。
+   ========================================================================== */
+window.DATA_PHOTO_S2 = [
+
+/* ---------------- U26 ---------------- */
+{
+  id:'p2601', u:'s2u1',
+  svg:'<svg viewBox="0 0 400 240" role="img" aria-label="辦公室裡一名男子站在影印機旁，一名女子坐在桌前使用筆電">' +
+      '<rect width="400" height="240" fill="#eef3f7"/><rect y="188" width="400" height="52" fill="#dbe4ec"/>' +
+      '<rect x="286" y="38" width="88" height="60" rx="4" fill="#cfe8f7" stroke="#b6ccd9" stroke-width="3"/>' +
+      '<line x1="330" y1="38" x2="330" y2="98" stroke="#b6ccd9" stroke-width="3"/>' +
+      '<rect x="38" y="116" width="76" height="72" rx="6" fill="#b7c5d1"/>' +
+      '<rect x="46" y="126" width="60" height="22" rx="3" fill="#7f909e"/>' +
+      '<rect x="50" y="158" width="52" height="7" rx="2" fill="#ffffff"/>' +
+      '<circle cx="104" cy="122" r="4" fill="#5aa02c"/>' +
+      '<circle cx="152" cy="84" r="15" fill="#f4cba6"/>' +
+      '<path d="M138 82a14 14 0 0 1 28 0z" fill="#4a3b30"/>' +
+      '<path d="M135 188 L135 106 Q152 96 169 106 L169 188 Z" fill="#4a7fb5"/>' +
+      '<path d="M169 118 L193 130" stroke="#f4cba6" stroke-width="10" stroke-linecap="round"/>' +
+      '<rect x="183" y="119" width="28" height="20" rx="2" fill="#ffffff" stroke="#c3cdd6" stroke-width="2"/>' +
+      '<rect x="248" y="146" width="126" height="9" rx="2" fill="#c98b5a"/>' +
+      '<rect x="256" y="155" width="9" height="33" fill="#a8703f"/>' +
+      '<rect x="357" y="155" width="9" height="33" fill="#a8703f"/>' +
+      '<rect x="262" y="120" width="10" height="68" rx="3" fill="#8b9aa5"/>' +
+      '<circle cx="296" cy="96" r="14" fill="#f4cba6"/>' +
+      '<path d="M282 96a14 14 0 0 1 28 0l3 13h-34z" fill="#6b4a3a"/>' +
+      '<path d="M283 146 L283 116 Q296 107 309 116 L309 146 Z" fill="#c8677f"/>' +
+      '<rect x="314" y="126" width="34" height="20" rx="2" fill="#63737f"/>' +
+      '<rect x="317" y="129" width="28" height="14" fill="#cfe6f5"/>' +
+      '<rect x="310" y="146" width="42" height="4" rx="2" fill="#8b9aa5"/></svg>',
+  opts:['A man is standing next to a copy machine.',
+        'A woman is talking on the phone.',
+        'They are leaving the office.',
+        'The copy machine has been moved outside.'],
+  a:0,
+  zh:['一名男子站在影印機旁。','一名女子正在講電話。','他們正要離開辦公室。','影印機已經被搬到外面了。'],
+  why:'男子站在影印機旁邊拿著紙 → A。女子在用筆電不是講電話，兩個人都還在辦公室裡。'
+},
+{
+  id:'p2602', u:'s2u1',
+  svg:'<svg viewBox="0 0 400 240" role="img" aria-label="咖啡店裡服務生端著托盤，兩位客人坐在桌邊">' +
+      '<rect width="400" height="240" fill="#f6efe6"/><rect y="190" width="400" height="50" fill="#e6d8c6"/>' +
+      '<rect x="20" y="46" width="90" height="58" rx="4" fill="#c8a97e"/>' +
+      '<rect x="26" y="54" width="34" height="18" rx="2" fill="#fff4e2"/>' +
+      '<rect x="68" y="54" width="34" height="18" rx="2" fill="#fff4e2"/>' +
+      '<rect x="26" y="80" width="76" height="16" rx="2" fill="#a98559"/>' +
+      '<circle cx="88" cy="96" r="15" fill="#f4cba6"/>' +
+      '<path d="M74 94a14 14 0 0 1 28 0z" fill="#2f2a26"/>' +
+      '<path d="M71 190 L71 118 Q88 108 105 118 L105 190 Z" fill="#3f5a4a"/>' +
+      '<path d="M105 130 L131 138" stroke="#f4cba6" stroke-width="10" stroke-linecap="round"/>' +
+      '<rect x="118" y="128" width="42" height="8" rx="3" fill="#b98d5b"/>' +
+      '<circle cx="130" cy="123" r="6" fill="#ffffff"/><circle cx="148" cy="123" r="6" fill="#ffffff"/>' +
+      '<ellipse cx="286" cy="168" rx="76" ry="12" fill="#c8a97e"/>' +
+      '<rect x="282" y="168" width="8" height="26" fill="#a98559"/>' +
+      '<circle cx="238" cy="104" r="14" fill="#f4cba6"/>' +
+      '<path d="M224 104a14 14 0 0 1 28 0l3 12h-34z" fill="#7a4b2a"/>' +
+      '<path d="M225 162 L225 124 Q238 115 251 124 L251 162 Z" fill="#4a7fb5"/>' +
+      '<path d="M251 136 L266 152" stroke="#f4cba6" stroke-width="9" stroke-linecap="round"/>' +
+      '<rect x="262" y="146" width="14" height="14" rx="2" fill="#ffffff" stroke="#d9c6ae" stroke-width="2"/>' +
+      '<circle cx="336" cy="104" r="14" fill="#f4cba6"/>' +
+      '<path d="M322 102a14 14 0 0 1 28 0z" fill="#3b3229"/>' +
+      '<path d="M323 162 L323 124 Q336 115 349 124 L349 162 Z" fill="#d4a33e"/>' +
+      '<rect x="300" y="150" width="16" height="12" rx="2" fill="#ffffff" stroke="#d9c6ae" stroke-width="2"/></svg>',
+  opts:['The customers are standing in line.',
+        'A waiter is carrying a tray.',
+        'A man is washing the dishes.',
+        'All the tables have been cleared.'],
+  a:1,
+  zh:['客人正在排隊。','一名服務生端著托盤。','一名男子正在洗碗。','所有桌子都已經收拾乾淨了。'],
+  why:'服務生手上端著托盤 → B。兩位客人是坐著的，桌上還有杯子。'
+},
+{
+  id:'p2603', u:'s2u1',
+  svg:'<svg viewBox="0 0 400 240" role="img" aria-label="倉庫裡一名戴安全帽的工人推著裝滿箱子的推車，後方是放滿貨物的層架">' +
+      '<rect width="400" height="240" fill="#eff0ea"/><rect y="192" width="400" height="48" fill="#d9dbd2"/>' +
+      '<rect x="232" y="52" width="150" height="140" fill="none" stroke="#9aa08f" stroke-width="6"/>' +
+      '<line x1="232" y1="98" x2="382" y2="98" stroke="#9aa08f" stroke-width="6"/>' +
+      '<line x1="232" y1="145" x2="382" y2="145" stroke="#9aa08f" stroke-width="6"/>' +
+      '<rect x="242" y="62" width="40" height="32" rx="2" fill="#d9a441"/>' +
+      '<rect x="290" y="66" width="34" height="28" rx="2" fill="#c98b5a"/>' +
+      '<rect x="332" y="60" width="44" height="34" rx="2" fill="#d9a441"/>' +
+      '<rect x="244" y="110" width="48" height="33" rx="2" fill="#c98b5a"/>' +
+      '<rect x="300" y="112" width="38" height="31" rx="2" fill="#d9a441"/>' +
+      '<rect x="344" y="108" width="34" height="35" rx="2" fill="#c98b5a"/>' +
+      '<rect x="246" y="158" width="42" height="32" rx="2" fill="#d9a441"/>' +
+      '<rect x="298" y="156" width="46" height="34" rx="2" fill="#c98b5a"/>' +
+      '<rect x="96" y="150" width="86" height="10" rx="3" fill="#6b7a86"/>' +
+      '<rect x="100" y="118" width="74" height="32" rx="2" fill="#c98b5a"/>' +
+      '<rect x="108" y="92" width="56" height="26" rx="2" fill="#d9a441"/>' +
+      '<circle cx="112" cy="182" r="13" fill="#3d4750"/><circle cx="112" cy="182" r="5" fill="#8b9aa5"/>' +
+      '<circle cx="168" cy="182" r="13" fill="#3d4750"/><circle cx="168" cy="182" r="5" fill="#8b9aa5"/>' +
+      '<path d="M182 155 L196 130" stroke="#6b7a86" stroke-width="7" stroke-linecap="round"/>' +
+      '<circle cx="212" cy="96" r="15" fill="#f4cba6"/>' +
+      '<path d="M196 92a16 15 0 0 1 32 0z" fill="#ffb020"/>' +
+      '<rect x="194" y="90" width="36" height="5" rx="2" fill="#e09400"/>' +
+      '<path d="M195 192 L195 118 Q212 108 229 118 L229 192 Z" fill="#e2762f"/>' +
+      '<path d="M196 124 L182 136" stroke="#f4cba6" stroke-width="10" stroke-linecap="round"/></svg>',
+  opts:['The shelves have been emptied.',
+        'A man is climbing a ladder.',
+        'A worker is pushing a cart.',
+        'The boxes are being loaded into a truck.'],
+  a:2,
+  zh:['層架已經被清空了。','一名男子正在爬梯子。','一名工人正在推推車。','箱子正被裝上卡車。'],
+  why:'戴安全帽的工人推著堆滿箱子的推車 → C。後面的層架是滿的，畫面裡沒有梯子也沒有卡車。'
+},
+
+/* ---------------- U27 ---------------- */
+{
+  id:'p2604', u:'s2u2',
+  svg:'<svg viewBox="0 0 400 240" role="img" aria-label="會議室裡三人坐在桌邊，一人站著指向牆上的圖表">' +
+      '<rect width="400" height="240" fill="#eef3f7"/><rect y="196" width="400" height="44" fill="#dbe4ec"/>' +
+      '<rect x="36" y="36" width="120" height="82" rx="4" fill="#ffffff" stroke="#b6ccd9" stroke-width="3"/>' +
+      '<rect x="50" y="88" width="14" height="20" fill="#4a7fb5"/><rect x="70" y="72" width="14" height="36" fill="#4a7fb5"/>' +
+      '<rect x="90" y="58" width="14" height="50" fill="#58cc02"/><rect x="110" y="80" width="14" height="28" fill="#4a7fb5"/>' +
+      '<polyline points="50,96 77,80 97,62 124,70" fill="none" stroke="#ff7a45" stroke-width="3"/>' +
+      '<circle cx="186" cy="82" r="14" fill="#f4cba6"/>' +
+      '<path d="M172 82a14 14 0 0 1 28 0l3 12h-34z" fill="#6b4a3a"/>' +
+      '<path d="M172 196 L172 104 Q186 94 200 104 L200 196 Z" fill="#8a63c0"/>' +
+      '<path d="M172 110 L150 92" stroke="#f4cba6" stroke-width="9" stroke-linecap="round"/>' +
+      '<ellipse cx="300" cy="168" rx="92" ry="16" fill="#c98b5a"/>' +
+      '<rect x="296" y="168" width="9" height="28" fill="#a8703f"/>' +
+      '<circle cx="248" cy="112" r="13" fill="#f4cba6"/>' +
+      '<path d="M235 110a13 13 0 0 1 26 0z" fill="#3b3229"/>' +
+      '<path d="M236 162 L236 130 Q248 122 260 130 L260 162 Z" fill="#4a7fb5"/>' +
+      '<circle cx="316" cy="108" r="13" fill="#f4cba6"/>' +
+      '<path d="M303 108a13 13 0 0 1 26 0l3 11h-32z" fill="#7a4b2a"/>' +
+      '<path d="M304 160 L304 126 Q316 118 328 126 L328 160 Z" fill="#c8677f"/>' +
+      '<circle cx="374" cy="118" r="12" fill="#f4cba6"/>' +
+      '<path d="M362 116a12 12 0 0 1 24 0z" fill="#2f2a26"/>' +
+      '<path d="M363 164 L363 134 Q374 127 385 134 L385 164 Z" fill="#d4a33e"/>' +
+      '<rect x="262" y="150" width="30" height="8" rx="2" fill="#ffffff" stroke="#c3cdd6" stroke-width="2"/>' +
+      '<rect x="330" y="152" width="26" height="7" rx="2" fill="#ffffff" stroke="#c3cdd6" stroke-width="2"/></svg>',
+  opts:['The room has been left empty.',
+        'They are eating lunch together.',
+        'Everyone is standing up.',
+        'One of them is pointing at a chart.'],
+  a:3,
+  zh:['房間已經被清空了。','他們正在一起吃午餐。','所有人都站著。','其中一人正指著一張圖表。'],
+  why:'站著的人伸手指向牆上的長條圖 → D。另外三人是坐著的，桌上沒有食物。'
+},
+{
+  id:'p2605', u:'s2u2',
+  svg:'<svg viewBox="0 0 400 240" role="img" aria-label="公車站牌旁一名女子提著行李箱等車，公車正駛近">' +
+      '<rect width="400" height="240" fill="#e9f1f6"/><rect y="186" width="400" height="54" fill="#c9d2d8"/>' +
+      '<rect y="186" width="400" height="5" fill="#9aa6ae"/>' +
+      '<line x1="20" y1="214" x2="70" y2="214" stroke="#ffffff" stroke-width="5"/>' +
+      '<line x1="110" y1="214" x2="160" y2="214" stroke="#ffffff" stroke-width="5"/>' +
+      '<rect x="52" y="60" width="9" height="126" fill="#7d8f9e"/>' +
+      '<rect x="30" y="52" width="54" height="34" rx="4" fill="#1cb0f6"/>' +
+      '<text x="57" y="75" font-size="20" text-anchor="middle" fill="#ffffff">🚌</text>' +
+      '<circle cx="150" cy="82" r="15" fill="#f4cba6"/>' +
+      '<path d="M136 82a14 14 0 0 1 28 0l4 16h-36z" fill="#5b4636"/>' +
+      '<path d="M136 186 L136 104 Q150 94 164 104 L164 186 Z" fill="#e2762f"/>' +
+      '<path d="M164 116 L178 140" stroke="#f4cba6" stroke-width="9" stroke-linecap="round"/>' +
+      '<rect x="172" y="140" width="34" height="46" rx="4" fill="#3f5a4a"/>' +
+      '<rect x="172" y="156" width="34" height="5" fill="#2c4034"/>' +
+      '<rect x="183" y="132" width="12" height="10" rx="3" fill="none" stroke="#3f5a4a" stroke-width="3"/>' +
+      '<rect x="248" y="92" width="140" height="76" rx="8" fill="#ffc800"/>' +
+      '<rect x="258" y="104" width="34" height="26" rx="3" fill="#cfe6f5"/>' +
+      '<rect x="300" y="104" width="34" height="26" rx="3" fill="#cfe6f5"/>' +
+      '<rect x="342" y="104" width="36" height="26" rx="3" fill="#cfe6f5"/>' +
+      '<rect x="248" y="140" width="140" height="8" fill="#e0a800"/>' +
+      '<circle cx="282" cy="172" r="16" fill="#3d4750"/><circle cx="282" cy="172" r="6" fill="#8b9aa5"/>' +
+      '<circle cx="356" cy="172" r="16" fill="#3d4750"/><circle cx="356" cy="172" r="6" fill="#8b9aa5"/></svg>',
+  opts:['A woman is waiting with a suitcase.',
+        'She is getting off a train.',
+        'The bus stop is empty.',
+        'She is riding a bicycle.'],
+  a:0,
+  zh:['一名女子帶著行李箱在等車。','她正從火車上下來。','公車站空無一人。','她正在騎腳踏車。'],
+  why:'女子站在公車站牌旁，手邊有一個行李箱 → A。車子是公車不是火車，她也還沒上車。'
+},
+{
+  id:'p2606', u:'s2u2',
+  svg:'<svg viewBox="0 0 400 240" role="img" aria-label="茶水間裡一名男子在水槽邊洗杯子，流理台上有一盆植物">' +
+      '<rect width="400" height="240" fill="#f2f6f3"/><rect y="192" width="400" height="48" fill="#dde5df"/>' +
+      '<rect x="24" y="40" width="120" height="46" rx="4" fill="#c6d3cb"/>' +
+      '<line x1="84" y1="40" x2="84" y2="86" stroke="#a9b8af" stroke-width="3"/>' +
+      '<rect x="20" y="146" width="360" height="14" rx="3" fill="#b9c7bf"/>' +
+      '<rect x="20" y="160" width="360" height="32" fill="#cdd9d2"/>' +
+      '<rect x="146" y="148" width="104" height="28" rx="4" fill="#8fa39a"/>' +
+      '<rect x="154" y="154" width="88" height="18" rx="3" fill="#6e837a"/>' +
+      // 水龍頭放在人的右側，不能被身體擋住 —— 擋住就看不出他在水槽邊
+      '<path d="M258 148 L258 116 Q258 108 246 108 L232 108" fill="none" stroke="#7d8f9e" stroke-width="7" stroke-linecap="round"/>' +
+      '<line x1="232" y1="114" x2="232" y2="152" stroke="#7fc6ec" stroke-width="5"/>' +
+      '<circle cx="186" cy="80" r="15" fill="#f4cba6"/>' +
+      '<path d="M171 78a15 15 0 0 1 30 0z" fill="#3b3229"/>' +
+      '<path d="M170 148 L170 102 Q186 92 202 102 L202 148 Z" fill="#4a7fb5"/>' +
+      '<path d="M200 112 L214 148" stroke="#f4cba6" stroke-width="9" stroke-linecap="round"/>' +
+      '<path d="M172 112 L182 148" stroke="#f4cba6" stroke-width="9" stroke-linecap="round"/>' +
+      '<circle cx="198" cy="152" r="9" fill="#ffffff" stroke="#c3cdd6" stroke-width="2"/>' +
+      '<rect x="300" y="122" width="30" height="24" rx="4" fill="#c98b5a"/>' +
+      '<path d="M315 122 C300 108 302 92 315 88 C328 92 330 108 315 122 Z" fill="#5aa02c"/>' +
+      '<path d="M315 120 C328 112 340 114 344 122 C336 130 322 128 315 120 Z" fill="#46a302"/>' +
+      '<rect x="52" y="126" width="18" height="20" rx="3" fill="#ffffff" stroke="#c3cdd6" stroke-width="2"/>' +
+      '<rect x="78" y="126" width="18" height="20" rx="3" fill="#ffffff" stroke="#c3cdd6" stroke-width="2"/></svg>',
+  opts:['He is drinking from a cup.',
+        'He is watering the plant.',
+        'He is washing cups at the sink.',
+        'The sink has been removed.'],
+  a:2,
+  zh:['他正在用杯子喝東西。','他正在幫植物澆水。','他正在水槽邊洗杯子。','水槽已經被拆掉了。'],
+  why:'男子雙手伸在水槽上方，水龍頭的水是開著的 → C。植物在流理台的另一端，他沒有碰到。'
+}
+
+];
+
+</script>
+<script>
+/* ===== data/toeic-p2-s2.js ===== */
+/* ==========================================================================
+   toeic-p2-s2.js — 多益 Part 2：應答問題（Stage 2）
+   --------------------------------------------------------------------------
+   Part 2 的送分關鍵不是聽懂整句，而是聽懂<b>開頭那一個字</b>：
+   Where 問地點、When 問時間、Who 問人、Why 問原因、How long 問多久。
+   所以誘答刻意放兩種最常見的陷阱：
+     1. WH 問句配 Yes / No 的回答（一定錯）
+     2. 用了問句裡出現過的字，但答非所問（同字陷阱）
+   ========================================================================== */
+window.DATA_RESPOND_S2 = [
+
+/* ---------------- U26 ---------------- */
+{
+  id:'q2601', u:'s2u1',
+  ask:'Have you finished the sales report?', askZh:'你把業績報告做完了嗎？',
+  opts:['Not yet, I need one more hour.',
+        'Yes, I have finished it yesterday.',
+        'It is on the third floor.'],
+  a:0,
+  zh:['還沒，我還需要一小時。','（文法錯）我昨天已經做完了。','在三樓。'],
+  why:'完成式的問句可以用 Not yet 回答。B 的 yesterday 不能和完成式並用，C 答的是地點。'
+},
+{
+  id:'q2602', u:'s2u1',
+  ask:'Where have you put the contract?', askZh:'你把合約放到哪裡了？',
+  opts:['Yes, I have.',
+        'On your desk, next to the printer.',
+        'About two hours ago.'],
+  a:1,
+  zh:['是的，我有。','在你桌上，印表機旁邊。','大約兩小時前。'],
+  why:'Where 問地點。WH 問句<b>不能</b>用 Yes / No 回答，C 回答的是時間。'
+},
+{
+  id:'q2603', u:'s2u1',
+  ask:'Has Ms. Lin approved the budget yet?', askZh:'林女士核准預算了嗎？',
+  opts:['She approved it this morning.',
+        'The budget is very large.',
+        'No, she has not approve.'],
+  a:0,
+  zh:['她今天早上核准了。','這筆預算很大。','（文法錯）不，她還沒核准。'],
+  why:'A 直接回答「已經核准，時間是今早」。B 只是重複 budget 這個字（同字陷阱），C 的 approve 應該用過去分詞 approved。'
+},
+{
+  id:'q2604', u:'s2u1',
+  ask:'How long have you worked here?', askZh:'你在這裡工作多久了？',
+  opts:['Since I graduated.',
+        'Yes, for a long time.',
+        'I work in the marketing department.'],
+  a:0,
+  zh:['從我畢業之後就在這裡了。','是的，很久了。','我在行銷部工作。'],
+  why:'How long 問時間長度，用 since / for 回答。B 用 Yes 開頭就錯了，C 答的是部門。'
+},
+{
+  id:'q2605', u:'s2u1',
+  ask:'Would you like coffee or tea?', askZh:'你要咖啡還是茶？',
+  opts:['Yes, please.',
+        'Tea, thanks.',
+        'In the break room.'],
+  a:1,
+  zh:['好的，麻煩你。','茶，謝謝。','在茶水間。'],
+  why:'A 或 B 的選擇疑問句要<b>選一個</b>，不能用 Yes / No 回答。'
+},
+
+/* ---------------- U27 ---------------- */
+{
+  id:'q2701', u:'s2u2',
+  ask:'When did you send the invitations?', askZh:'你什麼時候把邀請函寄出去的？',
+  opts:['I have already sent them.',
+        'Last Tuesday.',
+        'To all our clients.'],
+  a:1,
+  zh:['我已經寄出去了。','上週二。','寄給我們所有的客戶。'],
+  why:'When 問的是<b>哪一天</b>，要給時間點。A 雖然句子對，但沒回答「什麼時候」，C 回答的是對象。'
+},
+{
+  id:'q2702', u:'s2u2',
+  ask:'Why has the meeting been moved to Friday?', askZh:'會議為什麼改到星期五？',
+  opts:['To the tenth floor.',
+        'At three o\'clock.',
+        'Because the client\'s flight was delayed.'],
+  a:2,
+  zh:['到十樓。','三點鐘。','因為客戶的班機延誤了。'],
+  why:'Why 問原因，用 Because 回答。A 答地點、B 答時間 —— 兩個都被 moved 這個字誤導了。'
+},
+{
+  id:'q2703', u:'s2u2',
+  ask:'You have already met our new manager, haven\'t you?', askZh:'你已經見過我們的新經理了，對吧？',
+  opts:['Yes, we talked last week.',
+        'No, he has not.',
+        'The manager\'s office is upstairs.'],
+  a:0,
+  zh:['對，我們上週聊過。','不，他沒有。','經理的辦公室在樓上。'],
+  why:'附加問句問的是「你」，回答的主詞要是 I / we。B 的主詞變成 he 就對不上了。'
+},
+{
+  id:'q2704', u:'s2u2',
+  ask:'Who has the key to the storage room?', askZh:'誰有倉庫的鑰匙？',
+  opts:['It is next to the elevator.',
+        'Peter usually keeps it.',
+        'Since this morning.'],
+  a:1,
+  zh:['它在電梯旁邊。','通常在彼得那裡。','從今天早上開始。'],
+  why:'Who 問人，答案要是一個人。A 答地點、C 答時間。'
+},
+{
+  id:'q2705', u:'s2u2',
+  ask:'How many applications have we received so far?', askZh:'我們到目前為止收到幾份申請？',
+  opts:['Over fifty.',
+        'Yes, we have.',
+        'They applied online.'],
+  a:0,
+  zh:['五十多份。','是的，我們有。','他們是線上申請的。'],
+  why:'How many 問數量，答案要是數字。B 用 Yes 回答 WH 問句就錯了，C 答的是方式。'
+}
+
+];
+
+</script>
+<script>
 /* ===== data/achievements.js ===== */
 /* ==========================================================================
    achievements.js — 成就徽章
@@ -4541,15 +5189,19 @@ window.DATA_ACHIEVEMENTS = [
   }
 
   var VOCAB   = cat(global.DATA_VOCAB_S0,
-                    global.DATA_VOCAB_S1A, global.DATA_VOCAB_S1B, global.DATA_VOCAB_S1C);
-  var GRAMMAR = cat(global.DATA_GRAMMAR_S0, global.DATA_GRAMMAR_S1);
-  var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1);
+                    global.DATA_VOCAB_S1A, global.DATA_VOCAB_S1B, global.DATA_VOCAB_S1C,
+                    global.DATA_VOCAB_S2);
+  var GRAMMAR = cat(global.DATA_GRAMMAR_S0, global.DATA_GRAMMAR_S1, global.DATA_GRAMMAR_S2);
+  var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2);
+  var PHOTO   = cat(global.DATA_PHOTO_S2);      // 多益 Part 1：看圖聽描述
+  var RESPOND = cat(global.DATA_RESPOND_S2);    // 多益 Part 2：應答問題
   var PHONICS = global.DATA_PHONICS || {};
   var IRREG   = global.DATA_IRREGULAR || [];
   var CUR     = global.DATA_CURRICULUM || { stages: [], rules: {} };
 
   /* ---------- 索引 ---------- */
   var byId = {}, vocabByUnit = {}, grammarByUnit = {}, readingByUnit = {};
+  var photoByUnit = {}, respondByUnit = {};
   var unitById = {}, stageOfUnit = {}, unitOrder = [];
 
   VOCAB.forEach(function (v) {
@@ -4563,6 +5215,14 @@ window.DATA_ACHIEVEMENTS = [
   READING.forEach(function (r) {
     byId[r.id] = r;
     (readingByUnit[r.u] = readingByUnit[r.u] || []).push(r);
+  });
+  PHOTO.forEach(function (p) {
+    byId[p.id] = p;
+    (photoByUnit[p.u] = photoByUnit[p.u] || []).push(p);
+  });
+  RESPOND.forEach(function (q) {
+    byId[q.id] = q;
+    (respondByUnit[q.u] = respondByUnit[q.u] || []).push(q);
   });
   // 不規則動詞不綁關卡，但要能用 id 查回來（弱點怪獸需要）
   IRREG.forEach(function (iv) { byId[iv.id] = iv; });
@@ -4584,6 +5244,8 @@ window.DATA_ACHIEVEMENTS = [
   function vocabOf(uid)  { return vocabByUnit[uid] || []; }
   function grammarOf(uid){ return grammarByUnit[uid] || []; }
   function readingOf(uid){ return readingByUnit[uid] || []; }
+  function photoOf(uid)  { return photoByUnit[uid] || []; }
+  function respondOf(uid){ return respondByUnit[uid] || []; }
   function phonics(key)  { return PHONICS[key] || null; }
   function irregulars()  { return IRREG; }
   function allVocab()    { return VOCAB; }
@@ -4619,8 +5281,11 @@ window.DATA_ACHIEVEMENTS = [
     if (!u) return false;
     var st = stageOfUnit[uid];
     if (!st || !st.ready || !u.plan || !u.plan.length) return false;
+    // 純聽力關卡（多益 Part 1／Part 2）沒有單字也沒有文法，一樣算有內容
     var hasContent = (vocabByUnit[uid] && vocabByUnit[uid].length) ||
-                     (grammarByUnit[uid] && grammarByUnit[uid].length);
+                     (grammarByUnit[uid] && grammarByUnit[uid].length) ||
+                     (photoByUnit[uid] && photoByUnit[uid].length) ||
+                     (respondByUnit[uid] && respondByUnit[uid].length);
     return !!hasContent;
   }
 
@@ -4682,6 +5347,8 @@ window.DATA_ACHIEVEMENTS = [
       vocab: VOCAB.length,
       grammar: GRAMMAR.length,
       reading: READING.length,
+      photo: PHOTO.length,
+      respond: RESPOND.length,
       units: unitOrder.filter(isReady).length,
       unitsAll: unitOrder.length
     };
@@ -4690,6 +5357,7 @@ window.DATA_ACHIEVEMENTS = [
   global.Content = {
     unit: unit, stageOf: stageOf, stages: stages, rules: rules, item: item,
     vocabOf: vocabOf, grammarOf: grammarOf, readingOf: readingOf,
+    photoOf: photoOf, respondOf: respondOf,
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
     phonics: phonics, irregulars: irregulars,
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId,
@@ -5825,6 +6493,22 @@ window.DATA_ACHIEVEMENTS = [
       });
     }
 
+    /* --- 9.5 多益 Part 1／Part 2：題目自成一體，不從單字庫抽 --- */
+    if (plan.photo) {
+      var pics = Content.photoOf(unitId);
+      if (!pics.length) pics = Content.photoOf(Content.prevUnitId(unitId) || '');
+      SAMPLE(pics, plan.photo).forEach(function (p) {
+        body.push({ type: 'photo', ref: p, unitId: unitId });
+      });
+    }
+    if (plan.respond) {
+      var reps = Content.respondOf(unitId);
+      if (!reps.length) reps = Content.respondOf(Content.prevUnitId(unitId) || '');
+      SAMPLE(reps, plan.respond).forEach(function (r) {
+        body.push({ type: 'respond', ref: r, unitId: unitId });
+      });
+    }
+
     /* --- 10. 閱讀（放最後，當作這關的收尾） --- */
     if (plan.read) {
       var arts = Content.readingOf(unitId);
@@ -5881,6 +6565,8 @@ window.DATA_ACHIEVEMENTS = [
    *   grammar   記的是「文法點」，從它底下的題庫裡抽一題重問
    *   reading   記的是「文章」，整篇重讀一次
    *   irregular 記的是「動詞」，再問一次三態
+   *   photo     記的是「照片」，同一張再聽一次四個描述
+   *   respond   記的是「問句」，同一句再聽一次三個回應
    * 內容已經被移除（例如改版換了 id）就回傳 null。
    */
   function weakQuestion(w) {
@@ -5909,6 +6595,14 @@ window.DATA_ACHIEVEMENTS = [
     if (w.t === 'irregular') {
       return { type: 'irregular', ref: it, ask: (it.t !== 'A' && Math.random() < .4) ? 'pp' : 'p',
                unitId: w.u, weak: w.k };
+    }
+
+    if (w.t === 'photo') {
+      return { type: 'photo', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
+    if (w.t === 'respond') {
+      return { type: 'respond', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
     return null;
@@ -7593,6 +8287,240 @@ window.DATA_ACHIEVEMENTS = [
 })(window);
 
 </script>
+<script>
+/* ===== js/exercises/toeic.js ===== */
+/* ==========================================================================
+   exercises/toeic.js — 多益聽力題型
+     Ex.photo   Part 1 看圖聽描述（一張圖 + 四句描述，選出符合的那句）
+     Ex.respond Part 2 應答問題（一句問句 + 三個回應，選出最合適的）
+   --------------------------------------------------------------------------
+   這兩種題的訓練重點是「只靠耳朵」，所以選項文字預設不顯示 —— 印出來就變成
+   閱讀測驗了。但這是學習 App 不是模擬考，卡住的人可以按「顯示英文」把文字叫
+   出來；沒有 TTS 語音時也會自動顯示，否則整題無法作答。
+   ========================================================================== */
+(function (global) {
+  'use strict';
+
+  var esc = UI.esc;
+  var LETTERS = ['A', 'B', 'C', 'D'];
+
+  function noVoiceWarning() {
+    if (Speech.available()) return '';
+    return '<div class="warn-box">找不到英文語音，這一題先用文字作答。' +
+      '（Windows：設定 → 時間與語言 → 語音 → 新增語音 → English）</div>';
+  }
+
+  /**
+   * 依序朗讀多段文字，正在唸的那一項會亮起來。
+   * @returns {{stop:fn}} 控制器 —— 離開題目時要呼叫，否則語音會跟著跑到下一題
+   */
+  function playSeries(texts, nodes, onDone) {
+    var i = 0, stopped = false;
+
+    function unlight() {
+      nodes.forEach(function (n) { if (n) n.classList.remove('opt-playing'); });
+    }
+
+    function step() {
+      if (stopped) return;
+      if (i >= texts.length) { unlight(); if (onDone) onDone(); return; }
+      var n = nodes[i];
+      if (n) n.classList.add('opt-playing');
+      Speech.speak(texts[i]).then(function () {
+        if (stopped) return;
+        if (n) n.classList.remove('opt-playing');
+        i++;
+        setTimeout(step, 320);   // 選項之間留一點空隙，不然黏成一串聽不出斷句
+      });
+    }
+
+    step();
+    return { stop: function () { stopped = true; Speech.stop(); unlight(); } };
+  }
+
+  /** 「顯示英文」開關：預設藏起來，按了才露出 */
+  function revealControl(host, onToggle) {
+    var wrap = document.createElement('div');
+    wrap.className = 'center mt8';
+    wrap.innerHTML = '<button class="btn btn-ghost btn-sm" type="button">👁️ 顯示英文</button>';
+    var b = wrap.firstChild;
+    var shown = false;
+    b.addEventListener('click', function () {
+      shown = !shown;
+      b.innerHTML = shown ? '🙈 隱藏英文' : '👁️ 顯示英文';
+      onToggle(shown);
+    });
+    host.appendChild(wrap);
+    return wrap;
+  }
+
+  /**
+   * 兩種題型共用的骨架：一段音檔式的題幹 + 幾個只有字母的選項。
+   * @param cfg {{ intro, sub, head, lead, texts, answer, grade, detail, host, api, q }}
+   */
+  function audioChoice(cfg) {
+    var host = cfg.host, api = cfg.api, q = cfg.q;
+    var texts = cfg.texts;
+    var forceText = !Speech.available();
+    var player = null;
+
+    ExUtil.prompt(host, cfg.intro, cfg.sub);
+    host.insertAdjacentHTML('beforeend', noVoiceWarning() + (cfg.head || ''));
+
+    // 重播列：整組重播，或單獨重播某一個選項
+    var barHTML = '<div class="center" style="padding:6px 0">' +
+      '<button class="btn btn-primary" type="button" id="playall">🔊 播放</button>' +
+      '<div class="mt8 row" style="gap:6px;justify-content:center;flex-wrap:wrap" id="replay"></div>' +
+      '</div>';
+    host.insertAdjacentHTML('beforeend', barHTML);
+
+    var opts = texts.map(function (t, i) {
+      return {
+        html: '<span class="opt-letter">' + LETTERS[i] + '</span>' +
+              '<span class="opt-say" data-i="' + i + '">' +
+                '<span class="opt-text' + (forceText ? '' : ' is-hidden') + '">' + esc(t) + '</span>' +
+              '</span>'
+      };
+    });
+
+    var ctl = ExUtil.options(host, opts, { onPick: function () { api.enableCheck(true); } });
+    // 選項顯示 A–D（多益的編號方式），但鍵盤快捷仍是 1–4，所以只把數字藏起來
+    ctl.el.classList.add('opts-lettered');
+    ExUtil.bindKeys(ctl, api);
+    api.enableCheck(false);
+
+    // 單獨重播的小按鈕
+    var replay = UI.$('#replay', host);
+    texts.forEach(function (t, i) {
+      var b = document.createElement('button');
+      b.className = 'btn btn-ghost btn-sm';
+      b.type = 'button';
+      b.textContent = LETTERS[i];
+      b.addEventListener('click', function () {
+        if (player) player.stop();
+        player = playSeries([t], [ctl.nodes[i]]);
+      });
+      replay.appendChild(b);
+    });
+
+    if (!forceText) {
+      revealControl(host, function (shown) {
+        UI.$$('.opt-text, .ask-text', host).forEach(function (el) {
+          if (shown) el.classList.remove('is-hidden');
+          else el.classList.add('is-hidden');
+        });
+      });
+    }
+
+    function playAll() {
+      if (player) player.stop();
+      player = playSeries(cfg.lead ? [cfg.lead].concat(texts) : texts,
+                          cfg.lead ? [null].concat(ctl.nodes) : ctl.nodes);
+    }
+    UI.$('#playall', host).addEventListener('click', playAll);
+    api.onCleanup(function () { if (player) player.stop(); });
+
+    if (Speech.available()) setTimeout(playAll, 400);
+
+    api.ready(function () {
+      if (player) player.stop();
+      var picked = ctl.picked();
+      if (picked < 0) return;
+      var ok = picked === cfg.answer;
+      ctl.lock(cfg.answer);
+
+      // 作答後一律把文字露出來 —— 訂正時看不到原文等於白答
+      UI.$$('.opt-text', host).forEach(function (el) { el.classList.remove('is-hidden'); });
+
+      // 評分交給呼叫端做：弱點型別寫成字面值，才擋得住「新增型別忘了改
+      // scheduler.weakQuestion」——那個檢查是靠掃描原始碼的字串跑的
+      cfg.grade(ok);
+
+      api.result(ok, {
+        title: ok ? '答對了！' : '正確答案是 ' + LETTERS[cfg.answer],
+        detail: cfg.detail()
+      });
+    });
+  }
+
+  /** 作答後的對照表：四個選項的英文與中文一起列出來 */
+  function answerTable(texts, zhList, answer) {
+    return '<div class="opt-review">' + texts.map(function (t, i) {
+      return '<div class="opt-review-row' + (i === answer ? ' is-answer' : '') + '">' +
+        '<span class="opt-letter">' + LETTERS[i] + '</span>' +
+        Speech.btn(t, false, 'speak-inline') +
+        '<div><div class="sentence-en">' + esc(t) + '</div>' +
+        '<div class="sentence-zh">' + esc((zhList || [])[i] || '') + '</div></div>' +
+        '</div>';
+    }).join('') + '</div>';
+  }
+
+  /* ======================= Part 1：看圖聽描述 ======================= */
+  Ex.photo = {
+    scored: true,
+    render: function (q, host, api) {
+      var p = q.ref;
+
+      audioChoice({
+        host: host, api: api, q: q,
+        grade: function (ok) {
+          if (ok) SRS.clearWeak('photo', p.id);
+          else SRS.addWeak('photo', p.id, q.unitId || p.u);
+        },
+        intro: '看圖，選出最符合的描述',
+        sub: 'Part 1：四句描述只會唸一次，聽不清楚可以重播',
+        head: '<div class="photo-frame">' + p.svg + '</div>',
+        texts: p.opts,
+        answer: p.a,
+        detail: function () {
+          return answerTable(p.opts, p.zh, p.a) +
+            (p.why ? '<div class="check-detail">' + esc(p.why) + '</div>' : '');
+        }
+      });
+    }
+  };
+
+  /* ======================= Part 2：應答問題 ======================= */
+  Ex.respond = {
+    scored: true,
+    render: function (q, host, api) {
+      var r = q.ref;
+      var forceText = !Speech.available();
+
+      audioChoice({
+        host: host, api: api, q: q,
+        grade: function (ok) {
+          if (ok) SRS.clearWeak('respond', r.id);
+          else SRS.addWeak('respond', r.id, q.unitId || r.u);
+        },
+        intro: '聽問句，選出最適合的回應',
+        sub: 'Part 2：先聽懂開頭的疑問詞，答案通常就定了一半',
+        head: '<div class="ask-card">' +
+                '<div class="ask-label">問句</div>' +
+                Speech.btn(r.ask) +
+                '<div class="sentence-en ask-text' + (forceText ? '' : ' is-hidden') + '">' +
+                  esc(r.ask) + '</div>' +
+              '</div>',
+        lead: r.ask,
+        texts: r.opts,
+        answer: r.a,
+        detail: function () {
+          // 問句本身也要露出來，不然使用者不知道自己聽錯的是哪個字
+          UI.$$('.ask-text', host).forEach(function (el) { el.classList.remove('is-hidden'); });
+          return '<div class="opt-review-row is-ask">' +
+              Speech.btn(r.ask, false, 'speak-inline') +
+              '<div><div class="sentence-en">' + esc(r.ask) + '</div>' +
+              '<div class="sentence-zh">' + esc(r.askZh || '') + '</div></div>' +
+            '</div>' +
+            answerTable(r.opts, r.zh, r.a) +
+            (r.why ? '<div class="check-detail">' + esc(r.why) + '</div>' : '');
+        }
+      });
+    }
+  };
+})(window);
+
+</script>
 
 <!-- ===== 畫面層 ===== -->
 <script>
@@ -7812,6 +8740,9 @@ window.DATA_ACHIEVEMENTS = [
     if (doneN) cls += ' done';
     else if (isCur && unlocked) cls += ' current';
     if (!unlocked) cls += ' locked';
+    // 階段可以分批開放，所以同一個階段裡「還沒解鎖」和「根本還沒做」會並存。
+    // 兩者都畫成鎖頭的話，使用者會一路練上去撞牆卻不知道是撞到什麼。
+    if (!ready) cls += ' wip';
 
     var crown = rec && rec.lv ? '<span class="node-crown">' +
       (rec.lv >= 5 ? '👑' : '⭐'.repeat(Math.min(3, rec.s || 1))) + '</span>' : '';
@@ -7821,8 +8752,9 @@ window.DATA_ACHIEVEMENTS = [
     var learned = vocabTotal - unseen;
 
     return '<button class="' + cls + '" data-unit="' + u.id + '" ' +
-      (unlocked ? '' : 'disabled ') + 'title="' + esc(u.title) + '">' +
-      (unlocked ? (u.icon || '📘') : '🔒') + crown +
+      (unlocked ? '' : 'disabled ') +
+      'title="' + esc(u.title) + (ready ? '' : '（製作中）') + '">' +
+      (unlocked ? (u.icon || '📘') : (ready ? '🔒' : '🚧')) + crown +
       '<span class="node-label">' + u.n + '. ' + esc(shortTitle(u.title)) +
       (vocabTotal && unlocked ? '　<span class="tiny faint">' + learned + '/' + vocabTotal + '字</span>' : '') +
       '</span>' +

@@ -209,7 +209,7 @@ var Content = app.Content, Scheduler = app.Scheduler, SRS = app.SRS, State = app
    ========================================================================== */
 describe('資料完整性');
 
-var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular' };
+var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond' };
 var seen = {}, dupes = [], badPrefix = [];
 
 function checkIds(list, kind) {
@@ -220,14 +220,18 @@ function checkIds(list, kind) {
   });
 }
 checkIds(Content.allVocab(), 'vocab');
-var allGrammar = [], allReading = [];
+var allGrammar = [], allReading = [], allPhoto = [], allRespond = [];
 Content.orderedUnitIds().forEach(function (uid) {
   allGrammar = allGrammar.concat(Content.grammarOf(uid));
   allReading = allReading.concat(Content.readingOf(uid));
+  allPhoto = allPhoto.concat(Content.photoOf(uid));
+  allRespond = allRespond.concat(Content.respondOf(uid));
 });
 checkIds(allGrammar, 'grammar');
 checkIds(allReading, 'reading');
 checkIds(Content.irregulars(), 'irregular');
+checkIds(allPhoto, 'photo');
+checkIds(allRespond, 'respond');
 
 ok(dupes.length === 0, 'id 全域唯一（四種資料共用 byId 索引）' + (dupes.length ? '：' + dupes.slice(0, 5).join('、') : ''));
 ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
@@ -235,7 +239,7 @@ ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i）' + (badPrefix.
 var unitIds = {};
 Content.orderedUnitIds().forEach(function (u) { unitIds[u] = 1; });
 var orphan = [];
-Content.allVocab().concat(allGrammar, allReading).forEach(function (x) {
+Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond).forEach(function (x) {
   if (!unitIds[x.u]) orphan.push(x.id + ' → ' + x.u);
 });
 ok(orphan.length === 0, '每筆資料的 u 都指到存在的關卡' + (orphan.length ? '：' + orphan.slice(0, 5).join('、') : ''));
@@ -262,22 +266,54 @@ Content.irregulars().forEach(function (iv) {
 });
 ok(badIrr.length === 0, '不規則動詞三態齊全且與 t 分型相符' + (badIrr.length ? '：' + badIrr.slice(0, 5).join('、') : ''));
 
+// 多益 Part 1／Part 2：答案索引越界或中譯數量對不上，作答後的對照表就會缺一塊
+var badChoice = [];
+function checkChoice(list, kind, extra) {
+  list.forEach(function (x) {
+    if (!x.opts || x.opts.length < 3) badChoice.push(x.id + ' 選項不足');
+    else if (!(x.a >= 0 && x.a < x.opts.length)) badChoice.push(x.id + ' 的 a=' + x.a + ' 超出選項範圍');
+    if (x.zh && x.zh.length !== (x.opts || []).length) badChoice.push(x.id + ' 中譯數量與選項不符');
+    if (extra) extra(x);
+  });
+}
+checkChoice(allPhoto, 'photo', function (p) {
+  if (!/^<svg[\s>]/.test(p.svg || '')) badChoice.push(p.id + ' 缺少內嵌 SVG');
+  if ((p.svg || '').indexOf('</svg>') < 0) badChoice.push(p.id + ' 的 SVG 沒有收尾');
+});
+checkChoice(allRespond, 'respond', function (r) {
+  if (!r.ask) badChoice.push(r.id + ' 沒有問句');
+});
+ok(badChoice.length === 0, 'Part 1／Part 2 題目的選項、答案索引與中譯齊全' +
+   (badChoice.length ? '：' + badChoice.slice(0, 5).join('、') : ''));
+
 /* ==========================================================================
    4. 課表與 plan
    ========================================================================== */
 describe('課表');
 
-var readyUnits = [], notReady = [];
+// 階段可以分批開放，所以「ready 階段裡有製作中的關卡」是正常的。
+// 真正的錯誤是：關卡寫了 plan（宣稱可玩）卻沒有內容 —— 那會鎖住而且沒人知道為什麼。
+var readyUnits = [], plannedButEmpty = [];
 Content.stages().forEach(function (st) {
   (st.units || []).forEach(function (u) {
-    if (st.ready) {
-      if (Content.isReady(u.id)) readyUnits.push(u.id);
-      else notReady.push(u.id);
-    }
+    if (!st.ready) return;
+    if (Content.isReady(u.id)) readyUnits.push(u.id);
+    else if (u.plan && u.plan.length) plannedButEmpty.push(u.id);
   });
 });
-ok(notReady.length === 0, 'ready 階段裡的每一關都真的有內容（' + readyUnits.length + ' 關）' +
-   (notReady.length ? '：' + notReady.join('、') + ' 會顯示「製作中」' : ''));
+ok(plannedButEmpty.length === 0, '有 plan 的關卡都真的有內容（可玩 ' + readyUnits.length + ' 關）' +
+   (plannedButEmpty.length ? '：' + plannedButEmpty.join('、') + ' 寫了 plan 卻會顯示「製作中」' : ''));
+ok(readyUnits.length > 0, '至少有一關可玩');
+
+// 解鎖是一條鏈：前一關沒過就進不了下一關，所以可玩的關卡必須從第一關起連續
+var order = Content.orderedUnitIds();
+var firstGap = -1, unreachable = [];
+order.forEach(function (uid, i) {
+  if (!Content.isReady(uid)) { if (firstGap < 0) firstGap = i; }
+  else if (firstGap >= 0) unreachable.push(uid);
+});
+ok(unreachable.length === 0, '可玩的關卡沒有被製作中的關卡卡住' +
+   (unreachable.length ? '：' + unreachable.join('、') + ' 永遠解鎖不了（前面有製作中的關卡）' : ''));
 
 // plan 出現 scheduler 不處理的題型 → 那些題會靜靜地不出現
 var schedSrc = fs.readFileSync(path.join(ROOT, 'js/scheduler.js'), 'utf8');
@@ -305,7 +341,7 @@ listJs('js/exercises').forEach(function (rel) {
     exTypes[m.replace(/^\s*Ex\./, '').replace(/\s*=$/, '')] = 1;
   });
 });
-eq(Object.keys(exTypes).length, 12, '註冊了 12 種題型');
+eq(Object.keys(exTypes).length, 14, '註冊了 14 種題型');
 
 var emptyLesson = [], badType = [];
 readyUnits.forEach(function (uid) {
@@ -361,7 +397,9 @@ var samples = {
   vocab: (Content.allVocab()[0] || {}).id,
   grammar: (allGrammar.filter(function (g) { return (g.qs || []).length; })[0] || {}).id,
   reading: (allReading[0] || {}).id,
-  irregular: (Content.irregulars()[0] || {}).id
+  irregular: (Content.irregulars()[0] || {}).id,
+  photo: (allPhoto[0] || {}).id,
+  respond: (allRespond[0] || {}).id
 };
 Object.keys(weakTypes).forEach(function (t) {
   var refId = samples[t];

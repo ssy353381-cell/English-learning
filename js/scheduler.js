@@ -232,6 +232,22 @@
       });
     }
 
+    /* --- 9.5 多益 Part 1／Part 2：題目自成一體，不從單字庫抽 --- */
+    if (plan.photo) {
+      var pics = Content.photoOf(unitId);
+      if (!pics.length) pics = Content.photoOf(Content.prevUnitId(unitId) || '');
+      SAMPLE(pics, plan.photo).forEach(function (p) {
+        body.push({ type: 'photo', ref: p, unitId: unitId });
+      });
+    }
+    if (plan.respond) {
+      var reps = Content.respondOf(unitId);
+      if (!reps.length) reps = Content.respondOf(Content.prevUnitId(unitId) || '');
+      SAMPLE(reps, plan.respond).forEach(function (r) {
+        body.push({ type: 'respond', ref: r, unitId: unitId });
+      });
+    }
+
     /* --- 10. 閱讀（放最後，當作這關的收尾） --- */
     if (plan.read) {
       var arts = Content.readingOf(unitId);
@@ -288,6 +304,8 @@
    *   grammar   記的是「文法點」，從它底下的題庫裡抽一題重問
    *   reading   記的是「文章」，整篇重讀一次
    *   irregular 記的是「動詞」，再問一次三態
+   *   photo     記的是「照片」，同一張再聽一次四個描述
+   *   respond   記的是「問句」，同一句再聽一次三個回應
    * 內容已經被移除（例如改版換了 id）就回傳 null。
    */
   function weakQuestion(w) {
@@ -316,6 +334,14 @@
     if (w.t === 'irregular') {
       return { type: 'irregular', ref: it, ask: (it.t !== 'A' && Math.random() < .4) ? 'pp' : 'p',
                unitId: w.u, weak: w.k };
+    }
+
+    if (w.t === 'photo') {
+      return { type: 'photo', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
+    if (w.t === 'respond') {
+      return { type: 'respond', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
     return null;
