@@ -37,7 +37,7 @@ window.DATA_VOCAB_S2B = [
 {id:'v0964',w:'involve',kk:'ɪnˈvɑlv',pos:'v.',zh:'牽涉・包含',ic:'🔗',u:'s2u4',ex:[['The job involves traveling a lot.','這份工作要常出差。'],['The plan involves hiring two engineers.','這個計畫包含聘兩位工程師。']]},
 {id:'v0965',w:'dislike',kk:'dɪsˈlaɪk',pos:'v.',zh:'不喜歡',ic:'👎',u:'s2u4',ex:[['I dislike waiting in long lines.','我討厭排很長的隊。'],['She dislikes being interrupted.','她不喜歡被打斷。']]},
 {id:'v0966',w:'appreciate',kk:'əˈpriʃɪˌet',pos:'v.',zh:'感謝・欣賞',ic:'🙏',u:'s2u4',ex:[['I appreciate your help.','謝謝你的幫忙。'],['We appreciate you sending the file so quickly.','感謝你這麼快把檔案寄來。']]},
-{id:'v0967',w:'spend',kk:'spɛnd',pos:'v.',zh:'花費（時間・金錢）',ic:'⏳',u:'s2u4',ex:[['I spend two hours reading every night.','我每晚花兩小時閱讀。'],['We spent the morning checking the data.','我們花了整個早上核對資料。']]},
+{id:'v0967',w:'spend',kk:'spɛnd',pos:'v.',zh:'花費（時間・金錢）',ic:'⏳',u:'s2u4',lure:['cost','pay','take'],ex:[['I spend two hours reading every night.','我每晚花兩小時閱讀。'],['We spent the morning checking the data.','我們花了整個早上核對資料。']]},
 {id:'v0968',w:'worth',kk:'wɝθ',pos:'adj./n.',zh:'值得・價值',ic:'💎',u:'s2u4',ex:[['This movie is worth watching twice.','這部電影值得看兩次。'],['The trip was worth taking.','這趟出差很值得。']]},
 {id:'v0969',w:'habit',kk:'ˈhæbɪt',pos:'n.',zh:'習慣',ic:'🔁',u:'s2u4',ex:[['Reading before bed is a good habit.','睡前閱讀是好習慣。'],['He has a habit of checking email twice a day.','他習慣一天收兩次信。']]},
 {id:'v0970',w:'hobby',kk:'ˈhɑbɪ',pos:'n.',zh:'嗜好',ic:'🎨',u:'s2u4',ex:[['My hobby is taking photos.','我的嗜好是拍照。'],['Her hobby became her career.','她的嗜好變成了職業。']]},

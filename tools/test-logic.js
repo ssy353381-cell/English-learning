@@ -256,9 +256,51 @@ Content.allVocab().forEach(function (v) {
   if (!v.w || !v.zh || !v.pos || !v.u) badVocab.push(v.id + ' 缺欄位');
   (v.ex || []).forEach(function (p) {
     if (!Array.isArray(p) || p.length < 2 || !p[0] || !p[1]) badVocab.push(v.id + ' 例句格式錯誤');
+    else if (p[2] !== undefined && !Array.isArray(p[2])) badVocab.push(v.id + ' 例句的誘答不是陣列');
   });
 });
 ok(badVocab.length === 0, '單字欄位齊全、例句為 [英, 中]' + (badVocab.length ? '：' + badVocab.slice(0, 5).join('、') : ''));
+
+/* ---------- 刻意誘答 ----------
+   誘答寫壞不會噴錯，只會靜靜地變回隨機字或（更糟）產生兩個都對的選項。 */
+var badLure = [];
+function tokWords(s) { return s.toLowerCase().replace(/[^a-z'\- ]/g, '').split(/\s+/); }
+
+Content.allVocab().forEach(function (v) {
+  if (v.lure !== undefined) {
+    if (!Array.isArray(v.lure) || !v.lure.length) { badLure.push(v.id + ' 的 lure 不是非空陣列'); return; }
+    var seenL = {};
+    v.lure.forEach(function (w) {
+      if (typeof w !== 'string' || !w.trim()) { badLure.push(v.id + ' 的 lure 有空值'); return; }
+      if (seenL[w]) badLure.push(v.id + ' 的 lure 重複列了 ' + w);
+      seenL[w] = 1;
+      if (w.toLowerCase() === v.w.toLowerCase()) badLure.push(v.id + ' 拿自己 ' + w + ' 當誘答');
+      // 字庫裡查不到的誘答仍可用於排句字塊，但同形／同義的會被 distractors 的守衛
+      // 丟掉 —— 寫了等於沒寫，而且沒有任何跡象
+      var hit = Content.wordItem(w);
+      if (hit && (hit.w === v.w || hit.zh === v.zh)) {
+        badLure.push(v.id + '（' + v.w + '）的誘答 ' + w + ' 與它同形或同義，永遠不會被採用');
+      }
+    });
+  }
+  // 句級誘答如果本來就在句子裡，排句題會多出一個正確解
+  (v.ex || []).forEach(function (p) {
+    if (!Array.isArray(p[2])) return;
+    var inSent = {};
+    tokWords(String(p[0])).forEach(function (t) { inSent[t] = 1; });
+    p[2].forEach(function (w) {
+      if (typeof w !== 'string' || !w.trim()) { badLure.push(v.id + ' 的例句誘答有空值'); return; }
+      if (inSent[w.toLowerCase()]) {
+        badLure.push(v.id + ' 的例句誘答 ' + w + ' 已經在句子裡，排句題會有兩個解');
+      }
+    });
+  });
+});
+ok(badLure.length === 0, '刻意誘答（lure）都是可用的' +
+   (badLure.length ? '：' + badLure.slice(0, 5).join('、') : ''));
+
+var lureWords = Content.allVocab().filter(function (v) { return v.lure; }).length;
+ok(lureWords > 0, '有標記刻意誘答的單字（' + lureWords + ' 個）');
 
 // t 分型不只是標籤：irregular 題會依它決定要不要問過去分詞（A 型問了沒鑑別度）
 var badIrr = [];
@@ -388,6 +430,98 @@ var onlyIntro = readyUnits.filter(function (uid) {
   return Scheduler.buildLesson(uid).every(function (q) { return q.type === 'intro'; });
 });
 ok(onlyIntro.length === 0, '沒有只剩教學卡的關卡' + (onlyIntro.length ? '：' + onlyIntro.join('、') : ''));
+
+/* ==========================================================================
+   5.5 誘答
+   選項與字塊裡「錯的那些」決定一題有沒有鑑別度。這一段全部是無聲的失效：
+   誘答挑錯不會噴錯，只會讓題目變簡單，或變成兩個答案都對。
+   ========================================================================== */
+describe('誘答');
+
+// 同義字當誘答 = 兩個都對（job 與 work 的 zh 都是「工作」）。
+// 隨機抽樣只會偶爾撞到，所以直接把「目標 + 它的同義字」當候選池餵進去：
+// 守衛沒擋住就一定會抽到那一個，這樣才是每次都會紅的檢查。
+var byZhMap = {}, byWMap = {};
+Content.allVocab().forEach(function (v) {
+  (byZhMap[v.zh] = byZhMap[v.zh] || []).push(v);
+  (byWMap[v.w] = byWMap[v.w] || []).push(v);
+});
+var twins = [];
+[byZhMap, byWMap].forEach(function (map) {
+  for (var k in map) {
+    if (Object.prototype.hasOwnProperty.call(map, k) && map[k].length > 1) {
+      twins.push([map[k][0], map[k][1]]);
+    }
+  }
+});
+var leaked = [];
+twins.forEach(function (p) {
+  Content.distractors(p[0], 1, [p[0], p[1]]).forEach(function (d) {
+    if (d.id === p[1].id) leaked.push(p[0].w + '「' + p[0].zh + '」配上 ' + p[1].w + '「' + p[1].zh + '」');
+  });
+});
+ok(twins.length > 0, '資料裡有同形／同義的字組（' + twins.length + ' 組），守衛不是空轉');
+ok(leaked.length === 0, '同義字不會被當成誘答（選項不會兩個都對）' +
+   (leaked.length ? '：' + leaked.slice(0, 3).join('、') : ''));
+
+var selfLure = Content.allVocab().filter(function (v) {
+  return Content.distractors(v, 3).some(function (d) { return d.id === v.id; });
+});
+ok(selfLure.length === 0, '誘答不會包含正確答案本身' +
+   (selfLure.length ? '：' + selfLure.slice(0, 3).map(function (v) { return v.id; }).join('、') : ''));
+
+// 有標 lure 的字，誘答要真的用上它 —— 否則整份誘答表等於沒接
+var lureSample = Content.allVocab().filter(function (v) { return v.lure && v.lure.length; });
+var lureMissed = lureSample.filter(function (v) {
+  var got = Content.distractors(v, 3).map(function (d) { return d.w.toLowerCase(); });
+  return !v.lure.some(function (w) { return got.indexOf(w.toLowerCase()) >= 0; });
+});
+ok(lureMissed.length === 0, '標了 lure 的字，選項一定包含刻意誘答' +
+   (lureMissed.length ? '：' + lureMissed.slice(0, 5).map(function (v) { return v.id + ' ' + v.w; }).join('、') : ''));
+
+// 排句字塊：誘答不能是句子裡本來就有的字，否則會排得出第二個正確解
+var dupTok = [];
+Content.orderedUnitIds().filter(Content.isReady).forEach(function (uid) {
+  Scheduler.sentencesFrom(Content.vocabOf(uid)).forEach(function (s) {
+    var correct = ExUtil.tokenize(s.en);
+    var norm = {};
+    correct.forEach(function (t) { norm[t.toLowerCase().replace(/[^a-z'\-]/g, '')] = 1; });
+    Content.tokenLures(s, correct, { n: 2, unitId: uid }).forEach(function (w) {
+      if (norm[w.toLowerCase()]) dupTok.push(uid + '「' + s.en + '」→ ' + w);
+      if (/\s/.test(w)) dupTok.push(uid + '「' + s.en + '」的字塊 ' + w + ' 有空格');
+    });
+  });
+});
+ok(dupTok.length === 0, '排句誘答字塊不會與句子裡的字重複' +
+   (dupTok.length ? '（' + dupTok.length + ' 筆）：' + dupTok.slice(0, 3).join('、') : ''));
+
+// 上面那一輪掃的是現有資料，而現有資料本來就是乾淨的 —— 守衛本身要單獨戳一次，
+// 否則哪天它被拿掉，掃描還是全綠。
+var guardEn = 'She teaches English.';
+var guarded = Content.tokenLures(
+  { en: guardEn, lure: ['English', 'studies'] }, ExUtil.tokenize(guardEn), { n: 2, random: false });
+ok(guarded.indexOf('English') < 0 && guarded.indexOf('studies') >= 0,
+   '句子裡已經有的字會被踢出誘答字塊（得到 ' + JSON.stringify(guarded) + '）');
+
+var phraseEn = 'Please close the door.';
+var phraseOut = Content.tokenLures(
+  { en: phraseEn, lure: ['turn off', 'opens'] }, ExUtil.tokenize(phraseEn), { n: 2, random: false });
+ok(phraseOut.indexOf('turn off') < 0 && phraseOut.indexOf('opens') >= 0,
+   '有空格的片語不會被排進字塊（得到 ' + JSON.stringify(phraseOut) + '）');
+
+// 句級誘答優先於字級：例句寫了形態正確的版本，就不該被原形蓋過
+var sentLure = null;
+Content.allVocab().some(function (v) {
+  return (v.ex || []).some(function (p) {
+    if (Array.isArray(p[2]) && p[2].length) { sentLure = { v: v, p: p }; return true; }
+    return false;
+  });
+});
+if (sentLure) {
+  var sObj = { en: sentLure.p[0], zh: sentLure.p[1], from: sentLure.v.id, lure: sentLure.p[2] };
+  var got = Content.tokenLures(sObj, ExUtil.tokenize(sObj.en), { n: 1, unitId: sentLure.v.u });
+  eq(got[0], sentLure.p[2][0], '句級誘答優先於字級誘答（' + sentLure.v.w + '）');
+}
 
 /* ==========================================================================
    6. 跳關測驗

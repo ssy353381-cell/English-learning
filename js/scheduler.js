@@ -52,7 +52,8 @@
         var wc = en.split(/\s+/).length;
         if (opts.maxWords && wc > opts.maxWords) return;
         if (opts.minWords && wc < opts.minWords) return;
-        out.push({ en: en, zh: zh, from: v.id, kind: i === 0 ? 'daily' : 'work' });
+        // pair[2] 是這句專用的誘答字塊，沒寫就是 undefined（舊資料一律如此）
+        out.push({ en: en, zh: zh, from: v.id, kind: i === 0 ? 'daily' : 'work', lure: pair[2] });
       });
     });
     return out;
@@ -63,7 +64,7 @@
     var out = [];
     Content.grammarOf(unitId).forEach(function (g) {
       (g.sents || []).forEach(function (p) {
-        out.push({ en: p[0], zh: p[1], from: g.id, kind: 'grammar' });
+        out.push({ en: p[0], zh: p[1], from: g.id, kind: 'grammar', lure: p[2] });
       });
     });
     return out;
