@@ -886,6 +886,86 @@ ok(wr && wr.entry.zh.indexOf('保固') >= 0,
    '手寫層蓋掉自動層（warranty 是保固，不是字典排第一的「正當理由」）');
 ok(wr && wr.entry.note, '手寫層帶得出延伸用法');
 
+/* 手寫層是為了改詞義與補例句才存在的，不該連帶把自動層的音標、英英與詞形變化
+   一起蓋掉 —— 那樣「把字搬進 lexicon-core.js」這個補例句的標準做法，
+   等於每補一個字就讓那個字的卡片變薄一半。 */
+/* 自動層是原始字串陣列，合併時不會被改到，拿它當「本來有什麼」的基準 */
+var autoRaw = {};
+for (var lvA = 1; lvA <= 6; lvA++) {
+  (app['DATA_LEXICON_' + lvA] || []).forEach(function (rec) {
+    var f = String(rec).split('\t');
+    autoRaw[f[0].toLowerCase()] = { ph: f[3] || '', en: f[4] || '', fm: f[5] || '', tag: f[6] || '' };
+  });
+}
+function hasForm(e) {
+  for (var k in e.forms) { if (Object.prototype.hasOwnProperty.call(e.forms, k)) return true; }
+  return false;
+}
+var thin = { kk: [], en: [], forms: [] };
+lexAll.forEach(function (e) {
+  if (e.src !== 'core') return;
+  var raw = autoRaw[e.w.toLowerCase()];
+  if (!raw) return;                       // 自動層根本沒收這個字，沒得補
+  if (raw.ph && !e.kk) thin.kk.push(e.w);
+  if (raw.en && !e.en) thin.en.push(e.w);
+  if (raw.fm && !hasForm(e)) thin.forms.push(e.w);
+});
+ok(thin.kk.length === 0, '手寫層沒寫音標時，自動層的音標補得回來' +
+   (thin.kk.length ? '：' + thin.kk.slice(0, 5).join('、') : ''));
+ok(thin.en.length === 0, '手寫層沒寫英英解釋時，自動層的補得回來' +
+   (thin.en.length ? '：' + thin.en.slice(0, 5).join('、') : ''));
+ok(thin.forms.length === 0, '手寫層沒寫詞形變化時，自動層的補得回來' +
+   (thin.forms.length ? '：' + thin.forms.slice(0, 5).join('、') : ''));
+var bal = Lexicon.lookup('balance');
+ok(bal && bal.entry.forms && bal.entry.forms.p === 'balanced',
+   '手寫層的字也吃得到自動層的詞形變化（balance → balanced）');
+// 挑 curricula 而不是 balancing：後者 ruleForms() 自己就推得出來，
+// 補沒補回來都會過，等於白測。不規則複數只有自動層那筆給得出。
+var curForm = Lexicon.lookup('curricula');
+ok(curForm && curForm.entry.w === 'curriculum',
+   '補回來的詞形變化真的進了索引（查 curricula 回得到 curriculum）');
+
+/* biz 標籤決定一個字進不進「商務主題」那批特訓。手寫時漏標，
+   那個字就從那批裡消失了 —— 自動層標過的一定要留著。 */
+var tagLost = [];
+lexAll.forEach(function (e) {
+  if (e.src !== 'core') return;
+  var raw = autoRaw[e.w.toLowerCase()];
+  if (raw && /(^| )biz( |$)/.test(raw.tag) && (e.tags || []).indexOf('biz') < 0) tagLost.push(e.w);
+});
+ok(tagLost.length === 0, '自動層標過 biz 的字，進了手寫層也還在商務主題裡' +
+   (tagLost.length ? '：' + tagLost.slice(0, 5).join('、') : ''));
+
+/* 手寫層存在的理由就是例句 —— 少寫一句，那個字留在自動層還比較好 */
+var exBad = [];
+(app.DATA_LEXICON_CORE || []).forEach(function (v) {
+  if (!v.ex || v.ex.length < 2) { exBad.push(v.w + ' 例句不足兩句'); return; }
+  v.ex.forEach(function (p) {
+    if (!p || !p[0] || !p[1]) exBad.push(v.w + ' 例句缺英文或中譯');
+  });
+});
+ok(exBad.length === 0, '手寫層每一筆都有日常與職場兩句中英對照例句' +
+   (exBad.length ? '：' + exBad.slice(0, 5).join('、') : ''));
+
+/* 商務字是這個 App 的目標，一個例句都給不出來的商務字就是查了也學不到東西 */
+var bizDry = [];
+Lexicon.byTag('biz').forEach(function (e) {
+  var has = (e.ex || []).some(function (p) { return p && p[0]; }) || e.use;
+  if (!has) bizDry.push(e.w);
+});
+ok(bizDry.length === 0, '商務標籤的字都給得出例句（' + Lexicon.byTag('biz').length + ' 字）' +
+   (bizDry.length ? '，還缺 ' + bizDry.length + '：' + bizDry.slice(0, 8).join('、') : ''));
+
+/* 第 1 級是詞頻最高的那一批，interest、case、power 這種一字多義的字沒有例句，
+   詞義欄裡並排的三四個意思就分不出哪個常用在哪裡。這一級已經補完，別讓它退回去。 */
+var lv1Dry = [];
+Lexicon.byLevel(1).forEach(function (e) {
+  var has = (e.ex || []).some(function (p) { return p && p[0]; }) || e.use;
+  if (!has) lv1Dry.push(e.w);
+});
+ok(lv1Dry.length === 0, '第 1 級的字都給得出例句（' + Lexicon.byLevel(1).length + ' 字）' +
+   (lv1Dry.length ? '，還缺 ' + lv1Dry.length + '：' + lv1Dry.slice(0, 8).join('、') : ''));
+
 // 手寫層碰上課程已經教過的字：詞義以課程為準，但延伸用法要補上去
 var ad = Lexicon.lookup('address');
 ok(ad && ad.entry.u, 'address 用的是課程那筆（有綁關卡）');
