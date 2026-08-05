@@ -172,6 +172,16 @@
       });
     }
 
+    /* --- 3.65 最小音對：把 phonics 教過的音考回來 --- */
+    if (plan.phoneme) {
+      // 魔王關（s0u5）自己沒有音對，往前把學過的都收進來混考
+      var mp = Content.minPairsOf(unitId);
+      if (!mp.length) mp = Content.minPairsUpTo(unitId);
+      SAMPLE(mp, plan.phoneme).forEach(function (m) {
+        body.push({ type: 'phoneme', ref: m, unitId: unitId });
+      });
+    }
+
     /* --- 3.7 搭配詞 --- */
     if (plan.collocate) {
       // 從「這一關以及之前」的字裡抽，不限這關新教的 —— take a break 這種搭配
@@ -383,8 +393,17 @@
    *   irregular 記的是「動詞」，再問一次三態
    *   photo     記的是「照片」，同一張再聽一次四個描述
    *   respond   記的是「問句」，同一句再聽一次三個回應
+   *   phoneme   記的是「音對整組」，再抽一個字聽一次
    * 內容已經被移除（例如改版換了 id）就回傳 null。
    */
+  /**
+   * 文法點的一句話概念。複習、每日挑戰、弱點怪獸都不會經過教學卡 —— 題目直接
+   * 蓋臉丟過來，答錯了也只知道自己錯，不知道規則是什麼。關卡裡不給（前面才剛教完）。
+   */
+  function scaffoldOf(g) {
+    return (g && g.teach && g.teach.lead) ? g.teach.lead : '';
+  }
+
   function weakQuestion(w) {
     var it = Content.item(w.r);
     if (!it) return null;
@@ -401,7 +420,7 @@
       var quick = qs.filter(function (q) { return q.k === 'mc' || q.k === 'cloze'; });
       var q = PICK(quick.length ? quick : qs);
       return { type: q.k === 'cloze' ? 'cloze' : 'grammar', ref: q, g: it,
-               unitId: w.u || it.u, weak: w.k };
+               unitId: w.u || it.u, weak: w.k, scaffold: scaffoldOf(it) };
     }
 
     if (w.t === 'reading') {
@@ -419,6 +438,11 @@
 
     if (w.t === 'respond') {
       return { type: 'respond', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
+    // 音對記的是「整組」，重問時題型模組會自己再抽一個字，不會每次都考同一個
+    if (w.t === 'phoneme') {
+      return { type: 'phoneme', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
     return null;
@@ -489,7 +513,8 @@
       });
     });
     SAMPLE(gPool, Math.min(4, Math.floor(size * 0.4))).forEach(function (x) {
-      out.push({ type: x.q.k === 'cloze' ? 'cloze' : 'grammar', ref: x.q, g: x.g, unitId: x.u, challenge: true });
+      out.push({ type: x.q.k === 'cloze' ? 'cloze' : 'grammar', ref: x.q, g: x.g, unitId: x.u,
+                 challenge: true, scaffold: scaffoldOf(x.g) });
     });
 
     // 剩下的名額用單字題填滿，三種型態輪替

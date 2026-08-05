@@ -43,7 +43,7 @@
 
 `Ex[type] = { scored: bool, render(q, host, api) }`。api：`ready(fn)` 設定檢查行為、`enableCheck(bool)`、`result(ok, opts)` 送出批改、`setContinue(text)` 供不計分卡片用、`onCleanup(fn)`。完整說明見 `exercises/common.js` 檔頭。
 
-現有 15 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond collocate。
+現有 16 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond collocate phoneme。
 
 `photo`（多益 Part 1 看圖聽描述）與 `respond`（Part 2 應答）在 `exercises/toeic.js`，共用一個「只靠耳朵作答」的骨架：選項文字預設 `display:none`，按「顯示英文」或作答後才出現。用 `display:none` 而非 `visibility:hidden` 是因為後者會保留折行高度，長選項的框變高等於用看的就知道哪個最長。沒有 TTS 語音時自動顯示文字，否則整題無法作答。
 
@@ -53,13 +53,13 @@
 
 `data/curriculum.js` 定義 Stage 0–6 共 75 關。關卡的 `plan` 只描述「出哪些題、各幾題」，挑哪些字句由 `scheduler.js` 決定。
 
-`Content.isReady(uid)` = `stage.ready` && 有 `plan` && **自己**有內容（vocab／grammar／reading／photo／respond 任一）。缺一即鎖住並顯示「製作中」。
+`Content.isReady(uid)` = `stage.ready` && 有 `plan` && **自己**有內容（vocab／grammar／reading／photo／respond／minpair 任一）。缺一即鎖住並顯示「製作中」。
 
-五種都要算進去，因為關卡的形態差很多：純聽力關（Part 1／Part 2）沒有單字也沒有文法；魔王關相反，題目全靠 `*UpTo()` 往前借，只有自己的短文。
+六種都要算進去，因為關卡的形態差很多：純聽力關（Part 1／Part 2）沒有單字也沒有文法；魔王關相反，題目全靠 `*UpTo()` 往前借，只有自己的短文。
 
 `stage.ready` 只代表階段開放，**關卡可以分批補**：沒有 `plan` 的關卡顯示「製作中」，同階段其他關卡照常可玩。但解鎖是一條鏈（前一關至少一星才開下一關），所以可玩的關卡必須從頭連續 —— 中間空一關，後面的就永遠解不開。
 
-資料 id 前綴必須互斥（vocab `v####`、grammar `g####`、reading `r####`、irregular `i####`、Part 1 `p####`、Part 2 `q####`）—— 共用同一個 `byId` 索引。
+資料 id 前綴必須互斥（vocab `v####`、grammar `g####`、reading `r####`、irregular `i####`、Part 1 `p####`、Part 2 `q####`、最小音對 `m####`）—— 共用同一個 `byId` 索引。
 
 ## 刻意誘答
 
@@ -91,6 +91,26 @@
 
 不規則動詞不綁關卡，用 `t` 分 A／B／C 三型（三態同形／過去式＝過去分詞／三態都不同）。關卡設 `irregular: true` 會得到一張教學卡，plan 加 `['irregular', n]` 會出三態練習。
 
+## 最小音對
+
+`phonics.js` 教了字母發什麼音，但一直沒有題目考回來 —— 聽力題考的是整個字的意思，拼字題是看中文拼，都不是「聽到這個音，它寫成哪個字母」。`phoneme` 補的就是這一段。
+
+**刻意不播孤立音素。** `speechSynthesis` 唸 `/æ/` 會去唸斜線，單獨的 `/b/` 在不同語音引擎行為也不一樣，而語音是使用者系統上剛好裝了什麼就用什麼（見 `speech.js` 的 `chooseVoice()`）。改成整個字照唸，但同一組的候選字只差一個位置，要答對還是只能靠那個音。
+
+`data/minimal-pairs.js` 的 `set` 是 `[單字, 標籤]`，標籤省略就用單字本身：短母音組選的是單一個字母（`['bag','a']`），魔法 e 組選的是整個字的拼法（`['cape']`）。標籤必須是那個單字裡真的有的一段，否則選項與答案對不起來 —— 有測試擋著。
+
+沒有 TTS 時降級成看字辨形（直接露出單字）。這時候題目確實變簡單了，但至少還在練字母與音的對應，不會整題卡死。
+
+配方只寫在 `plan`、**不寫進 `planVocab`** —— 選「先學單字」的人本來就是要跳過發音練習的。
+
+## 鷹架提示與時間軸
+
+兩件事都是為了「答錯的當下」，資料都可選。
+
+**鷹架** 複習、每日挑戰、弱點怪獸這三條路徑都不經過教學卡，題目直接蓋臉丟過來。`scheduler.scaffoldOf()` 把文法點的 `teach.lead` 掛成 `q.scaffold`，題型端用 `ExUtil.scaffold()` 印在題目上方。**關卡裡不掛** —— 教學卡前面才整頁講完，再貼一次是雜訊，這條有測試釘住。
+
+**時間軸** 文法點的 `tl` 是一串 `{a, b, t, hl}`：`a`／`b` 是 past／now／future，只寫 `a` 是一個時間點，寫了 `b` 是一段時間。答錯時才畫（`ExUtil.timelineHTML()`），畫在 `why` 後面。公式（主詞＋have＋p.p.）背得起來，但背不出「到現在為止」的時間感，而錯的那一刻正好是最需要看到它的時候。目前掛在七個時態文法點上。
+
 ## Stage 0 起步：取向與跳關測驗
 
 前五關（s0u1–s0u5）全是發音，而解鎖是一條鏈，已經有底子的人會被卡住。兩個機制解這件事，**都不碰 `isUnlocked`**。
@@ -113,6 +133,7 @@
 | irregular | 動詞 | 再問一次過去式或過去分詞 | 答對 |
 | photo | 照片 | 同一張再聽一次四個描述 | 答對 |
 | respond | 問句 | 同一句再聽一次三個回應 | 答對 |
+| phoneme | 音對整組 | 從整組再抽一個字聽一次 | 答對 |
 
 `scheduler.weakQuestion()` 負責型別→題目的映射。**新增型別必須同步改它**，否則怪獸進得了清單卻永遠出不了題、也永遠消不掉。`test-logic.js` 會掃 `SRS.addWeak()` 的字串參數比對 `weakQuestion` 有沒有接 —— 所以呼叫時型別要寫**字面值**，包在變數裡就掃不到了（見 `toeic.js` 把評分交回各題型做的原因）。
 
@@ -120,7 +141,7 @@
 
 ## SRS 範圍
 
-間隔重複**僅涵蓋單字**。文法、閱讀、不規則動詞不寫入 `State.data.srs`（`buildReview` 的到期迴圈要求項目有 `.w`），只透過弱點怪獸清單回鍋。
+間隔重複**僅涵蓋單字**。文法、閱讀、不規則動詞、發音不寫入 `State.data.srs`（`buildReview` 的到期迴圈要求項目有 `.w`），只透過弱點怪獸清單回鍋。
 
 ## 存檔
 
@@ -146,7 +167,7 @@
 |---|---|
 | `node tools/build.js` | 重新打包（`--check` 只驗不寫檔） |
 | `node tools/verify-bundle.js` | 單檔版與原始檔逐區塊比對 |
-| `node tools/test-logic.js` | `node --check`、ES5 語法、資料完整性、組題、誘答、跳關測驗、弱點怪獸對映、SRS 範圍、`matchAny` |
+| `node tools/test-logic.js` | `node --check`、ES5 語法、資料完整性、組題、誘答、搭配詞、最小音對、時間軸、鷹架、跳關測驗、弱點怪獸對映、SRS 範圍、`matchAny` |
 
 新增檢查時請一併確認「它真的會失敗」—— 故意改壞一個地方跑一次，不會紅的檢查沒有價值。
 
@@ -154,10 +175,11 @@
 
 - 可玩的是 Stage 0–2 共 35 關（1028 單字、27 文法點、54 篇短文、63 個不規則動詞、14 題 Part 1、22 題 Part 2）。Stage 2 已完整。
 - 單字的可選欄位目前覆蓋率還低：`lure` 55 個字、`col` 12 個字（29 組）、`rt` 32 個字。都是純加法，補資料不必動程式。
+- 最小音對 18 組（發音關 U2–U5）、時間軸 7 個文法點。
 - Stage 3–6 共 40 關僅有標題，`ready: false`。
 
 ## 下一步 TODO
 
 1. **Stage 3 的 10 關**（被動語態、商務字彙、Part 5 詞性判斷、Part 3/4 長對話）。Part 3/4 要新的 `Ex` 模組（一段長音檔配多題），不是補資料就能解決。
-2. **口說自動評分從未被實際執行**：驗證都跑在 `file://`，麥克風被擋，`Speech.listen()` 與 `scoreSpeech()` 這條路要走 Vercel preview 才驗得到。
+2. **兩條聲音的路都沒在真機上驗過**：驗證都跑在 `file://`。麥克風被擋，`Speech.listen()` 與 `scoreSpeech()` 要走 Vercel preview 才驗得到；`phoneme` 則是反過來 —— 邏輯與降級都測得到，但「TTS 唸出來的 bag／beg／big 到底分不分得出來」只有真機聽得出來，而語音是使用者系統上剛好裝了什麼就用什麼。
 3. **畫面層沒有自動檢查**：CI 只驗語法、資料與組題，`views/*`／`exercises/*` 的 render 全靠手動。要納入就得引入 Playwright，與零依賴衝突，先想清楚值不值得。

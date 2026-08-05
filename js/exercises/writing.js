@@ -99,6 +99,7 @@
       var answers = [c.a].concat(c.alt || []);
       var hasOpts = !!(c.opts && c.opts.length);
 
+      ExUtil.scaffold(host, q.scaffold);
       ExUtil.prompt(host, hasOpts ? '選出正確的字填進空格' : '把空格填完');
 
       var sentenceHTML = esc(c.q).replace(/_{2,}/g,
@@ -150,13 +151,14 @@
 
       function finish(ok, answerText, near) {
         if (q.g) ExUtil.gradeGrammar(q.g, ok, q.unitId);
+        var tl = (!ok && q.g) ? ExUtil.timelineHTML(q.g.tl) : '';
         var full = c._full || String(c.q).replace(/_{2,}/, answerText);
         api.result(ok, {
           title: ok ? '正確！' : (near ? '差一點點，拼字再看一次' : '正確答案是 ' + answerText),
           detail: '<div class="row" style="gap:8px">' + Speech.btn(full) +
             '<div><div class="sentence-en">' + esc(full) + '</div>' +
             (c.zh ? '<div class="sentence-zh">' + esc(c.zh) + '</div>' : '') + '</div></div>' +
-            (c.why ? '<div class="check-detail">' + c.why + '</div>' : '')
+            (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') + tl
         });
       }
     }

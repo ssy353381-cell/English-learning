@@ -465,6 +465,32 @@ body.in-lesson { padding-bottom: 0; }
 .col-chip .en { font-weight: 700; font-family: var(--font-en); }
 .col-zh { color: var(--text-soft); font-size: .82rem; margin-left: 8px; }
 
+/* ============ 鷹架提示 ============ */
+.scaffold {
+  background: var(--blue-soft); color: var(--blue-dark);
+  border-radius: var(--radius-sm); padding: 9px 12px;
+  font-size: .86rem; font-weight: 700; margin-bottom: 12px;
+}
+
+/* ============ 時態時間軸 ============ */
+/* 三欄對應 過去／現在／未來，標記用 grid-column 橫跨 —— 一段時間就是一條長條，
+   一個時間點就是一個短塊，這樣「持續到現在」跟「停在過去」用看的就分得出來 */
+.tl-box { margin-top: 10px; border-top: 2px dashed var(--border); padding-top: 10px; }
+.tl-axis {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  font-size: .7rem; font-weight: 800; color: var(--text-faint); text-align: center;
+  border-bottom: 2px solid var(--border); padding-bottom: 3px; margin-bottom: 6px;
+}
+.tl-row { display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: 5px; }
+.tl-row:last-child { margin-bottom: 0; }
+.tl-mark {
+  border-radius: 999px; padding: 3px 9px; font-size: .74rem; font-weight: 700;
+  background: var(--border); color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.tl-mark.pt { justify-self: center; min-width: 0; }
+.tl-mark.hl { background: var(--purple); color: #fff; }
+
 /* ============ 字根字首拆解 ============ */
 /* 排成積木是重點：ex- ＋ tract 看得出結構，寫成一行字就只是另一段說明 */
 .root-box {
@@ -831,7 +857,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 </style>
 </head>
 <body>
-<!-- 單檔打包版 build: 2026-08-05 02:30 -->
+<!-- 單檔打包版 build: 2026-08-05 02:40 -->
 
 <!-- ===== 頂部狀態列 ===== -->
 <header id="topbar" class="topbar">
@@ -896,6 +922,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
                發音表看 unit.phonics，不規則動詞表看 unit.irregular
      flashcard 單字卡學習（新字）。有這一項就會自動配拼字題，不必另外寫
      irregular 不規則動詞三態（原形 → 過去式 / 過去分詞）
+     phoneme   最小音對：聽一個字，選它是哪個音／哪種拼法（題目在 data/minimal-pairs.js）
      recall    看中文選英文 / 看英文選中文
      collocate 搭配詞：把詞組裡的動詞挖空（take a ___ break）。從這關以前學過的
                字裡抽有 col 的，不限這關新教的
@@ -938,25 +965,25 @@ window.DATA_CURRICULUM = {
       { id:'s0u2', n:2, title:'短母音 a e i o u', icon:'🅰️', boss:false,
         goal:'看到 cat / pen / sit / dog / cup 就能直接拼出聲音',
         phonics:'shortVowels',
-        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',2],['recall',4]],
+        plan:[['phoneme',3],['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',2],['recall',4]],
         planVocab:[['intro',1],['flashcard',11],['recall',5],['build',3],['listen',3],['dictate',2],['speak',1]] },
 
       { id:'s0u3', n:3, title:'子音組合 sh ch th ph ck', icon:'🔊', boss:false,
         goal:'兩個字母黏在一起會變成新的音，這關把五組最常見的搞定',
         phonics:'digraphs',
-        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]],
+        plan:[['phoneme',3],['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]],
         planVocab:[['intro',1],['flashcard',11],['recall',5],['build',3],['listen',3],['dictate',2],['speak',1]] },
 
       { id:'s0u4', n:4, title:'長母音與魔法 e', icon:'✨', boss:false,
         goal:'cap → cape、hop → hope：字尾多一個 e，母音就唸自己的名字',
         phonics:'magicE',
-        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]],
+        plan:[['phoneme',3],['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]],
         planVocab:[['intro',1],['flashcard',11],['recall',5],['build',3],['listen',3],['dictate',2],['speak',1]] },
 
       { id:'s0u5', n:5, title:'KK 音標與重音', icon:'📖', boss:true,
         goal:'看得懂字典裡的 [ ] 音標，並知道重音要放哪裡',
         phonics:'kk',
-        plan:[['intro',1],['flashcard',6],['listen',8],['recall',6],['speak',3],['dictate',4]],
+        plan:[['phoneme',2],['intro',1],['flashcard',6],['listen',8],['recall',6],['speak',3],['dictate',4]],
         planVocab:[['intro',1],['flashcard',11],['recall',6],['build',3],['listen',4],['dictate',2],['speak',1]] },
 
       { id:'s0u6', n:6, title:'詞性入門：名詞・動詞・形容詞', icon:'🧩', boss:false,
@@ -1522,6 +1549,54 @@ window.DATA_IRREGULAR = [
   { id:'i0061', t:'C', v:'fly',     p:'flew',      pp:'flown',     zh:'飛' },
   { id:'i0062', t:'C', v:'wear',    p:'wore',      pp:'worn',      zh:'穿' },
   { id:'i0063', t:'C', v:'forget',  p:'forgot',    pp:'forgotten', zh:'忘記' }
+];
+
+</script>
+<script>
+/* ===== data/minimal-pairs.js ===== */
+/* ==========================================================================
+   minimal-pairs.js — 最小音對（Stage 0 發音關）
+   --------------------------------------------------------------------------
+   phonics.js 教了「字母發什麼音」，但從來沒有題目考回來 —— 聽力題考的是整個字
+   的意思，拼字題是看中文拼，都不是「聽到這個音、它寫成哪個字母」。這裡補上。
+
+   刻意不播孤立音素：speechSynthesis 唸 /æ/ 會去唸斜線，單獨的 /b/ 在不同語音
+   引擎行為也不一樣，而語音是使用者系統上剛好裝了什麼就用什麼。改用最小音對 ——
+   整個字照唸，但四個候選字只差一個位置，要答對還是只能靠那一個音。
+
+   欄位：
+     id   m####（前綴與其他資料互斥，共用 byId 索引）
+     u    綁哪一關
+     ask  題目問法
+     set  [單字, 選項標籤]。標籤省略時就用單字本身當標籤 —— 魔法 e 那組要選的
+          是整個字的拼法（cap 還是 cape），短母音那組要選的是單一個字母。
+   ========================================================================== */
+window.DATA_MINPAIR = [
+
+/* ===================== U2　短母音：聽音辨字母 ===================== */
+{id:'m0001',u:'s0u2',ask:'中間的母音是哪一個字母？',set:[['bag','a'],['beg','e'],['big','i'],['bug','u']]},
+{id:'m0002',u:'s0u2',ask:'中間的母音是哪一個字母？',set:[['hat','a'],['hit','i'],['hot','o'],['hut','u']]},
+{id:'m0003',u:'s0u2',ask:'中間的母音是哪一個字母？',set:[['cap','a'],['cop','o'],['cup','u']]},
+{id:'m0004',u:'s0u2',ask:'中間的母音是哪一個字母？',set:[['pen','e'],['pin','i'],['pan','a']]},
+{id:'m0005',u:'s0u2',ask:'中間的母音是哪一個字母？',set:[['bed','e'],['bad','a'],['bud','u']]},
+{id:'m0006',u:'s0u2',ask:'中間的母音是哪一個字母？',set:[['tap','a'],['tip','i'],['top','o']]},
+
+/* ===================== U3　子音組合：聽音辨字母組合 ===================== */
+{id:'m0011',u:'s0u3',ask:'開頭是哪一個音？',set:[['thin','th'],['chin','ch'],['shin','sh'],['pin','p']]},
+{id:'m0012',u:'s0u3',ask:'開頭是哪一個音？',set:[['ship','sh'],['chip','ch'],['tip','t'],['dip','d']]},
+{id:'m0013',u:'s0u3',ask:'開頭是哪一個音？',set:[['shop','sh'],['chop','ch'],['top','t'],['pop','p']]},
+{id:'m0014',u:'s0u3',ask:'開頭是哪一個音？',set:[['phone','ph'],['bone','b'],['tone','t']]},
+{id:'m0015',u:'s0u3',ask:'結尾是哪一個音？',set:[['cash','sh'],['catch','ch'],['cat','t'],['cap','p']]},
+{id:'m0016',u:'s0u3',ask:'結尾是哪一個音？',set:[['bath','th'],['bat','t'],['back','ck']]},
+
+/* ===================== U4　長母音與魔法 e：聽音辨拼法 ===================== */
+{id:'m0021',u:'s0u4',ask:'你聽到的是哪一個字？',set:[['cap'],['cape'],['tap'],['tape']]},
+{id:'m0022',u:'s0u4',ask:'你聽到的是哪一個字？',set:[['hop'],['hope'],['not'],['note']]},
+{id:'m0023',u:'s0u4',ask:'你聽到的是哪一個字？',set:[['kit'],['kite'],['bit'],['bite']]},
+{id:'m0024',u:'s0u4',ask:'你聽到的是哪一個字？',set:[['pin'],['pine'],['win'],['wine']]},
+{id:'m0025',u:'s0u4',ask:'你聽到的是哪一個字？',set:[['rid'],['ride'],['hid'],['hide']]},
+{id:'m0026',u:'s0u4',ask:'你聽到的是哪一個字？',set:[['mad'],['made'],['plan'],['plane']]}
+
 ];
 
 </script>
@@ -3178,6 +3253,7 @@ window.DATA_GRAMMAR_S1 = [
 /* ============================================================ U11 現在式 */
 {
   id:'g1101', u:'s1u1', title:'一般動詞現在式',
+  tl:[{a:'past',b:'future',t:'平常一直都這樣',hl:1}],
   teach:{
     title:'現在式：習慣與事實',
     lead:'現在式不是「現在正在做」，而是「平常都這樣」。台灣人最常掉分的地方只有一個：第三人稱單數要加 -s。',
@@ -3280,6 +3356,7 @@ window.DATA_GRAMMAR_S1 = [
 /* ============================================================ U13 現在進行式 */
 {
   id:'g1301', u:'s1u3', title:'現在進行式 be + Ving',
+  tl:[{a:'now',t:'此刻正在進行',hl:1}],
   teach:{
     title:'正在進行：多益 Part 1 的核心',
     lead:'看圖題（Part 1）幾乎每一題都用這個時態，因為它描述「照片裡此刻正在發生的事」。這一關練熟，Part 1 就穩了。',
@@ -3330,6 +3407,7 @@ window.DATA_GRAMMAR_S1 = [
 /* ============================================================ U14 was / were */
 {
   id:'g1401', u:'s1u4', title:'過去的 be 動詞：was / were',
+  tl:[{a:'past',t:'那時候的狀態',hl:1}],
   teach:{
     title:'把 am / is / are 搬到過去',
     lead:'規則只有兩行，比現在式還簡單。難的是要習慣「講過去的事，動詞一定要變」— 中文沒有這個習慣，所以要刻意練。',
@@ -3380,6 +3458,7 @@ window.DATA_GRAMMAR_S1 = [
 /* ============================================================ U15 過去式（魔王） */
 {
   id:'g1501', u:'s1u5', title:'過去式與不規則動詞',
+  tl:[{a:'past',t:'做完了，跟現在無關',hl:1}],
   teach:{
     title:'第一道真正的門檻',
     lead:'規則動詞加 -ed 就好，難的是那些完全不照規則的。但好消息是：真正高頻的不規則動詞大約只有 60 個，背完就一輩子夠用。',
@@ -3445,6 +3524,7 @@ window.DATA_GRAMMAR_S1 = [
 /* ============================================================ U16 未來式 */
 {
   id:'g1601', u:'s1u6', title:'未來式 will / be going to',
+  tl:[{a:'future',t:'還沒發生',hl:1}],
   teach:{
     title:'兩種未來，差在「有沒有先想好」',
     lead:'中文都翻成「會、要」，但英文分得很清楚：臨時決定用 will，早就計畫好用 be going to。多益很愛考這個差別。',
@@ -4018,6 +4098,7 @@ window.DATA_GRAMMAR_S2 = [
 /* ================================================== U26 現在完成式 */
 {
   id:'g2601', u:'s2u1', title:'現在完成式 have / has + p.p.',
+  tl:[{a:'past',b:'now',t:'從過去一路算到現在',hl:1}],
   teach:{
     title:'現在完成式：過去發生，但重點在現在',
     lead:'中文沒有完成式，所以這個時態不能用翻譯來記。判斷方法只有一個：這件事「跟現在還有沒有關係」。有關係就用完成式，純粹講過去就用過去式。',
@@ -4078,6 +4159,7 @@ window.DATA_GRAMMAR_S2 = [
 /* ================================================== U27 完成式 vs 過去式 */
 {
   id:'g2701', u:'s2u2', title:'現在完成式 vs 過去簡單式',
+  tl:[{a:'past',b:'now',t:'現在完成式：算到現在為止',hl:1},{a:'past',t:'過去式：停在那個時間點'}],
   teach:{
     title:'完成式 vs 過去式：看句子裡有沒有「結案的時間」',
     lead:'兩個時態講的都是過去發生的事，差別只有一個：句子裡有沒有指明「那件事已經結束在某個時間點」。有明確的過去時間 → 過去式；沒有、或還連著現在 → 完成式。',
@@ -6176,13 +6258,14 @@ window.DATA_ACHIEVEMENTS = [
   var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2);
   var PHOTO   = cat(global.DATA_PHOTO_S2);      // 多益 Part 1：看圖聽描述
   var RESPOND = cat(global.DATA_RESPOND_S2);    // 多益 Part 2：應答問題
+  var MINPAIR = cat(global.DATA_MINPAIR);          // 最小音對：發音關唯一考得回來的題型
   var PHONICS = global.DATA_PHONICS || {};
   var IRREG   = global.DATA_IRREGULAR || [];
   var CUR     = global.DATA_CURRICULUM || { stages: [], rules: {} };
 
   /* ---------- 索引 ---------- */
   var byId = {}, byWord = {}, vocabByUnit = {}, grammarByUnit = {}, readingByUnit = {};
-  var photoByUnit = {}, respondByUnit = {};
+  var photoByUnit = {}, respondByUnit = {}, minPairByUnit = {};
   var unitById = {}, stageOfUnit = {}, unitOrder = [];
 
   VOCAB.forEach(function (v) {
@@ -6209,6 +6292,10 @@ window.DATA_ACHIEVEMENTS = [
     byId[q.id] = q;
     (respondByUnit[q.u] = respondByUnit[q.u] || []).push(q);
   });
+  MINPAIR.forEach(function (m) {
+    byId[m.id] = m;
+    (minPairByUnit[m.u] = minPairByUnit[m.u] || []).push(m);
+  });
   // 不規則動詞不綁關卡，但要能用 id 查回來（弱點怪獸需要）
   IRREG.forEach(function (iv) { byId[iv.id] = iv; });
 
@@ -6231,6 +6318,7 @@ window.DATA_ACHIEVEMENTS = [
   function readingOf(uid){ return readingByUnit[uid] || []; }
   function photoOf(uid)  { return photoByUnit[uid] || []; }
   function respondOf(uid){ return respondByUnit[uid] || []; }
+  function minPairsOf(uid){ return minPairByUnit[uid] || []; }
   function phonics(key)  { return PHONICS[key] || null; }
   function irregulars()  { return IRREG; }
   function allVocab()    { return VOCAB; }
@@ -6260,6 +6348,7 @@ window.DATA_ACHIEVEMENTS = [
     for (var i = 0; i <= idx; i++) out = out.concat(byUnit[unitOrder[i]] || []);
     return out;
   }
+  function minPairsUpTo(uid){ return upTo(minPairByUnit, MINPAIR, uid); }
   function photoUpTo(uid)   { return upTo(photoByUnit, PHOTO, uid); }
   function respondUpTo(uid) { return upTo(respondByUnit, RESPOND, uid); }
 
@@ -6296,7 +6385,8 @@ window.DATA_ACHIEVEMENTS = [
                      (grammarByUnit[uid] && grammarByUnit[uid].length) ||
                      (readingByUnit[uid] && readingByUnit[uid].length) ||
                      (photoByUnit[uid] && photoByUnit[uid].length) ||
-                     (respondByUnit[uid] && respondByUnit[uid].length);
+                     (respondByUnit[uid] && respondByUnit[uid].length) ||
+                     (minPairByUnit[uid] && minPairByUnit[uid].length);
     return !!hasContent;
   }
 
@@ -6435,6 +6525,7 @@ window.DATA_ACHIEVEMENTS = [
       reading: READING.length,
       photo: PHOTO.length,
       respond: RESPOND.length,
+      minpair: MINPAIR.length,
       units: unitOrder.filter(isReady).length,
       unitsAll: unitOrder.length
     };
@@ -6443,9 +6534,9 @@ window.DATA_ACHIEVEMENTS = [
   global.Content = {
     unit: unit, stageOf: stageOf, stages: stages, rules: rules, item: item,
     vocabOf: vocabOf, grammarOf: grammarOf, readingOf: readingOf,
-    photoOf: photoOf, respondOf: respondOf,
+    photoOf: photoOf, respondOf: respondOf, minPairsOf: minPairsOf,
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
-    photoUpTo: photoUpTo, respondUpTo: respondUpTo,
+    photoUpTo: photoUpTo, respondUpTo: respondUpTo, minPairsUpTo: minPairsUpTo,
     phonics: phonics, irregulars: irregulars,
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,
@@ -7560,6 +7651,16 @@ window.DATA_ACHIEVEMENTS = [
       });
     }
 
+    /* --- 3.65 最小音對：把 phonics 教過的音考回來 --- */
+    if (plan.phoneme) {
+      // 魔王關（s0u5）自己沒有音對，往前把學過的都收進來混考
+      var mp = Content.minPairsOf(unitId);
+      if (!mp.length) mp = Content.minPairsUpTo(unitId);
+      SAMPLE(mp, plan.phoneme).forEach(function (m) {
+        body.push({ type: 'phoneme', ref: m, unitId: unitId });
+      });
+    }
+
     /* --- 3.7 搭配詞 --- */
     if (plan.collocate) {
       // 從「這一關以及之前」的字裡抽，不限這關新教的 —— take a break 這種搭配
@@ -7771,8 +7872,17 @@ window.DATA_ACHIEVEMENTS = [
    *   irregular 記的是「動詞」，再問一次三態
    *   photo     記的是「照片」，同一張再聽一次四個描述
    *   respond   記的是「問句」，同一句再聽一次三個回應
+   *   phoneme   記的是「音對整組」，再抽一個字聽一次
    * 內容已經被移除（例如改版換了 id）就回傳 null。
    */
+  /**
+   * 文法點的一句話概念。複習、每日挑戰、弱點怪獸都不會經過教學卡 —— 題目直接
+   * 蓋臉丟過來，答錯了也只知道自己錯，不知道規則是什麼。關卡裡不給（前面才剛教完）。
+   */
+  function scaffoldOf(g) {
+    return (g && g.teach && g.teach.lead) ? g.teach.lead : '';
+  }
+
   function weakQuestion(w) {
     var it = Content.item(w.r);
     if (!it) return null;
@@ -7789,7 +7899,7 @@ window.DATA_ACHIEVEMENTS = [
       var quick = qs.filter(function (q) { return q.k === 'mc' || q.k === 'cloze'; });
       var q = PICK(quick.length ? quick : qs);
       return { type: q.k === 'cloze' ? 'cloze' : 'grammar', ref: q, g: it,
-               unitId: w.u || it.u, weak: w.k };
+               unitId: w.u || it.u, weak: w.k, scaffold: scaffoldOf(it) };
     }
 
     if (w.t === 'reading') {
@@ -7807,6 +7917,11 @@ window.DATA_ACHIEVEMENTS = [
 
     if (w.t === 'respond') {
       return { type: 'respond', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
+    // 音對記的是「整組」，重問時題型模組會自己再抽一個字，不會每次都考同一個
+    if (w.t === 'phoneme') {
+      return { type: 'phoneme', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
     return null;
@@ -7877,7 +7992,8 @@ window.DATA_ACHIEVEMENTS = [
       });
     });
     SAMPLE(gPool, Math.min(4, Math.floor(size * 0.4))).forEach(function (x) {
-      out.push({ type: x.q.k === 'cloze' ? 'cloze' : 'grammar', ref: x.q, g: x.g, unitId: x.u, challenge: true });
+      out.push({ type: x.q.k === 'cloze' ? 'cloze' : 'grammar', ref: x.q, g: x.g, unitId: x.u,
+                 challenge: true, scaffold: scaffoldOf(x.g) });
     });
 
     // 剩下的名額用單字題填滿，三種型態輪替
@@ -8070,6 +8186,43 @@ window.DATA_ACHIEVEMENTS = [
     return d;
   }
 
+  /* ---------- 鷹架提示 ---------- */
+  /**
+   * 出現在題目上方的一句話概念。只有複習／每日挑戰／弱點怪獸會帶 —— 那三條路徑
+   * 都沒有教學卡，答錯了也只知道自己錯，不知道規則長什麼樣。
+   * teach.lead 是資料裡的信任 HTML（教學卡也直接吐），這裡不轉義。
+   */
+  function scaffold(host, text) {
+    if (!text) return;
+    host.insertAdjacentHTML('beforeend', '<div class="scaffold">💡 ' + text + '</div>');
+  }
+
+  /* ---------- 時態時間軸 ---------- */
+  /**
+   * 文法點的 tl 是一串標記，每個是 { a, b, t, hl }：
+   *   a／b  過去 past ／ 現在 now ／ 未來 future，只寫 a 就是一個時間點，寫了 b 就是一段
+   *   t     這段時間發生什麼事
+   *   hl    要不要highlight（這一題考的就是它）
+   * 答錯時才畫。公式（主詞＋have＋p.p.）能背，但背不出「到現在為止」的時間感，
+   * 而錯的那一刻正好是最需要看到它的時候。
+   */
+  var TL_COL = { past: 1, now: 2, future: 3 };
+
+  function timelineHTML(tl) {
+    if (!tl || !tl.length) return '';
+    var rows = tl.map(function (m) {
+      var a = TL_COL[m.a] || 1;
+      var b = TL_COL[m.b] || a;
+      if (b < a) b = a;
+      return '<div class="tl-row"><div class="tl-mark' +
+        (m.hl ? ' hl' : '') + (m.b ? '' : ' pt') + '"' +
+        ' style="grid-column:' + a + ' / ' + (b + 1) + '">' + esc(m.t) + '</div></div>';
+    }).join('');
+    return '<div class="tl-box">' +
+      '<div class="tl-axis"><span>過去</span><span>現在</span><span>未來</span></div>' +
+      rows + '</div>';
+  }
+
   /* ---------- 例句區塊 ---------- */
   function exampleHTML(v, showZh) {
     if (!v.ex || !v.ex.length) return '';
@@ -8203,6 +8356,7 @@ window.DATA_ACHIEVEMENTS = [
 
   global.ExUtil = {
     options: options, bindKeys: bindKeys, prompt: prompt,
+    scaffold: scaffold, timelineHTML: timelineHTML,
     exampleHTML: exampleHTML, wordCardHTML: wordCardHTML,
     collocationHTML: collocationHTML, rootHTML: rootHTML,
     normalizeAns: normalizeAns, expandContractions: expandContractions,
@@ -8504,6 +8658,92 @@ window.DATA_ACHIEVEMENTS = [
             (ok ? '' : '<div class="check-detail">' + esc(pool[picked].w) + ' 的意思沒錯，' +
               '但英文不這樣配。</div>') +
             othersHTML(v, phrase)
+        });
+      });
+    }
+  };
+})(window);
+
+</script>
+<script>
+/* ===== js/exercises/phoneme.js ===== */
+/* ==========================================================================
+   exercises/phoneme.js — 最小音對（phoneme）
+   --------------------------------------------------------------------------
+   聽一個字，選出它是哪一個音／哪一種拼法。四個候選只差一個位置，
+   所以答對的唯一依據就是那個音 —— 這是發音關卡唯一會「考回來」的題型。
+   沒有語音時降級成看字辨形（露出單字本身），至少還在練字母與音的對應，
+   而不是整題卡死。
+   ========================================================================== */
+(function (global) {
+  'use strict';
+
+  var esc = UI.esc;
+
+  function labelOf(pair) { return pair[1] === undefined ? pair[0] : pair[1]; }
+
+  Ex.phoneme = {
+    scored: true,
+    render: function (q, host, api) {
+      var p = q.ref;
+      var idx = q.pick === undefined ? Math.floor(Math.random() * p.set.length) : q.pick;
+      var target = p.set[idx];
+      var word = target[0];
+      var hasVoice = Speech.available();
+
+      ExUtil.prompt(host, p.ask || '你聽到的是哪一個？');
+
+      if (!hasVoice) {
+        host.insertAdjacentHTML('beforeend',
+          '<div class="warn-box">找不到英文語音，這一題改成看字作答。' +
+          '裝好語音套件之後它才會變成真正的聽力題。</div>' +
+          '<div class="card card-tight center"><div class="word-main">' + esc(word) + '</div></div>');
+      } else {
+        host.insertAdjacentHTML('beforeend',
+          '<div class="center" style="padding:12px 0">' +
+            '<button class="speak-btn" data-speak="' + esc(word) + '" ' +
+              'style="width:88px;height:88px;font-size:2.4rem">🔊</button>' +
+            '<div class="mt8"><button class="btn btn-ghost btn-sm" data-speak="' + esc(word) +
+              '" data-slow="1">🐢 慢速重播</button></div>' +
+          '</div>');
+        setTimeout(function () { Speech.speak(word); }, 300);
+      }
+
+      var order = Content.shuffle(p.set.map(function (x, i) { return i; }));
+      var correctIdx = order.indexOf(idx);
+      var ctl = ExUtil.options(host,
+        order.map(function (oi) {
+          return { html: '<span class="en bold">' + esc(labelOf(p.set[oi])) + '</span>' };
+        }),
+        { grid2: true, onPick: function () { api.enableCheck(true); } });
+      ExUtil.bindKeys(ctl, api);
+      api.enableCheck(false);
+
+      api.ready(function () {
+        var picked = ctl.picked();
+        if (picked < 0) return;
+        var ok = picked === correctIdx;
+        ctl.lock(correctIdx);
+
+        // 發音不進 SRS（那只涵蓋單字），錯了靠弱點怪獸帶回來
+        if (ok) SRS.clearWeak('phoneme', p.id);
+        else SRS.addWeak('phoneme', p.id, q.unitId || p.u);
+
+        // 整組都列出來對照：知道自己聽成了哪一個，比只知道答錯有用
+        var table = p.set.map(function (x) {
+          var isAns = x[0] === word;
+          return '<div class="ex-item' + (isAns ? ' bold' : '') + '">' +
+            Speech.btn(x[0], false, 'speak-inline') +
+            '<span class="en">' + esc(x[0]) + '</span>' +
+            '<span class="muted small">　' + esc(labelOf(x)) + '</span>' +
+            (isAns ? '<span class="tag green" style="margin-left:6px">這一題</span>' : '') +
+            '</div>';
+        }).join('');
+
+        api.result(ok, {
+          title: ok ? '聽對了！' : '這個字是 ' + word,
+          detail: '<div class="ex-list">' + table + '</div>' +
+            '<div class="small muted mt8">整組唸過一遍，差別只在那一個音。</div>'
         });
       });
     }
@@ -9335,6 +9575,7 @@ window.DATA_ACHIEVEMENTS = [
       var answers = [c.a].concat(c.alt || []);
       var hasOpts = !!(c.opts && c.opts.length);
 
+      ExUtil.scaffold(host, q.scaffold);
       ExUtil.prompt(host, hasOpts ? '選出正確的字填進空格' : '把空格填完');
 
       var sentenceHTML = esc(c.q).replace(/_{2,}/g,
@@ -9386,13 +9627,14 @@ window.DATA_ACHIEVEMENTS = [
 
       function finish(ok, answerText, near) {
         if (q.g) ExUtil.gradeGrammar(q.g, ok, q.unitId);
+        var tl = (!ok && q.g) ? ExUtil.timelineHTML(q.g.tl) : '';
         var full = c._full || String(c.q).replace(/_{2,}/, answerText);
         api.result(ok, {
           title: ok ? '正確！' : (near ? '差一點點，拼字再看一次' : '正確答案是 ' + answerText),
           detail: '<div class="row" style="gap:8px">' + Speech.btn(full) +
             '<div><div class="sentence-en">' + esc(full) + '</div>' +
             (c.zh ? '<div class="sentence-zh">' + esc(c.zh) + '</div>' : '') + '</div></div>' +
-            (c.why ? '<div class="check-detail">' + c.why + '</div>' : '')
+            (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') + tl
         });
       }
     }
@@ -9429,6 +9671,7 @@ window.DATA_ACHIEVEMENTS = [
     var order = Content.shuffle(c.opts.map(function (o, i) { return i; }));
     var correctIdx = order.indexOf(c.a);
 
+    ExUtil.scaffold(host, q.scaffold);
     ExUtil.prompt(host, c.title || '選出正確的答案');
     host.insertAdjacentHTML('beforeend',
       '<div class="card"><div class="cloze-text">' +
@@ -9453,7 +9696,8 @@ window.DATA_ACHIEVEMENTS = [
         title: ok ? '正確！' : '正確答案是 ' + c.opts[c.a],
         detail: '<div class="row" style="gap:8px">' + Speech.btn(full) +
           '<div class="sentence-en">' + esc(full) + '</div></div>' +
-          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '')
+          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') +
+          (ok ? '' : ExUtil.timelineHTML(q.g && q.g.tl))
       });
     });
   }
@@ -9461,6 +9705,7 @@ window.DATA_ACHIEVEMENTS = [
   /* ---------------- 改錯 ---------------- */
   function renderFix(q, host, api) {
     var c = q.ref;
+    ExUtil.scaffold(host, q.scaffold);
     ExUtil.prompt(host, '這句話有一個錯誤，把它改對', c.zh ? esc(c.zh) : '');
     host.insertAdjacentHTML('beforeend',
       '<div class="card card-tight center">' +
@@ -9490,7 +9735,8 @@ window.DATA_ACHIEVEMENTS = [
           '<div><div class="sentence-en">' + esc(c.a) + '</div>' +
           (c.zh ? '<div class="sentence-zh">' + esc(c.zh) + '</div>' : '') + '</div></div>' +
           (ok ? '' : '<div class="small muted mt8">你寫的：' + esc(inp.value) + '</div>') +
-          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '')
+          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') +
+          (ok ? '' : ExUtil.timelineHTML(q.g && q.g.tl))
       });
     });
   }
@@ -9500,6 +9746,7 @@ window.DATA_ACHIEVEMENTS = [
     var c = q.ref;
     var answers = [c.a].concat(c.alt || []);
 
+    ExUtil.scaffold(host, q.scaffold);
     ExUtil.prompt(host, '把這句中文翻成英文');
     host.insertAdjacentHTML('beforeend',
       '<div class="card card-tight center"><div class="big bold">' + esc(c.zh) + '</div></div>' +
@@ -9532,7 +9779,8 @@ window.DATA_ACHIEVEMENTS = [
           '<div class="sentence-zh">' + esc(c.zh) + '</div></div></div>' +
           (c.alt && c.alt.length ? '<div class="small muted mt8">也可以說：' + esc(c.alt.join('　/　')) + '</div>' : '') +
           (ok ? '' : '<div class="small muted mt8">你寫的：' + esc(inp.value) + '</div>') +
-          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '')
+          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') +
+          (ok ? '' : ExUtil.timelineHTML(q.g && q.g.tl))
       });
     });
   }

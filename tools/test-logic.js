@@ -216,7 +216,7 @@ var Content = app.Content, Scheduler = app.Scheduler, SRS = app.SRS, State = app
    ========================================================================== */
 describe('資料完整性');
 
-var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond' };
+var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond', m: 'minpair' };
 var seen = {}, dupes = [], badPrefix = [];
 
 function checkIds(list, kind) {
@@ -227,26 +227,28 @@ function checkIds(list, kind) {
   });
 }
 checkIds(Content.allVocab(), 'vocab');
-var allGrammar = [], allReading = [], allPhoto = [], allRespond = [];
+var allGrammar = [], allReading = [], allPhoto = [], allRespond = [], allMinPair = [];
 Content.orderedUnitIds().forEach(function (uid) {
   allGrammar = allGrammar.concat(Content.grammarOf(uid));
   allReading = allReading.concat(Content.readingOf(uid));
   allPhoto = allPhoto.concat(Content.photoOf(uid));
   allRespond = allRespond.concat(Content.respondOf(uid));
+  allMinPair = allMinPair.concat(Content.minPairsOf(uid));
 });
 checkIds(allGrammar, 'grammar');
 checkIds(allReading, 'reading');
 checkIds(Content.irregulars(), 'irregular');
 checkIds(allPhoto, 'photo');
 checkIds(allRespond, 'respond');
+checkIds(allMinPair, 'minpair');
 
 ok(dupes.length === 0, 'id 全域唯一（四種資料共用 byId 索引）' + (dupes.length ? '：' + dupes.slice(0, 5).join('、') : ''));
-ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
+ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
 
 var unitIds = {};
 Content.orderedUnitIds().forEach(function (u) { unitIds[u] = 1; });
 var orphan = [];
-Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond).forEach(function (x) {
+Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond, allMinPair).forEach(function (x) {
   if (!unitIds[x.u]) orphan.push(x.id + ' → ' + x.u);
 });
 ok(orphan.length === 0, '每筆資料的 u 都指到存在的關卡' + (orphan.length ? '：' + orphan.slice(0, 5).join('、') : ''));
@@ -338,6 +340,45 @@ ok(badCol.length === 0, '搭配詞格式正確且都挖得出空格（' + colWor
 ok(badRt.length === 0, '字根字首拆得成積木（' + rtWords + ' 個字）' +
    (badRt.length ? '：' + badRt.slice(0, 5).join('、') : ''));
 ok(colWords > 0 && rtWords > 0, '搭配詞與字根都有資料');
+
+/* ---------- 最小音對 ---------- */
+var badMp = [];
+allMinPair.forEach(function (m) {
+  if (!m.ask) badMp.push(m.id + ' 沒有題目問法');
+  if (!Array.isArray(m.set) || m.set.length < 3) { badMp.push(m.id + ' 的候選少於 3 個'); return; }
+  var seenW = {}, seenL = {};
+  m.set.forEach(function (x) {
+    if (!Array.isArray(x) || !x[0]) { badMp.push(m.id + ' 的候選格式錯誤'); return; }
+    var w = String(x[0]), lab = x[1] === undefined ? w : String(x[1]);
+    if (seenW[w]) badMp.push(m.id + ' 有兩個 ' + w);
+    if (seenL[lab]) badMp.push(m.id + ' 的選項 ' + lab + ' 重複，會出現兩個一樣的選項');
+    seenW[w] = seenL[lab] = 1;
+    // 標籤是「這個字裡的哪一段」，不在字裡面就對不起來 —— 拼錯了也只會靜靜出錯題
+    if (w.toLowerCase().indexOf(lab.toLowerCase()) < 0) {
+      badMp.push(m.id + ' 的 ' + w + ' 標成「' + lab + '」，但字裡沒有這一段');
+    }
+  });
+});
+ok(badMp.length === 0, '最小音對的候選與標籤對得起來（' + allMinPair.length + ' 組）' +
+   (badMp.length ? '：' + badMp.slice(0, 5).join('、') : ''));
+ok(allMinPair.length > 0, '有最小音對資料');
+
+/* ---------- 時態時間軸 ---------- */
+var TL_AT = { past: 1, now: 1, future: 1 };
+var badTl = [], tlPoints = 0;
+allGrammar.forEach(function (g) {
+  if (g.tl === undefined) return;
+  tlPoints++;
+  if (!Array.isArray(g.tl) || !g.tl.length) { badTl.push(g.id + ' 的 tl 不是非空陣列'); return; }
+  g.tl.forEach(function (m) {
+    if (!m || !m.t) { badTl.push(g.id + ' 的標記沒有文字'); return; }
+    if (!TL_AT[m.a]) badTl.push(g.id + ' 的 a=' + m.a + ' 不是 past/now/future');
+    if (m.b !== undefined && !TL_AT[m.b]) badTl.push(g.id + ' 的 b=' + m.b + ' 不是 past/now/future');
+  });
+});
+ok(badTl.length === 0, '時間軸標記都落在 過去／現在／未來 上（' + tlPoints + ' 個文法點）' +
+   (badTl.length ? '：' + badTl.slice(0, 5).join('、') : ''));
+ok(tlPoints > 0, '有時間軸資料');
 
 // t 分型不只是標籤：irregular 題會依它決定要不要問過去分詞（A 型問了沒鑑別度）
 var badIrr = [];
@@ -437,7 +478,7 @@ listJs('js/exercises').forEach(function (rel) {
     exTypes[m.replace(/^\s*Ex\./, '').replace(/\s*=$/, '')] = 1;
   });
 });
-eq(Object.keys(exTypes).length, 15, '註冊了 15 種題型');
+eq(Object.keys(exTypes).length, 16, '註冊了 16 種題型');
 
 // 兩種起步取向都要組得出題 —— planVocab 只有選「先學單字」的人會走到，壞了不會有人發現
 var emptyLesson = [], badType = [];
@@ -490,6 +531,42 @@ ok(colShort.length === 0, '課表寫幾題搭配詞就出得了幾題' +
    (colShort.length ? '：' + colShort.slice(0, 5).join('、') : ''));
 ok(colDup.length === 0, '同一課不會重複問同一個字的搭配' +
    (colDup.length ? '：' + colDup.slice(0, 5).join('、') : ''));
+
+// 課表寫了 phoneme 就要出得了題（發音關考回自己教過的音，抽不到會靜靜地少考）
+var phShort = [];
+Content.stages().forEach(function (st) {
+  (st.units || []).forEach(function (u) {
+    var want = 0;
+    (u.plan || []).forEach(function (p) { if (p[0] === 'phoneme') want = p[1]; });
+    if (!want || !Content.isReady(u.id)) return;
+    var n = Scheduler.buildLesson(u.id).filter(function (q) { return q.type === 'phoneme'; }).length;
+    if (n !== want) phShort.push(u.id + ' 要 ' + want + ' 題卻只出了 ' + n);
+  });
+});
+ok(phShort.length === 0, '課表寫幾題最小音對就出得了幾題' +
+   (phShort.length ? '：' + phShort.slice(0, 5).join('、') : ''));
+
+// 鷹架提示：複習／每日挑戰／弱點怪獸都沒有教學卡，文法題必須自己帶一句話概念。
+// 關卡裡則不能帶 —— 教學卡前面才剛整頁講完，再貼一次是雜訊。
+var weakG = allGrammar.filter(function (g) {
+  return (g.qs || []).length && g.teach && g.teach.lead;
+})[0];
+if (weakG) {
+  State.data.srs = {};
+  State.data.weak.length = 0;
+  State.data.weak.push({ k: 'grammar:' + weakG.id, t: 'grammar', r: weakG.id, u: weakG.u, n: 1, at: State.dayStr() });
+  var wq = Scheduler.buildReview(20)[0];
+  State.data.weak.length = 0;
+  ok(!!(wq && wq.scaffold), '弱點怪獸的文法題帶著一句話概念（' + weakG.id + '）');
+}
+var lessonG = [];
+readyUnits.forEach(function (uid) {
+  Scheduler.buildLesson(uid).forEach(function (q) {
+    if ((q.type === 'grammar' || q.type === 'cloze') && q.scaffold) lessonG.push(uid);
+  });
+});
+ok(lessonG.length === 0, '關卡裡的文法題不重複貼概念（教學卡已經講過）' +
+   (lessonG.length ? '：' + lessonG.slice(0, 3).join('、') : ''));
 
 // 教學卡不計分，但關卡不能只有教學卡
 var onlyIntro = readyUnits.filter(function (uid) {
@@ -702,7 +779,8 @@ var samples = {
   reading: (allReading[0] || {}).id,
   irregular: (Content.irregulars()[0] || {}).id,
   photo: (allPhoto[0] || {}).id,
-  respond: (allRespond[0] || {}).id
+  respond: (allRespond[0] || {}).id,
+  phoneme: (allMinPair[0] || {}).id
 };
 Object.keys(weakTypes).forEach(function (t) {
   var refId = samples[t];
@@ -721,8 +799,9 @@ var g0 = allGrammar[0], r0 = allReading[0], i0 = Content.irregulars()[0];
 ExUtil.gradeGrammar(g0, false, g0.u);
 SRS.addWeak('reading', r0.id, r0.u);
 SRS.addWeak('irregular', i0.id, '');
-eq(Object.keys(State.data.srs).length, 0, '文法/閱讀/不規則動詞不會寫進 srs');
-eq(State.data.weak.length, 3, '它們改為進弱點怪獸清單');
+SRS.addWeak('phoneme', allMinPair[0].id, allMinPair[0].u);
+eq(Object.keys(State.data.srs).length, 0, '文法/閱讀/不規則動詞/發音不會寫進 srs');
+eq(State.data.weak.length, 4, '它們改為進弱點怪獸清單');
 
 var v0 = Content.allVocab()[0];
 ExUtil.gradeVocab(v0, true, v0.u);
