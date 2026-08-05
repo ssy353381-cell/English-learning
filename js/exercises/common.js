@@ -91,6 +91,43 @@
     return d;
   }
 
+  /* ---------- 鷹架提示 ---------- */
+  /**
+   * 出現在題目上方的一句話概念。只有複習／每日挑戰／弱點怪獸會帶 —— 那三條路徑
+   * 都沒有教學卡，答錯了也只知道自己錯，不知道規則長什麼樣。
+   * teach.lead 是資料裡的信任 HTML（教學卡也直接吐），這裡不轉義。
+   */
+  function scaffold(host, text) {
+    if (!text) return;
+    host.insertAdjacentHTML('beforeend', '<div class="scaffold">💡 ' + text + '</div>');
+  }
+
+  /* ---------- 時態時間軸 ---------- */
+  /**
+   * 文法點的 tl 是一串標記，每個是 { a, b, t, hl }：
+   *   a／b  過去 past ／ 現在 now ／ 未來 future，只寫 a 就是一個時間點，寫了 b 就是一段
+   *   t     這段時間發生什麼事
+   *   hl    要不要highlight（這一題考的就是它）
+   * 答錯時才畫。公式（主詞＋have＋p.p.）能背，但背不出「到現在為止」的時間感，
+   * 而錯的那一刻正好是最需要看到它的時候。
+   */
+  var TL_COL = { past: 1, now: 2, future: 3 };
+
+  function timelineHTML(tl) {
+    if (!tl || !tl.length) return '';
+    var rows = tl.map(function (m) {
+      var a = TL_COL[m.a] || 1;
+      var b = TL_COL[m.b] || a;
+      if (b < a) b = a;
+      return '<div class="tl-row"><div class="tl-mark' +
+        (m.hl ? ' hl' : '') + (m.b ? '' : ' pt') + '"' +
+        ' style="grid-column:' + a + ' / ' + (b + 1) + '">' + esc(m.t) + '</div></div>';
+    }).join('');
+    return '<div class="tl-box">' +
+      '<div class="tl-axis"><span>過去</span><span>現在</span><span>未來</span></div>' +
+      rows + '</div>';
+  }
+
   /* ---------- 例句區塊 ---------- */
   function exampleHTML(v, showZh) {
     if (!v.ex || !v.ex.length) return '';
@@ -103,6 +140,39 @@
         '</div>';
     }).join('');
     return '<div class="ex-list">' + rows + '</div>';
+  }
+
+  /* ---------- 搭配詞 ---------- */
+  /** 搭配詞題會挖空考，這裡是「先教一次」的地方 —— 沒教過就考等於猜謎 */
+  function collocationHTML(v) {
+    if (!v.col || !v.col.length) return '';
+    return '<div class="col-box"><div class="col-lab">常見搭配</div>' +
+      v.col.map(function (c) {
+        return '<button class="col-chip" type="button" data-speak="' + esc(c[0]) + '">' +
+          '<span class="en">' + esc(c[0]) + '</span>' +
+          '<span class="col-zh">' + esc(c[1]) + '</span></button>';
+      }).join('') + '</div>';
+  }
+
+  /* ---------- 字根字首拆解 ---------- */
+  /**
+   * rt 的每個欄位都是「英文 + 空格 + 中文」，例如 'pro- 向前'。
+   * 兩段分開排是因為要對齊成 字首 ＋ 字根 ＋ 字尾 的積木，塞成一串就看不出結構。
+   */
+  function rootHTML(v) {
+    if (!v.rt) return '';
+    var parts = [];
+    ['p', 'r', 's'].forEach(function (k) {
+      if (!v.rt[k]) return;
+      var t = String(v.rt[k]);
+      var sp = t.indexOf(' ');
+      var en = sp < 0 ? t : t.slice(0, sp);
+      var zh = sp < 0 ? '' : t.slice(sp + 1);
+      parts.push('<div class="root-part"><div class="root-en">' + esc(en) + '</div>' +
+        (zh ? '<div class="root-zh">' + esc(zh) + '</div>' : '') + '</div>');
+    });
+    if (!parts.length) return '';
+    return '<div class="root-box">' + parts.join('<div class="root-plus">＋</div>') + '</div>';
   }
 
   /* ---------- 單字卡 HTML ---------- */
@@ -118,7 +188,8 @@
       '</div>' +
       (opts.hideZh ? '' :
         '<div class="word-zh"><span class="word-pos">' + esc(v.pos) + '</span>' + esc(v.zh) + '</div>') +
-      (opts.showEx === false ? '' : exampleHTML(v)) +
+      (opts.hideZh ? '' : rootHTML(v)) +
+      (opts.showEx === false ? '' : collocationHTML(v) + exampleHTML(v)) +
       '</div>';
   }
 
@@ -190,7 +261,9 @@
 
   global.ExUtil = {
     options: options, bindKeys: bindKeys, prompt: prompt,
+    scaffold: scaffold, timelineHTML: timelineHTML,
     exampleHTML: exampleHTML, wordCardHTML: wordCardHTML,
+    collocationHTML: collocationHTML, rootHTML: rootHTML,
     normalizeAns: normalizeAns, expandContractions: expandContractions,
     sameText: sameText, matchAny: matchAny,
     nearMiss: nearMiss, tokenize: tokenize,

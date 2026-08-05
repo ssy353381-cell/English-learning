@@ -10,11 +10,11 @@ window.DATA_VOCAB_S2B = [
 {id:'v0939',w:'afford',kk:'əˈfɔrd',pos:'v.',zh:'負擔得起',ic:'💰',u:'s2u3',ex:[['I cannot afford to buy a new phone.','我買不起新手機。'],['We cannot afford to lose this client.','我們承擔不起失去這個客戶。']]},
 {id:'v0940',w:'choose',kk:'tʃuz',pos:'v.',zh:'選擇',ic:'🔀',u:'s2u3',ex:[['She chose to stay home.','她選擇待在家。'],['They chose to renew the contract.','他們選擇續約。']]},
 {id:'v0941',w:'seem',kk:'sim',pos:'v.',zh:'似乎',ic:'🌫️',u:'s2u3',ex:[['He seems to be tired.','他好像很累。'],['The machine seems to be working now.','機器現在好像正常了。']]},
-{id:'v0942',w:'tend',kk:'tɛnd',pos:'v.',zh:'傾向・往往',ic:'↗️',u:'s2u3',ex:[['I tend to wake up early.','我通常很早醒。'],['Orders tend to increase in December.','訂單在十二月往往會變多。']]},
-{id:'v0943',w:'intend',kk:'ɪnˈtɛnd',pos:'v.',zh:'打算',ic:'🧠',u:'s2u3',ex:[['I intend to learn Japanese.','我打算學日文。'],['We intend to open a second store.','我們打算開第二家店。']]},
+{id:'v0942',w:'tend',kk:'tɛnd',pos:'v.',zh:'傾向・往往',ic:'↗️',u:'s2u3',rt:{r:'tend 伸展'},ex:[['I tend to wake up early.','我通常很早醒。'],['Orders tend to increase in December.','訂單在十二月往往會變多。']]},
+{id:'v0943',w:'intend',kk:'ɪnˈtɛnd',pos:'v.',zh:'打算',ic:'🧠',u:'s2u3',rt:{p:'in- 向內',r:'tend 伸展'},ex:[['I intend to learn Japanese.','我打算學日文。'],['We intend to open a second store.','我們打算開第二家店。']]},
 {id:'v0944',w:'attempt',kk:'əˈtɛmpt',pos:'v./n.',zh:'嘗試',ic:'🎯',u:'s2u3',ex:[['She attempted to fix it herself.','她試著自己修。'],['This is our second attempt to reach him.','這是我們第二次試著聯絡他。']]},
 {id:'v0945',w:'deserve',kk:'dɪˈzɝv',pos:'v.',zh:'值得・應得',ic:'🏅',u:'s2u3',ex:[['You deserve to rest.','你值得休息。'],['The team deserves to win the award.','這個團隊值得拿這個獎。']]},
-{id:'v0946',w:'pretend',kk:'prɪˈtɛnd',pos:'v.',zh:'假裝',ic:'🎭',u:'s2u3',ex:[['He pretended to be asleep.','他假裝睡著了。'],['Do not pretend to understand if you do not.','不懂就不要假裝懂。']]},
+{id:'v0946',w:'pretend',kk:'prɪˈtɛnd',pos:'v.',zh:'假裝',ic:'🎭',u:'s2u3',rt:{p:'pre- 在前',r:'tend 伸展'},ex:[['He pretended to be asleep.','他假裝睡著了。'],['Do not pretend to understand if you do not.','不懂就不要假裝懂。']]},
 {id:'v0947',w:'demand',kk:'dɪˈmænd',pos:'v./n.',zh:'要求・需求',ic:'📣',u:'s2u3',ex:[['The customer demanded to see the manager.','那位客人要求見經理。'],['Demand for this model has grown.','這款的需求成長了。']]},
 {id:'v0948',w:'aim',kk:'em',pos:'v./n.',zh:'目標・以…為目標',ic:'🏹',u:'s2u3',ex:[['We aim to finish before six.','我們的目標是六點前完成。'],['Our aim is to reduce waiting time.','我們的目標是縮短等待時間。']]},
 {id:'v0949',w:'opportunity',kk:'ˌɑpɚˈtunətɪ',pos:'n.',zh:'機會',ic:'🍀',u:'s2u3',ex:[['This is a good opportunity to practice.','這是練習的好機會。'],['She got the opportunity to lead the project.','她得到帶領這個專案的機會。']]},
@@ -37,7 +37,7 @@ window.DATA_VOCAB_S2B = [
 {id:'v0964',w:'involve',kk:'ɪnˈvɑlv',pos:'v.',zh:'牽涉・包含',ic:'🔗',u:'s2u4',ex:[['The job involves traveling a lot.','這份工作要常出差。'],['The plan involves hiring two engineers.','這個計畫包含聘兩位工程師。']]},
 {id:'v0965',w:'dislike',kk:'dɪsˈlaɪk',pos:'v.',zh:'不喜歡',ic:'👎',u:'s2u4',ex:[['I dislike waiting in long lines.','我討厭排很長的隊。'],['She dislikes being interrupted.','她不喜歡被打斷。']]},
 {id:'v0966',w:'appreciate',kk:'əˈpriʃɪˌet',pos:'v.',zh:'感謝・欣賞',ic:'🙏',u:'s2u4',ex:[['I appreciate your help.','謝謝你的幫忙。'],['We appreciate you sending the file so quickly.','感謝你這麼快把檔案寄來。']]},
-{id:'v0967',w:'spend',kk:'spɛnd',pos:'v.',zh:'花費（時間・金錢）',ic:'⏳',u:'s2u4',ex:[['I spend two hours reading every night.','我每晚花兩小時閱讀。'],['We spent the morning checking the data.','我們花了整個早上核對資料。']]},
+{id:'v0967',w:'spend',kk:'spɛnd',pos:'v.',zh:'花費（時間・金錢）',ic:'⏳',u:'s2u4',lure:['cost','pay','take'],col:[['spend money on','把錢花在…'],['spend time with','花時間陪…']],ex:[['I spend two hours reading every night.','我每晚花兩小時閱讀。'],['We spent the morning checking the data.','我們花了整個早上核對資料。']]},
 {id:'v0968',w:'worth',kk:'wɝθ',pos:'adj./n.',zh:'值得・價值',ic:'💎',u:'s2u4',ex:[['This movie is worth watching twice.','這部電影值得看兩次。'],['The trip was worth taking.','這趟出差很值得。']]},
 {id:'v0969',w:'habit',kk:'ˈhæbɪt',pos:'n.',zh:'習慣',ic:'🔁',u:'s2u4',ex:[['Reading before bed is a good habit.','睡前閱讀是好習慣。'],['He has a habit of checking email twice a day.','他習慣一天收兩次信。']]},
 {id:'v0970',w:'hobby',kk:'ˈhɑbɪ',pos:'n.',zh:'嗜好',ic:'🎨',u:'s2u4',ex:[['My hobby is taking photos.','我的嗜好是拍照。'],['Her hobby became her career.','她的嗜好變成了職業。']]},
@@ -103,7 +103,7 @@ window.DATA_VOCAB_S2B = [
 {id:'v1024',w:'exact',kk:'ɪgˈzækt',pos:'adj.',zh:'精確的',ic:'📏',u:'s2u7',ex:[['I do not know the exact time.','我不知道確切的時間。'],['Could you tell me the exact amount?','可以告訴我確切的金額嗎？']]},
 {id:'v1025',w:'polite',kk:'pəˈlaɪt',pos:'adj.',zh:'有禮貌的',ic:'🎩',u:'s2u7',ex:[['She is always polite to everyone.','她對每個人都很有禮貌。'],['Could you tell me… is a polite way to ask.','Could you tell me… 是比較有禮貌的問法。']]},
 {id:'v1026',w:'formal',kk:'ˈfɔrml̩',pos:'adj.',zh:'正式的',ic:'🤵',u:'s2u7',ex:[['The dinner is quite formal.','那場晚餐相當正式。'],['Please use formal language in the email.','信件裡請用正式的語氣。']]},
-{id:'v1027',w:'helpful',kk:'ˈhɛlpfəl',pos:'adj.',zh:'有幫助的',ic:'🙌',u:'s2u7',ex:[['Your advice was very helpful.','你的建議很有幫助。'],['The receptionist was extremely helpful.','那位櫃檯人員非常樂意幫忙。']]},
+{id:'v1027',w:'helpful',kk:'ˈhɛlpfəl',pos:'adj.',zh:'有幫助的',ic:'🙌',u:'s2u7',rt:{r:'help 幫助',s:'-ful 形容詞'},ex:[['Your advice was very helpful.','你的建議很有幫助。'],['The receptionist was extremely helpful.','那位櫃檯人員非常樂意幫忙。']]},
 {id:'v1028',w:'flexible',kk:'ˈflɛksəbl̩',pos:'adj.',zh:'有彈性的',ic:'🤸',u:'s2u7',ex:[['My schedule is flexible this week.','我這週時間很彈性。'],['We offer flexible working hours.','我們提供彈性工時。']]}
 
 ];

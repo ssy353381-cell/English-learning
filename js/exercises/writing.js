@@ -14,14 +14,14 @@
       var s = q.ref;
       var correct = ExUtil.tokenize(s.en);
 
-      // 誘答字塊：從同關卡的常見字抓 1–2 個混進去
-      var extras = [];
-      if (correct.length <= 8) {
-        var pool = Content.vocabUpTo(q.unitId)
-          .map(function (v) { return v.w; })
-          .filter(function (w) { return correct.indexOf(w) < 0 && w.indexOf(' ') < 0; });
-        extras = Content.sample(pool, correct.length >= 6 ? 2 : 1);
-      }
+      // 誘答字塊：優先用資料標明的母語干擾組，沒寫才退回隨機舊字。
+      // 長句本身已經夠難，隨機誘答只是加噪音，所以亂數補只開放給短句；
+      // 刻意誘答不受此限 —— 它是這一句真正要考的辨析。
+      var extras = Content.tokenLures(s, correct, {
+        n: correct.length >= 6 ? 2 : 1,
+        unitId: q.unitId,
+        random: correct.length <= 8
+      });
 
       var bankWords = Content.shuffle(correct.concat(extras));
 
@@ -99,6 +99,7 @@
       var answers = [c.a].concat(c.alt || []);
       var hasOpts = !!(c.opts && c.opts.length);
 
+      ExUtil.scaffold(host, q.scaffold);
       ExUtil.prompt(host, hasOpts ? '選出正確的字填進空格' : '把空格填完');
 
       var sentenceHTML = esc(c.q).replace(/_{2,}/g,
@@ -150,13 +151,14 @@
 
       function finish(ok, answerText, near) {
         if (q.g) ExUtil.gradeGrammar(q.g, ok, q.unitId);
+        var tl = (!ok && q.g) ? ExUtil.timelineHTML(q.g.tl) : '';
         var full = c._full || String(c.q).replace(/_{2,}/, answerText);
         api.result(ok, {
           title: ok ? '正確！' : (near ? '差一點點，拼字再看一次' : '正確答案是 ' + answerText),
           detail: '<div class="row" style="gap:8px">' + Speech.btn(full) +
             '<div><div class="sentence-en">' + esc(full) + '</div>' +
             (c.zh ? '<div class="sentence-zh">' + esc(c.zh) + '</div>' : '') + '</div></div>' +
-            (c.why ? '<div class="check-detail">' + c.why + '</div>' : '')
+            (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') + tl
         });
       }
     }

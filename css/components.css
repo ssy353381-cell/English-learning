@@ -257,6 +257,59 @@ body.in-lesson { padding-bottom: 0; }
 .ex-tag.daily { background: var(--green-soft); color: var(--green-dark); }
 .ex-tag.work  { background: var(--blue-soft);  color: var(--blue-dark); }
 
+/* ============ 搭配詞 ============ */
+.col-box { text-align: left; margin-top: 14px; border-top: 2px dashed var(--border); padding-top: 12px; }
+.col-lab { font-size: .72rem; font-weight: 800; color: var(--text-soft); margin-bottom: 6px; }
+.col-chip {
+  display: block; width: 100%; text-align: left; margin-bottom: 6px;
+  padding: 7px 11px; border: 2px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.col-chip:last-child { margin-bottom: 0; }
+.col-chip:active { transform: translateY(1px); }
+.col-chip .en { font-weight: 700; font-family: var(--font-en); }
+.col-zh { color: var(--text-soft); font-size: .82rem; margin-left: 8px; }
+
+/* ============ 鷹架提示 ============ */
+.scaffold {
+  background: var(--blue-soft); color: var(--blue-dark);
+  border-radius: var(--radius-sm); padding: 9px 12px;
+  font-size: .86rem; font-weight: 700; margin-bottom: 12px;
+}
+
+/* ============ 時態時間軸 ============ */
+/* 三欄對應 過去／現在／未來，標記用 grid-column 橫跨 —— 一段時間就是一條長條，
+   一個時間點就是一個短塊，這樣「持續到現在」跟「停在過去」用看的就分得出來 */
+.tl-box { margin-top: 10px; border-top: 2px dashed var(--border); padding-top: 10px; }
+.tl-axis {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  font-size: .7rem; font-weight: 800; color: var(--text-faint); text-align: center;
+  border-bottom: 2px solid var(--border); padding-bottom: 3px; margin-bottom: 6px;
+}
+.tl-row { display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: 5px; }
+.tl-row:last-child { margin-bottom: 0; }
+.tl-mark {
+  border-radius: 999px; padding: 3px 9px; font-size: .74rem; font-weight: 700;
+  background: var(--border); color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.tl-mark.pt { justify-self: center; min-width: 0; }
+.tl-mark.hl { background: var(--purple); color: #fff; }
+
+/* ============ 字根字首拆解 ============ */
+/* 排成積木是重點：ex- ＋ tract 看得出結構，寫成一行字就只是另一段說明 */
+.root-box {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 6px; margin-top: 12px;
+}
+.root-part {
+  padding: 5px 10px; border: 2px solid var(--purple); border-radius: var(--radius-sm);
+  background: var(--surface); text-align: center; min-width: 62px;
+}
+.root-en { font-weight: 800; font-family: var(--font-en); color: var(--purple-dark); font-size: .92rem; }
+.root-zh { font-size: .72rem; color: var(--text-soft); }
+.root-plus { font-weight: 800; color: var(--text-faint); }
+
 /* ============ 拖曳排句（寫作） ============ */
 .build-area {
   min-height: 78px; border-bottom: 2px solid var(--border);

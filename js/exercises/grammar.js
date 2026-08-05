@@ -25,6 +25,7 @@
     var order = Content.shuffle(c.opts.map(function (o, i) { return i; }));
     var correctIdx = order.indexOf(c.a);
 
+    ExUtil.scaffold(host, q.scaffold);
     ExUtil.prompt(host, c.title || '選出正確的答案');
     host.insertAdjacentHTML('beforeend',
       '<div class="card"><div class="cloze-text">' +
@@ -49,7 +50,8 @@
         title: ok ? '正確！' : '正確答案是 ' + c.opts[c.a],
         detail: '<div class="row" style="gap:8px">' + Speech.btn(full) +
           '<div class="sentence-en">' + esc(full) + '</div></div>' +
-          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '')
+          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') +
+          (ok ? '' : ExUtil.timelineHTML(q.g && q.g.tl))
       });
     });
   }
@@ -57,6 +59,7 @@
   /* ---------------- 改錯 ---------------- */
   function renderFix(q, host, api) {
     var c = q.ref;
+    ExUtil.scaffold(host, q.scaffold);
     ExUtil.prompt(host, '這句話有一個錯誤，把它改對', c.zh ? esc(c.zh) : '');
     host.insertAdjacentHTML('beforeend',
       '<div class="card card-tight center">' +
@@ -86,7 +89,8 @@
           '<div><div class="sentence-en">' + esc(c.a) + '</div>' +
           (c.zh ? '<div class="sentence-zh">' + esc(c.zh) + '</div>' : '') + '</div></div>' +
           (ok ? '' : '<div class="small muted mt8">你寫的：' + esc(inp.value) + '</div>') +
-          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '')
+          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') +
+          (ok ? '' : ExUtil.timelineHTML(q.g && q.g.tl))
       });
     });
   }
@@ -96,6 +100,7 @@
     var c = q.ref;
     var answers = [c.a].concat(c.alt || []);
 
+    ExUtil.scaffold(host, q.scaffold);
     ExUtil.prompt(host, '把這句中文翻成英文');
     host.insertAdjacentHTML('beforeend',
       '<div class="card card-tight center"><div class="big bold">' + esc(c.zh) + '</div></div>' +
@@ -128,7 +133,8 @@
           '<div class="sentence-zh">' + esc(c.zh) + '</div></div></div>' +
           (c.alt && c.alt.length ? '<div class="small muted mt8">也可以說：' + esc(c.alt.join('　/　')) + '</div>' : '') +
           (ok ? '' : '<div class="small muted mt8">你寫的：' + esc(inp.value) + '</div>') +
-          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '')
+          (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') +
+          (ok ? '' : ExUtil.timelineHTML(q.g && q.g.tl))
       });
     });
   }

@@ -216,7 +216,7 @@ var Content = app.Content, Scheduler = app.Scheduler, SRS = app.SRS, State = app
    ========================================================================== */
 describe('資料完整性');
 
-var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond' };
+var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond', m: 'minpair' };
 var seen = {}, dupes = [], badPrefix = [];
 
 function checkIds(list, kind) {
@@ -227,26 +227,28 @@ function checkIds(list, kind) {
   });
 }
 checkIds(Content.allVocab(), 'vocab');
-var allGrammar = [], allReading = [], allPhoto = [], allRespond = [];
+var allGrammar = [], allReading = [], allPhoto = [], allRespond = [], allMinPair = [];
 Content.orderedUnitIds().forEach(function (uid) {
   allGrammar = allGrammar.concat(Content.grammarOf(uid));
   allReading = allReading.concat(Content.readingOf(uid));
   allPhoto = allPhoto.concat(Content.photoOf(uid));
   allRespond = allRespond.concat(Content.respondOf(uid));
+  allMinPair = allMinPair.concat(Content.minPairsOf(uid));
 });
 checkIds(allGrammar, 'grammar');
 checkIds(allReading, 'reading');
 checkIds(Content.irregulars(), 'irregular');
 checkIds(allPhoto, 'photo');
 checkIds(allRespond, 'respond');
+checkIds(allMinPair, 'minpair');
 
 ok(dupes.length === 0, 'id 全域唯一（四種資料共用 byId 索引）' + (dupes.length ? '：' + dupes.slice(0, 5).join('、') : ''));
-ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
+ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
 
 var unitIds = {};
 Content.orderedUnitIds().forEach(function (u) { unitIds[u] = 1; });
 var orphan = [];
-Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond).forEach(function (x) {
+Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond, allMinPair).forEach(function (x) {
   if (!unitIds[x.u]) orphan.push(x.id + ' → ' + x.u);
 });
 ok(orphan.length === 0, '每筆資料的 u 都指到存在的關卡' + (orphan.length ? '：' + orphan.slice(0, 5).join('、') : ''));
@@ -256,9 +258,127 @@ Content.allVocab().forEach(function (v) {
   if (!v.w || !v.zh || !v.pos || !v.u) badVocab.push(v.id + ' 缺欄位');
   (v.ex || []).forEach(function (p) {
     if (!Array.isArray(p) || p.length < 2 || !p[0] || !p[1]) badVocab.push(v.id + ' 例句格式錯誤');
+    else if (p[2] !== undefined && !Array.isArray(p[2])) badVocab.push(v.id + ' 例句的誘答不是陣列');
   });
 });
 ok(badVocab.length === 0, '單字欄位齊全、例句為 [英, 中]' + (badVocab.length ? '：' + badVocab.slice(0, 5).join('、') : ''));
+
+/* ---------- 刻意誘答 ----------
+   誘答寫壞不會噴錯，只會靜靜地變回隨機字或（更糟）產生兩個都對的選項。 */
+var badLure = [];
+function tokWords(s) { return s.toLowerCase().replace(/[^a-z'\- ]/g, '').split(/\s+/); }
+
+Content.allVocab().forEach(function (v) {
+  if (v.lure !== undefined) {
+    if (!Array.isArray(v.lure) || !v.lure.length) { badLure.push(v.id + ' 的 lure 不是非空陣列'); return; }
+    var seenL = {};
+    v.lure.forEach(function (w) {
+      if (typeof w !== 'string' || !w.trim()) { badLure.push(v.id + ' 的 lure 有空值'); return; }
+      if (seenL[w]) badLure.push(v.id + ' 的 lure 重複列了 ' + w);
+      seenL[w] = 1;
+      if (w.toLowerCase() === v.w.toLowerCase()) badLure.push(v.id + ' 拿自己 ' + w + ' 當誘答');
+      // 字庫裡查不到的誘答仍可用於排句字塊，但同形／同義的會被 distractors 的守衛
+      // 丟掉 —— 寫了等於沒寫，而且沒有任何跡象
+      var hit = Content.wordItem(w);
+      if (hit && (hit.w === v.w || hit.zh === v.zh)) {
+        badLure.push(v.id + '（' + v.w + '）的誘答 ' + w + ' 與它同形或同義，永遠不會被採用');
+      }
+    });
+  }
+  // 句級誘答如果本來就在句子裡，排句題會多出一個正確解
+  (v.ex || []).forEach(function (p) {
+    if (!Array.isArray(p[2])) return;
+    var inSent = {};
+    tokWords(String(p[0])).forEach(function (t) { inSent[t] = 1; });
+    p[2].forEach(function (w) {
+      if (typeof w !== 'string' || !w.trim()) { badLure.push(v.id + ' 的例句誘答有空值'); return; }
+      if (inSent[w.toLowerCase()]) {
+        badLure.push(v.id + ' 的例句誘答 ' + w + ' 已經在句子裡，排句題會有兩個解');
+      }
+    });
+  });
+});
+ok(badLure.length === 0, '刻意誘答（lure）都是可用的' +
+   (badLure.length ? '：' + badLure.slice(0, 5).join('、') : ''));
+
+var lureWords = Content.allVocab().filter(function (v) { return v.lure; }).length;
+ok(lureWords > 0, '有標記刻意誘答的單字（' + lureWords + ' 個）');
+
+/* ---------- 搭配詞與字根字首 ---------- */
+var badCol = [], badRt = [], colWords = 0, rtWords = 0;
+Content.allVocab().forEach(function (v) {
+  if (v.col !== undefined) {
+    colWords++;
+    if (!Array.isArray(v.col) || !v.col.length) { badCol.push(v.id + ' 的 col 不是非空陣列'); return; }
+    // 搭配詞只掛動詞：挖掉名詞（pay the ___）常常不只一個答案，題目就沒有標準解
+    if (v.pos.indexOf('v.') < 0) badCol.push(v.id + '（' + v.w + ' ' + v.pos + '）不是動詞卻有搭配詞');
+    v.col.forEach(function (c) {
+      if (!Array.isArray(c) || c.length < 2 || !c[0] || !c[1]) {
+        badCol.push(v.id + ' 的搭配詞格式不是 [英, 中]'); return;
+      }
+      // 詞組裡沒有目標字就挖不出空格，題目會把答案直接印在題目上
+      if (!new RegExp('\\b' + v.w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(c[0])) {
+        badCol.push(v.id + ' 的「' + c[0] + '」不含 ' + v.w + '，挖不出空格');
+      }
+    });
+  }
+  if (v.rt !== undefined) {
+    rtWords++;
+    if (!v.rt || typeof v.rt !== 'object' || Array.isArray(v.rt)) { badRt.push(v.id + ' 的 rt 不是物件'); return; }
+    if (!v.rt.p && !v.rt.r && !v.rt.s) badRt.push(v.id + ' 的 rt 三個欄位都空的');
+    ['p', 'r', 's'].forEach(function (k) {
+      if (v.rt[k] === undefined) return;
+      // 顯示時用第一個空格切成「英文／中文」兩段，沒有空格就只會排出半塊積木
+      if (typeof v.rt[k] !== 'string' || v.rt[k].indexOf(' ') <= 0) {
+        badRt.push(v.id + ' 的 rt.' + k + '「' + v.rt[k] + '」不是「英文 空格 中文」');
+      }
+    });
+  }
+});
+ok(badCol.length === 0, '搭配詞格式正確且都挖得出空格（' + colWords + ' 個字）' +
+   (badCol.length ? '：' + badCol.slice(0, 5).join('、') : ''));
+ok(badRt.length === 0, '字根字首拆得成積木（' + rtWords + ' 個字）' +
+   (badRt.length ? '：' + badRt.slice(0, 5).join('、') : ''));
+ok(colWords > 0 && rtWords > 0, '搭配詞與字根都有資料');
+
+/* ---------- 最小音對 ---------- */
+var badMp = [];
+allMinPair.forEach(function (m) {
+  if (!m.ask) badMp.push(m.id + ' 沒有題目問法');
+  if (!Array.isArray(m.set) || m.set.length < 3) { badMp.push(m.id + ' 的候選少於 3 個'); return; }
+  var seenW = {}, seenL = {};
+  m.set.forEach(function (x) {
+    if (!Array.isArray(x) || !x[0]) { badMp.push(m.id + ' 的候選格式錯誤'); return; }
+    var w = String(x[0]), lab = x[1] === undefined ? w : String(x[1]);
+    if (seenW[w]) badMp.push(m.id + ' 有兩個 ' + w);
+    if (seenL[lab]) badMp.push(m.id + ' 的選項 ' + lab + ' 重複，會出現兩個一樣的選項');
+    seenW[w] = seenL[lab] = 1;
+    // 標籤是「這個字裡的哪一段」，不在字裡面就對不起來 —— 拼錯了也只會靜靜出錯題
+    if (w.toLowerCase().indexOf(lab.toLowerCase()) < 0) {
+      badMp.push(m.id + ' 的 ' + w + ' 標成「' + lab + '」，但字裡沒有這一段');
+    }
+  });
+});
+ok(badMp.length === 0, '最小音對的候選與標籤對得起來（' + allMinPair.length + ' 組）' +
+   (badMp.length ? '：' + badMp.slice(0, 5).join('、') : ''));
+ok(allMinPair.length > 0, '有最小音對資料');
+
+/* ---------- 時態時間軸 ---------- */
+var TL_AT = { past: 1, now: 1, future: 1 };
+var badTl = [], tlPoints = 0;
+allGrammar.forEach(function (g) {
+  if (g.tl === undefined) return;
+  tlPoints++;
+  if (!Array.isArray(g.tl) || !g.tl.length) { badTl.push(g.id + ' 的 tl 不是非空陣列'); return; }
+  g.tl.forEach(function (m) {
+    if (!m || !m.t) { badTl.push(g.id + ' 的標記沒有文字'); return; }
+    if (!TL_AT[m.a]) badTl.push(g.id + ' 的 a=' + m.a + ' 不是 past/now/future');
+    if (m.b !== undefined && !TL_AT[m.b]) badTl.push(g.id + ' 的 b=' + m.b + ' 不是 past/now/future');
+  });
+});
+ok(badTl.length === 0, '時間軸標記都落在 過去／現在／未來 上（' + tlPoints + ' 個文法點）' +
+   (badTl.length ? '：' + badTl.slice(0, 5).join('、') : ''));
+ok(tlPoints > 0, '有時間軸資料');
 
 // t 分型不只是標籤：irregular 題會依它決定要不要問過去分詞（A 型問了沒鑑別度）
 var badIrr = [];
@@ -358,7 +478,7 @@ listJs('js/exercises').forEach(function (rel) {
     exTypes[m.replace(/^\s*Ex\./, '').replace(/\s*=$/, '')] = 1;
   });
 });
-eq(Object.keys(exTypes).length, 14, '註冊了 14 種題型');
+eq(Object.keys(exTypes).length, 16, '註冊了 16 種題型');
 
 // 兩種起步取向都要組得出題 —— planVocab 只有選「先學單字」的人會走到，壞了不會有人發現
 var emptyLesson = [], badType = [];
@@ -383,11 +503,185 @@ ok(vCards > pCards, '「先學單字」在發音關教更多新字（' + pCards 
 eq(cardsOf('s0u6', 'vocab'), cardsOf('s0u6', 'phonics'), '沒有 planVocab 的關卡不受取向影響');
 State.data.profile.track = 'phonics';
 
+// 搭配詞是從 vocabUpTo 抽的，不是這一關新教的字 —— 早期關卡累積的搭配詞不夠時
+// 會靜靜地少出題，所以課表寫幾題就要驗幾題
+var colShort = [], colDup = [];
+Content.stages().forEach(function (st) {
+  (st.units || []).forEach(function (u) {
+    var want = 0;
+    (u.plan || []).forEach(function (p) { if (p[0] === 'collocate') want = p[1]; });
+    if (!want || !Content.isReady(u.id)) return;
+    var qs = Scheduler.buildLesson(u.id).filter(function (q) { return q.type === 'collocate'; });
+    if (qs.length !== want) colShort.push(u.id + ' 要 ' + want + ' 題卻只出了 ' + qs.length);
+    qs.forEach(function (q) {
+      if (!q.col || !q.col[0]) colShort.push(u.id + ' 出的搭配詞題沒有詞組');
+    });
+    // 一次只抽兩題，光看一次跑不出重複（機率大概 7%）—— 多抽幾輪才測得到守衛
+    for (var r = 0; r < 25 && !colDup.length; r++) {
+      var seenCol = {};
+      Scheduler.buildLesson(u.id).forEach(function (q) {
+        if (q.type !== 'collocate') return;
+        if (seenCol[q.ref.id]) colDup.push(u.id + ' 重複問 ' + q.ref.w);
+        seenCol[q.ref.id] = 1;
+      });
+    }
+  });
+});
+ok(colShort.length === 0, '課表寫幾題搭配詞就出得了幾題' +
+   (colShort.length ? '：' + colShort.slice(0, 5).join('、') : ''));
+ok(colDup.length === 0, '同一課不會重複問同一個字的搭配' +
+   (colDup.length ? '：' + colDup.slice(0, 5).join('、') : ''));
+
+// 課表寫了 phoneme 就要出得了題（發音關考回自己教過的音，抽不到會靜靜地少考）
+var phShort = [];
+Content.stages().forEach(function (st) {
+  (st.units || []).forEach(function (u) {
+    var want = 0;
+    (u.plan || []).forEach(function (p) { if (p[0] === 'phoneme') want = p[1]; });
+    if (!want || !Content.isReady(u.id)) return;
+    var n = Scheduler.buildLesson(u.id).filter(function (q) { return q.type === 'phoneme'; }).length;
+    if (n !== want) phShort.push(u.id + ' 要 ' + want + ' 題卻只出了 ' + n);
+  });
+});
+ok(phShort.length === 0, '課表寫幾題最小音對就出得了幾題' +
+   (phShort.length ? '：' + phShort.slice(0, 5).join('、') : ''));
+
+// 鷹架提示：複習／每日挑戰／弱點怪獸都沒有教學卡，文法題必須自己帶一句話概念。
+// 關卡裡則不能帶 —— 教學卡前面才剛整頁講完，再貼一次是雜訊。
+var weakG = allGrammar.filter(function (g) {
+  return (g.qs || []).length && g.teach && g.teach.lead;
+})[0];
+if (weakG) {
+  State.data.srs = {};
+  State.data.weak.length = 0;
+  State.data.weak.push({ k: 'grammar:' + weakG.id, t: 'grammar', r: weakG.id, u: weakG.u, n: 1, at: State.dayStr() });
+  var wq = Scheduler.buildReview(20)[0];
+  State.data.weak.length = 0;
+  ok(!!(wq && wq.scaffold), '弱點怪獸的文法題帶著一句話概念（' + weakG.id + '）');
+}
+var lessonG = [];
+readyUnits.forEach(function (uid) {
+  Scheduler.buildLesson(uid).forEach(function (q) {
+    if ((q.type === 'grammar' || q.type === 'cloze') && q.scaffold) lessonG.push(uid);
+  });
+});
+ok(lessonG.length === 0, '關卡裡的文法題不重複貼概念（教學卡已經講過）' +
+   (lessonG.length ? '：' + lessonG.slice(0, 3).join('、') : ''));
+
 // 教學卡不計分，但關卡不能只有教學卡
 var onlyIntro = readyUnits.filter(function (uid) {
   return Scheduler.buildLesson(uid).every(function (q) { return q.type === 'intro'; });
 });
 ok(onlyIntro.length === 0, '沒有只剩教學卡的關卡' + (onlyIntro.length ? '：' + onlyIntro.join('、') : ''));
+
+/* ==========================================================================
+   5.5 誘答
+   選項與字塊裡「錯的那些」決定一題有沒有鑑別度。這一段全部是無聲的失效：
+   誘答挑錯不會噴錯，只會讓題目變簡單，或變成兩個答案都對。
+   ========================================================================== */
+describe('誘答');
+
+// 同義字當誘答 = 兩個都對（job 與 work 的 zh 都是「工作」）。
+// 隨機抽樣只會偶爾撞到，所以直接把「目標 + 它的同義字」當候選池餵進去：
+// 守衛沒擋住就一定會抽到那一個，這樣才是每次都會紅的檢查。
+var byZhMap = {}, byWMap = {};
+Content.allVocab().forEach(function (v) {
+  (byZhMap[v.zh] = byZhMap[v.zh] || []).push(v);
+  (byWMap[v.w] = byWMap[v.w] || []).push(v);
+});
+var twins = [];
+[byZhMap, byWMap].forEach(function (map) {
+  for (var k in map) {
+    if (Object.prototype.hasOwnProperty.call(map, k) && map[k].length > 1) {
+      twins.push([map[k][0], map[k][1]]);
+    }
+  }
+});
+var leaked = [];
+twins.forEach(function (p) {
+  Content.distractors(p[0], 1, [p[0], p[1]]).forEach(function (d) {
+    if (d.id === p[1].id) leaked.push(p[0].w + '「' + p[0].zh + '」配上 ' + p[1].w + '「' + p[1].zh + '」');
+  });
+});
+ok(twins.length > 0, '資料裡有同形／同義的字組（' + twins.length + ' 組），守衛不是空轉');
+ok(leaked.length === 0, '同義字不會被當成誘答（選項不會兩個都對）' +
+   (leaked.length ? '：' + leaked.slice(0, 3).join('、') : ''));
+
+var selfLure = Content.allVocab().filter(function (v) {
+  return Content.distractors(v, 3).some(function (d) { return d.id === v.id; });
+});
+ok(selfLure.length === 0, '誘答不會包含正確答案本身' +
+   (selfLure.length ? '：' + selfLure.slice(0, 3).map(function (v) { return v.id; }).join('、') : ''));
+
+// 有標 lure 的字，誘答要真的用上它 —— 否則整份誘答表等於沒接
+var lureSample = Content.allVocab().filter(function (v) { return v.lure && v.lure.length; });
+var lureMissed = lureSample.filter(function (v) {
+  var got = Content.distractors(v, 3).map(function (d) { return d.w.toLowerCase(); });
+  return !v.lure.some(function (w) { return got.indexOf(w.toLowerCase()) >= 0; });
+});
+ok(lureMissed.length === 0, '標了 lure 的字，選項一定包含刻意誘答' +
+   (lureMissed.length ? '：' + lureMissed.slice(0, 5).map(function (v) { return v.id + ' ' + v.w; }).join('、') : ''));
+
+// 搭配詞題的誘答不能是隨機動詞 —— 抽到剛好也配得起來的字（give a speech 抽到 make，
+// 而 make a speech 也是對的）那題就沒有標準解。合法來源只有其他搭配詞動詞與自己的 lure。
+var colSet = {};
+Content.allVocab().forEach(function (v) { if (v.col && v.col.length) colSet[v.id] = 1; });
+var wildCol = [];
+Content.allVocab().forEach(function (v) {
+  if (!colSet[v.id]) return;
+  for (var r = 0; r < 20 && !wildCol.length; r++) {
+    Content.colDistractors(v, 3).forEach(function (d) {
+      var isLure = (v.lure || []).some(function (w) { return w.toLowerCase() === d.w.toLowerCase(); });
+      if (!colSet[d.id] && !isLure) wildCol.push(v.w + ' 抽到 ' + d.w);
+    });
+  }
+});
+ok(wildCol.length === 0, '搭配詞題的誘答只來自搭配詞字組或自己的 lure' +
+   (wildCol.length ? '：' + wildCol.slice(0, 3).join('、') : ''));
+
+// 排句字塊：誘答不能是句子裡本來就有的字，否則會排得出第二個正確解
+var dupTok = [];
+Content.orderedUnitIds().filter(Content.isReady).forEach(function (uid) {
+  Scheduler.sentencesFrom(Content.vocabOf(uid)).forEach(function (s) {
+    var correct = ExUtil.tokenize(s.en);
+    var norm = {};
+    correct.forEach(function (t) { norm[t.toLowerCase().replace(/[^a-z'\-]/g, '')] = 1; });
+    Content.tokenLures(s, correct, { n: 2, unitId: uid }).forEach(function (w) {
+      if (norm[w.toLowerCase()]) dupTok.push(uid + '「' + s.en + '」→ ' + w);
+      if (/\s/.test(w)) dupTok.push(uid + '「' + s.en + '」的字塊 ' + w + ' 有空格');
+    });
+  });
+});
+ok(dupTok.length === 0, '排句誘答字塊不會與句子裡的字重複' +
+   (dupTok.length ? '（' + dupTok.length + ' 筆）：' + dupTok.slice(0, 3).join('、') : ''));
+
+// 上面那一輪掃的是現有資料，而現有資料本來就是乾淨的 —— 守衛本身要單獨戳一次，
+// 否則哪天它被拿掉，掃描還是全綠。
+var guardEn = 'She teaches English.';
+var guarded = Content.tokenLures(
+  { en: guardEn, lure: ['English', 'studies'] }, ExUtil.tokenize(guardEn), { n: 2, random: false });
+ok(guarded.indexOf('English') < 0 && guarded.indexOf('studies') >= 0,
+   '句子裡已經有的字會被踢出誘答字塊（得到 ' + JSON.stringify(guarded) + '）');
+
+var phraseEn = 'Please close the door.';
+var phraseOut = Content.tokenLures(
+  { en: phraseEn, lure: ['turn off', 'opens'] }, ExUtil.tokenize(phraseEn), { n: 2, random: false });
+ok(phraseOut.indexOf('turn off') < 0 && phraseOut.indexOf('opens') >= 0,
+   '有空格的片語不會被排進字塊（得到 ' + JSON.stringify(phraseOut) + '）');
+
+// 句級誘答優先於字級：例句寫了形態正確的版本，就不該被原形蓋過
+var sentLure = null;
+Content.allVocab().some(function (v) {
+  return (v.ex || []).some(function (p) {
+    if (Array.isArray(p[2]) && p[2].length) { sentLure = { v: v, p: p }; return true; }
+    return false;
+  });
+});
+if (sentLure) {
+  var sObj = { en: sentLure.p[0], zh: sentLure.p[1], from: sentLure.v.id, lure: sentLure.p[2] };
+  var got = Content.tokenLures(sObj, ExUtil.tokenize(sObj.en), { n: 1, unitId: sentLure.v.u });
+  eq(got[0], sentLure.p[2][0], '句級誘答優先於字級誘答（' + sentLure.v.w + '）');
+}
 
 /* ==========================================================================
    6. 跳關測驗
@@ -485,7 +779,8 @@ var samples = {
   reading: (allReading[0] || {}).id,
   irregular: (Content.irregulars()[0] || {}).id,
   photo: (allPhoto[0] || {}).id,
-  respond: (allRespond[0] || {}).id
+  respond: (allRespond[0] || {}).id,
+  phoneme: (allMinPair[0] || {}).id
 };
 Object.keys(weakTypes).forEach(function (t) {
   var refId = samples[t];
@@ -504,8 +799,9 @@ var g0 = allGrammar[0], r0 = allReading[0], i0 = Content.irregulars()[0];
 ExUtil.gradeGrammar(g0, false, g0.u);
 SRS.addWeak('reading', r0.id, r0.u);
 SRS.addWeak('irregular', i0.id, '');
-eq(Object.keys(State.data.srs).length, 0, '文法/閱讀/不規則動詞不會寫進 srs');
-eq(State.data.weak.length, 3, '它們改為進弱點怪獸清單');
+SRS.addWeak('phoneme', allMinPair[0].id, allMinPair[0].u);
+eq(Object.keys(State.data.srs).length, 0, '文法/閱讀/不規則動詞/發音不會寫進 srs');
+eq(State.data.weak.length, 4, '它們改為進弱點怪獸清單');
 
 var v0 = Content.allVocab()[0];
 ExUtil.gradeVocab(v0, true, v0.u);

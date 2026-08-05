@@ -21,17 +21,22 @@
   var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2);
   var PHOTO   = cat(global.DATA_PHOTO_S2);      // 多益 Part 1：看圖聽描述
   var RESPOND = cat(global.DATA_RESPOND_S2);    // 多益 Part 2：應答問題
+  var MINPAIR = cat(global.DATA_MINPAIR);          // 最小音對：發音關唯一考得回來的題型
   var PHONICS = global.DATA_PHONICS || {};
   var IRREG   = global.DATA_IRREGULAR || [];
   var CUR     = global.DATA_CURRICULUM || { stages: [], rules: {} };
 
   /* ---------- 索引 ---------- */
-  var byId = {}, vocabByUnit = {}, grammarByUnit = {}, readingByUnit = {};
-  var photoByUnit = {}, respondByUnit = {};
+  var byId = {}, byWord = {}, vocabByUnit = {}, grammarByUnit = {}, readingByUnit = {};
+  var photoByUnit = {}, respondByUnit = {}, minPairByUnit = {};
   var unitById = {}, stageOfUnit = {}, unitOrder = [];
 
   VOCAB.forEach(function (v) {
     byId[v.id] = v;
+    // lure 是用「字」寫的（誘答表要看得懂），查回單字物件才能當選項渲染。
+    // 少數字重複收錄（book、soon…），保留先出現的那個，也就是先教的那一關。
+    var key = v.w.toLowerCase();
+    if (!byWord[key]) byWord[key] = v;
     (vocabByUnit[v.u] = vocabByUnit[v.u] || []).push(v);
   });
   GRAMMAR.forEach(function (g) {
@@ -49,6 +54,10 @@
   RESPOND.forEach(function (q) {
     byId[q.id] = q;
     (respondByUnit[q.u] = respondByUnit[q.u] || []).push(q);
+  });
+  MINPAIR.forEach(function (m) {
+    byId[m.id] = m;
+    (minPairByUnit[m.u] = minPairByUnit[m.u] || []).push(m);
   });
   // 不規則動詞不綁關卡，但要能用 id 查回來（弱點怪獸需要）
   IRREG.forEach(function (iv) { byId[iv.id] = iv; });
@@ -72,6 +81,7 @@
   function readingOf(uid){ return readingByUnit[uid] || []; }
   function photoOf(uid)  { return photoByUnit[uid] || []; }
   function respondOf(uid){ return respondByUnit[uid] || []; }
+  function minPairsOf(uid){ return minPairByUnit[uid] || []; }
   function phonics(key)  { return PHONICS[key] || null; }
   function irregulars()  { return IRREG; }
   function allVocab()    { return VOCAB; }
@@ -101,6 +111,7 @@
     for (var i = 0; i <= idx; i++) out = out.concat(byUnit[unitOrder[i]] || []);
     return out;
   }
+  function minPairsUpTo(uid){ return upTo(minPairByUnit, MINPAIR, uid); }
   function photoUpTo(uid)   { return upTo(photoByUnit, PHOTO, uid); }
   function respondUpTo(uid) { return upTo(respondByUnit, RESPOND, uid); }
 
@@ -137,7 +148,8 @@
                      (grammarByUnit[uid] && grammarByUnit[uid].length) ||
                      (readingByUnit[uid] && readingByUnit[uid].length) ||
                      (photoByUnit[uid] && photoByUnit[uid].length) ||
-                     (respondByUnit[uid] && respondByUnit[uid].length);
+                     (respondByUnit[uid] && respondByUnit[uid].length) ||
+                     (minPairByUnit[uid] && minPairByUnit[uid].length);
     return !!hasContent;
   }
 
@@ -177,20 +189,95 @@
 
   function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+  function wordItem(w) { return byWord[String(w || '').toLowerCase()] || null; }
+
+  /** 字塊比對：忽略大小寫與標點，"day." 與 "day" 是同一個字 */
+  function normTok(t) {
+    return String(t || '').toLowerCase().replace(/[^a-z'-]/g, '');
+  }
+
   /**
-   * 產生誘答用的單字：優先挑同詞性、同關卡附近的字，比較有鑑別度。
+   * 產生誘答用的單字：先用資料標明的刻意誘答（lure），不足才退回同詞性隨機抽。
+   * 隨機誘答的鑑別度很低 —— 問 take 卻配上 office、very，看一眼就能刪掉；
+   * 真正會錯的是母語干擾（中文說「吃藥」，所以 eat 才是那個陷阱）。
+   *
+   * 同形或同義的字一律排除：job 與 work 的 zh 都是「工作」，湊在同一題會出現
+   * 兩個都對的選項，題目直接壞掉（recall 兩個方向分別看 w 與 zh，兩邊都要擋）。
    */
   function distractors(target, n, pool) {
     pool = pool || vocabUpTo(target.u);
-    var same = pool.filter(function (v) { return v.id !== target.id && v.pos === target.pos; });
-    var rest = pool.filter(function (v) { return v.id !== target.id && v.pos !== target.pos; });
-    var out = sample(same, n);
-    if (out.length < n) out = out.concat(sample(rest, n - out.length));
-    if (out.length < n) {
-      var wide = VOCAB.filter(function (v) { return v.id !== target.id; });
-      out = out.concat(sample(wide, n - out.length));
+    var taken = {};
+    var out = [];
+
+    function usable(v) {
+      return !!v && !taken[v.id] && v.id !== target.id &&
+             v.w !== target.w && v.zh !== target.zh;
     }
-    return out.slice(0, n);
+    function add(v) {
+      if (out.length >= n || !usable(v)) return;
+      taken[v.id] = 1;
+      out.push(v);
+    }
+
+    (target.lure || []).forEach(function (w) { add(wordItem(w)); });
+
+    if (out.length < n) {
+      sample(pool.filter(function (v) { return usable(v) && v.pos === target.pos; }),
+             n - out.length).forEach(add);
+    }
+    if (out.length < n) {
+      sample(pool.filter(function (v) { return usable(v) && v.pos !== target.pos; }),
+             n - out.length).forEach(add);
+    }
+    if (out.length < n) {
+      sample(VOCAB.filter(usable), n - out.length).forEach(add);
+    }
+    return out;
+  }
+
+  /**
+   * 搭配詞題的誘答：只從「其他也有搭配詞的動詞」裡抽。
+   * 不能用一般的隨機誘答 —— 隨機抽到的動詞有機會剛好也配得起來
+   * （give a speech 抽到 make，可是 make a speech 也是對的），那題就沒有標準解。
+   * 會收進 col 的都是彼此互相干擾的高頻動詞，拿它們互當誘答最準也最安全。
+   */
+  function colDistractors(target, n) {
+    return distractors(target, n, VOCAB.filter(function (v) { return v.col && v.col.length; }));
+  }
+
+  /**
+   * 排句題的誘答字塊（回傳字串，不是單字物件）。
+   * 取用順序：
+   *   1. 句子自己的 lure（例句的第三個元素）—— 資料作者知道這句用的是哪個形態，最精準
+   *   2. 來源單字的 lure —— 一份資料所有題型共用，但形態不一定跟這句吻合
+   *   3. 都沒寫才退回隨機舊字
+   * 已經在句子裡的字不能當誘答，否則排句題會多出一個正確解。
+   */
+  function tokenLures(sent, correct, opts) {
+    opts = opts || {};
+    var n = opts.n || 1;
+    var used = {}, out = [];
+    (correct || []).forEach(function (t) { used[normTok(t)] = 1; });
+
+    function add(w) {
+      var k = normTok(w);
+      // 片語（turn on）當選擇題誘答很好用，但排成字塊會是唯一有空格的那一塊，
+      // 等於用看的就知道它是多的 —— 這裡跳過，選擇題那邊照用。
+      if (!k || used[k] || out.length >= n || /\s/.test(w)) return;
+      used[k] = 1;
+      out.push(String(w));
+    }
+
+    (sent.lure || []).forEach(add);
+    if (out.length < n && sent.from && byId[sent.from]) {
+      (byId[sent.from].lure || []).forEach(add);
+    }
+    if (out.length < n && opts.random !== false) {
+      sample(vocabUpTo(opts.unitId).filter(function (v) {
+        return !used[normTok(v.w)] && v.w.indexOf(' ') < 0;
+      }), n - out.length).forEach(function (v) { add(v.w); });
+    }
+    return out;
   }
 
   /* ---------- 統計 ---------- */
@@ -201,6 +288,7 @@
       reading: READING.length,
       photo: PHOTO.length,
       respond: RESPOND.length,
+      minpair: MINPAIR.length,
       units: unitOrder.filter(isReady).length,
       unitsAll: unitOrder.length
     };
@@ -209,13 +297,15 @@
   global.Content = {
     unit: unit, stageOf: stageOf, stages: stages, rules: rules, item: item,
     vocabOf: vocabOf, grammarOf: grammarOf, readingOf: readingOf,
-    photoOf: photoOf, respondOf: respondOf,
+    photoOf: photoOf, respondOf: respondOf, minPairsOf: minPairsOf,
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
-    photoUpTo: photoUpTo, respondUpTo: respondUpTo,
+    photoUpTo: photoUpTo, respondUpTo: respondUpTo, minPairsUpTo: minPairsUpTo,
     phonics: phonics, irregulars: irregulars,
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,
-    shuffle: shuffle, sample: sample, pick: pick, distractors: distractors,
+    shuffle: shuffle, sample: sample, pick: pick,
+    distractors: distractors, colDistractors: colDistractors,
+    tokenLures: tokenLures, wordItem: wordItem,
     counts: counts
   };
 })(window);
