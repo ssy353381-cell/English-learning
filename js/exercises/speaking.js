@@ -16,7 +16,7 @@
     ExUtil.prompt(host, isWord ? '跟著唸這個字' : '跟著唸這句話');
     host.insertAdjacentHTML('beforeend',
       '<div class="wordcard">' +
-        '<div class="' + (isWord ? 'word-main' : 'sentence-en big') + '">' + esc(s.en) + '</div>' +
+        '<div class="' + (isWord ? 'word-main' : 'sentence-en big') + '">' + Lexicon.markup(s.en) + '</div>' +
         '<div class="sentence-zh mt8">' + esc(s.zh) + '</div>' +
         '<div class="row mt16" style="justify-content:center;gap:10px">' +
           Speech.btn(s.en) + Speech.btn(s.en, true) +
@@ -167,7 +167,7 @@
               api.result(lv >= 1, {
                 title: lv === 2 ? '很好，這句過關' : (lv === 1 ? '有抓到感覺了' : '沒關係，多聽幾次再唸'),
                 detail: '<div class="row" style="gap:8px">' + Speech.btn(s.en) + Speech.btn(s.en, true) +
-                  '<div class="sentence-en">' + esc(s.en) + '</div></div>' +
+                  '<div class="sentence-en">' + Lexicon.markup(s.en) + '</div></div>' +
                   '<div class="small muted mt8">離線模式沒有自動評分。連上網路後，這一題會改成逐字比對。</div>'
               });
             };

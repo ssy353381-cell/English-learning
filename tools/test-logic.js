@@ -15,6 +15,9 @@
      · 跳關測驗沒把星寫進去：解鎖鏈靠那顆星，測驗過了卻卡在原地
      · 弱點怪獸新型別沒同步改 weakQuestion：怪獸進得了清單卻永遠消不掉
      · SRS 只涵蓋單字：文法/閱讀/不規則動詞寫進 srs 會讓複習佇列壞掉
+     · 詞庫三層的優先序：手寫層蓋不過自動層的話，寫了也沒用
+     · 詞庫的字（lx: 開頭）Content.item 查不到：漏了 refItem 就變成消不掉的怪獸
+     · markup 先轉義再包 span：正規表示式沒吃掉 HTML 實體會把 amp 當成單字
 
    用法：node tools/test-logic.js
    ========================================================================== */
@@ -178,6 +181,9 @@ function loadApp() {
   };
   sb.window = sb;
   sb.self = sb;
+  sb.addEventListener = function () {};
+  sb.removeEventListener = function () {};
+  sb.innerWidth = 900;
   sb.document = {
     hidden: false, body: stubEl(),
     addEventListener: function () {}, removeEventListener: function () {},
@@ -187,8 +193,14 @@ function loadApp() {
     querySelectorAll: function () { return []; }
   };
   // 只測邏輯，畫面/語音/音效用最小門面替代
+  // esc 要和 ui.js 的實作一致 —— 詞庫的 markup 是「先轉義再包 span」，
+  // 門面如果不轉義，跳脫相關的測試就會用錯的理由通過
   sb.UI = {
-    esc: function (s) { return String(s === undefined ? '' : s); },
+    esc: function (s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    },
     toast: function () {}, modal: function () {}, refreshChips: function () {}
   };
   sb.Speech = { btn: function () { return ''; }, similar: function () { return 0; }, say: function () {} };
@@ -197,9 +209,10 @@ function loadApp() {
   vm.createContext(sb);
 
   // 順序即相依順序，和 index.html 一致
+  // lexicon 在載入當下就取用 UI.esc，所以一定要排在 UI 門面備妥之後
   var files = listJs('data').concat([
-    'js/state.js', 'js/content.js', 'js/srs.js', 'js/gamify.js', 'js/scheduler.js',
-    'js/exercises/common.js'
+    'js/state.js', 'js/content.js', 'js/srs.js', 'js/gamify.js', 'js/lexicon.js',
+    'js/scheduler.js', 'js/exercises/common.js'
   ]);
   files.forEach(function (rel) {
     vm.runInContext(fs.readFileSync(path.join(ROOT, rel), 'utf8'), sb, { filename: rel });
@@ -209,14 +222,15 @@ function loadApp() {
 
 var app = loadApp();
 var Content = app.Content, Scheduler = app.Scheduler, SRS = app.SRS, State = app.State,
-    ExUtil = app.ExUtil, Gamify = app.Gamify;
+    ExUtil = app.ExUtil, Gamify = app.Gamify, Lexicon = app.Lexicon;
 
 /* ==========================================================================
    3. 資料完整性
    ========================================================================== */
 describe('資料完整性');
 
-var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond', m: 'minpair' };
+var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond',
+               m: 'minpair', c: 'convo' };
 var seen = {}, dupes = [], badPrefix = [];
 
 function checkIds(list, kind) {
@@ -227,13 +241,14 @@ function checkIds(list, kind) {
   });
 }
 checkIds(Content.allVocab(), 'vocab');
-var allGrammar = [], allReading = [], allPhoto = [], allRespond = [], allMinPair = [];
+var allGrammar = [], allReading = [], allPhoto = [], allRespond = [], allMinPair = [], allConvo = [];
 Content.orderedUnitIds().forEach(function (uid) {
   allGrammar = allGrammar.concat(Content.grammarOf(uid));
   allReading = allReading.concat(Content.readingOf(uid));
   allPhoto = allPhoto.concat(Content.photoOf(uid));
   allRespond = allRespond.concat(Content.respondOf(uid));
   allMinPair = allMinPair.concat(Content.minPairsOf(uid));
+  allConvo = allConvo.concat(Content.convoOf(uid));
 });
 checkIds(allGrammar, 'grammar');
 checkIds(allReading, 'reading');
@@ -241,6 +256,7 @@ checkIds(Content.irregulars(), 'irregular');
 checkIds(allPhoto, 'photo');
 checkIds(allRespond, 'respond');
 checkIds(allMinPair, 'minpair');
+checkIds(allConvo, 'convo');
 
 ok(dupes.length === 0, 'id 全域唯一（四種資料共用 byId 索引）' + (dupes.length ? '：' + dupes.slice(0, 5).join('、') : ''));
 ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
@@ -248,7 +264,7 @@ ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m）' + (badP
 var unitIds = {};
 Content.orderedUnitIds().forEach(function (u) { unitIds[u] = 1; });
 var orphan = [];
-Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond, allMinPair).forEach(function (x) {
+Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond, allMinPair, allConvo).forEach(function (x) {
   if (!unitIds[x.u]) orphan.push(x.id + ' → ' + x.u);
 });
 ok(orphan.length === 0, '每筆資料的 u 都指到存在的關卡' + (orphan.length ? '：' + orphan.slice(0, 5).join('、') : ''));
@@ -478,7 +494,7 @@ listJs('js/exercises').forEach(function (rel) {
     exTypes[m.replace(/^\s*Ex\./, '').replace(/\s*=$/, '')] = 1;
   });
 });
-eq(Object.keys(exTypes).length, 16, '註冊了 16 種題型');
+eq(Object.keys(exTypes).length, 17, '註冊了 17 種題型');
 
 // 兩種起步取向都要組得出題 —— planVocab 只有選「先學單字」的人會走到，壞了不會有人發現
 var emptyLesson = [], badType = [];
@@ -780,7 +796,8 @@ var samples = {
   irregular: (Content.irregulars()[0] || {}).id,
   photo: (allPhoto[0] || {}).id,
   respond: (allRespond[0] || {}).id,
-  phoneme: (allMinPair[0] || {}).id
+  phoneme: (allMinPair[0] || {}).id,
+  convo: (allConvo[0] || {}).id
 };
 Object.keys(weakTypes).forEach(function (t) {
   var refId = samples[t];
@@ -829,6 +846,114 @@ ok(ExUtil.matchAny('  she   is  late ', ['she is late']), '忽略多餘空白');
 ok(!ExUtil.matchAny('he is tall', ['he is short']), '真的不同就是錯');
 // 's 與 'd 有歧義（is/has、would/had），刻意不展開
 ok(!ExUtil.sameText("he's got it", ['he has got it'][0]), "'s 不展開（歧義）");
+
+/* ==========================================================================
+   10. 詞庫
+   ========================================================================== */
+describe('詞庫');
+
+var lexAll = Lexicon.all();
+ok(lexAll.length >= 11000, '詞庫達到多益的字彙量級（' + lexAll.length + ' 字）');
+
+var lexBad = [];
+lexAll.forEach(function (e) {
+  if (!e.w || !e.zh) lexBad.push(e.w || '(空)');
+  else if (/\t/.test(e.w) || /\t/.test(e.zh)) lexBad.push(e.w + ' 欄位錯位');
+});
+ok(lexBad.length === 0, '每筆都有英文與中文，欄位沒有錯位' +
+   (lexBad.length ? '：' + lexBad.slice(0, 5).join('、') : ''));
+
+var lexDup = {}, dupWord = [];
+lexAll.forEach(function (e) {
+  var k = e.w.toLowerCase();
+  if (lexDup[k]) dupWord.push(k);
+  lexDup[k] = 1;
+});
+ok(dupWord.length === 0, '同一個字只會有一筆（三層合併時取最上層）' +
+   (dupWord.length ? '：' + dupWord.slice(0, 5).join('、') : ''));
+
+// 課程單字必須查得到，否則例句點字會把已經教過的字標成「不認識」
+var missTaught = [];
+Content.allVocab().slice(0, 400).forEach(function (v) {
+  if (!Lexicon.lookup(v.w)) missTaught.push(v.w);
+});
+ok(missTaught.length === 0, '課程教過的字都查得到' +
+   (missTaught.length ? '：' + missTaught.slice(0, 5).join('、') : ''));
+
+// 手寫層要蓋得過自動層，否則寫了也沒用
+var wr = Lexicon.lookup('warranty');
+ok(wr && wr.entry.zh.indexOf('保固') >= 0,
+   '手寫層蓋掉自動層（warranty 是保固，不是字典排第一的「正當理由」）');
+ok(wr && wr.entry.note, '手寫層帶得出延伸用法');
+
+// 手寫層碰上課程已經教過的字：詞義以課程為準，但延伸用法要補上去
+var ad = Lexicon.lookup('address');
+ok(ad && ad.entry.u, 'address 用的是課程那筆（有綁關卡）');
+ok(ad && ad.entry.note && ad.entry.note.indexOf('演說') >= 0,
+   '課程的字也吃得到手寫層的延伸用法（否則為已教的字寫 note 等於白寫）');
+// col 不能從手寫層流進課程單字 —— collocate 題型會直接把它當題庫
+var colLeak = [];
+Content.allVocab().forEach(function (v) {
+  (v.col || []).forEach(function (c) {
+    if (String(c[0]).toLowerCase().indexOf(v.w.toLowerCase()) < 0) colLeak.push(v.w + ' → ' + c[0]);
+  });
+});
+ok(colLeak.length === 0, '搭配詞一律含目標字（挖空才挖得出來）' +
+   (colLeak.length ? '：' + colLeak.slice(0, 5).join('、') : ''));
+
+// 詞形變化還原
+var infl = [['abandoned', 'abandon'], ['negotiating', 'negotiate'], ['shipments', 'shipment']];
+var inflBad = [];
+infl.forEach(function (p) {
+  var h = Lexicon.lookup(p[0]);
+  if (!h || h.entry.w !== p[1]) inflBad.push(p[0] + ' → ' + (h ? h.entry.w : '查不到'));
+  else if (!h.via) inflBad.push(p[0] + ' 沒說明這是變化形');
+});
+ok(inflBad.length === 0, '變化形查得回原形，而且說得出是哪一種變化' +
+   (inflBad.length ? '：' + inflBad.join('、') : ''));
+
+// went 本身是課程單字（s1u5 教過去式時單獨教過），所以拿 gone 來測
+var irr = Lexicon.lookup('gone');
+ok(irr && irr.entry.w === 'go', '不規則動詞的過去分詞查得回原形（gone → go）');
+var irr2 = Lexicon.lookup('said');
+ok(irr2 && irr2.entry.w === 'say', '不規則動詞的過去式查得回原形（said → say）');
+
+// 詞條本身優先於別人的變化形：left 是獨立的字，不該被 leave 蓋掉
+var lf = Lexicon.lookup('left');
+ok(lf && lf.entry.w === 'left' && !lf.via, '自己就是詞條的字不會被當成別人的變化形');
+
+/* markup：先轉義再包 span，實體不能被拆開 */
+var mk = Lexicon.markup('Tom & Amy said "run".');
+ok(mk.indexOf('&amp;') >= 0, 'markup 保留 HTML 實體（& 沒有被拆成 amp）');
+ok(mk.indexOf('>amp<') < 0, 'markup 不會把實體裡的字母包成單字');
+ok(/data-lexw="run"/.test(mk), 'markup 把句子裡的字包成可點的 span');
+ok(Lexicon.markup('a<b>c').indexOf('<b>') < 0, 'markup 會轉義使用者資料裡的標籤');
+
+/* 詞庫特訓 */
+var drillWords = Lexicon.byLevel(3).slice(0, 8);
+var drill = Scheduler.buildLexiconDrill(drillWords);
+ok(drill.length > 0, '詞庫特訓組得出題目（' + drill.length + ' 題）');
+ok(drill.some(function (q) { return q.type === 'flashcard'; }), '特訓有單字卡（沒教過就直接考等於猜謎）');
+ok(drill.every(function (q) { return q.ref && q.ref.w; }), '特訓每一題都掛得到單字');
+eq(Scheduler.buildLexiconDrill([]).length, 0, '沒有字就不組題');
+
+/* 詞庫的字答錯後要出得了題 —— Content.item 查不到 lx: 開頭的 id */
+var lxWord = drillWords[0];
+ok(Lexicon.item(lxWord.id) === lxWord, 'Lexicon.item 認得 lx: 開頭的 id');
+State.data.weak.length = 0;
+SRS.addWeak('vocab', lxWord.id, '');
+var lxWeak = Scheduler.buildReview(20).filter(function (q) {
+  return q.ref && q.ref.id === lxWord.id;
+});
+ok(lxWeak.length > 0, '詞庫的字變成弱點怪獸後出得了題（否則永遠消不掉）');
+
+State.data.weak.length = 0;
+State.data.srs[lxWord.id] = { ef: 2.5, iv: 1, rep: 1, due: State.dayStr(), lap: 0, n: 1 };
+var lxDue = Scheduler.buildReview(20).filter(function (q) {
+  return q.ref && q.ref.id === lxWord.id;
+});
+ok(lxDue.length > 0, '詞庫的字到期後排得進複習佇列');
+delete State.data.srs[lxWord.id];
 
 /* ==========================================================================
    結果

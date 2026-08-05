@@ -278,6 +278,14 @@
         body.push({ type: 'respond', ref: r, unitId: unitId });
       });
     }
+    // Part 3／4 一題要聽一整段再答三小題，和閱讀一樣重，所以跟著放到收尾
+    if (plan.convo) {
+      var cvs = Content.convoOf(unitId);
+      if (!cvs.length) cvs = Content.convoUpTo(unitId);
+      SAMPLE(cvs, plan.convo).forEach(function (c) {
+        tail.push({ type: 'convo', ref: c, unitId: unitId });
+      });
+    }
 
     /* --- 10. 閱讀（放最後，當作這關的收尾） --- */
     if (plan.read) {
@@ -404,8 +412,17 @@
     return (g && g.teach && g.teach.lead) ? g.teach.lead : '';
   }
 
+  /**
+   * 弱點怪獸與 SRS 存的都是 id 字串。詞庫的字用 lx: 開頭，Content 查不到，
+   * 兩邊都要記得往 Lexicon 再問一次 —— 漏掉的話，詞庫特訓答錯的字會變成
+   * 進得了清單卻永遠出不了題的怪獸。
+   */
+  function refItem(id) {
+    return Content.item(id) || Lexicon.item(id);
+  }
+
   function weakQuestion(w) {
-    var it = Content.item(w.r);
+    var it = refItem(w.r);
     if (!it) return null;
 
     if (w.t === 'vocab') {
@@ -445,6 +462,11 @@
       return { type: 'phoneme', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
+    // Part 3／4 和閱讀一樣是整段重來：三小題全對才算消滅
+    if (w.t === 'convo') {
+      return { type: 'convo', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
     return null;
   }
 
@@ -465,18 +487,19 @@
       .sort(function (a, b) { return b.n - a.n; })
       .forEach(function (w) {
         if (taken() >= budget) return;
-        // 一篇文章要讀好幾分鐘，一次複習最多夾一篇
-        if (w.t === 'reading' && tail.length) return;
+        // 一篇文章要讀好幾分鐘，Part 3／4 要聽完整段再答三小題，一樣重。
+        // 兩種合計一次複習最多夾一個，否則整輪複習會被它們吃光。
+        if ((w.t === 'reading' || w.t === 'convo') && tail.length) return;
         var q = weakQuestion(w);
         if (!q) return;
-        if (q.type === 'read') tail.push(q);
+        if (q.type === 'read' || q.type === 'convo') tail.push(q);
         else out.push(q);
       });
 
     // 2) SRS 到期單字
     SRS.dueIds(limit).forEach(function (id) {
       if (taken() >= limit) return;
-      var v = Content.item(id);
+      var v = refItem(id);
       if (!v || !v.w) return;
       if (hasRef(id)) return;
       var spellable = v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w);
@@ -490,6 +513,45 @@
     out = out.concat(tail);
     out.forEach(function (q, i) { q.i = i; });
     return out;
+  }
+
+  /* ==========================================================================
+     詞庫特訓
+     課程關卡一次只教六到十個字，一萬二千字這樣走完要好幾年。詞庫特訓是另一條
+     腿：自己挑一批字直接背，走的還是同一套單字卡 → 回想 → 拼字 → 聽力流程。
+
+     誘答刻意從「同一批字」裡抽（pool 參數）—— 同一級的字難度相近，
+     拿課程裡的簡單字當誘答，這一批再難也會變成送分題。
+     ========================================================================== */
+  function buildLexiconDrill(words) {
+    if (!words || !words.length) return [];
+
+    var cards = [], body = [];
+
+    words.forEach(function (v) {
+      cards.push({ type: 'flashcard', ref: v, unitId: '', pool: words });
+    });
+
+    words.forEach(function (v, i) {
+      body.push({ type: 'recall', ref: v, dir: i % 2 ? 'zh2en' : 'en2zh', unitId: '', pool: words });
+      // 拼得出來才算真的會，但太長的字用字母銀行拼會變成純粹的耐心測驗
+      if (v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w) && i % 2 === 0) {
+        body.push({ type: 'spell', ref: v, unitId: '' });
+      } else {
+        body.push({ type: 'listen', mode: 'word', ref: v, unitId: '', pool: words });
+      }
+    });
+
+    // 單字卡之間夾一題練習，和關卡的節奏一致
+    var queue = [], shuffled = S(body), bi = 0;
+    cards.forEach(function (c, i) {
+      queue.push(c);
+      if (i % 2 === 1 && bi < shuffled.length) queue.push(shuffled[bi++]);
+    });
+    while (bi < shuffled.length) queue.push(shuffled[bi++]);
+
+    queue.forEach(function (q, i) { q.i = i; });
+    return queue;
   }
 
   /* ==========================================================================
@@ -598,6 +660,7 @@
   global.Scheduler = {
     buildLesson: buildLesson,
     buildReview: buildReview,
+    buildLexiconDrill: buildLexiconDrill,
     buildChallenge: buildChallenge,
     buildSkipTest: buildSkipTest,
     skipTestable: skipTestable,

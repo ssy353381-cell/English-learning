@@ -129,13 +129,18 @@
   }
 
   /* ---------- 例句區塊 ---------- */
+  /**
+   * 例句裡的每個字都是可以點開查的（Lexicon.markup）。
+   * 這是單字卡上最容易被忽略的一段：真正卡住閱讀的往往不是正在教的那個字，
+   * 而是例句裡順手用掉的另一個字。
+   */
   function exampleHTML(v, showZh) {
     if (!v.ex || !v.ex.length) return '';
     var rows = v.ex.map(function (p, i) {
       return '<div class="ex-item">' +
         '<span class="ex-tag ' + (i === 0 ? 'daily">日常' : 'work">職場') + '</span> ' +
         Speech.btn(p[0], false, 'speak-inline') +
-        '<div class="sentence-en">' + esc(p[0]) + '</div>' +
+        '<div class="sentence-en">' + Lexicon.markup(p[0]) + '</div>' +
         (showZh === false ? '' : '<div class="sentence-zh">' + esc(p[1]) + '</div>') +
         '</div>';
     }).join('');

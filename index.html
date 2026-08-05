@@ -48,6 +48,7 @@
   <button class="navbtn" data-nav="#/home"><span class="navicon">🏠</span><span class="navtext">今日</span></button>
   <button class="navbtn" data-nav="#/map"><span class="navicon">🗺️</span><span class="navtext">地圖</span></button>
   <button class="navbtn" data-nav="#/review"><span class="navicon">🗂️</span><span class="navtext">複習</span></button>
+  <button class="navbtn" data-nav="#/words"><span class="navicon">📚</span><span class="navtext">詞庫</span></button>
   <button class="navbtn" data-nav="#/stats"><span class="navicon">📈</span><span class="navtext">統計</span></button>
   <button class="navbtn" data-nav="#/settings"><span class="navicon">⚙️</span><span class="navtext">設定</span></button>
 </nav>
@@ -75,15 +76,28 @@
 <script src="data/vocab-s1c.js"></script>
 <script src="data/vocab-s2.js"></script>
 <script src="data/vocab-s2b.js"></script>
+<script src="data/vocab-s3.js"></script>
 <script src="data/grammar-s0.js"></script>
 <script src="data/grammar-s1.js"></script>
 <script src="data/grammar-s2.js"></script>
+<script src="data/grammar-s3.js"></script>
 <script src="data/reading-s0.js"></script>
 <script src="data/reading-s1.js"></script>
 <script src="data/reading-s2.js"></script>
+<script src="data/reading-s3.js"></script>
 <script src="data/toeic-p1-s2.js"></script>
 <script src="data/toeic-p2-s2.js"></script>
+<script src="data/toeic-p34-s3.js"></script>
 <script src="data/achievements.js"></script>
+
+<!-- 詞庫：lexicon-core.js 手寫，lexicon-1..6.js 由 tools/gen-lexicon.js 產生 -->
+<script src="data/lexicon-core.js"></script>
+<script src="data/lexicon-1.js"></script>
+<script src="data/lexicon-2.js"></script>
+<script src="data/lexicon-3.js"></script>
+<script src="data/lexicon-4.js"></script>
+<script src="data/lexicon-5.js"></script>
+<script src="data/lexicon-6.js"></script>
 
 <!-- ===== 引擎層 ===== -->
 <script src="js/state.js"></script>
@@ -92,6 +106,8 @@
 <script src="js/gamify.js"></script>
 <script src="js/speech.js"></script>
 <script src="js/ui.js"></script>
+<!-- lexicon 在模組載入當下就取用 UI.esc，所以一定要排在 ui.js 之後 -->
+<script src="js/lexicon.js"></script>
 <script src="js/scheduler.js"></script>
 
 <!-- ===== 練習題型 ===== -->
@@ -108,10 +124,12 @@
 <script src="js/exercises/grammar.js"></script>
 <script src="js/exercises/irregular.js"></script>
 <script src="js/exercises/toeic.js"></script>
+<script src="js/exercises/convo.js"></script>
 
 <!-- ===== 畫面層 ===== -->
 <script src="js/views/home.js"></script>
 <script src="js/views/map.js"></script>
+<script src="js/views/words.js"></script>
 <script src="js/views/lesson.js"></script>
 <script src="js/views/review.js"></script>
 <script src="js/views/stats.js"></script>

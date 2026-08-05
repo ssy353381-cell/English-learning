@@ -158,7 +158,7 @@
       return '<div class="opt-review-row' + (i === answer ? ' is-answer' : '') + '">' +
         '<span class="opt-letter">' + LETTERS[i] + '</span>' +
         Speech.btn(t, false, 'speak-inline') +
-        '<div><div class="sentence-en">' + esc(t) + '</div>' +
+        '<div><div class="sentence-en">' + Lexicon.markup(t) + '</div>' +
         '<div class="sentence-zh">' + esc((zhList || [])[i] || '') + '</div></div>' +
         '</div>';
     }).join('') + '</div>';
@@ -218,7 +218,7 @@
           UI.$$('.ask-text', host).forEach(function (el) { el.classList.remove('is-hidden'); });
           return '<div class="opt-review-row is-ask">' +
               Speech.btn(r.ask, false, 'speak-inline') +
-              '<div><div class="sentence-en">' + esc(r.ask) + '</div>' +
+              '<div><div class="sentence-en">' + Lexicon.markup(r.ask) + '</div>' +
               '<div class="sentence-zh">' + esc(r.askZh || '') + '</div></div>' +
             '</div>' +
             answerTable(r.opts, r.zh, r.a) +

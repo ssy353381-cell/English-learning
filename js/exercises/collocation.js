@@ -19,7 +19,7 @@
     return '<div class="ex-list"><div class="small muted">' + esc(v.w) + ' 的其他常見搭配</div>' +
       rest.map(function (c) {
         return '<div class="ex-item">' + Speech.btn(c[0], false, 'speak-inline') +
-          '<div class="sentence-en">' + esc(c[0]) + '</div>' +
+          '<div class="sentence-en">' + Lexicon.markup(c[0]) + '</div>' +
           '<div class="sentence-zh">' + esc(c[1]) + '</div></div>';
       }).join('') + '</div>';
   }
@@ -61,7 +61,7 @@
         api.result(ok, {
           title: ok ? '搭配正確！' : '這個詞組要用 ' + v.w,
           detail: '<div class="row" style="gap:8px">' + Speech.btn(phrase) +
-            '<div><div class="sentence-en">' + esc(phrase) + '</div>' +
+            '<div><div class="sentence-en">' + Lexicon.markup(phrase) + '</div>' +
             '<div class="sentence-zh">' + esc(zh) + '</div></div></div>' +
             (ok ? '' : '<div class="check-detail">' + esc(pool[picked].w) + ' 的意思沒錯，' +
               '但英文不這樣配。</div>') +

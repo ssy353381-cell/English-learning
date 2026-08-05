@@ -22,6 +22,7 @@
 |---|---|
 | `state.js` | localStorage 存檔（key `eq.save.v1`）、跨日結算、匯出匯入、進度碼 |
 | `content.js` | 合併 `data/*`、建索引、解鎖判定、`planOf()` 依取向給配方、出誘答 |
+| `lexicon.js` | 詞庫：三層合併、詞形還原、`markup()` 把句子包成可點的字、查詢卡 |
 | `srs.js` | SM-2 簡化版間隔重複、弱點怪獸清單 |
 | `scheduler.js` | 組題：關卡、複習、每日挑戰、跳關測驗 |
 | `gamify.js` | XP／等級／連續天數／寶石／成就、關卡與跳關測驗結算，及 WebAudio 合成音效 |
@@ -34,9 +35,11 @@
 
 `Ex[type] = { scored, render(q, host, api) }`。api：`ready(fn)` 設定檢查行為、`enableCheck(bool)`、`result(ok, opts)` 送批改、`setContinue(text)` 給不計分卡片、`onCleanup(fn)`。詳見 `exercises/common.js` 檔頭。
 
-16 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond collocate phoneme。
+17 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond collocate phoneme convo。
 
 `photo`／`respond`（多益 Part 1／2，在 `toeic.js`）共用「只靠耳朵作答」骨架：選項文字預設 `display:none`，按鈕或作答後才顯示。不可改用 `visibility:hidden` —— 它保留折行高度，長選項的框變高就洩題。沒有 TTS 時自動顯示，否則整題無法作答。
+
+`convo`（多益 Part 3／4，在 `convo.js`）反過來：**題目與選項要印出來**，真實測驗本來就印在題本上，藏起來是在練考場上不存在的能力。要藏的是**對話腳本**，那才是耳朵的工作。三小題一起作答一起批改，和閱讀題同一個節奏。換人說話時改音高而不是換語音 —— `chooseVoice()` 挑到什麼是使用者系統決定的，只有一個英文語音可用是常態。
 
 自由作答（fix／trans／cloze／dictate）走 `ExUtil.matchAny()`，已忽略大小寫、標點、彎引號與縮寫（`'s`／`'d` 有歧義故不展開）。`alt` 只需寫真正不同的說法。
 
@@ -44,13 +47,79 @@
 
 `data/curriculum.js` 定義 Stage 0–6 共 75 關。`plan` 只描述「出哪些題、各幾題」，挑哪些字句由 `scheduler.js` 決定。
 
-`Content.isReady(uid)` = `stage.ready` && 有 `plan` && 自己有六種內容任一（vocab／grammar／reading／photo／respond／minpair）。六種都要算：純聽力關沒有單字也沒有文法，魔王關相反 —— 題目全靠 `*UpTo()` 往前借，只有自己的短文。
+`Content.isReady(uid)` = `stage.ready` && 有 `plan` && 自己有七種內容任一（vocab／grammar／reading／photo／respond／minpair／convo）。七種都要算：純聽力關沒有單字也沒有文法，魔王關相反 —— 題目全靠 `*UpTo()` 往前借，只有自己的短文。
 
 `stage.ready` 只代表階段開放，關卡可分批補（沒 `plan` 就顯示「製作中」）。但解鎖是一條鏈，**可玩的關卡必須從頭連續** —— 中間空一關，後面永遠解不開。
 
-id 前綴互斥（共用 `byId` 索引）：vocab `v` / grammar `g` / reading `r` / irregular `i` / Part 1 `p` / Part 2 `q` / 最小音對 `m`，各接四位數。
+id 前綴互斥（共用 `byId` 索引）：vocab `v` / grammar `g` / reading `r` / irregular `i` / Part 1 `p` / Part 2 `q` / 最小音對 `m` / Part 3・4 `c`，各接四位數。
 
 不規則動詞不綁關卡，用 `t` 分 A／B／C 三型（三態同形／過去式＝過去分詞／三態都不同）。關卡設 `irregular: true` 得到一張教學卡，`plan` 加 `['irregular', n]` 出三態練習。
+
+## 詞庫：查得到的字
+
+課程單字（`data/vocab-*.js`）是「教得到的字」—— 綁關卡、有圖示、有刻意誘答，全部手寫。
+詞庫是「查得到的字」，不綁關卡，一萬一千筆，加上課程的一千多字剛好是多益的量級。
+
+三層，愈上面愈優先（`js/lexicon.js` 的 `build()`）：
+
+| 層 | 檔案 | 來源 |
+|---|---|---|
+| 課程單字 | `data/vocab-*.js` | 手寫，資料最完整 |
+| 手寫詞庫 | `data/lexicon-core.js` | 手寫，補課程沒教到的多益字 |
+| 自動詞庫 | `data/lexicon-1..6.js` | `tools/gen-lexicon.js` 產生，**不要手改** |
+
+自動層的中文是照詞頻排的，而多益考的常常不是最常用的意思（`warranty` 排最前面的是
+「正當理由」，考題只考「保固」）。手寫層就是為了蓋掉那些字。**要把某個字升級成手寫
+品質，把它搬進 `lexicon-core.js` 即可**，不必動程式。
+
+字**已經在課程裡**時（`address`、`order`、`last`…）不會被蓋掉 —— 課程那筆比較完整，
+只有 `note`（延伸用法）與 `fam`（同家族）會補上去。`col` 刻意不合併：`collocate` 題型
+直接把 vocab 的 `col` 當題庫抽，從詞庫塞進去等於繞過搭配詞那一串限制。
+
+自動層一筆是一行 `\t` 分隔的字串而不是物件字面值：一萬多筆各背三十個位元組的鍵名就是
+300KB，拆成字串陣列既省檔案也省瀏覽器的剖析時間。欄位順序見各檔案的檔頭。
+索引是第一次查詢才建的 —— 大部分的人打開 App 是要練習，不是要查字典。
+
+`tools/gen-lexicon.js` 需要兩份外部資料（體積太大，都不進 repo，URL 寫在檔頭）：
+ECDICT（MIT，含 BNC／COCA 詞頻與詞形變化）與 OpenCC 的簡繁對照表（Apache-2.0），
+另可選 WordNet 3.0 補英文用法示例。**簡轉繁的詞組表與單字表必須合成同一組做最長匹配**，
+分兩輪跑會把「公里」轉成「公裡」——詞組表裡那些左右相同的項目就是用來擋單字表的。
+
+挑字不能只看詞頻：`invoice` 的 COCA 排名一萬五、`itinerary` 更後面，但每回考題都在。
+腳本裡的 `BIZ` 清單把多益主題字無條件拉進來，是整支腳本唯一需要人腦判斷的地方。
+
+**例句是詞庫最弱的一環**：自動層的中英對照例句只有 256 筆（從 repo 自己寫過的句子比對
+出來的），另有約四千筆 WordNet 的英文用法示例，其餘六千多字目前只有詞義、音標、詞形
+變化與同家族。查詢卡在沒有例句時會照實說，不會假裝有。要補就是往 `lexicon-core.js` 寫。
+
+## 例句點字
+
+**每一句英文例句裡的每個字都可以點開查**（`Lexicon.markup()`）：真正卡住閱讀的往往不是
+正在教的那個字，而是例句裡順手用掉的另一個字。查詢卡給詞義、詞形變化、同家族、搭配詞、
+英英解釋與例句，而卡片裡的例句一樣可以再點下去（有返回鍵）。
+
+原本只有閱讀題的文章能點字（邏輯寫在 `exercises/reading.js` 裡），現在整包搬到
+`js/lexicon.js`。`lexicon.js` 在載入當下就取用 `UI.esc`，**所以它一定要排在 `ui.js` 之後**
+（`index.html` 與 `tools/test-logic.js` 的載入順序都要顧到）。
+
+只有「教學內容」與「批改後的詳解」用 `markup()`，**題目本身不包**：`recall` 的選項一點
+就會跳出中文，等於直接送答案。
+
+`markup()` 是先轉義再包 span，所以正規表示式必須先把 `&amp;` 這類實體整段吃掉，
+否則實體裡的 `amp` 會被當成一個英文字包起來。
+
+## 詞庫特訓
+
+課程一關教六到十個字，一萬二千字這樣走完要好幾年，所以詞庫另開一條腿：
+`#/words` 挑一批（分級或商務主題）→ `Scheduler.buildLexiconDrill()` → 走**同一套**
+關卡畫面（`lesson` 的 `drill` 模式）。刻意不做新畫面 —— 練習節奏、批改、結算都調好了。
+
+誘答從**同一批字**裡抽（題目上掛 `pool`，`flashcard`／`listening` 傳給 `distractors()`）。
+同一級的字難度相近；拿課程裡的簡單字當誘答，這一批再難也會變成送分題。
+
+詞庫的字 id 是 `lx:` 開頭，`Content.item()` 查不到。`scheduler.js` 的 `refItem()` 會再問
+一次 `Lexicon.item()`，**`weakQuestion` 與 `buildReview` 兩處都要用它** —— 漏掉的話，
+詞庫特訓答錯的字會變成進得了清單卻永遠出不了題的怪獸。
 
 ## 可選欄位
 
@@ -106,7 +175,7 @@ id 前綴互斥（共用 `byId` 索引）：vocab `v` / grammar `g` / reading `r
 
 ## 弱點怪獸
 
-七種型別記的都是**來源**而非個別題目：
+八種型別記的都是**來源**而非個別題目：
 
 | type | 記的 id | 複習時出什麼 | 消滅條件 |
 |---|---|---|---|
@@ -117,10 +186,11 @@ id 前綴互斥（共用 `byId` 索引）：vocab `v` / grammar `g` / reading `r
 | photo | 照片 | 同一張再聽一次四個描述 | 答對 |
 | respond | 問句 | 同一句再聽一次三個回應 | 答對 |
 | phoneme | 音對整組 | 從整組再抽一個字聽一次 | 答對 |
+| convo | 對話／獨白 | 整段重聽一次 | 三小題全對 |
 
 `Scheduler.weakQuestion()` 負責型別→題目的映射。**新增型別必須同步改它**，否則怪獸進得了清單卻永遠出不了題、也永遠消不掉。`test-logic.js` 掃 `SRS.addWeak()` 的字串參數比對 `weakQuestion` 有沒有接 —— 呼叫時型別要寫**字面值**，包在變數裡就掃不到（見 `toeic.js` 把評分交回各題型的原因）。
 
-複習佇列中怪獸佔 40% 額度，以**實際排進去的題數**計算（出不了題的不佔名額）；依答錯次數排序；閱讀排最後且每次至多一篇。
+複習佇列中怪獸佔 40% 額度，以**實際排進去的題數**計算（出不了題的不佔名額）；依答錯次數排序；閱讀與 Part 3／4 排最後，兩者合計每次至多一個 —— 它們一題就要好幾分鐘，放行第二個會把整輪複習吃光。
 
 間隔重複**僅涵蓋單字**：文法、閱讀、不規則動詞、發音都不寫入 `State.data.srs`（`buildReview` 的到期迴圈要求項目有 `.w`），只透過弱點怪獸回鍋。
 
@@ -144,12 +214,14 @@ id 前綴互斥（共用 `byId` 索引）：vocab `v` / grammar `g` / reading `r
 
 ## 現況
 
-- 可玩 Stage 0–2 共 35 關（1028 單字、27 文法點、54 篇短文、63 個不規則動詞、14 題 Part 1、22 題 Part 2、18 組最小音對）。Stage 2 已完整。
-- 可選欄位覆蓋率仍低：`lure` 55 字、`col` 12 字（29 組）、`rt` 32 字、`tl` 7 個文法點。純資料，補充不必動程式。
-- Stage 3–6 共 40 關僅有標題，`ready: false`。
+- 可玩 Stage 0–3 共 45 關（1120 單字、30 文法點、63 篇短文、63 個不規則動詞、14 題 Part 1、22 題 Part 2、6 題 Part 3／4、18 組最小音對）。Stage 3 已完整。
+- 詞庫 12018 字（手寫層 81、自動層 11000、其餘來自課程單字），例句涵蓋率仍低：中英對照 256 筆、英文用法示例 4184 筆，其餘只有詞義與詞形變化。
+- 可選欄位覆蓋率：`lure` 141 字、`col` 30 字（47 組）、`rt` 45 字、`tl` 9 個文法點。純資料，補充不必動程式。
+- Stage 4–6 共 30 關僅有標題，`ready: false`。
 
 ## 下一步 TODO
 
-1. **Stage 3 的 10 關**（被動語態、商務字彙、Part 5 詞性判斷、Part 3/4 長對話）。Part 3/4 要新的 `Ex` 模組（一段長音檔配多題），不是補資料就能解決；Part 5 可直接吃 `rt` 的後綴詞性。
-2. **兩條聲音的路都沒在真機驗過**。麥克風被 `file://` 擋住，`Speech.listen()`／`scoreSpeech()` 要走 Vercel preview；`phoneme` 反過來 —— 邏輯與降級都測得到，但「TTS 唸出來的 bag／beg／big 分不分得出來」只有真機聽得出來。
-3. **畫面層零自動檢查**。CI 只驗語法、資料與組題，`views/*`／`exercises/*` 的 render 全靠手動，而題型模組已增至 16 種。要納入就得引入 Playwright，與零依賴衝突，先想清楚值不值得。
+1. **詞庫的例句**。一萬一千字裡有六千多字連一句例句都沒有，這是詞庫目前最弱的一環。補的方式是往 `lexicon-core.js` 寫（手寫層會蓋掉自動層），優先補商務主題字與第 1–3 級。
+2. **Stage 4 的 10 關**（假設語氣、分詞構句、片語動詞、Part 6／7）。Part 6 段落填空與 Part 7 雙篇閱讀都要新的 `Ex` 模組 —— 前者要在一篇文章裡挖好幾個空，後者要同時顯示兩份文件並跨篇找答案。
+3. **兩條聲音的路都沒在真機驗過**。麥克風被 `file://` 擋住，`Speech.listen()`／`scoreSpeech()` 要走 Vercel preview；`phoneme` 反過來 —— 邏輯與降級都測得到，但「TTS 唸出來的 bag／beg／big 分不分得出來」只有真機聽得出來。Part 3／4 換人說話靠音高，多人對話聽不聽得出分界也一樣要真機。
+4. **畫面層零自動檢查**。CI 只驗語法、資料與組題，`views/*`／`exercises/*` 的 render 全靠手動，而題型模組已增至 17 種。要納入就得引入 Playwright，與零依賴衝突，先想清楚值不值得。

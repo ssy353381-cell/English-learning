@@ -49,7 +49,7 @@
       api.result(ok, {
         title: ok ? '正確！' : '正確答案是 ' + c.opts[c.a],
         detail: '<div class="row" style="gap:8px">' + Speech.btn(full) +
-          '<div class="sentence-en">' + esc(full) + '</div></div>' +
+          '<div class="sentence-en">' + Lexicon.markup(full) + '</div></div>' +
           (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') +
           (ok ? '' : ExUtil.timelineHTML(q.g && q.g.tl))
       });
@@ -86,7 +86,7 @@
       api.result(ok, {
         title: ok ? '改對了！' : '正確的句子是',
         detail: '<div class="row" style="gap:8px">' + Speech.btn(c.a) +
-          '<div><div class="sentence-en">' + esc(c.a) + '</div>' +
+          '<div><div class="sentence-en">' + Lexicon.markup(c.a) + '</div>' +
           (c.zh ? '<div class="sentence-zh">' + esc(c.zh) + '</div>' : '') + '</div></div>' +
           (ok ? '' : '<div class="small muted mt8">你寫的：' + esc(inp.value) + '</div>') +
           (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') +
@@ -129,7 +129,7 @@
       api.result(ok, {
         title: ok ? '翻得好！' : (near ? '很接近了，再看一次正確寫法' : '參考答案'),
         detail: '<div class="row" style="gap:8px">' + Speech.btn(c.a) +
-          '<div><div class="sentence-en">' + esc(c.a) + '</div>' +
+          '<div><div class="sentence-en">' + Lexicon.markup(c.a) + '</div>' +
           '<div class="sentence-zh">' + esc(c.zh) + '</div></div></div>' +
           (c.alt && c.alt.length ? '<div class="small muted mt8">也可以說：' + esc(c.alt.join('　/　')) + '</div>' : '') +
           (ok ? '' : '<div class="small muted mt8">你寫的：' + esc(inp.value) + '</div>') +
