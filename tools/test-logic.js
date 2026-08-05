@@ -302,6 +302,43 @@ ok(badLure.length === 0, '刻意誘答（lure）都是可用的' +
 var lureWords = Content.allVocab().filter(function (v) { return v.lure; }).length;
 ok(lureWords > 0, '有標記刻意誘答的單字（' + lureWords + ' 個）');
 
+/* ---------- 搭配詞與字根字首 ---------- */
+var badCol = [], badRt = [], colWords = 0, rtWords = 0;
+Content.allVocab().forEach(function (v) {
+  if (v.col !== undefined) {
+    colWords++;
+    if (!Array.isArray(v.col) || !v.col.length) { badCol.push(v.id + ' 的 col 不是非空陣列'); return; }
+    // 搭配詞只掛動詞：挖掉名詞（pay the ___）常常不只一個答案，題目就沒有標準解
+    if (v.pos.indexOf('v.') < 0) badCol.push(v.id + '（' + v.w + ' ' + v.pos + '）不是動詞卻有搭配詞');
+    v.col.forEach(function (c) {
+      if (!Array.isArray(c) || c.length < 2 || !c[0] || !c[1]) {
+        badCol.push(v.id + ' 的搭配詞格式不是 [英, 中]'); return;
+      }
+      // 詞組裡沒有目標字就挖不出空格，題目會把答案直接印在題目上
+      if (!new RegExp('\\b' + v.w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(c[0])) {
+        badCol.push(v.id + ' 的「' + c[0] + '」不含 ' + v.w + '，挖不出空格');
+      }
+    });
+  }
+  if (v.rt !== undefined) {
+    rtWords++;
+    if (!v.rt || typeof v.rt !== 'object' || Array.isArray(v.rt)) { badRt.push(v.id + ' 的 rt 不是物件'); return; }
+    if (!v.rt.p && !v.rt.r && !v.rt.s) badRt.push(v.id + ' 的 rt 三個欄位都空的');
+    ['p', 'r', 's'].forEach(function (k) {
+      if (v.rt[k] === undefined) return;
+      // 顯示時用第一個空格切成「英文／中文」兩段，沒有空格就只會排出半塊積木
+      if (typeof v.rt[k] !== 'string' || v.rt[k].indexOf(' ') <= 0) {
+        badRt.push(v.id + ' 的 rt.' + k + '「' + v.rt[k] + '」不是「英文 空格 中文」');
+      }
+    });
+  }
+});
+ok(badCol.length === 0, '搭配詞格式正確且都挖得出空格（' + colWords + ' 個字）' +
+   (badCol.length ? '：' + badCol.slice(0, 5).join('、') : ''));
+ok(badRt.length === 0, '字根字首拆得成積木（' + rtWords + ' 個字）' +
+   (badRt.length ? '：' + badRt.slice(0, 5).join('、') : ''));
+ok(colWords > 0 && rtWords > 0, '搭配詞與字根都有資料');
+
 // t 分型不只是標籤：irregular 題會依它決定要不要問過去分詞（A 型問了沒鑑別度）
 var badIrr = [];
 Content.irregulars().forEach(function (iv) {
@@ -400,7 +437,7 @@ listJs('js/exercises').forEach(function (rel) {
     exTypes[m.replace(/^\s*Ex\./, '').replace(/\s*=$/, '')] = 1;
   });
 });
-eq(Object.keys(exTypes).length, 14, '註冊了 14 種題型');
+eq(Object.keys(exTypes).length, 15, '註冊了 15 種題型');
 
 // 兩種起步取向都要組得出題 —— planVocab 只有選「先學單字」的人會走到，壞了不會有人發現
 var emptyLesson = [], badType = [];
@@ -424,6 +461,35 @@ var pCards = cardsOf('s0u1', 'phonics'), vCards = cardsOf('s0u1', 'vocab');
 ok(vCards > pCards, '「先學單字」在發音關教更多新字（' + pCards + ' → ' + vCards + '）');
 eq(cardsOf('s0u6', 'vocab'), cardsOf('s0u6', 'phonics'), '沒有 planVocab 的關卡不受取向影響');
 State.data.profile.track = 'phonics';
+
+// 搭配詞是從 vocabUpTo 抽的，不是這一關新教的字 —— 早期關卡累積的搭配詞不夠時
+// 會靜靜地少出題，所以課表寫幾題就要驗幾題
+var colShort = [], colDup = [];
+Content.stages().forEach(function (st) {
+  (st.units || []).forEach(function (u) {
+    var want = 0;
+    (u.plan || []).forEach(function (p) { if (p[0] === 'collocate') want = p[1]; });
+    if (!want || !Content.isReady(u.id)) return;
+    var qs = Scheduler.buildLesson(u.id).filter(function (q) { return q.type === 'collocate'; });
+    if (qs.length !== want) colShort.push(u.id + ' 要 ' + want + ' 題卻只出了 ' + qs.length);
+    qs.forEach(function (q) {
+      if (!q.col || !q.col[0]) colShort.push(u.id + ' 出的搭配詞題沒有詞組');
+    });
+    // 一次只抽兩題，光看一次跑不出重複（機率大概 7%）—— 多抽幾輪才測得到守衛
+    for (var r = 0; r < 25 && !colDup.length; r++) {
+      var seenCol = {};
+      Scheduler.buildLesson(u.id).forEach(function (q) {
+        if (q.type !== 'collocate') return;
+        if (seenCol[q.ref.id]) colDup.push(u.id + ' 重複問 ' + q.ref.w);
+        seenCol[q.ref.id] = 1;
+      });
+    }
+  });
+});
+ok(colShort.length === 0, '課表寫幾題搭配詞就出得了幾題' +
+   (colShort.length ? '：' + colShort.slice(0, 5).join('、') : ''));
+ok(colDup.length === 0, '同一課不會重複問同一個字的搭配' +
+   (colDup.length ? '：' + colDup.slice(0, 5).join('、') : ''));
 
 // 教學卡不計分，但關卡不能只有教學卡
 var onlyIntro = readyUnits.filter(function (uid) {
@@ -478,6 +544,23 @@ var lureMissed = lureSample.filter(function (v) {
 });
 ok(lureMissed.length === 0, '標了 lure 的字，選項一定包含刻意誘答' +
    (lureMissed.length ? '：' + lureMissed.slice(0, 5).map(function (v) { return v.id + ' ' + v.w; }).join('、') : ''));
+
+// 搭配詞題的誘答不能是隨機動詞 —— 抽到剛好也配得起來的字（give a speech 抽到 make，
+// 而 make a speech 也是對的）那題就沒有標準解。合法來源只有其他搭配詞動詞與自己的 lure。
+var colSet = {};
+Content.allVocab().forEach(function (v) { if (v.col && v.col.length) colSet[v.id] = 1; });
+var wildCol = [];
+Content.allVocab().forEach(function (v) {
+  if (!colSet[v.id]) return;
+  for (var r = 0; r < 20 && !wildCol.length; r++) {
+    Content.colDistractors(v, 3).forEach(function (d) {
+      var isLure = (v.lure || []).some(function (w) { return w.toLowerCase() === d.w.toLowerCase(); });
+      if (!colSet[d.id] && !isLure) wildCol.push(v.w + ' 抽到 ' + d.w);
+    });
+  }
+});
+ok(wildCol.length === 0, '搭配詞題的誘答只來自搭配詞字組或自己的 lure' +
+   (wildCol.length ? '：' + wildCol.slice(0, 3).join('、') : ''));
 
 // 排句字塊：誘答不能是句子裡本來就有的字，否則會排得出第二個正確解
 var dupTok = [];

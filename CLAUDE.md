@@ -43,7 +43,7 @@
 
 `Ex[type] = { scored: bool, render(q, host, api) }`。api：`ready(fn)` 設定檢查行為、`enableCheck(bool)`、`result(ok, opts)` 送出批改、`setContinue(text)` 供不計分卡片用、`onCleanup(fn)`。完整說明見 `exercises/common.js` 檔頭。
 
-現有 14 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond。
+現有 15 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond collocate。
 
 `photo`（多益 Part 1 看圖聽描述）與 `respond`（Part 2 應答）在 `exercises/toeic.js`，共用一個「只靠耳朵作答」的骨架：選項文字預設 `display:none`，按「顯示英文」或作答後才出現。用 `display:none` 而非 `visibility:hidden` 是因為後者會保留折行高度，長選項的框變高等於用看的就知道哪個最長。沒有 TTS 語音時自動顯示文字，否則整題無法作答。
 
@@ -75,6 +75,19 @@
 同形或同義的字一律不能當誘答：`job` 與 `work` 的 `zh` 都是「工作」，湊在同一題會出現兩個都對的選項（資料裡有 47 組這種字）。守衛在 `distractors()` 裡，寫進 `lure` 也一樣會被丟掉，所以測試直接把這種資料擋下來 —— 寫了卻永遠不生效比沒寫更糟。
 
 排句誘答另外兩條：不能是句子裡已有的字（會多出一個正確解），也不能有空格（唯一有空格的字塊用看的就知道是多的，片語留給選擇題）。
+
+## 搭配詞與字根字首
+
+兩個可選欄位，都是純加法，沒寫的字完全不受影響。
+
+- **`col`** 搭配詞 `col:[['take a break','休息一下'], …]`。單字卡先列出來教，`collocate` 題型再把動詞挖空考回去。
+- **`rt`** 字根字首 `rt:{p:'pro- 向前', r:'gress 走', s:'-ment 名詞'}`，三個欄位都可省。每格都是「英文 空格 中文」，顯示時從第一個空格切成上下兩段排成積木 —— 沒有空格只會排出半塊。
+
+`col` **只能掛在動詞上**：挖掉名詞（pay the ___）常常不只一個答案。詞組裡也一定要含目標字，否則挖不出空格，答案會直接印在題目上。兩條都有測試擋著。
+
+搭配詞題的誘答走 `Content.colDistractors()`，只從**其他也有 `col` 的動詞**裡抽，不是一般的隨機誘答 —— 隨機抽到的動詞有機會剛好也配得起來（give a speech 抽到 make，可是 make a speech 也對），那題就沒有標準解。同理，寫資料時要避開「兩個都成立」的搭配：give、talk、receive、accept 就是因為和 make／speak／get 大量重疊而整組拿掉的。
+
+`collocate` 從 `vocabUpTo()` 抽而不是只抽這一關的新字：高頻動詞集中在 Stage 0，但要等學過幾關、有東西可比較之後才練得起來。所以發音關卡不出這種題，配方寫在 Stage 1 以後的關卡上。
 
 不規則動詞不綁關卡，用 `t` 分 A／B／C 三型（三態同形／過去式＝過去分詞／三態都不同）。關卡設 `irregular: true` 會得到一張教學卡，plan 加 `['irregular', n]` 會出三態練習。
 
@@ -140,6 +153,7 @@
 ## 現況
 
 - 可玩的是 Stage 0–2 共 35 關（1028 單字、27 文法點、54 篇短文、63 個不規則動詞、14 題 Part 1、22 題 Part 2）。Stage 2 已完整。
+- 單字的可選欄位目前覆蓋率還低：`lure` 55 個字、`col` 12 個字（29 組）、`rt` 32 個字。都是純加法，補資料不必動程式。
 - Stage 3–6 共 40 關僅有標題，`ready: false`。
 
 ## 下一步 TODO

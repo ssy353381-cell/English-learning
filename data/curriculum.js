@@ -7,6 +7,8 @@
      flashcard 單字卡學習（新字）。有這一項就會自動配拼字題，不必另外寫
      irregular 不規則動詞三態（原形 → 過去式 / 過去分詞）
      recall    看中文選英文 / 看英文選中文
+     collocate 搭配詞：把詞組裡的動詞挖空（take a ___ break）。從這關以前學過的
+               字裡抽有 col 的，不限這關新教的
      listen    聽音辨義
      dictate   聽寫填空
      speak     跟讀
@@ -99,7 +101,7 @@ window.DATA_CURRICULUM = {
     units: [
       { id:'s1u1', n:11, title:'一般動詞現在式', icon:'🏃', boss:false,
         goal:'I work / He works — 第三人稱單數那個 -s 是台灣人最常掉的分',
-        plan:[['intro',1],['flashcard',8],['grammar',6],['cloze',5],['build',3],['listen',3],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',8],['grammar',6],['cloze',5],['build',3],['listen',3],['read',1]] },
 
       { id:'s1u2', n:12, title:'否定與疑問：don\'t / Does', icon:'🚫', boss:false,
         goal:'會說「我不…」和「你有沒有…？」',
@@ -107,7 +109,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s1u3', n:13, title:'現在進行式 be + Ving', icon:'⏳', boss:false,
         goal:'「他正在打電話」— 多益 Part 1 看圖題幾乎全用這個時態',
-        plan:[['intro',1],['flashcard',8],['grammar',6],['cloze',4],['listen',4],['build',3],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',8],['grammar',6],['cloze',4],['listen',4],['build',3],['read',1]] },
 
       { id:'s1u4', n:14, title:'過去的 be 動詞 was / were', icon:'🕰️', boss:false,
         goal:'把 am/is/are 搬到過去',
@@ -116,11 +118,11 @@ window.DATA_CURRICULUM = {
       { id:'s1u5', n:15, title:'過去式與不規則動詞', icon:'📜', boss:true,
         goal:'規則加 -ed，不規則的 63 個只能背 — 這關是第一道真正的門檻',
         irregular:true,
-        plan:[['intro',1],['flashcard',10],['irregular',8],['grammar',8],['cloze',6],['dictate',4],['build',4],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',10],['irregular',8],['grammar',8],['cloze',6],['dictate',4],['build',4],['read',1]] },
 
       { id:'s1u6', n:16, title:'未來式 will / be going to', icon:'🔮', boss:false,
         goal:'兩種未來的差別：臨時決定 vs 早就計畫好',
-        plan:[['intro',1],['flashcard',8],['grammar',6],['cloze',4],['build',4],['listen',3],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',8],['grammar',6],['cloze',4],['build',4],['listen',3],['read',1]] },
 
       { id:'s1u7', n:17, title:'地方介系詞 in / on / at', icon:'📍', boss:false,
         goal:'in the room、on the desk、at the door — 小字最要命',
@@ -132,7 +134,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s1u9', n:19, title:'助動詞 can / should / must', icon:'🔑', boss:false,
         goal:'能力、建議、義務 — 職場英文天天用',
-        plan:[['intro',1],['flashcard',8],['grammar',6],['cloze',5],['build',4],['speak',2],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',8],['grammar',6],['cloze',5],['build',4],['speak',2],['read',1]] },
 
       { id:'s1u10', n:20, title:'形容詞・副詞・比較級', icon:'📊', boss:true,
         goal:'bigger / the biggest / more important — 加 -er 還是加 more？',
@@ -156,7 +158,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s1u15', n:25, title:'Stage 1 大魔王測驗', icon:'👑', boss:true,
         goal:'時態、介系詞、助動詞、比較級全部混在一起考',
-        plan:[['grammar',10],['cloze',8],['build',5],['listen',6],['dictate',4],['read',2],['recall',8]] }
+        plan:[['collocate',2],['grammar',10],['cloze',8],['build',5],['listen',6],['dictate',4],['read',2],['recall',8]] }
     ]
   },
 
@@ -170,7 +172,7 @@ window.DATA_CURRICULUM = {
     units: [
       { id:'s2u1', n:26, title:'現在完成式 have + p.p.', icon:'✅',
         goal:'搞懂「做完了」和「做過了」差在哪，並且會用 already / yet / just / ever',
-        plan:[['intro',1],['flashcard',10],['recall',6],['listen',5],['grammar',6],
+        plan:[['collocate',2],['intro',1],['flashcard',10],['recall',6],['listen',5],['grammar',6],
               ['cloze',4],['build',3],['photo',2],['respond',2],['read',1]] },
 
       { id:'s2u2', n:27, title:'完成式 vs 過去式', icon:'⚖️',
@@ -179,7 +181,7 @@ window.DATA_CURRICULUM = {
               ['cloze',4],['dictate',3],['photo',2],['respond',3],['read',1]] },
       { id:'s2u3', n:28, title:'不定詞 to V', icon:'🎯',
         goal:'搞懂哪些動詞後面要接 to V，以及「為了…」怎麼說',
-        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+        plan:[['collocate',2],['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
               ['cloze',4],['build',3],['read',1]] },
 
       { id:'s2u4', n:29, title:'動名詞 Ving', icon:'🔁',
@@ -189,7 +191,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s2u5', n:30, title:'to V 還是 Ving？', icon:'🤔', boss:true,
         goal:'兩種用法混在一起考，包括 remember／forget／stop／try 換意思的陷阱',
-        plan:[['intro',1],['flashcard',10],['recall',6],['grammar',9],['cloze',5],
+        plan:[['collocate',2],['intro',1],['flashcard',10],['recall',6],['grammar',9],['cloze',5],
               ['build',4],['dictate',3],['read',1]] },
 
       { id:'s2u6', n:31, title:'關係代名詞 who / which / that', icon:'🪢',
@@ -212,7 +214,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s2u10', n:35, title:'Stage 2 魔王測驗', icon:'👑', boss:true,
         goal:'完成式、不定詞、動名詞、關係代名詞、間接問句與 Part 1／Part 2 全部混合',
-        plan:[['grammar',10],['cloze',6],['build',4],['listen',5],['dictate',4],
+        plan:[['collocate',2],['grammar',10],['cloze',6],['build',4],['listen',5],['dictate',4],
               ['photo',2],['respond',3],['read',2],['recall',8]] }
     ]
   },

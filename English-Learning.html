@@ -452,6 +452,33 @@ body.in-lesson { padding-bottom: 0; }
 .ex-tag.daily { background: var(--green-soft); color: var(--green-dark); }
 .ex-tag.work  { background: var(--blue-soft);  color: var(--blue-dark); }
 
+/* ============ 搭配詞 ============ */
+.col-box { text-align: left; margin-top: 14px; border-top: 2px dashed var(--border); padding-top: 12px; }
+.col-lab { font-size: .72rem; font-weight: 800; color: var(--text-soft); margin-bottom: 6px; }
+.col-chip {
+  display: block; width: 100%; text-align: left; margin-bottom: 6px;
+  padding: 7px 11px; border: 2px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.col-chip:last-child { margin-bottom: 0; }
+.col-chip:active { transform: translateY(1px); }
+.col-chip .en { font-weight: 700; font-family: var(--font-en); }
+.col-zh { color: var(--text-soft); font-size: .82rem; margin-left: 8px; }
+
+/* ============ 字根字首拆解 ============ */
+/* 排成積木是重點：ex- ＋ tract 看得出結構，寫成一行字就只是另一段說明 */
+.root-box {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 6px; margin-top: 12px;
+}
+.root-part {
+  padding: 5px 10px; border: 2px solid var(--purple); border-radius: var(--radius-sm);
+  background: var(--surface); text-align: center; min-width: 62px;
+}
+.root-en { font-weight: 800; font-family: var(--font-en); color: var(--purple-dark); font-size: .92rem; }
+.root-zh { font-size: .72rem; color: var(--text-soft); }
+.root-plus { font-weight: 800; color: var(--text-faint); }
+
 /* ============ 拖曳排句（寫作） ============ */
 .build-area {
   min-height: 78px; border-bottom: 2px solid var(--border);
@@ -804,7 +831,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 </style>
 </head>
 <body>
-<!-- 單檔打包版 build: 2026-08-05 01:04 -->
+<!-- 單檔打包版 build: 2026-08-05 02:30 -->
 
 <!-- ===== 頂部狀態列 ===== -->
 <header id="topbar" class="topbar">
@@ -870,6 +897,8 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
      flashcard 單字卡學習（新字）。有這一項就會自動配拼字題，不必另外寫
      irregular 不規則動詞三態（原形 → 過去式 / 過去分詞）
      recall    看中文選英文 / 看英文選中文
+     collocate 搭配詞：把詞組裡的動詞挖空（take a ___ break）。從這關以前學過的
+               字裡抽有 col 的，不限這關新教的
      listen    聽音辨義
      dictate   聽寫填空
      speak     跟讀
@@ -962,7 +991,7 @@ window.DATA_CURRICULUM = {
     units: [
       { id:'s1u1', n:11, title:'一般動詞現在式', icon:'🏃', boss:false,
         goal:'I work / He works — 第三人稱單數那個 -s 是台灣人最常掉的分',
-        plan:[['intro',1],['flashcard',8],['grammar',6],['cloze',5],['build',3],['listen',3],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',8],['grammar',6],['cloze',5],['build',3],['listen',3],['read',1]] },
 
       { id:'s1u2', n:12, title:'否定與疑問：don\'t / Does', icon:'🚫', boss:false,
         goal:'會說「我不…」和「你有沒有…？」',
@@ -970,7 +999,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s1u3', n:13, title:'現在進行式 be + Ving', icon:'⏳', boss:false,
         goal:'「他正在打電話」— 多益 Part 1 看圖題幾乎全用這個時態',
-        plan:[['intro',1],['flashcard',8],['grammar',6],['cloze',4],['listen',4],['build',3],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',8],['grammar',6],['cloze',4],['listen',4],['build',3],['read',1]] },
 
       { id:'s1u4', n:14, title:'過去的 be 動詞 was / were', icon:'🕰️', boss:false,
         goal:'把 am/is/are 搬到過去',
@@ -979,11 +1008,11 @@ window.DATA_CURRICULUM = {
       { id:'s1u5', n:15, title:'過去式與不規則動詞', icon:'📜', boss:true,
         goal:'規則加 -ed，不規則的 63 個只能背 — 這關是第一道真正的門檻',
         irregular:true,
-        plan:[['intro',1],['flashcard',10],['irregular',8],['grammar',8],['cloze',6],['dictate',4],['build',4],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',10],['irregular',8],['grammar',8],['cloze',6],['dictate',4],['build',4],['read',1]] },
 
       { id:'s1u6', n:16, title:'未來式 will / be going to', icon:'🔮', boss:false,
         goal:'兩種未來的差別：臨時決定 vs 早就計畫好',
-        plan:[['intro',1],['flashcard',8],['grammar',6],['cloze',4],['build',4],['listen',3],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',8],['grammar',6],['cloze',4],['build',4],['listen',3],['read',1]] },
 
       { id:'s1u7', n:17, title:'地方介系詞 in / on / at', icon:'📍', boss:false,
         goal:'in the room、on the desk、at the door — 小字最要命',
@@ -995,7 +1024,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s1u9', n:19, title:'助動詞 can / should / must', icon:'🔑', boss:false,
         goal:'能力、建議、義務 — 職場英文天天用',
-        plan:[['intro',1],['flashcard',8],['grammar',6],['cloze',5],['build',4],['speak',2],['read',1]] },
+        plan:[['collocate',2],['intro',1],['flashcard',8],['grammar',6],['cloze',5],['build',4],['speak',2],['read',1]] },
 
       { id:'s1u10', n:20, title:'形容詞・副詞・比較級', icon:'📊', boss:true,
         goal:'bigger / the biggest / more important — 加 -er 還是加 more？',
@@ -1019,7 +1048,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s1u15', n:25, title:'Stage 1 大魔王測驗', icon:'👑', boss:true,
         goal:'時態、介系詞、助動詞、比較級全部混在一起考',
-        plan:[['grammar',10],['cloze',8],['build',5],['listen',6],['dictate',4],['read',2],['recall',8]] }
+        plan:[['collocate',2],['grammar',10],['cloze',8],['build',5],['listen',6],['dictate',4],['read',2],['recall',8]] }
     ]
   },
 
@@ -1033,7 +1062,7 @@ window.DATA_CURRICULUM = {
     units: [
       { id:'s2u1', n:26, title:'現在完成式 have + p.p.', icon:'✅',
         goal:'搞懂「做完了」和「做過了」差在哪，並且會用 already / yet / just / ever',
-        plan:[['intro',1],['flashcard',10],['recall',6],['listen',5],['grammar',6],
+        plan:[['collocate',2],['intro',1],['flashcard',10],['recall',6],['listen',5],['grammar',6],
               ['cloze',4],['build',3],['photo',2],['respond',2],['read',1]] },
 
       { id:'s2u2', n:27, title:'完成式 vs 過去式', icon:'⚖️',
@@ -1042,7 +1071,7 @@ window.DATA_CURRICULUM = {
               ['cloze',4],['dictate',3],['photo',2],['respond',3],['read',1]] },
       { id:'s2u3', n:28, title:'不定詞 to V', icon:'🎯',
         goal:'搞懂哪些動詞後面要接 to V，以及「為了…」怎麼說',
-        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+        plan:[['collocate',2],['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
               ['cloze',4],['build',3],['read',1]] },
 
       { id:'s2u4', n:29, title:'動名詞 Ving', icon:'🔁',
@@ -1052,7 +1081,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s2u5', n:30, title:'to V 還是 Ving？', icon:'🤔', boss:true,
         goal:'兩種用法混在一起考，包括 remember／forget／stop／try 換意思的陷阱',
-        plan:[['intro',1],['flashcard',10],['recall',6],['grammar',9],['cloze',5],
+        plan:[['collocate',2],['intro',1],['flashcard',10],['recall',6],['grammar',9],['cloze',5],
               ['build',4],['dictate',3],['read',1]] },
 
       { id:'s2u6', n:31, title:'關係代名詞 who / which / that', icon:'🪢',
@@ -1075,7 +1104,7 @@ window.DATA_CURRICULUM = {
 
       { id:'s2u10', n:35, title:'Stage 2 魔王測驗', icon:'👑', boss:true,
         goal:'完成式、不定詞、動名詞、關係代名詞、間接問句與 Part 1／Part 2 全部混合',
-        plan:[['grammar',10],['cloze',6],['build',4],['listen',5],['dictate',4],
+        plan:[['collocate',2],['grammar',10],['cloze',6],['build',4],['listen',5],['dictate',4],
               ['photo',2],['respond',3],['read',2],['recall',8]] }
     ]
   },
@@ -1542,7 +1571,7 @@ window.DATA_VOCAB_S0 = [
 {id:'v0032',w:'bad',kk:'bæd',pos:'adj.',zh:'壞的',ic:'👎',u:'s0u2',ex:[['The weather is bad.','天氣很糟。'],['That is bad news for the team.','那對團隊是壞消息。']]},
 {id:'v0033',w:'bed',kk:'bɛd',pos:'n.',zh:'床',ic:'🛏️',u:'s0u2',ex:[['I go to bed at eleven.','我十一點上床睡覺。'],['The hotel bed is very soft.','飯店的床很軟。']]},
 {id:'v0034',w:'red',kk:'rɛd',pos:'adj.',zh:'紅色的',ic:'🔴',u:'s0u2',ex:[['I like the red one.','我喜歡紅色那個。'],['Sign here with the red pen.','用紅筆在這裡簽名。']]},
-{id:'v0035',w:'get',kk:'gɛt',pos:'v.',zh:'得到・拿',ic:'🤲',u:'s0u2',lure:['take','receive'],ex:[['I get up at seven.','我七點起床。'],['Did you get my email?','你收到我的信了嗎？']]},
+{id:'v0035',w:'get',kk:'gɛt',pos:'v.',zh:'得到・拿',ic:'🤲',u:'s0u2',lure:['take','receive'],col:[['get married','結婚'],['get better','好轉']],ex:[['I get up at seven.','我七點起床。'],['Did you get my email?','你收到我的信了嗎？']]},
 {id:'v0036',w:'let',kk:'lɛt',pos:'v.',zh:'讓',ic:'🙌',u:'s0u2',ex:[['Let me see.','讓我看看。'],['Let me know by Friday.','星期五前告訴我。']]},
 {id:'v0037',w:'big',kk:'bɪg',pos:'adj.',zh:'大的',ic:'🐘',u:'s0u2',ex:[['This is a big room.','這是一間大房間。'],['We got a big order today.','我們今天接到一筆大訂單。']]},
 {id:'v0038',w:'six',kk:'sɪks',pos:'num.',zh:'六',ic:'6️⃣',u:'s0u2',ex:[['I have six pens.','我有六支筆。'],['The store closes at six.','店裡六點關門。']]},
@@ -1598,8 +1627,8 @@ window.DATA_VOCAB_S0 = [
 /* ===================== U4　長母音・魔法 e ===================== */
 {id:'v0085',w:'date',kk:'det',pos:'n.',zh:'日期',ic:'📅',u:'s0u4',ex:[['What is the date today?','今天幾號？'],['Please confirm the date.','請確認日期。']]},
 {id:'v0086',w:'late',kk:'let',pos:'adj.',zh:'遲的',ic:'⏰',u:'s0u4',ex:[['I am late again.','我又遲到了。'],['The train is ten minutes late.','火車誤點十分鐘。']]},
-{id:'v0087',w:'make',kk:'mek',pos:'v.',zh:'製作・做',ic:'🔨',u:'s0u4',lure:['do'],ex:[['I make coffee every morning.','我每天早上煮咖啡。'],['Let\'s make a plan.','我們來訂個計畫。']]},
-{id:'v0088',w:'take',kk:'tek',pos:'v.',zh:'拿・搭乘',ic:'🫴',u:'s0u4',lure:['eat','get','carry'],ex:[['Take an umbrella.','帶把傘。'],['I take the MRT to work.','我搭捷運上班。']]},
+{id:'v0087',w:'make',kk:'mek',pos:'v.',zh:'製作・做',ic:'🔨',u:'s0u4',lure:['do'],col:[['make a decision','做決定'],['make a mistake','犯錯'],['make progress','有進步'],['make a reservation','訂位']],ex:[['I make coffee every morning.','我每天早上煮咖啡。'],['Let\'s make a plan.','我們來訂個計畫。']]},
+{id:'v0088',w:'take',kk:'tek',pos:'v.',zh:'拿・搭乘',ic:'🫴',u:'s0u4',lure:['eat','get','carry'],col:[['take a break','休息一下'],['take a photo','拍照'],['take the elevator','搭電梯'],['take medicine','吃藥']],ex:[['Take an umbrella.','帶把傘。'],['I take the MRT to work.','我搭捷運上班。']]},
 {id:'v0089',w:'page',kk:'pedʒ',pos:'n.',zh:'頁',ic:'📄',u:'s0u4',ex:[['Turn to page five.','翻到第五頁。'],['The price is on page two.','價格在第二頁。']]},
 {id:'v0090',w:'time',kk:'taɪm',pos:'n.',zh:'時間',ic:'⌚',u:'s0u4',ex:[['What time is it?','現在幾點？'],['We don\'t have much time.','我們時間不多。']]},
 {id:'v0091',w:'line',kk:'laɪn',pos:'n.',zh:'線・隊伍',ic:'📶',u:'s0u4',ex:[['Stand in line, please.','請排隊。'],['The line is busy.','電話忙線中。']]},
@@ -1619,7 +1648,7 @@ window.DATA_VOCAB_S0 = [
 {id:'v0105',w:'wait',kk:'wet',pos:'v.',zh:'等待',ic:'⏳',u:'s0u4',ex:[['Wait a moment, please.','請稍等。'],['We are waiting for the client.','我們在等客戶。']]},
 {id:'v0106',w:'train',kk:'tren',pos:'n./v.',zh:'火車・訓練',ic:'🚆',u:'s0u4',ex:[['The train is fast.','火車很快。'],['We train new staff every month.','我們每個月訓練新員工。']]},
 {id:'v0107',w:'day',kk:'de',pos:'n.',zh:'天',ic:'🌞',u:'s0u4',ex:[['Have a nice day!','祝你有美好的一天！'],['I work eight hours a day.','我一天工作八小時。']]},
-{id:'v0108',w:'pay',kk:'pe',pos:'v.',zh:'付款',ic:'💳',u:'s0u4',lure:['spend','cost'],ex:[['I will pay by card.','我要刷卡。'],['The company pays on the fifth.','公司五號發薪。',['spends']]]},
+{id:'v0108',w:'pay',kk:'pe',pos:'v.',zh:'付款',ic:'💳',u:'s0u4',lure:['spend','cost'],col:[['pay attention','注意'],['pay the bill','付帳'],['pay by credit card','刷卡']],ex:[['I will pay by card.','我要刷卡。'],['The company pays on the fifth.','公司五號發薪。',['spends']]]},
 {id:'v0109',w:'road',kk:'rod',pos:'n.',zh:'道路',ic:'🛣️',u:'s0u4',ex:[['This road is long.','這條路很長。'],['The office is on Park Road.','辦公室在公園路上。']]},
 {id:'v0110',w:'know',kk:'no',pos:'v.',zh:'知道',ic:'💡',u:'s0u4',ex:[['I know his name.','我知道他的名字。'],['Let me know the result.','結果出來告訴我。']]},
 {id:'v0111',w:'food',kk:'fud',pos:'n.',zh:'食物',ic:'🍲',u:'s0u4',ex:[['The food is delicious.','食物很好吃。'],['We order food for the meeting.','我們幫會議訂餐。']]},
@@ -1681,8 +1710,8 @@ window.DATA_VOCAB_S0 = [
 {id:'v0163',w:'long',kk:'lɔŋ',pos:'adj.',zh:'長的',ic:'📏',u:'s0u6',ex:[['It is a long movie.','那是一部很長的電影。'],['We had a long meeting.','我們開了很久的會。']]},
 {id:'v0164',w:'easy',kk:'ˈizɪ',pos:'adj.',zh:'容易的',ic:'😌',u:'s0u6',ex:[['This is easy.','這很簡單。'],['The new system is easy to use.','新系統很好用。']]},
 {id:'v0165',w:'hard',kk:'hɑrd',pos:'adj./adv.',zh:'困難的・努力地',ic:'🧗',u:'s0u6',ex:[['English is hard for me.','英文對我來說很難。'],['She works very hard.','她非常努力工作。']]},
-{id:'v0166',w:'quickly',kk:'ˈkwɪklɪ',pos:'adv.',zh:'快速地',ic:'⚡',u:'s0u6',ex:[['He eats quickly.','他吃得很快。'],['Please reply quickly.','請盡快回覆。']]},
-{id:'v0167',w:'slowly',kk:'ˈsloli',pos:'adv.',zh:'慢慢地',ic:'🐢',u:'s0u6',ex:[['Please speak slowly.','請說慢一點。'],['Sales are growing slowly.','業績在緩慢成長。']]},
+{id:'v0166',w:'quickly',kk:'ˈkwɪklɪ',pos:'adv.',zh:'快速地',ic:'⚡',u:'s0u6',rt:{r:'quick 快的',s:'-ly 副詞'},ex:[['He eats quickly.','他吃得很快。'],['Please reply quickly.','請盡快回覆。']]},
+{id:'v0167',w:'slowly',kk:'ˈsloli',pos:'adv.',zh:'慢慢地',ic:'🐢',u:'s0u6',rt:{r:'slow 慢的',s:'-ly 副詞'},ex:[['Please speak slowly.','請說慢一點。'],['Sales are growing slowly.','業績在緩慢成長。']]},
 {id:'v0168',w:'well',kk:'wɛl',pos:'adv.',zh:'良好地',ic:'👌',u:'s0u6',ex:[['She sings well.','她唱得很好。'],['The team works well together.','團隊合作得很好。']]},
 {id:'v0169',w:'here',kk:'hɪr',pos:'adv.',zh:'這裡',ic:'📍',u:'s0u6',ex:[['Come here, please.','請過來這裡。'],['Sign here, please.','請在這裡簽名。']]},
 {id:'v0170',w:'there',kk:'ðɛr',pos:'adv.',zh:'那裡',ic:'👉',u:'s0u6',ex:[['My bag is over there.','我的包包在那邊。'],['Put the boxes over there.','把箱子放到那邊。']]},
@@ -1766,8 +1795,8 @@ window.DATA_VOCAB_S0 = [
 {id:'v0242',w:'place',kk:'ples',pos:'n.',zh:'地方',ic:'📌',u:'s0u9',ex:[['This is a nice place.','這是個好地方。'],['Let\'s find a place to meet.','我們找個地方見面。']]},
 {id:'v0243',w:'person',kk:'ˈpɝsn',pos:'n.',zh:'人',ic:'🧍',u:'s0u9',ex:[['She is a kind person.','她是個親切的人。'],['Ask the person at the front desk.','問櫃檯的人。']]},
 {id:'v0244',w:'idea',kk:'aɪˈdiə',pos:'n.',zh:'想法',ic:'💡',u:'s0u9',ex:[['That is a good idea.','那是個好主意。'],['Any ideas for the campaign?','對這個活動有想法嗎？']]},
-{id:'v0245',w:'say',kk:'se',pos:'v.',zh:'說',ic:'🗣️',u:'s0u9',lure:['tell','speak','talk'],ex:[['What did you say?','你說什麼？'],['He said the deadline is Friday.','他說截止日是星期五。']]},
-{id:'v0246',w:'tell',kk:'tɛl',pos:'v.',zh:'告訴',ic:'📢',u:'s0u9',lure:['say','speak'],ex:[['Tell me about it.','跟我說說。'],['Tell the team about the change.','告訴團隊這個改變。']]},
+{id:'v0245',w:'say',kk:'se',pos:'v.',zh:'說',ic:'🗣️',u:'s0u9',lure:['tell','speak','talk'],col:[['say hello','打招呼'],['say sorry','道歉']],ex:[['What did you say?','你說什麼？'],['He said the deadline is Friday.','他說截止日是星期五。']]},
+{id:'v0246',w:'tell',kk:'tɛl',pos:'v.',zh:'告訴',ic:'📢',u:'s0u9',lure:['say','speak'],col:[['tell the truth','說實話'],['tell a story','說故事']],ex:[['Tell me about it.','跟我說說。'],['Tell the team about the change.','告訴團隊這個改變。']]},
 {id:'v0247',w:'want',kk:'wɑnt',pos:'v.',zh:'想要',ic:'🤲',u:'s0u9',lure:['hope','wish'],ex:[['I want some water.','我想要一點水。'],['The client wants a discount.','客戶想要折扣。',['hopes']]]},
 {id:'v0248',w:'give',kk:'gɪv',pos:'v.',zh:'給',ic:'🎁',u:'s0u9',ex:[['Give me your hand.','把手給我。'],['Give the file to the manager.','把檔案給經理。']]},
 {id:'v0249',w:'find',kk:'faɪnd',pos:'v.',zh:'找到',ic:'🔍',u:'s0u9',ex:[['I can\'t find my keys.','我找不到鑰匙。'],['I found the missing file.','我找到不見的檔案了。']]},
@@ -1848,7 +1877,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0310',w:'wear',kk:'wɛr',pos:'v.',zh:'穿戴',ic:'👕',u:'s1u1',ex:[['I wear a jacket in winter.','我冬天穿外套。'],['Staff wear name tags at the fair.','員工在展場要戴名牌。']]},
 {id:'v0311',w:'carry',kk:'ˈkærɪ',pos:'v.',zh:'攜帶',ic:'🎒',u:'s1u1',lure:['take','send'],ex:[['She carries a big bag.','她背著一個大包包。'],['He carries the boxes upstairs.','他把箱子搬上樓。']]},
 {id:'v0312',w:'wash',kk:'wɑʃ',pos:'v.',zh:'清洗',ic:'🧼',u:'s1u1',ex:[['I wash my hands before lunch.','我午餐前洗手。'],['We wash the cups every evening.','我們每天傍晚洗杯子。']]},
-{id:'v0313',w:'arrive',kk:'əˈraɪv',pos:'v.',zh:'抵達',ic:'🛬',u:'s1u1',lure:['come','get'],ex:[['The bus arrives at eight.','公車八點到。',['comes']],['The shipment arrives on Tuesday.','貨物星期二到。',['comes']]]},
+{id:'v0313',w:'arrive',kk:'əˈraɪv',pos:'v.',zh:'抵達',ic:'🛬',u:'s1u1',lure:['come','get'],col:[['arrive at the airport','抵達機場'],['arrive at the office','抵達辦公室']],ex:[['The bus arrives at eight.','公車八點到。',['comes']],['The shipment arrives on Tuesday.','貨物星期二到。',['comes']]]},
 {id:'v0314',w:'leave',kk:'liv',pos:'v.',zh:'離開・留下',ic:'🚪',u:'s1u1',ex:[['I leave home at seven.','我七點出門。'],['Please leave a message.','請留言。']]},
 {id:'v0315',w:'return',kk:'rɪˈtɝn',pos:'v.',zh:'返回・退還',ic:'↩️',u:'s1u1',ex:[['She returns home late.','她很晚才回家。'],['Please return the form by Friday.','請在星期五前交回表格。']]},
 {id:'v0316',w:'stay',kk:'ste',pos:'v.',zh:'停留',ic:'🏨',u:'s1u1',ex:[['I stay home on Sunday.','我星期天待在家。'],['We stay at this hotel every year.','我們每年都住這家飯店。']]},
@@ -1857,8 +1886,8 @@ window.DATA_VOCAB_S1A = [
 {id:'v0319',w:'order',kk:'ˈɔrdɚ',pos:'v./n.',zh:'訂購・訂單',ic:'🧾',u:'s1u1',ex:[['I order coffee every morning.','我每天早上點咖啡。'],['The customer orders 50 units.','客戶訂了 50 個。']]},
 {id:'v0320',w:'deliver',kk:'dɪˈlɪvɚ',pos:'v.',zh:'運送',ic:'🚚',u:'s1u1',ex:[['They deliver the food fast.','他們送餐很快。'],['We deliver within three days.','我們三天內送達。']]},
 {id:'v0321',w:'visit',kk:'ˈvɪzɪt',pos:'v.',zh:'拜訪',ic:'🧳',u:'s1u1',ex:[['I visit my parents on weekends.','我週末去看父母。'],['The client visits our factory.','客戶來參觀我們的工廠。']]},
-{id:'v0322',w:'join',kk:'dʒɔɪn',pos:'v.',zh:'加入',ic:'➕',u:'s1u1',lure:['attend'],ex:[['Come and join us!','來加入我們吧！'],['She joins the meeting online.','她線上參加會議。',['attends']]]},
-{id:'v0323',w:'attend',kk:'əˈtɛnd',pos:'v.',zh:'出席',ic:'🎟️',u:'s1u1',lure:['join'],ex:[['I attend class every Monday.','我每週一上課。'],['All managers attend the review.','所有經理都要出席檢討會。']]},
+{id:'v0322',w:'join',kk:'dʒɔɪn',pos:'v.',zh:'加入',ic:'➕',u:'s1u1',lure:['attend'],col:[['join a club','加入社團'],['join the company','進這家公司']],ex:[['Come and join us!','來加入我們吧！'],['She joins the meeting online.','她線上參加會議。',['attends']]]},
+{id:'v0323',w:'attend',kk:'əˈtɛnd',pos:'v.',zh:'出席',ic:'🎟️',u:'s1u1',lure:['join'],col:[['attend school','上學'],['attend a training','參加訓練']],rt:{p:'at- 朝向',r:'tend 伸展'},ex:[['I attend class every Monday.','我每週一上課。'],['All managers attend the review.','所有經理都要出席檢討會。']]},
 {id:'v0324',w:'prepare',kk:'prɪˈpɛr',pos:'v.',zh:'準備',ic:'🛠️',u:'s1u1',ex:[['I prepare breakfast every day.','我每天準備早餐。'],['She prepares the monthly report.','她負責準備月報。']]},
 {id:'v0325',w:'discuss',kk:'dɪˈskʌs',pos:'v.',zh:'討論',ic:'💬',u:'s1u1',lure:['talk'],ex:[['Let\'s discuss it later.','我們晚點討論。'],['We discuss the budget on Friday.','我們星期五討論預算。']]},
 {id:'v0326',w:'explain',kk:'ɪkˈsplen',pos:'v.',zh:'解釋',ic:'🗒️',u:'s1u1',ex:[['Can you explain it again?','可以再解釋一次嗎？'],['He explains the new process.','他說明新的流程。']]},
@@ -1885,7 +1914,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0347',w:'sometimes',kk:'ˈsʌmˌtaɪmz',pos:'adv.',zh:'有時候',ic:'🔀',u:'s1u1',ex:[['Sometimes I walk to work.','我有時候走路上班。'],['Sometimes the system is slow.','系統有時候很慢。']]},
 
 /* ===================== U12　否定與疑問 ===================== */
-{id:'v0348',w:'do',kk:'du',pos:'v./aux.',zh:'做・助動詞',ic:'✅',u:'s1u2',lure:['make'],ex:[['What do you do?','你是做什麼的？'],['Do you have the file?','你有那個檔案嗎？']]},
+{id:'v0348',w:'do',kk:'du',pos:'v./aux.',zh:'做・助動詞',ic:'✅',u:'s1u2',lure:['make'],col:[['do homework','寫作業'],['do business','做生意'],['do the dishes','洗碗']],ex:[['What do you do?','你是做什麼的？'],['Do you have the file?','你有那個檔案嗎？']]},
 {id:'v0349',w:'does',kk:'dʌz',pos:'aux.',zh:'助動詞（單數）',ic:'☝️',u:'s1u2',ex:[['Does she like coffee?','她喜歡咖啡嗎？'],['Does the store open at nine?','店裡九點開門嗎？']]},
 {id:'v0350',w:'don\'t',kk:'dont',pos:'aux.',zh:'不（否定）',ic:'🚫',u:'s1u2',ex:[['I don\'t know.','我不知道。'],['We don\'t ship on Sunday.','我們星期日不出貨。']]},
 {id:'v0351',w:'doesn\'t',kk:'ˈdʌznt',pos:'aux.',zh:'不（單數否定）',ic:'⛔',u:'s1u2',ex:[['He doesn\'t eat meat.','他不吃肉。'],['The machine doesn\'t work.','機器壞了。']]},
@@ -1909,7 +1938,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0369',w:'really',kk:'ˈrɪəlɪ',pos:'adv.',zh:'真的',ic:'‼️',u:'s1u2',ex:[['Really? That\'s great!','真的嗎？太好了！'],['This is really urgent.','這真的很急。']]},
 {id:'v0370',w:'problem-free',kk:'ˈprɑbləm fri',pos:'adj.',zh:'沒問題的',ic:'✨',u:'s1u2',ex:[['The trip was problem-free.','旅程很順利。'],['The launch was problem-free.','發表會很順利。']]},
 {id:'v0371',w:'free',kk:'fri',pos:'adj.',zh:'免費的・有空的',ic:'🆓',u:'s1u2',ex:[['Are you free tonight?','你今晚有空嗎？'],['The room is free at two.','那間房兩點有空。']]},
-{id:'v0372',w:'expensive',kk:'ɪkˈspɛnsɪv',pos:'adj.',zh:'昂貴的',ic:'💸',u:'s1u2',ex:[['This is too expensive.','這太貴了。'],['The new model is expensive.','新款很貴。']]},
+{id:'v0372',w:'expensive',kk:'ɪkˈspɛnsɪv',pos:'adj.',zh:'昂貴的',ic:'💸',u:'s1u2',rt:{r:'expense 費用',s:'-ive 形容詞'},ex:[['This is too expensive.','這太貴了。'],['The new model is expensive.','新款很貴。']]},
 {id:'v0373',w:'cheap',kk:'tʃip',pos:'adj.',zh:'便宜的',ic:'🏷️',u:'s1u2',ex:[['This shop is cheap.','這家店很便宜。'],['We found a cheaper supplier.','我們找到更便宜的供應商。']]},
 {id:'v0374',w:'difficult',kk:'ˈdɪfəˌkʌlt',pos:'adj.',zh:'困難的',ic:'🧗',u:'s1u2',ex:[['This question is difficult.','這題很難。'],['It is a difficult decision.','這是個困難的決定。']]},
 {id:'v0375',w:'possible',kk:'ˈpɑsəbl',pos:'adj.',zh:'可能的',ic:'🔓',u:'s1u2',ex:[['Is it possible?','有可能嗎？'],['Please reply as soon as possible.','請盡快回覆。']]},
@@ -2069,7 +2098,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0523',w:'wallet',kk:'ˈwɑlɪt',pos:'n.',zh:'皮夾',ic:'👛',u:'s1u5',ex:[['I lost my wallet.','我弄丟皮夾了。'],['His wallet was in the drawer.','他的皮夾在抽屜裡。']]},
 {id:'v0524',w:'receipt',kk:'rɪˈsit',pos:'n.',zh:'收據',ic:'🧾',u:'s1u5',ex:[['Keep the receipt.','留著收據。'],['Please attach the receipt.','請附上收據。']]},
 {id:'v0525',w:'contract',kk:'ˈkɑntrækt',pos:'n.',zh:'合約',ic:'📜',u:'s1u5',ex:[['Read the contract first.','先看合約。'],['We signed the contract yesterday.','我們昨天簽了合約。']]},
-{id:'v0526',w:'payment',kk:'ˈpemənt',pos:'n.',zh:'付款',ic:'💵',u:'s1u5',ex:[['The payment is late.','付款遲了。'],['We received the payment today.','我們今天收到款項。']]},
+{id:'v0526',w:'payment',kk:'ˈpemənt',pos:'n.',zh:'付款',ic:'💵',u:'s1u5',rt:{r:'pay 付款',s:'-ment 名詞'},ex:[['The payment is late.','付款遲了。'],['We received the payment today.','我們今天收到款項。']]},
 {id:'v0527',w:'delivery',kk:'dɪˈlɪvərɪ',pos:'n.',zh:'配送',ic:'🚚',u:'s1u5',ex:[['The delivery is free.','免運費。'],['The delivery arrived late.','送貨遲到了。']]}
 
 ];
@@ -2106,7 +2135,7 @@ window.DATA_VOCAB_S1B = [
 {id:'v0548',w:'event',kk:'ɪˈvɛnt',pos:'n.',zh:'活動',ic:'🎪',u:'s1u6',ex:[['The event is free.','活動免費。'],['The event will be held downtown.','活動將在市中心舉行。']]},
 {id:'v0549',w:'conference',kk:'ˈkɑnfərəns',pos:'n.',zh:'研討會',ic:'🎤',u:'s1u6',ex:[['The conference is in Tokyo.','研討會在東京。'],['She will attend the conference.','她會參加研討會。']]},
 {id:'v0550',w:'flight',kk:'flaɪt',pos:'n.',zh:'班機',ic:'✈️',u:'s1u6',ex:[['My flight is at six.','我的班機六點。'],['The flight was delayed.','班機延誤了。']]},
-{id:'v0551',w:'appointment',kk:'əˈpɔɪntmənt',pos:'n.',zh:'預約',ic:'📌',u:'s1u6',ex:[['I have an appointment at three.','我三點有約。'],['Do you have an appointment?','你有預約嗎？']]},
+{id:'v0551',w:'appointment',kk:'əˈpɔɪntmənt',pos:'n.',zh:'預約',ic:'📌',u:'s1u6',rt:{r:'appoint 約定',s:'-ment 名詞'},ex:[['I have an appointment at three.','我三點有約。'],['Do you have an appointment?','你有預約嗎？']]},
 {id:'v0552',w:'deadline',kk:'ˈdɛdˌlaɪn',pos:'n.',zh:'截止日',ic:'⏰',u:'s1u6',ex:[['The deadline is tomorrow.','截止日是明天。'],['We can\'t miss the deadline.','我們不能錯過截止日。']]},
 {id:'v0553',w:'budget',kk:'ˈbʌdʒɪt',pos:'n.',zh:'預算',ic:'💰',u:'s1u6',ex:[['The budget is small.','預算不多。'],['The budget will be approved next week.','預算下週會核准。']]},
 {id:'v0554',w:'quote',kk:'kwot',pos:'n./v.',zh:'報價',ic:'📄',u:'s1u6',ex:[['Can I get a quote?','可以給我報價嗎？'],['I will send the quote today.','我今天會寄報價單。']]},
@@ -2121,7 +2150,7 @@ window.DATA_VOCAB_S1B = [
 {id:'v0563',w:'increase',kk:'ɪnˈkris',pos:'v.',zh:'增加',ic:'⬆️',u:'s1u6',lure:['raise','decrease'],ex:[['Prices will increase.','價格會上漲。'],['Sales increased by ten percent.','業績成長了百分之十。']]},
 {id:'v0564',w:'decrease',kk:'dɪˈkris',pos:'v.',zh:'減少',ic:'⬇️',u:'s1u6',ex:[['Costs will decrease.','成本會下降。'],['Orders decreased last quarter.','上一季訂單減少了。']]},
 {id:'v0565',w:'replace',kk:'rɪˈples',pos:'v.',zh:'取代・更換',ic:'♻️',u:'s1u6',ex:[['I will replace the battery.','我會換電池。'],['We will replace the old printer.','我們會換掉舊印表機。']]},
-{id:'v0566',w:'introduce',kk:'ˌɪntrəˈdjus',pos:'v.',zh:'介紹',ic:'🙋',u:'s1u6',ex:[['Let me introduce myself.','讓我自我介紹。'],['I will introduce you to the team.','我會把你介紹給團隊。']]},
+{id:'v0566',w:'introduce',kk:'ˌɪntrəˈdjus',pos:'v.',zh:'介紹',ic:'🙋',u:'s1u6',rt:{p:'intro- 向內',r:'duce 引導'},ex:[['Let me introduce myself.','讓我自我介紹。'],['I will introduce you to the team.','我會把你介紹給團隊。']]},
 {id:'v0567',w:'shortly',kk:'ˈʃɔrtlɪ',pos:'adv.',zh:'不久後',ic:'⌛',u:'s1u6',ex:[['He will arrive shortly.','他很快就到。'],['We will reply shortly.','我們會盡快回覆。']]},
 
 /* ===================== U17　地方介系詞 ===================== */
@@ -2216,7 +2245,7 @@ window.DATA_VOCAB_S1B = [
 {id:'v0652',w:'avoid',kk:'əˈvɔɪd',pos:'v.',zh:'避免',ic:'🚫',u:'s1u9',ex:[['Avoid the highway.','避開高速公路。'],['Avoid scheduling on Fridays.','避免排在星期五。']]},
 {id:'v0653',w:'follow',kk:'ˈfɑlo',pos:'v.',zh:'遵守・跟隨',ic:'👣',u:'s1u9',ex:[['Follow me, please.','請跟我來。'],['Please follow the safety rules.','請遵守安全規定。']]},
 {id:'v0654',w:'wear a helmet',kk:'wɛr ə ˈhɛlmɪt',pos:'phr.',zh:'戴安全帽',ic:'⛑️',u:'s1u9',ex:[['You must wear a helmet.','你必須戴安全帽。'],['Workers must wear a helmet on site.','工地內必須戴安全帽。']]},
-{id:'v0655',w:'permission',kk:'pɚˈmɪʃən',pos:'n.',zh:'許可',ic:'🎫',u:'s1u9',ex:[['I need permission.','我需要許可。'],['You need permission to enter.','進入需要許可。']]},
+{id:'v0655',w:'permission',kk:'pɚˈmɪʃən',pos:'n.',zh:'許可',ic:'🎫',u:'s1u9',rt:{r:'permit 允許',s:'-sion 名詞'},ex:[['I need permission.','我需要許可。'],['You need permission to enter.','進入需要許可。']]},
 {id:'v0656',w:'approval',kk:'əˈpruvl',pos:'n.',zh:'核准',ic:'✔️',u:'s1u9',ex:[['We are waiting for approval.','我們在等核准。'],['The budget needs approval.','預算需要核准。']]},
 {id:'v0657',w:'rule',kk:'rul',pos:'n.',zh:'規則',ic:'📏',u:'s1u9',ex:[['Follow the rules.','遵守規則。'],['The safety rules are on the wall.','安全規則貼在牆上。']]},
 {id:'v0658',w:'safety',kk:'ˈseftɪ',pos:'n.',zh:'安全',ic:'🦺',u:'s1u9',ex:[['Safety comes first.','安全第一。'],['Attend the safety training.','參加安全訓練。']]},
@@ -2227,15 +2256,15 @@ window.DATA_VOCAB_S1B = [
 {id:'v0663',w:'apply',kk:'əˈplaɪ',pos:'v.',zh:'申請',ic:'📝',u:'s1u9',ex:[['I want to apply.','我想申請。'],['She applied for the position.','她應徵了那個職位。']]},
 {id:'v0664',w:'contact',kk:'ˈkɑntækt',pos:'v./n.',zh:'聯絡',ic:'☎️',u:'s1u9',ex:[['Contact me anytime.','隨時聯絡我。'],['Please contact our support team.','請聯絡我們的客服團隊。']]},
 {id:'v0665',w:'report to',kk:'rɪˈport tu',pos:'phr.',zh:'向…報到／回報',ic:'📊',u:'s1u9',ex:[['Report to the front desk.','到櫃檯報到。'],['She reports to the sales manager.','她向業務經理回報。']]},
-{id:'v0666',w:'careful',kk:'ˈkɛrfəl',pos:'adj.',zh:'小心的',ic:'⚠️',u:'s1u9',ex:[['Be careful!','小心！'],['Be careful with the samples.','小心處理樣品。']]},
+{id:'v0666',w:'careful',kk:'ˈkɛrfəl',pos:'adj.',zh:'小心的',ic:'⚠️',u:'s1u9',rt:{r:'care 小心',s:'-ful 形容詞'},ex:[['Be careful!','小心！'],['Be careful with the samples.','小心處理樣品。']]},
 {id:'v0667',w:'necessary',kk:'ˈnɛsəˌsɛrɪ',pos:'adj.',zh:'必要的',ic:'❗',u:'s1u9',ex:[['Is it necessary?','有必要嗎？'],['A signature is necessary.','簽名是必要的。']]},
 {id:'v0668',w:'able',kk:'ˈebl',pos:'adj.',zh:'能夠的',ic:'💪',u:'s1u9',ex:[['She is very able.','她很有能力。'],['We were not able to attend.','我們無法出席。']]},
 {id:'v0669',w:'allowed',kk:'əˈlaʊd',pos:'adj.',zh:'被允許的',ic:'🆗',u:'s1u9',ex:[['Food is not allowed here.','這裡不能吃東西。'],['Pets are not allowed in the office.','辦公室不能帶寵物。']]},
 {id:'v0670',w:'urgent',kk:'ˈɝdʒənt',pos:'adj.',zh:'緊急的',ic:'🚨',u:'s1u9',ex:[['This is urgent.','這很緊急。'],['Mark the email as urgent.','把信標為緊急。']]},
 {id:'v0671',w:'ID card',kk:'aɪ ˈdi kɑrd',pos:'n.',zh:'證件',ic:'🪪',u:'s1u9',ex:[['Show your ID card.','出示你的證件。'],['Bring your ID card to the interview.','面試請帶證件。']]},
 {id:'v0672',w:'password',kk:'ˈpæsˌwɝd',pos:'n.',zh:'密碼',ic:'🔑',u:'s1u9',ex:[['I forgot my password.','我忘了密碼。'],['Change your password monthly.','每個月換一次密碼。']]},
-{id:'v0673',w:'equipment',kk:'ɪˈkwɪpmənt',pos:'n.',zh:'設備',ic:'🔧',u:'s1u9',ex:[['The equipment is new.','設備是新的。'],['Check the equipment before use.','使用前檢查設備。']]},
-{id:'v0674',w:'instruction',kk:'ɪnˈstrʌkʃən',pos:'n.',zh:'說明・指示',ic:'📘',u:'s1u9',ex:[['Read the instructions.','看說明。'],['Follow the instructions carefully.','仔細照著說明做。']]},
+{id:'v0673',w:'equipment',kk:'ɪˈkwɪpmənt',pos:'n.',zh:'設備',ic:'🔧',u:'s1u9',rt:{r:'equip 配備',s:'-ment 名詞'},ex:[['The equipment is new.','設備是新的。'],['Check the equipment before use.','使用前檢查設備。']]},
+{id:'v0674',w:'instruction',kk:'ɪnˈstrʌkʃən',pos:'n.',zh:'說明・指示',ic:'📘',u:'s1u9',rt:{r:'instruct 指示',s:'-ion 名詞'},ex:[['Read the instructions.','看說明。'],['Follow the instructions carefully.','仔細照著說明做。']]},
 {id:'v0675',w:'manual',kk:'ˈmænjʊəl',pos:'n.',zh:'手冊',ic:'📙',u:'s1u9',ex:[['Where is the manual?','手冊在哪？'],['The manual is in the drawer.','手冊在抽屜裡。']]},
 {id:'v0676',w:'policy',kk:'ˈpɑləsɪ',pos:'n.',zh:'政策',ic:'📋',u:'s1u9',ex:[['That is our policy.','那是我們的政策。'],['The return policy is 30 days.','退貨政策是三十天。']]},
 {id:'v0677',w:'request',kk:'rɪˈkwɛst',pos:'n./v.',zh:'要求',ic:'🙋',u:'s1u9',ex:[['I have a request.','我有個請求。'],['Your request was approved.','你的申請通過了。']]},
@@ -2260,22 +2289,22 @@ window.DATA_VOCAB_S1B = [
 {id:'v0694',w:'smaller',kk:'ˈsmɔlɚ',pos:'adj.',zh:'更小的',ic:'🔎',u:'s1u10',ex:[['This box is smaller.','這個箱子比較小。'],['Try a smaller package.','試試小一點的包裝。']]},
 {id:'v0695',w:'popular',kk:'ˈpɑpjəlɚ',pos:'adj.',zh:'受歡迎的',ic:'🌟',u:'s1u10',ex:[['This song is popular.','這首歌很紅。'],['This model is the most popular.','這一款最受歡迎。']]},
 {id:'v0696',w:'convenient',kk:'kənˈvinjənt',pos:'adj.',zh:'方便的',ic:'👍',u:'s1u10',ex:[['This place is convenient.','這個地方很方便。'],['Is Friday convenient for you?','星期五你方便嗎？']]},
-{id:'v0697',w:'comfortable',kk:'ˈkʌmfɚtəbl',pos:'adj.',zh:'舒適的',ic:'🛋️',u:'s1u10',ex:[['This chair is comfortable.','這張椅子很舒服。'],['The hotel was very comfortable.','飯店很舒適。']]},
-{id:'v0698',w:'useful',kk:'ˈjusfəl',pos:'adj.',zh:'有用的',ic:'🧰',u:'s1u10',ex:[['This app is useful.','這個 App 很有用。'],['The training was very useful.','訓練很有用。']]},
+{id:'v0697',w:'comfortable',kk:'ˈkʌmfɚtəbl',pos:'adj.',zh:'舒適的',ic:'🛋️',u:'s1u10',rt:{r:'comfort 舒適',s:'-able 形容詞'},ex:[['This chair is comfortable.','這張椅子很舒服。'],['The hotel was very comfortable.','飯店很舒適。']]},
+{id:'v0698',w:'useful',kk:'ˈjusfəl',pos:'adj.',zh:'有用的',ic:'🧰',u:'s1u10',rt:{r:'use 使用',s:'-ful 形容詞'},ex:[['This app is useful.','這個 App 很有用。'],['The training was very useful.','訓練很有用。']]},
 {id:'v0699',w:'careful with',kk:'ˈkɛrfəl wɪð',pos:'phr.',zh:'小心處理',ic:'🧤',u:'s1u10',ex:[['Be careful with the glass.','小心玻璃。'],['Be careful with the numbers.','數字要小心。']]},
 {id:'v0700',w:'quality',kk:'ˈkwɑlətɪ',pos:'n.',zh:'品質',ic:'💎',u:'s1u10',ex:[['The quality is good.','品質不錯。'],['We check the quality twice.','我們檢查品質兩次。']]},
 {id:'v0701',w:'size',kk:'saɪz',pos:'n.',zh:'尺寸',ic:'📏',u:'s1u10',ex:[['What size do you need?','你要什麼尺寸？'],['We have three sizes.','我們有三種尺寸。']]},
 {id:'v0702',w:'weight',kk:'wet',pos:'n.',zh:'重量',ic:'⚖️',u:'s1u10',ex:[['What is the weight?','重量多少？'],['The weight is on the label.','重量寫在標籤上。']]},
 {id:'v0703',w:'speed',kk:'spid',pos:'n.',zh:'速度',ic:'🏎️',u:'s1u10',ex:[['The speed is good.','速度不錯。'],['Delivery speed matters most.','送貨速度最重要。']]},
 {id:'v0704',w:'discount',kk:'ˈdɪskaʊnt',pos:'n.',zh:'折扣',ic:'🏷️',u:'s1u10',ex:[['Is there a discount?','有折扣嗎？'],['We offer a 10% discount.','我們提供九折。']]},
-{id:'v0705',w:'offer',kk:'ˈɔfɚ',pos:'n./v.',zh:'提供・優惠',ic:'🎁',u:'s1u10',ex:[['That is a good offer.','那是不錯的提議。'],['We offer free shipping.','我們提供免運。']]},
+{id:'v0705',w:'offer',kk:'ˈɔfɚ',pos:'n./v.',zh:'提供・優惠',ic:'🎁',u:'s1u10',rt:{p:'of- 朝向',r:'fer 帶'},ex:[['That is a good offer.','那是不錯的提議。'],['We offer free shipping.','我們提供免運。']]},
 {id:'v0706',w:'choice',kk:'tʃɔɪs',pos:'n.',zh:'選擇',ic:'🔀',u:'s1u10',ex:[['You have a choice.','你有選擇。'],['That is the better choice.','那是比較好的選擇。']]},
 {id:'v0707',w:'option',kk:'ˈɑpʃən',pos:'n.',zh:'選項',ic:'📑',u:'s1u10',ex:[['We have two options.','我們有兩個選項。'],['Option A is cheaper.','A 方案比較便宜。']]},
 {id:'v0708',w:'difference',kk:'ˈdɪfərəns',pos:'n.',zh:'差異',ic:'🔍',u:'s1u10',ex:[['What is the difference?','差別是什麼？'],['The main difference is price.','主要差別在價格。']]},
 {id:'v0709',w:'compare',kk:'kəmˈpɛr',pos:'v.',zh:'比較',ic:'⚖️',u:'s1u10',ex:[['Let\'s compare them.','我們比較看看。'],['Compare the two quotes.','比較這兩份報價。']]},
-{id:'v0710',w:'prefer',kk:'prɪˈfɝ',pos:'v.',zh:'偏好',ic:'❤️',u:'s1u10',ex:[['I prefer tea.','我比較喜歡茶。'],['I prefer the morning flight.','我比較想搭早班機。']]},
+{id:'v0710',w:'prefer',kk:'prɪˈfɝ',pos:'v.',zh:'偏好',ic:'❤️',u:'s1u10',rt:{p:'pre- 在前',r:'fer 帶'},ex:[['I prefer tea.','我比較喜歡茶。'],['I prefer the morning flight.','我比較想搭早班機。']]},
 {id:'v0711',w:'improve',kk:'ɪmˈpruv',pos:'v.',zh:'改善',ic:'📈',u:'s1u10',ex:[['I want to improve my English.','我想改善我的英文。'],['We improved the process.','我們改善了流程。']]},
-{id:'v0712',w:'reduce',kk:'rɪˈdjus',pos:'v.',zh:'減少',ic:'📉',u:'s1u10',ex:[['Reduce the amount of sugar.','減少糖的量。'],['We reduced costs by 20%.','我們降低了兩成成本。']]},
+{id:'v0712',w:'reduce',kk:'rɪˈdjus',pos:'v.',zh:'減少',ic:'📉',u:'s1u10',rt:{p:'re- 往回',r:'duce 引導'},ex:[['Reduce the amount of sugar.','減少糖的量。'],['We reduced costs by 20%.','我們降低了兩成成本。']]},
 {id:'v0713',w:'enough',kk:'əˈnʌf',pos:'adj./adv.',zh:'足夠的',ic:'👌',u:'s1u10',ex:[['That is enough.','夠了。'],['We don\'t have enough staff.','我們人手不夠。']]},
 {id:'v0714',w:'especially',kk:'əˈspɛʃəlɪ',pos:'adv.',zh:'尤其',ic:'⭐',u:'s1u10',ex:[['I like fruit, especially apples.','我喜歡水果，尤其蘋果。'],['Mondays are busy, especially in the morning.','星期一很忙，尤其是早上。']]},
 {id:'v0715',w:'almost',kk:'ˈɔlmost',pos:'adv.',zh:'幾乎',ic:'🎯',u:'s1u10',lure:['most'],ex:[['I am almost done.','我快好了。'],['Almost all orders shipped.','幾乎所有訂單都出貨了。']]},
@@ -2321,7 +2350,7 @@ window.DATA_VOCAB_S1C = [
 {id:'v0743',w:'topic',kk:'ˈtɑpɪk',pos:'n.',zh:'主題',ic:'🗂️',u:'s1u11',ex:[['What is the topic?','主題是什麼？'],['The topic is the new budget.','主題是新預算。']]},
 {id:'v0744',w:'opinion',kk:'əˈpɪnjən',pos:'n.',zh:'意見',ic:'💬',u:'s1u11',ex:[['In my opinion, it is fine.','我認為這樣可以。'],['What is your opinion?','你的意見呢？']]},
 {id:'v0745',w:'advice',kk:'ədˈvaɪs',pos:'n.',zh:'建議',ic:'🧭',u:'s1u11',ex:[['Thanks for the advice.','謝謝你的建議。'],['I need some advice on this.','這件事我需要一些建議。']]},
-{id:'v0746',w:'information',kk:'ˌɪnfɚˈmeʃən',pos:'n.',zh:'資訊',ic:'ℹ️',u:'s1u11',ex:[['I need more information.','我需要更多資訊。'],['The information is on our website.','資訊在我們網站上。']]},
+{id:'v0746',w:'information',kk:'ˌɪnfɚˈmeʃən',pos:'n.',zh:'資訊',ic:'ℹ️',u:'s1u11',rt:{r:'inform 通知',s:'-ation 名詞'},ex:[['I need more information.','我需要更多資訊。'],['The information is on our website.','資訊在我們網站上。']]},
 {id:'v0747',w:'because of',kk:'bɪˈkɔz əv',pos:'phr.',zh:'因為',ic:'🔗',u:'s1u11',ex:[['We stayed home because of the rain.','我們因為下雨待在家。'],['The delay was because of traffic.','延誤是因為塞車。']]},
 {id:'v0748',w:'both ... and',kk:'boθ ænd',pos:'phr.',zh:'兩者都',ic:'✌️',u:'s1u11',ex:[['Both Amy and Ben came.','艾咪和班都來了。'],['Both price and quality matter.','價格和品質都重要。']]},
 {id:'v0749',w:'either ... or',kk:'ˈiðɚ ɔr',pos:'phr.',zh:'不是…就是',ic:'🔀',u:'s1u11',ex:[['Either Monday or Tuesday.','星期一或星期二。'],['Either email or call is fine.','寄信或打電話都可以。']]},
@@ -2449,7 +2478,7 @@ window.DATA_VOCAB_S1C = [
 {id:'v0863',w:'responsible',kk:'rɪˈspɑnsəbl',pos:'adj.',zh:'負責的',ic:'🧑‍⚖️',u:'s1u15',ex:[['He is responsible.','他很負責。'],['Who is responsible for this?','這件事誰負責？']]},
 {id:'v0864',w:'experience',kk:'ɪkˈspɪrɪəns',pos:'n.',zh:'經驗',ic:'🧭',u:'s1u15',ex:[['It was a good experience.','那是很好的經驗。'],['She has ten years of experience.','她有十年經驗。']]},
 {id:'v0865',w:'skill',kk:'skɪl',pos:'n.',zh:'技能',ic:'🛠️',u:'s1u15',ex:[['Cooking is a useful skill.','煮飯是有用的技能。'],['English skills are required.','需要英文能力。']]},
-{id:'v0866',w:'ability',kk:'əˈbɪlətɪ',pos:'n.',zh:'能力',ic:'💪',u:'s1u15',ex:[['She has great ability.','她能力很好。'],['The ability to work in a team matters.','團隊合作能力很重要。']]},
+{id:'v0866',w:'ability',kk:'əˈbɪlətɪ',pos:'n.',zh:'能力',ic:'💪',u:'s1u15',rt:{r:'able 能夠的',s:'-ity 名詞'},ex:[['She has great ability.','她能力很好。'],['The ability to work in a team matters.','團隊合作能力很重要。']]},
 {id:'v0867',w:'chance to',kk:'tʃæns tu',pos:'phr.',zh:'…的機會',ic:'🎟️',u:'s1u15',ex:[['I had a chance to try it.','我有機會試過。'],['This is a chance to learn.','這是個學習的機會。']]},
 {id:'v0868',w:'benefit',kk:'ˈbɛnəfɪt',pos:'n.',zh:'好處・福利',ic:'🎁',u:'s1u15',ex:[['The benefits are good.','福利不錯。'],['The main benefit is lower cost.','主要好處是成本較低。']]},
 {id:'v0869',w:'customer service',kk:'ˈkʌstəmɚ ˈsɝvɪs',pos:'n.',zh:'客戶服務',ic:'🎧',u:'s1u15',ex:[['Call customer service.','打客服。'],['Customer service opens at nine.','客服九點開始。']]},
@@ -2468,8 +2497,8 @@ window.DATA_VOCAB_S1C = [
 {id:'v0882',w:'actually',kk:'ˈæktʃʊəlɪ',pos:'adv.',zh:'其實',ic:'💬',u:'s1u15',ex:[['Actually, I agree.','其實我同意。'],['Actually, the price went down.','其實價格降了。']]},
 {id:'v0883',w:'certainly',kk:'ˈsɝtnlɪ',pos:'adv.',zh:'當然',ic:'✔️',u:'s1u15',ex:[['Certainly!','當然！'],['Certainly, I will check it.','當然，我會確認。']]},
 {id:'v0884',w:'unfortunately',kk:'ʌnˈfɔrtʃənɪtlɪ',pos:'adv.',zh:'不幸地',ic:'😞',u:'s1u15',ex:[['Unfortunately, it rained.','不幸地下雨了。'],['Unfortunately, the item is sold out.','很遺憾，該商品已售完。']]},
-{id:'v0885',w:'successful',kk:'səkˈsɛsfəl',pos:'adj.',zh:'成功的',ic:'🏆',u:'s1u15',ex:[['The party was successful.','派對很成功。'],['The launch was successful.','發表會很成功。']]},
-{id:'v0886',w:'effective',kk:'ɪˈfɛktɪv',pos:'adj.',zh:'有效的',ic:'⚡',u:'s1u15',ex:[['This method is effective.','這個方法有效。'],['The new rule is effective on May 1.','新規定五月一日生效。']]},
+{id:'v0885',w:'successful',kk:'səkˈsɛsfəl',pos:'adj.',zh:'成功的',ic:'🏆',u:'s1u15',rt:{r:'success 成功',s:'-ful 形容詞'},ex:[['The party was successful.','派對很成功。'],['The launch was successful.','發表會很成功。']]},
+{id:'v0886',w:'effective',kk:'ɪˈfɛktɪv',pos:'adj.',zh:'有效的',ic:'⚡',u:'s1u15',rt:{r:'effect 效果',s:'-ive 形容詞'},ex:[['This method is effective.','這個方法有效。'],['The new rule is effective on May 1.','新規定五月一日生效。']]},
 {id:'v0887',w:'similar',kk:'ˈsɪmələ',pos:'adj.',zh:'相似的',ic:'👯',u:'s1u15',ex:[['They look similar.','它們看起來很像。'],['We offer a similar product.','我們有類似的產品。']]},
 {id:'v0888',w:'various',kk:'ˈvɛrɪəs',pos:'adj.',zh:'各式各樣的',ic:'🎨',u:'s1u15',ex:[['We sell various sizes.','我們賣各種尺寸。'],['Various options are available.','有各種選擇。']]},
 {id:'v0889',w:'recent',kk:'ˈrisnt',pos:'adj.',zh:'最近的',ic:'🕐',u:'s1u15',ex:[['This is a recent photo.','這是最近的照片。'],['See the recent orders.','看一下最近的訂單。']]},
@@ -2491,15 +2520,15 @@ window.DATA_VOCAB_S2 = [
 {id:'v0892',w:'yet',kk:'jɛt',pos:'adv.',zh:'還（沒）・尚未',ic:'⏳',u:'s2u1',ex:[['She has not called me yet.','她還沒打電話給我。'],['Has the shipment arrived yet?','貨到了嗎？']]},
 {id:'v0893',w:'ever',kk:'ˈɛvɚ',pos:'adv.',zh:'曾經',ic:'🕰️',u:'s2u1',ex:[['Have you ever tried Thai food?','你吃過泰國菜嗎？'],['Have you ever worked with this supplier?','你和這家供應商合作過嗎？']]},
 {id:'v0894',w:'just',kk:'dʒʌst',pos:'adv.',zh:'剛剛・只是',ic:'⏱️',u:'s2u1',ex:[['I have just finished my homework.','我剛寫完功課。'],['The manager has just left the office.','經理剛離開辦公室。']]},
-{id:'v0895',w:'receive',kk:'rɪˈsiv',pos:'v.',zh:'收到',ic:'📬',u:'s2u1',lure:['accept','get'],ex:[['I have received your message.','我收到你的訊息了。'],['We have not received the payment yet.','我們還沒收到款項。']]},
+{id:'v0895',w:'receive',kk:'rɪˈsiv',pos:'v.',zh:'收到',ic:'📬',u:'s2u1',lure:['accept','get'],rt:{p:'re- 收回',r:'ceive 拿'},ex:[['I have received your message.','我收到你的訊息了。'],['We have not received the payment yet.','我們還沒收到款項。']]},
 {id:'v0896',w:'arrange',kk:'əˈrendʒ',pos:'v.',zh:'安排',ic:'🗂️',u:'s2u1',ex:[['She has arranged a dinner for us.','她幫我們安排了晚餐。'],['I have arranged a meeting with the client.','我已經和客戶約好會議了。']]},
 {id:'v0897',w:'approve',kk:'əˈpruv',pos:'v.',zh:'核准',ic:'✔️',u:'s2u1',ex:[['My parents have approved the plan.','我爸媽同意這個計畫了。'],['The manager has approved your leave.','經理已經核准你的假了。']]},
-{id:'v0898',w:'remind',kk:'rɪˈmaɪnd',pos:'v.',zh:'提醒',ic:'🔔',u:'s2u1',lure:['remember'],ex:[['Please remind me to buy milk.','請提醒我買牛奶。'],['I have reminded him about the deadline twice.','我已經提醒他期限兩次了。',['remembered']]]},
-{id:'v0899',w:'progress',kk:'ˈprɑgrɛs',pos:'n.',zh:'進度・進展',ic:'📈',u:'s2u1',ex:[['You have made great progress in English.','你的英文進步很多。'],['We have made little progress on the report.','報告的進度沒什麼進展。']]},
-{id:'v0900',w:'decision',kk:'dɪˈsɪʒən',pos:'n.',zh:'決定',ic:'⚖️',u:'s2u1',ex:[['I have made my decision.','我已經決定了。'],['The board has not made a decision yet.','董事會還沒做出決定。']]},
-{id:'v0901',w:'announcement',kk:'əˈnaʊnsmənt',pos:'n.',zh:'公告',ic:'📢',u:'s2u1',ex:[['Did you hear the announcement?','你聽到廣播了嗎？'],['The company has posted an announcement online.','公司已經在網路上公告了。']]},
-{id:'v0902',w:'reservation',kk:'ˌrɛzɚˈveʃən',pos:'n.',zh:'預訂',ic:'🎫',u:'s2u1',ex:[['I have made a reservation for two.','我訂了兩個人的位子。'],['Has she confirmed the hotel reservation?','她確認飯店訂房了嗎？']]},
-{id:'v0903',w:'invitation',kk:'ˌɪnvəˈteʃən',pos:'n.',zh:'邀請・邀請函',ic:'💌',u:'s2u1',ex:[['Thank you for the invitation.','謝謝你的邀請。'],['We have sent the invitations to all clients.','我們已經把邀請函寄給所有客戶了。']]},
+{id:'v0898',w:'remind',kk:'rɪˈmaɪnd',pos:'v.',zh:'提醒',ic:'🔔',u:'s2u1',lure:['remember'],col:[['remind me to call','提醒我打電話']],ex:[['Please remind me to buy milk.','請提醒我買牛奶。'],['I have reminded him about the deadline twice.','我已經提醒他期限兩次了。',['remembered']]]},
+{id:'v0899',w:'progress',kk:'ˈprɑgrɛs',pos:'n.',zh:'進度・進展',ic:'📈',u:'s2u1',rt:{p:'pro- 向前',r:'gress 走'},ex:[['You have made great progress in English.','你的英文進步很多。'],['We have made little progress on the report.','報告的進度沒什麼進展。']]},
+{id:'v0900',w:'decision',kk:'dɪˈsɪʒən',pos:'n.',zh:'決定',ic:'⚖️',u:'s2u1',rt:{r:'decide 決定',s:'-sion 名詞'},ex:[['I have made my decision.','我已經決定了。'],['The board has not made a decision yet.','董事會還沒做出決定。']]},
+{id:'v0901',w:'announcement',kk:'əˈnaʊnsmənt',pos:'n.',zh:'公告',ic:'📢',u:'s2u1',rt:{r:'announce 宣布',s:'-ment 名詞'},ex:[['Did you hear the announcement?','你聽到廣播了嗎？'],['The company has posted an announcement online.','公司已經在網路上公告了。']]},
+{id:'v0902',w:'reservation',kk:'ˌrɛzɚˈveʃən',pos:'n.',zh:'預訂',ic:'🎫',u:'s2u1',rt:{r:'reserve 保留',s:'-ation 名詞'},ex:[['I have made a reservation for two.','我訂了兩個人的位子。'],['Has she confirmed the hotel reservation?','她確認飯店訂房了嗎？']]},
+{id:'v0903',w:'invitation',kk:'ˌɪnvəˈteʃən',pos:'n.',zh:'邀請・邀請函',ic:'💌',u:'s2u1',rt:{r:'invite 邀請',s:'-ation 名詞'},ex:[['Thank you for the invitation.','謝謝你的邀請。'],['We have sent the invitations to all clients.','我們已經把邀請函寄給所有客戶了。']]},
 {id:'v0904',w:'application',kk:'ˌæpləˈkeʃən',pos:'n.',zh:'申請・申請書',ic:'📝',u:'s2u1',ex:[['I have sent my application already.','我已經把申請寄出去了。'],['We have received over fifty applications.','我們收到超過五十份申請。']]},
 {id:'v0905',w:'achieve',kk:'əˈtʃiv',pos:'v.',zh:'達成',ic:'🏆',u:'s2u1',ex:[['She has achieved her goal.','她達成目標了。'],['The team has achieved its sales target.','團隊達成業績目標了。']]},
 {id:'v0906',w:'manage',kk:'ˈmænɪdʒ',pos:'v.',zh:'設法做到・管理',ic:'🧭',u:'s2u1',ex:[['I have managed to fix the bike.','我設法把腳踏車修好了。'],['She manages a team of ten people.','她管理一個十人的團隊。']]},
@@ -2524,12 +2553,12 @@ window.DATA_VOCAB_S2 = [
 {id:'v0923',w:'journey',kk:'ˈdʒɝnɪ',pos:'n.',zh:'旅程',ic:'🧳',u:'s2u2',lure:['travel'],ex:[['The journey took six hours.','這趟路花了六小時。'],['It has been a long journey for our team.','對我們團隊來說這是一段漫長的過程。']]},
 {id:'v0924',w:'graduate',kk:'ˈgrædʒuˌet',pos:'v.',zh:'畢業',ic:'🎓',u:'s2u2',ex:[['I graduated in 2018.','我 2018 年畢業。'],['She has graduated from a business school.','她從商學院畢業了。']]},
 {id:'v0925',w:'retire',kk:'rɪˈtaɪr',pos:'v.',zh:'退休',ic:'🌇',u:'s2u2',ex:[['My father retired last year.','我爸爸去年退休了。'],['Our founder has retired from the board.','我們的創辦人已經從董事會退休。']]},
-{id:'v0926',w:'transfer',kk:'trænsˈfɝ',pos:'v.',zh:'調職・轉乘・轉帳',ic:'🔀',u:'s2u2',ex:[['Transfer to the blue line at this station.','在這站換藍線。'],['He has been transferred to the Tainan branch.','他被調到台南分公司了。']]},
+{id:'v0926',w:'transfer',kk:'trænsˈfɝ',pos:'v.',zh:'調職・轉乘・轉帳',ic:'🔀',u:'s2u2',rt:{p:'trans- 橫越',r:'fer 帶'},ex:[['Transfer to the blue line at this station.','在這站換藍線。'],['He has been transferred to the Tainan branch.','他被調到台南分公司了。']]},
 {id:'v0927',w:'promote',kk:'prəˈmot',pos:'v.',zh:'升遷・推廣',ic:'⬆️',u:'s2u2',ex:[['She has been promoted twice this year.','她今年升遷兩次了。'],['We promoted the new product on social media.','我們在社群上推廣新產品。']]},
 {id:'v0928',w:'resign',kk:'rɪˈzaɪn',pos:'v.',zh:'辭職',ic:'📤',u:'s2u2',ex:[['He resigned last Friday.','他上星期五辭職了。'],['Two engineers have resigned this month.','這個月有兩位工程師辭職。']]},
 {id:'v0929',w:'expand',kk:'ɪkˈspænd',pos:'v.',zh:'擴展',ic:'📊',u:'s2u2',ex:[['The city has expanded a lot.','這座城市擴大了不少。'],['We expanded into Vietnam in 2019.','我們在 2019 年拓展到越南。']]},
 {id:'v0930',w:'conversation',kk:'ˌkɑnvɚˈseʃən',pos:'n.',zh:'對話',ic:'🗨️',u:'s2u2',ex:[['We had a long conversation last night.','我們昨晚聊了很久。'],['I have had a short conversation with the client.','我和客戶簡短談過了。']]},
-{id:'v0931',w:'discussion',kk:'dɪˈskʌʃən',pos:'n.',zh:'討論',ic:'🧑‍🤝‍🧑',u:'s2u2',ex:[['The discussion lasted two hours.','討論持續了兩小時。'],['After a long discussion, we chose the second plan.','經過長時間討論，我們選了第二個方案。']]},
+{id:'v0931',w:'discussion',kk:'dɪˈskʌʃən',pos:'n.',zh:'討論',ic:'🧑‍🤝‍🧑',u:'s2u2',rt:{r:'discuss 討論',s:'-sion 名詞'},ex:[['The discussion lasted two hours.','討論持續了兩小時。'],['After a long discussion, we chose the second plan.','經過長時間討論，我們選了第二個方案。']]},
 {id:'v0932',w:'condition',kk:'kənˈdɪʃən',pos:'n.',zh:'狀況・條件',ic:'🩺',u:'s2u2',ex:[['The car is in good condition.','這台車狀況良好。'],['We accepted the contract on one condition.','我們接受合約，但有一個條件。']]},
 {id:'v0933',w:'purpose',kk:'ˈpɝpəs',pos:'n.',zh:'目的',ic:'🎯',u:'s2u2',ex:[['What is the purpose of your visit?','你此行的目的是什麼？'],['The purpose of the meeting was to review costs.','會議的目的是檢討成本。']]},
 {id:'v0934',w:'effort',kk:'ˈɛfɚt',pos:'n.',zh:'努力',ic:'💪',u:'s2u2',ex:[['Thank you for your effort.','謝謝你的付出。'],['The team has put a lot of effort into this project.','團隊在這個專案上投入很多心力。']]},
@@ -2555,11 +2584,11 @@ window.DATA_VOCAB_S2B = [
 {id:'v0939',w:'afford',kk:'əˈfɔrd',pos:'v.',zh:'負擔得起',ic:'💰',u:'s2u3',ex:[['I cannot afford to buy a new phone.','我買不起新手機。'],['We cannot afford to lose this client.','我們承擔不起失去這個客戶。']]},
 {id:'v0940',w:'choose',kk:'tʃuz',pos:'v.',zh:'選擇',ic:'🔀',u:'s2u3',ex:[['She chose to stay home.','她選擇待在家。'],['They chose to renew the contract.','他們選擇續約。']]},
 {id:'v0941',w:'seem',kk:'sim',pos:'v.',zh:'似乎',ic:'🌫️',u:'s2u3',ex:[['He seems to be tired.','他好像很累。'],['The machine seems to be working now.','機器現在好像正常了。']]},
-{id:'v0942',w:'tend',kk:'tɛnd',pos:'v.',zh:'傾向・往往',ic:'↗️',u:'s2u3',ex:[['I tend to wake up early.','我通常很早醒。'],['Orders tend to increase in December.','訂單在十二月往往會變多。']]},
-{id:'v0943',w:'intend',kk:'ɪnˈtɛnd',pos:'v.',zh:'打算',ic:'🧠',u:'s2u3',ex:[['I intend to learn Japanese.','我打算學日文。'],['We intend to open a second store.','我們打算開第二家店。']]},
+{id:'v0942',w:'tend',kk:'tɛnd',pos:'v.',zh:'傾向・往往',ic:'↗️',u:'s2u3',rt:{r:'tend 伸展'},ex:[['I tend to wake up early.','我通常很早醒。'],['Orders tend to increase in December.','訂單在十二月往往會變多。']]},
+{id:'v0943',w:'intend',kk:'ɪnˈtɛnd',pos:'v.',zh:'打算',ic:'🧠',u:'s2u3',rt:{p:'in- 向內',r:'tend 伸展'},ex:[['I intend to learn Japanese.','我打算學日文。'],['We intend to open a second store.','我們打算開第二家店。']]},
 {id:'v0944',w:'attempt',kk:'əˈtɛmpt',pos:'v./n.',zh:'嘗試',ic:'🎯',u:'s2u3',ex:[['She attempted to fix it herself.','她試著自己修。'],['This is our second attempt to reach him.','這是我們第二次試著聯絡他。']]},
 {id:'v0945',w:'deserve',kk:'dɪˈzɝv',pos:'v.',zh:'值得・應得',ic:'🏅',u:'s2u3',ex:[['You deserve to rest.','你值得休息。'],['The team deserves to win the award.','這個團隊值得拿這個獎。']]},
-{id:'v0946',w:'pretend',kk:'prɪˈtɛnd',pos:'v.',zh:'假裝',ic:'🎭',u:'s2u3',ex:[['He pretended to be asleep.','他假裝睡著了。'],['Do not pretend to understand if you do not.','不懂就不要假裝懂。']]},
+{id:'v0946',w:'pretend',kk:'prɪˈtɛnd',pos:'v.',zh:'假裝',ic:'🎭',u:'s2u3',rt:{p:'pre- 在前',r:'tend 伸展'},ex:[['He pretended to be asleep.','他假裝睡著了。'],['Do not pretend to understand if you do not.','不懂就不要假裝懂。']]},
 {id:'v0947',w:'demand',kk:'dɪˈmænd',pos:'v./n.',zh:'要求・需求',ic:'📣',u:'s2u3',ex:[['The customer demanded to see the manager.','那位客人要求見經理。'],['Demand for this model has grown.','這款的需求成長了。']]},
 {id:'v0948',w:'aim',kk:'em',pos:'v./n.',zh:'目標・以…為目標',ic:'🏹',u:'s2u3',ex:[['We aim to finish before six.','我們的目標是六點前完成。'],['Our aim is to reduce waiting time.','我們的目標是縮短等待時間。']]},
 {id:'v0949',w:'opportunity',kk:'ˌɑpɚˈtunətɪ',pos:'n.',zh:'機會',ic:'🍀',u:'s2u3',ex:[['This is a good opportunity to practice.','這是練習的好機會。'],['She got the opportunity to lead the project.','她得到帶領這個專案的機會。']]},
@@ -2582,7 +2611,7 @@ window.DATA_VOCAB_S2B = [
 {id:'v0964',w:'involve',kk:'ɪnˈvɑlv',pos:'v.',zh:'牽涉・包含',ic:'🔗',u:'s2u4',ex:[['The job involves traveling a lot.','這份工作要常出差。'],['The plan involves hiring two engineers.','這個計畫包含聘兩位工程師。']]},
 {id:'v0965',w:'dislike',kk:'dɪsˈlaɪk',pos:'v.',zh:'不喜歡',ic:'👎',u:'s2u4',ex:[['I dislike waiting in long lines.','我討厭排很長的隊。'],['She dislikes being interrupted.','她不喜歡被打斷。']]},
 {id:'v0966',w:'appreciate',kk:'əˈpriʃɪˌet',pos:'v.',zh:'感謝・欣賞',ic:'🙏',u:'s2u4',ex:[['I appreciate your help.','謝謝你的幫忙。'],['We appreciate you sending the file so quickly.','感謝你這麼快把檔案寄來。']]},
-{id:'v0967',w:'spend',kk:'spɛnd',pos:'v.',zh:'花費（時間・金錢）',ic:'⏳',u:'s2u4',lure:['cost','pay','take'],ex:[['I spend two hours reading every night.','我每晚花兩小時閱讀。'],['We spent the morning checking the data.','我們花了整個早上核對資料。']]},
+{id:'v0967',w:'spend',kk:'spɛnd',pos:'v.',zh:'花費（時間・金錢）',ic:'⏳',u:'s2u4',lure:['cost','pay','take'],col:[['spend money on','把錢花在…'],['spend time with','花時間陪…']],ex:[['I spend two hours reading every night.','我每晚花兩小時閱讀。'],['We spent the morning checking the data.','我們花了整個早上核對資料。']]},
 {id:'v0968',w:'worth',kk:'wɝθ',pos:'adj./n.',zh:'值得・價值',ic:'💎',u:'s2u4',ex:[['This movie is worth watching twice.','這部電影值得看兩次。'],['The trip was worth taking.','這趟出差很值得。']]},
 {id:'v0969',w:'habit',kk:'ˈhæbɪt',pos:'n.',zh:'習慣',ic:'🔁',u:'s2u4',ex:[['Reading before bed is a good habit.','睡前閱讀是好習慣。'],['He has a habit of checking email twice a day.','他習慣一天收兩次信。']]},
 {id:'v0970',w:'hobby',kk:'ˈhɑbɪ',pos:'n.',zh:'嗜好',ic:'🎨',u:'s2u4',ex:[['My hobby is taking photos.','我的嗜好是拍照。'],['Her hobby became her career.','她的嗜好變成了職業。']]},
@@ -2648,7 +2677,7 @@ window.DATA_VOCAB_S2B = [
 {id:'v1024',w:'exact',kk:'ɪgˈzækt',pos:'adj.',zh:'精確的',ic:'📏',u:'s2u7',ex:[['I do not know the exact time.','我不知道確切的時間。'],['Could you tell me the exact amount?','可以告訴我確切的金額嗎？']]},
 {id:'v1025',w:'polite',kk:'pəˈlaɪt',pos:'adj.',zh:'有禮貌的',ic:'🎩',u:'s2u7',ex:[['She is always polite to everyone.','她對每個人都很有禮貌。'],['Could you tell me… is a polite way to ask.','Could you tell me… 是比較有禮貌的問法。']]},
 {id:'v1026',w:'formal',kk:'ˈfɔrml̩',pos:'adj.',zh:'正式的',ic:'🤵',u:'s2u7',ex:[['The dinner is quite formal.','那場晚餐相當正式。'],['Please use formal language in the email.','信件裡請用正式的語氣。']]},
-{id:'v1027',w:'helpful',kk:'ˈhɛlpfəl',pos:'adj.',zh:'有幫助的',ic:'🙌',u:'s2u7',ex:[['Your advice was very helpful.','你的建議很有幫助。'],['The receptionist was extremely helpful.','那位櫃檯人員非常樂意幫忙。']]},
+{id:'v1027',w:'helpful',kk:'ˈhɛlpfəl',pos:'adj.',zh:'有幫助的',ic:'🙌',u:'s2u7',rt:{r:'help 幫助',s:'-ful 形容詞'},ex:[['Your advice was very helpful.','你的建議很有幫助。'],['The receptionist was extremely helpful.','那位櫃檯人員非常樂意幫忙。']]},
 {id:'v1028',w:'flexible',kk:'ˈflɛksəbl̩',pos:'adj.',zh:'有彈性的',ic:'🤸',u:'s2u7',ex:[['My schedule is flexible this week.','我這週時間很彈性。'],['We offer flexible working hours.','我們提供彈性工時。']]}
 
 ];
@@ -6354,6 +6383,16 @@ window.DATA_ACHIEVEMENTS = [
   }
 
   /**
+   * 搭配詞題的誘答：只從「其他也有搭配詞的動詞」裡抽。
+   * 不能用一般的隨機誘答 —— 隨機抽到的動詞有機會剛好也配得起來
+   * （give a speech 抽到 make，可是 make a speech 也是對的），那題就沒有標準解。
+   * 會收進 col 的都是彼此互相干擾的高頻動詞，拿它們互當誘答最準也最安全。
+   */
+  function colDistractors(target, n) {
+    return distractors(target, n, VOCAB.filter(function (v) { return v.col && v.col.length; }));
+  }
+
+  /**
    * 排句題的誘答字塊（回傳字串，不是單字物件）。
    * 取用順序：
    *   1. 句子自己的 lure（例句的第三個元素）—— 資料作者知道這句用的是哪個形態，最精準
@@ -6411,7 +6450,8 @@ window.DATA_ACHIEVEMENTS = [
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,
     shuffle: shuffle, sample: sample, pick: pick,
-    distractors: distractors, tokenLures: tokenLures, wordItem: wordItem,
+    distractors: distractors, colDistractors: colDistractors,
+    tokenLures: tokenLures, wordItem: wordItem,
     counts: counts
   };
 })(window);
@@ -7520,6 +7560,24 @@ window.DATA_ACHIEVEMENTS = [
       });
     }
 
+    /* --- 3.7 搭配詞 --- */
+    if (plan.collocate) {
+      // 從「這一關以及之前」的字裡抽，不限這關新教的 —— take a break 這種搭配
+      // 掛在 Stage 0 的高頻動詞上，但要等學過幾關、有東西可比較之後練才有意義。
+      var colPool = [];
+      Content.vocabUpTo(unitId).forEach(function (v) {
+        (v.col || []).forEach(function (c) { colPool.push({ v: v, c: c }); });
+      });
+      var usedCol = {}, gotCol = 0;
+      S(colPool).forEach(function (x) {
+        // 同一個字只出一題：連問三題 take 只是在考同一件事
+        if (gotCol >= plan.collocate || usedCol[x.v.id]) return;
+        usedCol[x.v.id] = 1;
+        gotCol++;
+        body.push({ type: 'collocate', ref: x.v, col: x.c, unitId: unitId });
+      });
+    }
+
     /* --- 4. 聽力：聽單字或句子選意思 --- */
     if (plan.listen) {
       var half = Math.ceil(plan.listen / 2);
@@ -8026,6 +8084,39 @@ window.DATA_ACHIEVEMENTS = [
     return '<div class="ex-list">' + rows + '</div>';
   }
 
+  /* ---------- 搭配詞 ---------- */
+  /** 搭配詞題會挖空考，這裡是「先教一次」的地方 —— 沒教過就考等於猜謎 */
+  function collocationHTML(v) {
+    if (!v.col || !v.col.length) return '';
+    return '<div class="col-box"><div class="col-lab">常見搭配</div>' +
+      v.col.map(function (c) {
+        return '<button class="col-chip" type="button" data-speak="' + esc(c[0]) + '">' +
+          '<span class="en">' + esc(c[0]) + '</span>' +
+          '<span class="col-zh">' + esc(c[1]) + '</span></button>';
+      }).join('') + '</div>';
+  }
+
+  /* ---------- 字根字首拆解 ---------- */
+  /**
+   * rt 的每個欄位都是「英文 + 空格 + 中文」，例如 'pro- 向前'。
+   * 兩段分開排是因為要對齊成 字首 ＋ 字根 ＋ 字尾 的積木，塞成一串就看不出結構。
+   */
+  function rootHTML(v) {
+    if (!v.rt) return '';
+    var parts = [];
+    ['p', 'r', 's'].forEach(function (k) {
+      if (!v.rt[k]) return;
+      var t = String(v.rt[k]);
+      var sp = t.indexOf(' ');
+      var en = sp < 0 ? t : t.slice(0, sp);
+      var zh = sp < 0 ? '' : t.slice(sp + 1);
+      parts.push('<div class="root-part"><div class="root-en">' + esc(en) + '</div>' +
+        (zh ? '<div class="root-zh">' + esc(zh) + '</div>' : '') + '</div>');
+    });
+    if (!parts.length) return '';
+    return '<div class="root-box">' + parts.join('<div class="root-plus">＋</div>') + '</div>';
+  }
+
   /* ---------- 單字卡 HTML ---------- */
   function wordCardHTML(v, opts) {
     opts = opts || {};
@@ -8039,7 +8130,8 @@ window.DATA_ACHIEVEMENTS = [
       '</div>' +
       (opts.hideZh ? '' :
         '<div class="word-zh"><span class="word-pos">' + esc(v.pos) + '</span>' + esc(v.zh) + '</div>') +
-      (opts.showEx === false ? '' : exampleHTML(v)) +
+      (opts.hideZh ? '' : rootHTML(v)) +
+      (opts.showEx === false ? '' : collocationHTML(v) + exampleHTML(v)) +
       '</div>';
   }
 
@@ -8112,6 +8204,7 @@ window.DATA_ACHIEVEMENTS = [
   global.ExUtil = {
     options: options, bindKeys: bindKeys, prompt: prompt,
     exampleHTML: exampleHTML, wordCardHTML: wordCardHTML,
+    collocationHTML: collocationHTML, rootHTML: rootHTML,
     normalizeAns: normalizeAns, expandContractions: expandContractions,
     sameText: sameText, matchAny: matchAny,
     nearMiss: nearMiss, tokenize: tokenize,
@@ -8334,6 +8427,83 @@ window.DATA_ACHIEVEMENTS = [
             '<div class="sentence-zh">' + esc(v.pos) + ' ' + esc(v.zh) + '</div></div></div>' +
             (v.ex && v.ex[0] ? '<div class="sentence-en mt8">' + esc(v.ex[0][0]) + '</div>' +
               '<div class="sentence-zh">' + esc(v.ex[0][1]) + '</div>' : '')
+        });
+      });
+    }
+  };
+})(window);
+
+</script>
+<script>
+/* ===== js/exercises/collocation.js ===== */
+/* ==========================================================================
+   exercises/collocation.js — 搭配詞（collocate）
+   --------------------------------------------------------------------------
+   單字認得、句子看得懂，寫出來還是錯，通常錯在搭配：中文說「吃藥」，
+   於是寫成 eat medicine。這種錯背單字表救不了，只能一組一組記。
+   出題方式是把詞組裡的目標字挖掉讓人選，誘答就是 lure 那組母語干擾字 ——
+   問 take a break 時配上 eat / get / carry 才有鑑別度。
+   搭配詞只掛在動詞上：挖掉名詞的話（pay the ___）常常不只一個答案。
+   ========================================================================== */
+(function (global) {
+  'use strict';
+
+  var esc = UI.esc;
+
+  /** 這個字的其他搭配，批改後一起露出來 —— 錯的那一次是最想看的時候 */
+  function othersHTML(v, skip) {
+    var rest = (v.col || []).filter(function (c) { return c[0] !== skip; });
+    if (!rest.length) return '';
+    return '<div class="ex-list"><div class="small muted">' + esc(v.w) + ' 的其他常見搭配</div>' +
+      rest.map(function (c) {
+        return '<div class="ex-item">' + Speech.btn(c[0], false, 'speak-inline') +
+          '<div class="sentence-en">' + esc(c[0]) + '</div>' +
+          '<div class="sentence-zh">' + esc(c[1]) + '</div></div>';
+      }).join('') + '</div>';
+  }
+
+  Ex.collocate = {
+    scored: true,
+    render: function (q, host, api) {
+      var v = q.ref;
+      var phrase = q.col[0], zh = q.col[1];
+      var t0 = Date.now();
+
+      var re = new RegExp('\\b' + v.w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i');
+      var blanked = esc(phrase).replace(re, '<b class="text-blue">＿＿＿</b>');
+
+      ExUtil.prompt(host, '哪個字才配得上這個詞組？');
+      host.insertAdjacentHTML('beforeend',
+        '<div class="card center">' +
+          '<div class="cloze-text">' + blanked + '</div>' +
+          '<div class="sentence-zh mt8">' + esc(zh) + '</div>' +
+        '</div>');
+
+      var pool = Content.shuffle([v].concat(Content.colDistractors(v, 3)));
+      var correctIdx = pool.indexOf(v);
+
+      var ctl = ExUtil.options(host, pool.map(function (x) {
+        return { html: '<span class="en bold">' + esc(x.w) + '</span>' +
+          '<span class="muted small">　' + esc(x.zh) + '</span>' };
+      }), { onPick: function () { api.enableCheck(true); } });
+      ExUtil.bindKeys(ctl, api);
+      api.enableCheck(false);
+
+      api.ready(function () {
+        var picked = ctl.picked();
+        if (picked < 0) return;
+        var ok = picked === correctIdx;
+        ctl.lock(correctIdx);
+        ExUtil.gradeVocab(v, ok, (Date.now() - t0) > 9000, q.unitId);
+
+        api.result(ok, {
+          title: ok ? '搭配正確！' : '這個詞組要用 ' + v.w,
+          detail: '<div class="row" style="gap:8px">' + Speech.btn(phrase) +
+            '<div><div class="sentence-en">' + esc(phrase) + '</div>' +
+            '<div class="sentence-zh">' + esc(zh) + '</div></div></div>' +
+            (ok ? '' : '<div class="check-detail">' + esc(pool[picked].w) + ' 的意思沒錯，' +
+              '但英文不這樣配。</div>') +
+            othersHTML(v, phrase)
         });
       });
     }

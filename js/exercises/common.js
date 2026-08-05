@@ -105,6 +105,39 @@
     return '<div class="ex-list">' + rows + '</div>';
   }
 
+  /* ---------- 搭配詞 ---------- */
+  /** 搭配詞題會挖空考，這裡是「先教一次」的地方 —— 沒教過就考等於猜謎 */
+  function collocationHTML(v) {
+    if (!v.col || !v.col.length) return '';
+    return '<div class="col-box"><div class="col-lab">常見搭配</div>' +
+      v.col.map(function (c) {
+        return '<button class="col-chip" type="button" data-speak="' + esc(c[0]) + '">' +
+          '<span class="en">' + esc(c[0]) + '</span>' +
+          '<span class="col-zh">' + esc(c[1]) + '</span></button>';
+      }).join('') + '</div>';
+  }
+
+  /* ---------- 字根字首拆解 ---------- */
+  /**
+   * rt 的每個欄位都是「英文 + 空格 + 中文」，例如 'pro- 向前'。
+   * 兩段分開排是因為要對齊成 字首 ＋ 字根 ＋ 字尾 的積木，塞成一串就看不出結構。
+   */
+  function rootHTML(v) {
+    if (!v.rt) return '';
+    var parts = [];
+    ['p', 'r', 's'].forEach(function (k) {
+      if (!v.rt[k]) return;
+      var t = String(v.rt[k]);
+      var sp = t.indexOf(' ');
+      var en = sp < 0 ? t : t.slice(0, sp);
+      var zh = sp < 0 ? '' : t.slice(sp + 1);
+      parts.push('<div class="root-part"><div class="root-en">' + esc(en) + '</div>' +
+        (zh ? '<div class="root-zh">' + esc(zh) + '</div>' : '') + '</div>');
+    });
+    if (!parts.length) return '';
+    return '<div class="root-box">' + parts.join('<div class="root-plus">＋</div>') + '</div>';
+  }
+
   /* ---------- 單字卡 HTML ---------- */
   function wordCardHTML(v, opts) {
     opts = opts || {};
@@ -118,7 +151,8 @@
       '</div>' +
       (opts.hideZh ? '' :
         '<div class="word-zh"><span class="word-pos">' + esc(v.pos) + '</span>' + esc(v.zh) + '</div>') +
-      (opts.showEx === false ? '' : exampleHTML(v)) +
+      (opts.hideZh ? '' : rootHTML(v)) +
+      (opts.showEx === false ? '' : collocationHTML(v) + exampleHTML(v)) +
       '</div>';
   }
 
@@ -191,6 +225,7 @@
   global.ExUtil = {
     options: options, bindKeys: bindKeys, prompt: prompt,
     exampleHTML: exampleHTML, wordCardHTML: wordCardHTML,
+    collocationHTML: collocationHTML, rootHTML: rootHTML,
     normalizeAns: normalizeAns, expandContractions: expandContractions,
     sameText: sameText, matchAny: matchAny,
     nearMiss: nearMiss, tokenize: tokenize,

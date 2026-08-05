@@ -228,6 +228,16 @@
   }
 
   /**
+   * 搭配詞題的誘答：只從「其他也有搭配詞的動詞」裡抽。
+   * 不能用一般的隨機誘答 —— 隨機抽到的動詞有機會剛好也配得起來
+   * （give a speech 抽到 make，可是 make a speech 也是對的），那題就沒有標準解。
+   * 會收進 col 的都是彼此互相干擾的高頻動詞，拿它們互當誘答最準也最安全。
+   */
+  function colDistractors(target, n) {
+    return distractors(target, n, VOCAB.filter(function (v) { return v.col && v.col.length; }));
+  }
+
+  /**
    * 排句題的誘答字塊（回傳字串，不是單字物件）。
    * 取用順序：
    *   1. 句子自己的 lure（例句的第三個元素）—— 資料作者知道這句用的是哪個形態，最精準
@@ -285,7 +295,8 @@
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,
     shuffle: shuffle, sample: sample, pick: pick,
-    distractors: distractors, tokenLures: tokenLures, wordItem: wordItem,
+    distractors: distractors, colDistractors: colDistractors,
+    tokenLures: tokenLures, wordItem: wordItem,
     counts: counts
   };
 })(window);

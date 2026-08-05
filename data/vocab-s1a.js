@@ -14,7 +14,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0310',w:'wear',kk:'wɛr',pos:'v.',zh:'穿戴',ic:'👕',u:'s1u1',ex:[['I wear a jacket in winter.','我冬天穿外套。'],['Staff wear name tags at the fair.','員工在展場要戴名牌。']]},
 {id:'v0311',w:'carry',kk:'ˈkærɪ',pos:'v.',zh:'攜帶',ic:'🎒',u:'s1u1',lure:['take','send'],ex:[['She carries a big bag.','她背著一個大包包。'],['He carries the boxes upstairs.','他把箱子搬上樓。']]},
 {id:'v0312',w:'wash',kk:'wɑʃ',pos:'v.',zh:'清洗',ic:'🧼',u:'s1u1',ex:[['I wash my hands before lunch.','我午餐前洗手。'],['We wash the cups every evening.','我們每天傍晚洗杯子。']]},
-{id:'v0313',w:'arrive',kk:'əˈraɪv',pos:'v.',zh:'抵達',ic:'🛬',u:'s1u1',lure:['come','get'],ex:[['The bus arrives at eight.','公車八點到。',['comes']],['The shipment arrives on Tuesday.','貨物星期二到。',['comes']]]},
+{id:'v0313',w:'arrive',kk:'əˈraɪv',pos:'v.',zh:'抵達',ic:'🛬',u:'s1u1',lure:['come','get'],col:[['arrive at the airport','抵達機場'],['arrive at the office','抵達辦公室']],ex:[['The bus arrives at eight.','公車八點到。',['comes']],['The shipment arrives on Tuesday.','貨物星期二到。',['comes']]]},
 {id:'v0314',w:'leave',kk:'liv',pos:'v.',zh:'離開・留下',ic:'🚪',u:'s1u1',ex:[['I leave home at seven.','我七點出門。'],['Please leave a message.','請留言。']]},
 {id:'v0315',w:'return',kk:'rɪˈtɝn',pos:'v.',zh:'返回・退還',ic:'↩️',u:'s1u1',ex:[['She returns home late.','她很晚才回家。'],['Please return the form by Friday.','請在星期五前交回表格。']]},
 {id:'v0316',w:'stay',kk:'ste',pos:'v.',zh:'停留',ic:'🏨',u:'s1u1',ex:[['I stay home on Sunday.','我星期天待在家。'],['We stay at this hotel every year.','我們每年都住這家飯店。']]},
@@ -23,8 +23,8 @@ window.DATA_VOCAB_S1A = [
 {id:'v0319',w:'order',kk:'ˈɔrdɚ',pos:'v./n.',zh:'訂購・訂單',ic:'🧾',u:'s1u1',ex:[['I order coffee every morning.','我每天早上點咖啡。'],['The customer orders 50 units.','客戶訂了 50 個。']]},
 {id:'v0320',w:'deliver',kk:'dɪˈlɪvɚ',pos:'v.',zh:'運送',ic:'🚚',u:'s1u1',ex:[['They deliver the food fast.','他們送餐很快。'],['We deliver within three days.','我們三天內送達。']]},
 {id:'v0321',w:'visit',kk:'ˈvɪzɪt',pos:'v.',zh:'拜訪',ic:'🧳',u:'s1u1',ex:[['I visit my parents on weekends.','我週末去看父母。'],['The client visits our factory.','客戶來參觀我們的工廠。']]},
-{id:'v0322',w:'join',kk:'dʒɔɪn',pos:'v.',zh:'加入',ic:'➕',u:'s1u1',lure:['attend'],ex:[['Come and join us!','來加入我們吧！'],['She joins the meeting online.','她線上參加會議。',['attends']]]},
-{id:'v0323',w:'attend',kk:'əˈtɛnd',pos:'v.',zh:'出席',ic:'🎟️',u:'s1u1',lure:['join'],ex:[['I attend class every Monday.','我每週一上課。'],['All managers attend the review.','所有經理都要出席檢討會。']]},
+{id:'v0322',w:'join',kk:'dʒɔɪn',pos:'v.',zh:'加入',ic:'➕',u:'s1u1',lure:['attend'],col:[['join a club','加入社團'],['join the company','進這家公司']],ex:[['Come and join us!','來加入我們吧！'],['She joins the meeting online.','她線上參加會議。',['attends']]]},
+{id:'v0323',w:'attend',kk:'əˈtɛnd',pos:'v.',zh:'出席',ic:'🎟️',u:'s1u1',lure:['join'],col:[['attend school','上學'],['attend a training','參加訓練']],rt:{p:'at- 朝向',r:'tend 伸展'},ex:[['I attend class every Monday.','我每週一上課。'],['All managers attend the review.','所有經理都要出席檢討會。']]},
 {id:'v0324',w:'prepare',kk:'prɪˈpɛr',pos:'v.',zh:'準備',ic:'🛠️',u:'s1u1',ex:[['I prepare breakfast every day.','我每天準備早餐。'],['She prepares the monthly report.','她負責準備月報。']]},
 {id:'v0325',w:'discuss',kk:'dɪˈskʌs',pos:'v.',zh:'討論',ic:'💬',u:'s1u1',lure:['talk'],ex:[['Let\'s discuss it later.','我們晚點討論。'],['We discuss the budget on Friday.','我們星期五討論預算。']]},
 {id:'v0326',w:'explain',kk:'ɪkˈsplen',pos:'v.',zh:'解釋',ic:'🗒️',u:'s1u1',ex:[['Can you explain it again?','可以再解釋一次嗎？'],['He explains the new process.','他說明新的流程。']]},
@@ -51,7 +51,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0347',w:'sometimes',kk:'ˈsʌmˌtaɪmz',pos:'adv.',zh:'有時候',ic:'🔀',u:'s1u1',ex:[['Sometimes I walk to work.','我有時候走路上班。'],['Sometimes the system is slow.','系統有時候很慢。']]},
 
 /* ===================== U12　否定與疑問 ===================== */
-{id:'v0348',w:'do',kk:'du',pos:'v./aux.',zh:'做・助動詞',ic:'✅',u:'s1u2',lure:['make'],ex:[['What do you do?','你是做什麼的？'],['Do you have the file?','你有那個檔案嗎？']]},
+{id:'v0348',w:'do',kk:'du',pos:'v./aux.',zh:'做・助動詞',ic:'✅',u:'s1u2',lure:['make'],col:[['do homework','寫作業'],['do business','做生意'],['do the dishes','洗碗']],ex:[['What do you do?','你是做什麼的？'],['Do you have the file?','你有那個檔案嗎？']]},
 {id:'v0349',w:'does',kk:'dʌz',pos:'aux.',zh:'助動詞（單數）',ic:'☝️',u:'s1u2',ex:[['Does she like coffee?','她喜歡咖啡嗎？'],['Does the store open at nine?','店裡九點開門嗎？']]},
 {id:'v0350',w:'don\'t',kk:'dont',pos:'aux.',zh:'不（否定）',ic:'🚫',u:'s1u2',ex:[['I don\'t know.','我不知道。'],['We don\'t ship on Sunday.','我們星期日不出貨。']]},
 {id:'v0351',w:'doesn\'t',kk:'ˈdʌznt',pos:'aux.',zh:'不（單數否定）',ic:'⛔',u:'s1u2',ex:[['He doesn\'t eat meat.','他不吃肉。'],['The machine doesn\'t work.','機器壞了。']]},
@@ -75,7 +75,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0369',w:'really',kk:'ˈrɪəlɪ',pos:'adv.',zh:'真的',ic:'‼️',u:'s1u2',ex:[['Really? That\'s great!','真的嗎？太好了！'],['This is really urgent.','這真的很急。']]},
 {id:'v0370',w:'problem-free',kk:'ˈprɑbləm fri',pos:'adj.',zh:'沒問題的',ic:'✨',u:'s1u2',ex:[['The trip was problem-free.','旅程很順利。'],['The launch was problem-free.','發表會很順利。']]},
 {id:'v0371',w:'free',kk:'fri',pos:'adj.',zh:'免費的・有空的',ic:'🆓',u:'s1u2',ex:[['Are you free tonight?','你今晚有空嗎？'],['The room is free at two.','那間房兩點有空。']]},
-{id:'v0372',w:'expensive',kk:'ɪkˈspɛnsɪv',pos:'adj.',zh:'昂貴的',ic:'💸',u:'s1u2',ex:[['This is too expensive.','這太貴了。'],['The new model is expensive.','新款很貴。']]},
+{id:'v0372',w:'expensive',kk:'ɪkˈspɛnsɪv',pos:'adj.',zh:'昂貴的',ic:'💸',u:'s1u2',rt:{r:'expense 費用',s:'-ive 形容詞'},ex:[['This is too expensive.','這太貴了。'],['The new model is expensive.','新款很貴。']]},
 {id:'v0373',w:'cheap',kk:'tʃip',pos:'adj.',zh:'便宜的',ic:'🏷️',u:'s1u2',ex:[['This shop is cheap.','這家店很便宜。'],['We found a cheaper supplier.','我們找到更便宜的供應商。']]},
 {id:'v0374',w:'difficult',kk:'ˈdɪfəˌkʌlt',pos:'adj.',zh:'困難的',ic:'🧗',u:'s1u2',ex:[['This question is difficult.','這題很難。'],['It is a difficult decision.','這是個困難的決定。']]},
 {id:'v0375',w:'possible',kk:'ˈpɑsəbl',pos:'adj.',zh:'可能的',ic:'🔓',u:'s1u2',ex:[['Is it possible?','有可能嗎？'],['Please reply as soon as possible.','請盡快回覆。']]},
@@ -235,7 +235,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0523',w:'wallet',kk:'ˈwɑlɪt',pos:'n.',zh:'皮夾',ic:'👛',u:'s1u5',ex:[['I lost my wallet.','我弄丟皮夾了。'],['His wallet was in the drawer.','他的皮夾在抽屜裡。']]},
 {id:'v0524',w:'receipt',kk:'rɪˈsit',pos:'n.',zh:'收據',ic:'🧾',u:'s1u5',ex:[['Keep the receipt.','留著收據。'],['Please attach the receipt.','請附上收據。']]},
 {id:'v0525',w:'contract',kk:'ˈkɑntrækt',pos:'n.',zh:'合約',ic:'📜',u:'s1u5',ex:[['Read the contract first.','先看合約。'],['We signed the contract yesterday.','我們昨天簽了合約。']]},
-{id:'v0526',w:'payment',kk:'ˈpemənt',pos:'n.',zh:'付款',ic:'💵',u:'s1u5',ex:[['The payment is late.','付款遲了。'],['We received the payment today.','我們今天收到款項。']]},
+{id:'v0526',w:'payment',kk:'ˈpemənt',pos:'n.',zh:'付款',ic:'💵',u:'s1u5',rt:{r:'pay 付款',s:'-ment 名詞'},ex:[['The payment is late.','付款遲了。'],['We received the payment today.','我們今天收到款項。']]},
 {id:'v0527',w:'delivery',kk:'dɪˈlɪvərɪ',pos:'n.',zh:'配送',ic:'🚚',u:'s1u5',ex:[['The delivery is free.','免運費。'],['The delivery arrived late.','送貨遲到了。']]}
 
 ];

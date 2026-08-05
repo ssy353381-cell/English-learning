@@ -172,6 +172,24 @@
       });
     }
 
+    /* --- 3.7 搭配詞 --- */
+    if (plan.collocate) {
+      // 從「這一關以及之前」的字裡抽，不限這關新教的 —— take a break 這種搭配
+      // 掛在 Stage 0 的高頻動詞上，但要等學過幾關、有東西可比較之後練才有意義。
+      var colPool = [];
+      Content.vocabUpTo(unitId).forEach(function (v) {
+        (v.col || []).forEach(function (c) { colPool.push({ v: v, c: c }); });
+      });
+      var usedCol = {}, gotCol = 0;
+      S(colPool).forEach(function (x) {
+        // 同一個字只出一題：連問三題 take 只是在考同一件事
+        if (gotCol >= plan.collocate || usedCol[x.v.id]) return;
+        usedCol[x.v.id] = 1;
+        gotCol++;
+        body.push({ type: 'collocate', ref: x.v, col: x.c, unitId: unitId });
+      });
+    }
+
     /* --- 4. 聽力：聽單字或句子選意思 --- */
     if (plan.listen) {
       var half = Math.ceil(plan.listen / 2);
