@@ -30,10 +30,10 @@
 | 檔案 | 職責 |
 |---|---|
 | `state.js` | localStorage 存檔（key `eq.save.v1`）、跨日結算、匯出匯入、進度碼 |
-| `content.js` | 合併 `data/*`、建索引、關卡解鎖判定 |
+| `content.js` | 合併 `data/*`、建索引、解鎖判定、`planOf()` 依取向給配方 |
 | `srs.js` | SM-2 簡化版間隔重複、弱點怪獸清單 |
-| `scheduler.js` | 組題：關卡佇列、複習佇列、每日挑戰 |
-| `gamify.js` | XP／等級／連續天數／寶石／成就，及 WebAudio 合成音效 |
+| `scheduler.js` | 組題：關卡、複習、每日挑戰、跳關測驗 |
+| `gamify.js` | XP／等級／連續天數／寶石／成就、關卡與跳關測驗結算，及 WebAudio 合成音效 |
 | `speech.js` | TTS、語音辨識、離線錄音降級 |
 | `ui.js` | DOM 工具、彈窗、toast、主題 |
 | `views/*.js` | `Views[name]`，由 `app.js` 依 hash 路由呼叫 |
@@ -63,23 +63,15 @@
 
 不規則動詞不綁關卡，用 `t` 分 A／B／C 三型（三態同形／過去式＝過去分詞／三態都不同）。關卡設 `irregular: true` 會得到一張教學卡，plan 加 `['irregular', n]` 會出三態練習。
 
-## 起步取向
+## Stage 0 起步：取向與跳關測驗
 
-`profile.track`（`'phonics'` 預設／`'vocab'`）在 onboarding 問一題，設定頁隨時可改。它換的只有配方：發音關 s0u1–s0u5 各多寫一份 `planVocab`（新字加倍、第一關就出排句題、聽力與跟讀砍半），`Content.planOf(uid)` 依取向決定回傳哪一份。
+前五關（s0u1–s0u5）全是發音，而解鎖是一條鏈，已經有底子的人會被卡住。兩個機制解這件事，**都不碰 `isUnlocked`**。
 
-`isReady`／`isUnlocked` 都不看 `planVocab`，**解鎖鏈完全不變** —— 兩種取向走的是同一串關卡，換的是同一關裡出哪些題。沒寫 `planVocab` 的關卡兩邊一模一樣。
+**起步取向** `profile.track`（`'phonics'` 預設／`'vocab'`），onboarding 問一題、設定頁可改。它只換配方：發音關另備一份 `planVocab`（新字加倍、第一關就出排句題、聽力與跟讀砍半）。讀配方一律走 `Content.planOf(uid)` —— 直接讀 `unit.plan` 在 `vocab` 取向下會說謊（`buildLesson` 與地圖的「這次會教幾個新字」都已改用）。`isReady`／`isUnlocked` 不看 `planVocab`，沒寫的關卡兩種取向一模一樣。
 
-要讀關卡配方一律走 `Content.planOf(uid)`，不要直接讀 `unit.plan`（`buildLesson` 與地圖的「這次會教幾個新字」都已改用）—— 直接讀 `plan` 的地方在 `vocab` 取向下會說謊。
+**跳關測驗** 只給發音關，入口在地圖的關卡卡片；首頁待辦卡只推給 `track === 'vocab'`（選「先練發音」的人不該被慫恿跳過）。`Scheduler.SKIP_N` = 8 題（聽音 3、拼字 3、中英互選 2，可拼的字不夠就用互選補），全部出自**這一關自己的**單字，沒有教學卡也沒有單字卡 —— 先教一次再答對，證明不了什麼。答對 `rules.skipPass`（0.85 → 8 題只能錯 1 題）就 `State.unit(id).s = 1`：一顆星本來就是解鎖條件，**使用者不是跳過，是證明不需要**。
 
-## 跳關測驗
-
-發音關（s0u1–s0u5）在地圖的關卡卡片上多一顆「跳關測驗」：`Scheduler.SKIP_N` 題（聽音 3、拼字 3、中英互選 2，可拼的字不夠就用互選補），全部出自**這一關自己的**單字，沒有教學卡也沒有單字卡 —— 先被教一次再答對，證明不了什麼。答對 `rules.skipPass`（0.85，8 題只能錯 1 題）就 `State.unit(id).s = 1`。
-
-一顆星本來就是解鎖條件，所以 `isUnlocked` 一行都沒改：**使用者不是跳過，是證明不需要**。通過不給皇冠、不算通關次數，並記 `rec.skip = 1`，因為這一關的內容確實沒上過 —— 地圖要照實顯示「內容還沒上過」，之後回來打也還是當第一次教。
-
-測驗不重排答錯的題（`session.noRetry`）：那是課堂的補救機制，在測驗裡等於送答案。但答錯照樣進 SRS 與弱點怪獸，跳掉的關卡才不會變成黑洞。
-
-首頁的待辦卡只推給 `track === 'vocab'` 的人；地圖上兩種取向都找得到。選「先練發音」的人是自己要求練發音的，不該在首頁被慫恿跳過。
+通過不給皇冠、不算通關次數，另記 `rec.skip = 1`：這一關的內容確實沒上過，地圖要照實顯示，回頭再打也還是當第一次教。測驗不重排答錯的題（`session.noRetry`）—— 那是課堂的補救機制，在測驗裡等於送答案；但答錯照樣進 SRS 與弱點怪獸，跳掉的關卡才不會變成黑洞。
 
 ## 弱點怪獸
 
@@ -104,7 +96,7 @@
 
 ## 存檔
 
-在 `state.js` 的 `blank()` 增欄位即可，`fill()` 會把新欄位補進舊存檔，不需寫 migration。
+在 `state.js` 的 `blank()` 增欄位即可，`fill()` 會把新欄位補進舊存檔，不需寫 migration。關卡紀錄不走 `blank()`，欄位加在 `State.unit()` 的預設物件裡（`s` 星數、`lv` 皇冠、`best`、`n`、`at`、`skip`）。
 
 `g.shieldUsedN` 是「已扣護盾但還沒告知使用者」的計數：`rollDay()` 累加，`Gamify.noticeShield()` 報一次後歸零。任何靜靜改變存檔的機制都該配一個這樣的欄位，否則使用者不會知道自己被救了。
 
@@ -115,8 +107,8 @@
 ## 慣例
 
 - 註解與 commit 訊息用繁體中文；註解說明「為什麼」而非「做什麼」。
-- 無測試框架（刻意維持零依賴）。`node tools/test-logic.js` 用內建 `vm` 把 data 與引擎載進假的 window，驗語法、資料完整性與組題邏輯；提交前連同 `node tools/verify-bundle.js` 一起跑。
-- 端對端（Playwright + Chromium 開 `file://`）仍是手動、腳本不進 repo —— 那會引入 npm 依賴。
+- 無測試框架（刻意維持零依賴）。`node tools/test-logic.js` 用內建 `vm` 把 data 與引擎層（含 `gamify.js`，星數與解鎖要測得到）載進假的 window；提交前連同 `node tools/verify-bundle.js` 一起跑。
+- 端對端（Playwright + Chromium 開 `file://`）仍是手動、腳本與 node_modules 都留在 repo 外 —— 進來就破壞零依賴。
 
 ## 測試
 
@@ -137,6 +129,6 @@
 
 ## 下一步 TODO
 
-1. **Stage 3 的 10 關**（被動語態、商務字彙、Part 5 詞性判斷、Part 3/4 長對話）。Part 3/4 需要新的 `Ex` 模組（一段長音檔配多題），不是補資料就能解決。
-2. **驗證口說的自動評分**。所有既有驗證都跑在 `file://`，而那裡瀏覽器擋麥克風，等於 `Speech.listen()` 與 `scoreSpeech()` 這條路從未被實際執行過。要走 Vercel preview 才驗得到。
-3. **端對端測試進 CI**。目前 CI 只驗語法、資料與組題邏輯，畫面層（`views/*`、`exercises/*` 的 render）沒有任何自動檢查。要納入就得引入 Playwright，與零依賴衝突，得先想清楚值不值得。
+1. **Stage 3 的 10 關**（被動語態、商務字彙、Part 5 詞性判斷、Part 3/4 長對話）。Part 3/4 要新的 `Ex` 模組（一段長音檔配多題），不是補資料就能解決。
+2. **口說自動評分從未被實際執行**：驗證都跑在 `file://`，麥克風被擋，`Speech.listen()` 與 `scoreSpeech()` 這條路要走 Vercel preview 才驗得到。
+3. **畫面層沒有自動檢查**：CI 只驗語法、資料與組題，`views/*`／`exercises/*` 的 render 全靠手動。要納入就得引入 Playwright，與零依賴衝突，先想清楚值不值得。
