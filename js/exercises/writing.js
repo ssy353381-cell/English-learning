@@ -83,7 +83,7 @@
         api.result(ok, {
           title: ok ? '句子正確！' : '正確的排法是',
           detail: '<div class="row" style="gap:8px">' + Speech.btn(s.en) +
-            '<div><div class="sentence-en">' + esc(s.en) + '</div>' +
+            '<div><div class="sentence-en">' + Lexicon.markup(s.en) + '</div>' +
             '<div class="sentence-zh">' + esc(s.zh) + '</div></div></div>' +
             (ok ? '' : '<div class="small muted mt8">你排的：' + esc(mine.join(' ')) + '</div>')
         });
@@ -156,7 +156,7 @@
         api.result(ok, {
           title: ok ? '正確！' : (near ? '差一點點，拼字再看一次' : '正確答案是 ' + answerText),
           detail: '<div class="row" style="gap:8px">' + Speech.btn(full) +
-            '<div><div class="sentence-en">' + esc(full) + '</div>' +
+            '<div><div class="sentence-en">' + Lexicon.markup(full) + '</div>' +
             (c.zh ? '<div class="sentence-zh">' + esc(c.zh) + '</div>' : '') + '</div></div>' +
             (c.why ? '<div class="check-detail">' + c.why + '</div>' : '') + tl
         });

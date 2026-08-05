@@ -57,7 +57,7 @@
       if (s.ex) {
         out += '<div class="ex-list">' + s.ex.map(function (p) {
           return '<div class="ex-item">' + Speech.btn(p[0], false, 'speak-inline') +
-            '<div class="sentence-en">' + esc(p[0]) + '</div>' +
+            '<div class="sentence-en">' + Lexicon.markup(p[0]) + '</div>' +
             '<div class="sentence-zh">' + esc(p[1]) + '</div></div>';
         }).join('') + '</div>';
       }

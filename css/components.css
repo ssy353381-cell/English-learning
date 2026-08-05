@@ -351,23 +351,124 @@ body.in-lesson { padding-bottom: 0; }
   font-family: var(--font-en); font-size: 1.02rem; line-height: 1.95;
 }
 .article h3 { font-family: var(--font-en); margin-bottom: 10px; }
-.w {
-  cursor: pointer; border-radius: 3px;
-  border-bottom: 1px dotted transparent;
-}
-.w.known { border-bottom-color: var(--blue); }
-.w:hover { background: var(--gold); }
 .readtimer {
   font-family: var(--font-mono); font-weight: 800; color: var(--text-soft);
   font-size: .85rem;
 }
-.wordpop {
-  position: fixed; z-index: 90; max-width: 260px;
+
+/* ============ 詞庫：可點的字與查詢卡 ============ */
+.lexw {
+  cursor: pointer; border-radius: 3px;
+  border-bottom: 1px dotted transparent;
+}
+.lexw.known { border-bottom-color: var(--blue); }
+.lexw:hover { background: var(--gold); }
+
+.lexpop {
+  position: fixed; z-index: 90; width: min(360px, calc(100vw - 16px));
+  max-height: min(70vh, 560px); display: flex; flex-direction: column;
   background: var(--surface); border: 2px solid var(--blue);
-  border-radius: var(--radius-sm); padding: 10px 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.18);
+  border-radius: var(--radius); box-shadow: 0 10px 32px rgba(0,0,0,.22);
   animation: pop .15s ease-out;
 }
+/* 窄畫面貼底：卡片內容比一行釋義多得多，浮在字旁邊會把整句蓋掉 */
+.lexpop.sheet {
+  left: 0; right: 0; bottom: 0; top: auto; width: 100%;
+  max-height: 76vh;
+  border-width: 2px 0 0; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.lexpop-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 8px 0 10px; flex: 0 0 auto;
+}
+.lexpop-back, .lexpop-x {
+  background: none; color: var(--text-soft); font-weight: 800;
+  font-size: .85rem; padding: 4px 8px; border-radius: 8px;
+}
+.lexpop-back:hover, .lexpop-x:hover { background: var(--bg-alt); }
+.lexpop-body { overflow-y: auto; padding: 0 14px 14px; -webkit-overflow-scrolling: touch; }
+
+.lexcard { text-align: left; }
+.lexhead { display: flex; align-items: center; gap: 10px; }
+.lexic { font-size: 1.8rem; }
+.lexw-main { font-family: var(--font-en); font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
+.lexvia {
+  margin-top: 8px; padding: 6px 10px; border-radius: 8px;
+  background: var(--blue-soft); color: var(--blue-dark); font-size: .8rem; font-weight: 700;
+}
+.lexzh { margin-top: 8px; font-weight: 700; }
+.lextags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.lextag {
+  font-size: .65rem; font-weight: 800; padding: 2px 7px; border-radius: 999px;
+  background: var(--bg-alt); color: var(--text-soft); text-transform: uppercase;
+}
+.lextag.biz  { background: var(--gold); color: #6b4d00; }
+.lextag.lv   { background: var(--purple); color: #fff; }
+.lextag.unit { background: var(--green-soft); color: var(--green-dark); }
+
+.lexsec { margin-top: 14px; border-top: 2px dashed var(--border); padding-top: 10px; }
+.lexsec-h { font-size: .72rem; font-weight: 800; color: var(--text-faint); letter-spacing: .06em; }
+.lexrow { display: flex; gap: 8px; align-items: flex-start; margin-top: 8px; }
+.lexrow > b { flex: 0 0 4.6em; font-size: .78rem; color: var(--text-soft); padding-top: 3px; }
+.lexrow > div { flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 5px; }
+.lexchip {
+  display: inline-flex; align-items: baseline; gap: 4px;
+  font-family: var(--font-en); font-size: .85rem; font-weight: 700;
+  background: var(--bg-alt); border-radius: 8px; padding: 3px 8px;
+}
+.lexchip em { font-family: var(--font); font-style: normal; font-size: .68rem; color: var(--text-soft); }
+.lexchip.link { border: 1px solid var(--blue); color: var(--blue-dark); background: var(--surface); }
+.lexen { font-family: var(--font-en); font-size: .84rem; color: var(--text-soft); line-height: 1.5; }
+.lexnote {
+  margin-top: 8px; padding: 8px 10px; border-radius: 8px;
+  background: var(--bg-alt); font-size: .84rem; line-height: 1.65;
+}
+.lexfoot {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin-top: 14px; padding-top: 10px; border-top: 2px dashed var(--border);
+}
+.lexfoot .btn { padding: 6px 12px; font-size: .78rem; border-bottom-width: 3px; }
+
+/* ============ 詞庫頁 ============ */
+.searchbar .input {
+  width: 100%; padding: 12px 14px; font-size: 1rem; font-family: var(--font);
+  border: 2px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); outline: none;
+}
+.searchbar .input:focus { border-color: var(--blue); }
+
+.lvpick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.lvbtn {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 8px 2px; border-radius: var(--radius-sm);
+  border: 2px solid var(--border); background: var(--surface);
+}
+.lvbtn.on { border-color: var(--purple); background: var(--surface); }
+.lvbtn-n { font-weight: 800; font-size: 1rem; }
+.lvbtn.on .lvbtn-n { color: var(--purple); }
+.lvbtn-name { font-size: .6rem; font-weight: 700; color: var(--text-soft); }
+.lvbtn-c { font-size: .58rem; color: var(--text-faint); font-family: var(--font-mono); }
+
+.lexlist {
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.lexrow-item {
+  display: flex; align-items: baseline; gap: 10px; width: 100%;
+  padding: 10px 14px; text-align: left;
+  border-bottom: 1px solid var(--border); background: none;
+}
+.lexrow-item:last-child { border-bottom: none; }
+.lexrow-item:hover { background: var(--bg-alt); }
+.lexrow-w {
+  font-family: var(--font-en); font-weight: 800; font-size: .98rem;
+  flex: 0 0 auto; min-width: 7.5em;
+}
+.lexrow-zh { flex: 1 1 auto; font-size: .84rem; color: var(--text-soft); }
+.lexrow-dot { flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%; }
+.lexrow-dot.lv1 { background: var(--gold); }
+.lexrow-dot.lv2 { background: var(--blue); }
+.lexrow-dot.lv3 { background: var(--green); }
 
 /* ============ 口說 ============ */
 .mic-btn {

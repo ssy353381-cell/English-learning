@@ -1,76 +1,15 @@
 /* ==========================================================================
    exercises/reading.js — 短文閱讀
    讀完 → 作答 → 一次批改。文章可點任一個字查意思、可整篇朗讀、有計時。
+
+   點字查詢原本是這個檔案自己做的，現在整包搬到 js/lexicon.js —— 那時候只有
+   閱讀題有長句子，如今每張單字卡、每張教學卡都有例句，全部都要能點。
    ========================================================================== */
 (function (global) {
   'use strict';
 
   var esc = UI.esc;
-
-  /* ---------- 建一份「單字表」供點字查詢 ---------- */
-  var lex = null;
-  function lexicon() {
-    if (lex) return lex;
-    lex = {};
-    Content.allVocab().forEach(function (v) {
-      lex[v.w.toLowerCase()] = v;
-      // 常見變化形也對得到
-      var w = v.w.toLowerCase();
-      [w + 's', w + 'es', w + 'ed', w + 'ing', w + 'd'].forEach(function (f) {
-        if (!lex[f]) lex[f] = v;
-      });
-    });
-    (Content.irregulars() || []).forEach(function (iv) {
-      var base = lex[iv.v];
-      if (!base) return;
-      if (!lex[iv.p]) lex[iv.p] = base;
-      if (!lex[iv.pp]) lex[iv.pp] = base;
-    });
-    return lex;
-  }
-
-  /** 把文章切成可點的字 */
-  function markup(text) {
-    return esc(text).replace(/([A-Za-z][A-Za-z'’-]*)/g, function (m) {
-      var known = lexicon()[m.toLowerCase()];
-      return '<span class="w' + (known ? ' known' : '') + '" data-w="' + m + '">' + m + '</span>';
-    }).replace(/\n/g, '<br>');
-  }
-
-  /* ---------- 點字彈窗 ---------- */
-  var pop = null;
-  function closePop() { if (pop && pop.parentNode) pop.parentNode.removeChild(pop); pop = null; }
-
-  function showPop(target, word) {
-    closePop();
-    var v = lexicon()[word.toLowerCase()];
-    pop = document.createElement('div');
-    pop.className = 'wordpop';
-    pop.innerHTML =
-      '<div class="row" style="gap:8px">' + Speech.btn(word) +
-        '<div class="grow"><div class="sentence-en bold">' + esc(word) + '</div>' +
-        (v
-          ? (State.data.profile.showKK && v.kk ? '<div class="word-kk">[' + esc(v.kk) + ']</div>' : '') +
-            '<div class="sentence-zh"><span class="word-pos">' + esc(v.pos) + '</span>' + esc(v.zh) + '</div>'
-          : '<div class="sentence-zh muted">這個字還沒收進單字庫，先聽發音</div>') +
-        '</div></div>';
-    document.body.appendChild(pop);
-
-    var r = target.getBoundingClientRect();
-    var w = pop.offsetWidth, h = pop.offsetHeight;
-    var left = Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2));
-    var top = r.top - h - 8;
-    if (top < 8) top = r.bottom + 8;
-    pop.style.left = left + 'px';
-    pop.style.top = top + 'px';
-    Speech.speak(word, { rate: 0.8 });
-  }
-
-  document.addEventListener('click', function (e) {
-    var w = e.target.closest ? e.target.closest('.w') : null;
-    if (w) { showPop(w, w.getAttribute('data-w')); return; }
-    if (pop && !(e.target.closest && e.target.closest('.wordpop'))) closePop();
-  });
+  var markup = Lexicon.markup;
 
   /* ======================= 閱讀題 ======================= */
   Ex.read = {
@@ -100,7 +39,7 @@
         var s = Math.floor((Date.now() - t0) / 1000);
         timer.textContent = ('0' + Math.floor(s / 60)).slice(-2) + ':' + ('0' + (s % 60)).slice(-2);
       }, 500);
-      api.onCleanup(function () { clearInterval(tick); closePop(); });
+      api.onCleanup(function () { clearInterval(tick); Lexicon.close(); });
 
       /* --- 問題區 --- */
       var qs = a.qs || [];

@@ -50,6 +50,16 @@
       }
       title = '複習';
       sub = '間隔重複';
+    } else if (mode === 'drill') {
+      // 詞庫特訓：字是使用者自己從詞庫挑的，不屬於任何關卡
+      queue = Scheduler.buildLexiconDrill(opts.words);
+      if (!queue.length) {
+        UI.toast('這一批沒有可以練的字', 'bad');
+        location.hash = '#/words';
+        return;
+      }
+      title = '詞庫特訓';
+      sub = opts.batch || '';
     } else {
       var u = Content.unit(unitId);
       if (!u || !Content.isReady(unitId)) {
@@ -104,7 +114,8 @@
   function exit() {
     cleanup();
     document.body.classList.remove('in-lesson');
-    var back = session && (session.mode === 'unit' || session.mode === 'skip') ? '#/map' : '#/home';
+    var back = session && (session.mode === 'unit' || session.mode === 'skip') ? '#/map'
+             : session && session.mode === 'drill' ? '#/words' : '#/home';
     session = null;
     location.hash = back;
   }
@@ -341,7 +352,10 @@
                   '<button class="btn btn-ghost btn-lg" id="again">還是想上這一關</button>'
                 : '<button class="btn btn-primary btn-lg" id="again">開始上這一關</button>' +
                   '<button class="btn btn-ghost btn-lg" data-nav="#/map">回到地圖</button>')
-            : '<button class="btn btn-primary btn-lg" data-nav="#/home">回到今日</button>') +
+            : s.mode === 'drill'
+              ? '<button class="btn btn-primary btn-lg" data-nav="#/words">回到詞庫</button>' +
+                '<button class="btn btn-ghost btn-lg" data-nav="#/review">看複習排程</button>'
+              : '<button class="btn btn-primary btn-lg" data-nav="#/home">回到今日</button>') +
       '</div>';
 
     UI.countUp(UI.$('#k-acc'), Math.round(rate * 100), 700);
@@ -392,6 +406,11 @@
     if (id === 'review') return start('review', null, params);
     if (params.skip) return start('skip', id);      // #/lesson/s0u1?skip=1
     return start('unit', id);
+  };
+
+  /** 詞庫頁按下「開始特訓」時呼叫：字已經挑好了，直接開一場 */
+  Views.lessonStartLexicon = function (words, batchName) {
+    start('drill', null, { words: words, batch: batchName });
   };
 
   Views.lessonExit = function () {

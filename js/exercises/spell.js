@@ -180,7 +180,7 @@
             (v.kk ? ' <span class="word-kk">[' + esc(v.kk) + ']</span>' : '') + '</div>' +
             '<div class="sentence-zh">' + esc(v.pos) + ' ' + esc(v.zh) + '</div></div></div>' +
             (ok ? '' : '<div class="small muted mt8">你拼的：' + esc(mine) + '</div>') +
-            (ex ? '<div class="sentence-en mt8">' + esc(ex[0]) + '</div>' +
+            (ex ? '<div class="sentence-en mt8">' + Lexicon.markup(ex[0]) + '</div>' +
                   '<div class="sentence-zh">' + esc(ex[1]) + '</div>' : '')
         });
       });

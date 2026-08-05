@@ -48,7 +48,7 @@
 
       if (isWord) {
         var v = q.ref;
-        pool = Content.shuffle([v].concat(Content.distractors(v, 3)));
+        pool = Content.shuffle([v].concat(Content.distractors(v, 3, q.pool)));
         correctIdx = pool.indexOf(v);
         opts = pool.map(function (x) {
           return { html: '<span class="en bold">' + esc(x.w) + '</span>' +
@@ -148,7 +148,7 @@
         api.result(allOk, {
           title: allOk ? '全對！耳朵很準' : '正確的句子是',
           detail: '<div class="row" style="gap:8px">' + Speech.btn(s.en) +
-            '<div><div class="sentence-en">' + esc(s.en) + '</div>' +
+            '<div><div class="sentence-en">' + Lexicon.markup(s.en) + '</div>' +
             '<div class="sentence-zh">' + esc(s.zh) + '</div></div></div>'
         });
       });

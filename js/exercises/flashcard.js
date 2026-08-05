@@ -37,7 +37,8 @@
       var zh2en = q.dir === 'zh2en';
       var t0 = Date.now();
 
-      var wrongs = Content.distractors(v, 3);
+      // 詞庫特訓會帶 q.pool（同一批、難度相近的字）；關卡沒帶就用學過的字
+      var wrongs = Content.distractors(v, 3, q.pool);
       var pool = Content.shuffle([v].concat(wrongs));
       var correctIdx = pool.indexOf(v);
 
@@ -82,7 +83,7 @@
             '<div><div class="sentence-en">' + esc(v.w) +
             (v.kk ? ' <span class="word-kk">[' + esc(v.kk) + ']</span>' : '') + '</div>' +
             '<div class="sentence-zh">' + esc(v.pos) + ' ' + esc(v.zh) + '</div></div></div>' +
-            (v.ex && v.ex[0] ? '<div class="sentence-en mt8">' + esc(v.ex[0][0]) + '</div>' +
+            (v.ex && v.ex[0] ? '<div class="sentence-en mt8">' + Lexicon.markup(v.ex[0][0]) + '</div>' +
               '<div class="sentence-zh">' + esc(v.ex[0][1]) + '</div>' : '')
         });
       });

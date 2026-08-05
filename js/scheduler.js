@@ -404,8 +404,17 @@
     return (g && g.teach && g.teach.lead) ? g.teach.lead : '';
   }
 
+  /**
+   * 弱點怪獸與 SRS 存的都是 id 字串。詞庫的字用 lx: 開頭，Content 查不到，
+   * 兩邊都要記得往 Lexicon 再問一次 —— 漏掉的話，詞庫特訓答錯的字會變成
+   * 進得了清單卻永遠出不了題的怪獸。
+   */
+  function refItem(id) {
+    return Content.item(id) || Lexicon.item(id);
+  }
+
   function weakQuestion(w) {
-    var it = Content.item(w.r);
+    var it = refItem(w.r);
     if (!it) return null;
 
     if (w.t === 'vocab') {
@@ -476,7 +485,7 @@
     // 2) SRS 到期單字
     SRS.dueIds(limit).forEach(function (id) {
       if (taken() >= limit) return;
-      var v = Content.item(id);
+      var v = refItem(id);
       if (!v || !v.w) return;
       if (hasRef(id)) return;
       var spellable = v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w);
@@ -490,6 +499,45 @@
     out = out.concat(tail);
     out.forEach(function (q, i) { q.i = i; });
     return out;
+  }
+
+  /* ==========================================================================
+     詞庫特訓
+     課程關卡一次只教六到十個字，一萬二千字這樣走完要好幾年。詞庫特訓是另一條
+     腿：自己挑一批字直接背，走的還是同一套單字卡 → 回想 → 拼字 → 聽力流程。
+
+     誘答刻意從「同一批字」裡抽（pool 參數）—— 同一級的字難度相近，
+     拿課程裡的簡單字當誘答，這一批再難也會變成送分題。
+     ========================================================================== */
+  function buildLexiconDrill(words) {
+    if (!words || !words.length) return [];
+
+    var cards = [], body = [];
+
+    words.forEach(function (v) {
+      cards.push({ type: 'flashcard', ref: v, unitId: '', pool: words });
+    });
+
+    words.forEach(function (v, i) {
+      body.push({ type: 'recall', ref: v, dir: i % 2 ? 'zh2en' : 'en2zh', unitId: '', pool: words });
+      // 拼得出來才算真的會，但太長的字用字母銀行拼會變成純粹的耐心測驗
+      if (v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w) && i % 2 === 0) {
+        body.push({ type: 'spell', ref: v, unitId: '' });
+      } else {
+        body.push({ type: 'listen', mode: 'word', ref: v, unitId: '', pool: words });
+      }
+    });
+
+    // 單字卡之間夾一題練習，和關卡的節奏一致
+    var queue = [], shuffled = S(body), bi = 0;
+    cards.forEach(function (c, i) {
+      queue.push(c);
+      if (i % 2 === 1 && bi < shuffled.length) queue.push(shuffled[bi++]);
+    });
+    while (bi < shuffled.length) queue.push(shuffled[bi++]);
+
+    queue.forEach(function (q, i) { q.i = i; });
+    return queue;
   }
 
   /* ==========================================================================
@@ -598,6 +646,7 @@
   global.Scheduler = {
     buildLesson: buildLesson,
     buildReview: buildReview,
+    buildLexiconDrill: buildLexiconDrill,
     buildChallenge: buildChallenge,
     buildSkipTest: buildSkipTest,
     skipTestable: skipTestable,
