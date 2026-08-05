@@ -11,6 +11,8 @@
      3. 自動詞庫   DATA_LEXICON_1..6       tools/gen-lexicon.js 產生
    同一個字出現在多層時取最上面那層 —— 自動層的詞義是照詞頻排的，
    遇到 warranty（保固）這種多益專用意思會排在後面，手寫層就是為了蓋掉它。
+   蓋掉不等於丟掉：手寫層沒寫的音標、英英與詞形變化會從自動層補回來，
+   否則把一個字搬進手寫層（補例句的標準做法）反而讓卡片變薄。
 
    --------------------------------------------------------------------------
    對外的三件事：
@@ -113,6 +115,29 @@
       ordered.push(e);
     }
 
+    function hasKey(o) {
+      for (var k in o) { if (Object.prototype.hasOwnProperty.call(o, k)) return true; }
+      return false;
+    }
+
+    /**
+     * 手寫層蓋掉自動層時，把只有自動層有的欄位補回去。
+     *
+     * 手寫層存在的理由是改對詞義、補上例句與延伸用法；音標、英英解釋與詞形變化
+     * 這三樣 ECDICT 本來就給得比人手抄的正確也齊全。不補回去的話，把一個字搬進
+     * lexicon-core.js 反而讓卡片少了一半內容 —— 而「搬進手寫層」正是補例句的標準
+     * 做法，等於每補一個字就砸掉一個字。
+     */
+    function backfill(base, auto) {
+      if (!base.kk && auto.kk) base.kk = auto.kk;
+      if (!base.en && auto.en) base.en = auto.en;
+      if (!base.use && auto.use) base.use = auto.use;
+      if (!hasKey(base.forms) && hasKey(auto.forms)) base.forms = auto.forms;
+      if (!(base.fam && base.fam.length) && auto.fam.length) base.fam = auto.fam;
+      // biz 決定這個字進不進「商務主題」那批特訓，手寫時漏標就從那批裡消失了
+      if (auto.tags.indexOf('biz') >= 0 && base.tags.indexOf('biz') < 0) base.tags.push('biz');
+    }
+
     /**
      * 手寫層碰上課程已經教過的字（address、order、last…）。
      * 課程那筆資料比較完整（有圖示、誘答、綁關卡），所以詞義與例句一律以它為準，
@@ -143,6 +168,8 @@
       for (var i = 0; i < arr.length; i++) {
         var e = makeAuto(arr[i], lv);
         e.src = 'auto';
+        var seat = byWord[e.w.toLowerCase()];
+        if (seat) { if (seat.src === 'core') backfill(seat, e); continue; }
         put(e);
       }
     }
