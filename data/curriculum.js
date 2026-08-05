@@ -19,6 +19,7 @@
      read      短文閱讀 + 理解題
      photo     多益 Part 1：看圖聽描述（題目在 data/toeic-p1-*.js）
      respond   多益 Part 2：應答問題（題目在 data/toeic-p2-*.js）
+     convo     多益 Part 3／4：一段對話或獨白配三題（題目在 data/toeic-p34-*.js）
    --------------------------------------------------------------------------
    unit.planVocab 是「單字優先」取向（profile.track = 'vocab'）改用的配方，
    目前只有 Stage 0 的五個發音關需要：解鎖是一條鏈，想快點學句子的人也得先走完
@@ -224,18 +225,56 @@ window.DATA_CURRICULUM = {
     sub: '被動語態・商務字彙・Part 3/4/5',
     level: '約 TOEIC 650–750',
     desc: '正式進入多益的主戰場：辦公室、會議、訂單、出差、人事。被動語態與商務字彙是這一階段的兩根柱子。',
-    ready: false,
+    ready: true,
     units: [
-      { id:'s3u1', n:36, title:'被動語態 be + p.p.', icon:'🔄' },
-      { id:'s3u2', n:37, title:'主動改被動', icon:'↔️' },
-      { id:'s3u3', n:38, title:'商務字彙：辦公室與設備', icon:'🖨️' },
-      { id:'s3u4', n:39, title:'商務字彙：會議與簡報', icon:'📊' },
-      { id:'s3u5', n:40, title:'商務字彙：訂單與付款', icon:'🧾', boss:true },
-      { id:'s3u6', n:41, title:'商務字彙：出差與交通', icon:'✈️' },
-      { id:'s3u7', n:42, title:'商務字彙：人事與招聘', icon:'👔' },
-      { id:'s3u8', n:43, title:'Part 5 詞性判斷題', icon:'🔍' },
-      { id:'s3u9', n:44, title:'Part 3/4 聽長對話', icon:'🗣️' },
-      { id:'s3u10', n:45, title:'Stage 3 魔王測驗', icon:'👑', boss:true }
+      { id:'s3u1', n:36, title:'被動語態 be + p.p.', icon:'🔄',
+        goal:'公告與通知有一半是被動句 —— 先看懂「事情被做了」怎麼寫',
+        plan:[['collocate',2],['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+              ['cloze',4],['build',3],['read',1]] },
+
+      { id:'s3u2', n:37, title:'主動改被動', icon:'↔️',
+        goal:'認得出主動句與被動句是同一件事，並知道哪些動詞不能改被動',
+        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+              ['cloze',4],['build',3],['dictate',3],['read',1]] },
+
+      { id:'s3u3', n:38, title:'商務字彙：辦公室與設備', icon:'🖨️',
+        goal:'影印機、檔案櫃、維修、權限 —— 辦公室情境的二十個高頻字',
+        plan:[['collocate',2],['flashcard',12],['recall',7],['listen',5],['spell',4],
+              ['cloze',3],['build',3],['respond',2],['read',1]] },
+
+      { id:'s3u4', n:39, title:'商務字彙：會議與簡報', icon:'📊',
+        goal:'議程、講義、會議紀錄、提案 —— 開會從頭到尾會用到的字',
+        plan:[['collocate',2],['flashcard',12],['recall',7],['listen',5],['spell',4],
+              ['cloze',3],['build',3],['respond',2],['read',1]] },
+
+      { id:'s3u5', n:40, title:'商務字彙：訂單與付款', icon:'🧾', boss:true,
+        goal:'invoice 與 receipt 差在哪、保固涵蓋什麼 —— 多益最常考的一組情境',
+        plan:[['collocate',2],['flashcard',12],['recall',8],['listen',5],['spell',4],
+              ['grammar',4],['cloze',4],['build',3],['photo',2],['respond',2],['read',1]] },
+
+      { id:'s3u6', n:41, title:'商務字彙：出差與交通', icon:'✈️',
+        goal:'行程表、登機、延誤、報帳 —— 出差一趟會遇到的所有字',
+        plan:[['collocate',2],['flashcard',12],['recall',7],['listen',5],['spell',4],
+              ['cloze',3],['build',3],['respond',2],['read',1]] },
+
+      { id:'s3u7', n:42, title:'商務字彙：人事與招聘', icon:'👔',
+        goal:'應徵者、面試、資歷、升遷 —— 徵才啟事與面試對話的核心字',
+        plan:[['collocate',2],['flashcard',12],['recall',7],['listen',5],['spell',4],
+              ['cloze',3],['build',3],['respond',2],['read',1]] },
+
+      { id:'s3u8', n:43, title:'Part 5 詞性判斷題', icon:'🔍',
+        goal:'四個選項是同一個字的四種詞性時，看字尾就能選，不必看懂句子',
+        plan:[['intro',1],['flashcard',12],['recall',6],['grammar',9],['cloze',5],
+              ['listen',3],['build',2]] },
+
+      { id:'s3u9', n:44, title:'Part 3/4 聽長對話', icon:'🗣️',
+        goal:'一段對話配三個問題 —— 練「先看題目再聽」，而不是逐字聽懂',
+        plan:[['convo',3],['recall',5],['listen',4],['respond',2]] },
+
+      { id:'s3u10', n:45, title:'Stage 3 魔王測驗', icon:'👑', boss:true,
+        goal:'被動語態、五組商務字彙、詞性判斷與 Part 3／4 全部混合',
+        plan:[['collocate',2],['convo',2],['grammar',10],['cloze',6],['build',4],['listen',5],
+              ['dictate',4],['photo',2],['respond',3],['recall',10],['read',1]] }
     ]
   },
   {

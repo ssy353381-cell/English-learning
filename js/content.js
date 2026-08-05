@@ -16,11 +16,14 @@
 
   var VOCAB   = cat(global.DATA_VOCAB_S0,
                     global.DATA_VOCAB_S1A, global.DATA_VOCAB_S1B, global.DATA_VOCAB_S1C,
-                    global.DATA_VOCAB_S2, global.DATA_VOCAB_S2B);
-  var GRAMMAR = cat(global.DATA_GRAMMAR_S0, global.DATA_GRAMMAR_S1, global.DATA_GRAMMAR_S2);
-  var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2);
+                    global.DATA_VOCAB_S2, global.DATA_VOCAB_S2B, global.DATA_VOCAB_S3);
+  var GRAMMAR = cat(global.DATA_GRAMMAR_S0, global.DATA_GRAMMAR_S1, global.DATA_GRAMMAR_S2,
+                    global.DATA_GRAMMAR_S3);
+  var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2,
+                    global.DATA_READING_S3);
   var PHOTO   = cat(global.DATA_PHOTO_S2);      // 多益 Part 1：看圖聽描述
   var RESPOND = cat(global.DATA_RESPOND_S2);    // 多益 Part 2：應答問題
+  var CONVO   = cat(global.DATA_CONVO_S3);      // 多益 Part 3／4：長對話與獨白
   var MINPAIR = cat(global.DATA_MINPAIR);          // 最小音對：發音關唯一考得回來的題型
   var PHONICS = global.DATA_PHONICS || {};
   var IRREG   = global.DATA_IRREGULAR || [];
@@ -28,7 +31,7 @@
 
   /* ---------- 索引 ---------- */
   var byId = {}, byWord = {}, vocabByUnit = {}, grammarByUnit = {}, readingByUnit = {};
-  var photoByUnit = {}, respondByUnit = {}, minPairByUnit = {};
+  var photoByUnit = {}, respondByUnit = {}, minPairByUnit = {}, convoByUnit = {};
   var unitById = {}, stageOfUnit = {}, unitOrder = [];
 
   VOCAB.forEach(function (v) {
@@ -59,6 +62,10 @@
     byId[m.id] = m;
     (minPairByUnit[m.u] = minPairByUnit[m.u] || []).push(m);
   });
+  CONVO.forEach(function (c) {
+    byId[c.id] = c;
+    (convoByUnit[c.u] = convoByUnit[c.u] || []).push(c);
+  });
   // 不規則動詞不綁關卡，但要能用 id 查回來（弱點怪獸需要）
   IRREG.forEach(function (iv) { byId[iv.id] = iv; });
 
@@ -82,6 +89,7 @@
   function photoOf(uid)  { return photoByUnit[uid] || []; }
   function respondOf(uid){ return respondByUnit[uid] || []; }
   function minPairsOf(uid){ return minPairByUnit[uid] || []; }
+  function convoOf(uid)  { return convoByUnit[uid] || []; }
   function phonics(key)  { return PHONICS[key] || null; }
   function irregulars()  { return IRREG; }
   function allVocab()    { return VOCAB; }
@@ -112,6 +120,7 @@
     return out;
   }
   function minPairsUpTo(uid){ return upTo(minPairByUnit, MINPAIR, uid); }
+  function convoUpTo(uid)   { return upTo(convoByUnit, CONVO, uid); }
   function photoUpTo(uid)   { return upTo(photoByUnit, PHOTO, uid); }
   function respondUpTo(uid) { return upTo(respondByUnit, RESPOND, uid); }
 
@@ -149,7 +158,8 @@
                      (readingByUnit[uid] && readingByUnit[uid].length) ||
                      (photoByUnit[uid] && photoByUnit[uid].length) ||
                      (respondByUnit[uid] && respondByUnit[uid].length) ||
-                     (minPairByUnit[uid] && minPairByUnit[uid].length);
+                     (minPairByUnit[uid] && minPairByUnit[uid].length) ||
+                     (convoByUnit[uid] && convoByUnit[uid].length);
     return !!hasContent;
   }
 
@@ -289,6 +299,7 @@
       photo: PHOTO.length,
       respond: RESPOND.length,
       minpair: MINPAIR.length,
+      convo: CONVO.length,
       units: unitOrder.filter(isReady).length,
       unitsAll: unitOrder.length
     };
@@ -297,9 +308,10 @@
   global.Content = {
     unit: unit, stageOf: stageOf, stages: stages, rules: rules, item: item,
     vocabOf: vocabOf, grammarOf: grammarOf, readingOf: readingOf,
-    photoOf: photoOf, respondOf: respondOf, minPairsOf: minPairsOf,
+    photoOf: photoOf, respondOf: respondOf, minPairsOf: minPairsOf, convoOf: convoOf,
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
     photoUpTo: photoUpTo, respondUpTo: respondUpTo, minPairsUpTo: minPairsUpTo,
+    convoUpTo: convoUpTo,
     phonics: phonics, irregulars: irregulars,
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,

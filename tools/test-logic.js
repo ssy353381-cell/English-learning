@@ -15,6 +15,9 @@
      · 跳關測驗沒把星寫進去：解鎖鏈靠那顆星，測驗過了卻卡在原地
      · 弱點怪獸新型別沒同步改 weakQuestion：怪獸進得了清單卻永遠消不掉
      · SRS 只涵蓋單字：文法/閱讀/不規則動詞寫進 srs 會讓複習佇列壞掉
+     · 詞庫三層的優先序：手寫層蓋不過自動層的話，寫了也沒用
+     · 詞庫的字（lx: 開頭）Content.item 查不到：漏了 refItem 就變成消不掉的怪獸
+     · markup 先轉義再包 span：正規表示式沒吃掉 HTML 實體會把 amp 當成單字
 
    用法：node tools/test-logic.js
    ========================================================================== */
@@ -226,7 +229,8 @@ var Content = app.Content, Scheduler = app.Scheduler, SRS = app.SRS, State = app
    ========================================================================== */
 describe('資料完整性');
 
-var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond', m: 'minpair' };
+var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond',
+               m: 'minpair', c: 'convo' };
 var seen = {}, dupes = [], badPrefix = [];
 
 function checkIds(list, kind) {
@@ -237,13 +241,14 @@ function checkIds(list, kind) {
   });
 }
 checkIds(Content.allVocab(), 'vocab');
-var allGrammar = [], allReading = [], allPhoto = [], allRespond = [], allMinPair = [];
+var allGrammar = [], allReading = [], allPhoto = [], allRespond = [], allMinPair = [], allConvo = [];
 Content.orderedUnitIds().forEach(function (uid) {
   allGrammar = allGrammar.concat(Content.grammarOf(uid));
   allReading = allReading.concat(Content.readingOf(uid));
   allPhoto = allPhoto.concat(Content.photoOf(uid));
   allRespond = allRespond.concat(Content.respondOf(uid));
   allMinPair = allMinPair.concat(Content.minPairsOf(uid));
+  allConvo = allConvo.concat(Content.convoOf(uid));
 });
 checkIds(allGrammar, 'grammar');
 checkIds(allReading, 'reading');
@@ -251,6 +256,7 @@ checkIds(Content.irregulars(), 'irregular');
 checkIds(allPhoto, 'photo');
 checkIds(allRespond, 'respond');
 checkIds(allMinPair, 'minpair');
+checkIds(allConvo, 'convo');
 
 ok(dupes.length === 0, 'id 全域唯一（四種資料共用 byId 索引）' + (dupes.length ? '：' + dupes.slice(0, 5).join('、') : ''));
 ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
@@ -258,7 +264,7 @@ ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m）' + (badP
 var unitIds = {};
 Content.orderedUnitIds().forEach(function (u) { unitIds[u] = 1; });
 var orphan = [];
-Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond, allMinPair).forEach(function (x) {
+Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond, allMinPair, allConvo).forEach(function (x) {
   if (!unitIds[x.u]) orphan.push(x.id + ' → ' + x.u);
 });
 ok(orphan.length === 0, '每筆資料的 u 都指到存在的關卡' + (orphan.length ? '：' + orphan.slice(0, 5).join('、') : ''));
@@ -488,7 +494,7 @@ listJs('js/exercises').forEach(function (rel) {
     exTypes[m.replace(/^\s*Ex\./, '').replace(/\s*=$/, '')] = 1;
   });
 });
-eq(Object.keys(exTypes).length, 16, '註冊了 16 種題型');
+eq(Object.keys(exTypes).length, 17, '註冊了 17 種題型');
 
 // 兩種起步取向都要組得出題 —— planVocab 只有選「先學單字」的人會走到，壞了不會有人發現
 var emptyLesson = [], badType = [];
@@ -790,7 +796,8 @@ var samples = {
   irregular: (Content.irregulars()[0] || {}).id,
   photo: (allPhoto[0] || {}).id,
   respond: (allRespond[0] || {}).id,
-  phoneme: (allMinPair[0] || {}).id
+  phoneme: (allMinPair[0] || {}).id,
+  convo: (allConvo[0] || {}).id
 };
 Object.keys(weakTypes).forEach(function (t) {
   var refId = samples[t];

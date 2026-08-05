@@ -35,9 +35,11 @@
 
 `Ex[type] = { scored, render(q, host, api) }`。api：`ready(fn)` 設定檢查行為、`enableCheck(bool)`、`result(ok, opts)` 送批改、`setContinue(text)` 給不計分卡片、`onCleanup(fn)`。詳見 `exercises/common.js` 檔頭。
 
-16 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond collocate phoneme。
+17 種：intro flashcard recall spell listen dictate speak grammar build cloze read irregular photo respond collocate phoneme convo。
 
 `photo`／`respond`（多益 Part 1／2，在 `toeic.js`）共用「只靠耳朵作答」骨架：選項文字預設 `display:none`，按鈕或作答後才顯示。不可改用 `visibility:hidden` —— 它保留折行高度，長選項的框變高就洩題。沒有 TTS 時自動顯示，否則整題無法作答。
+
+`convo`（多益 Part 3／4，在 `convo.js`）反過來：**題目與選項要印出來**，真實測驗本來就印在題本上，藏起來是在練考場上不存在的能力。要藏的是**對話腳本**，那才是耳朵的工作。三小題一起作答一起批改，和閱讀題同一個節奏。換人說話時改音高而不是換語音 —— `chooseVoice()` 挑到什麼是使用者系統決定的，只有一個英文語音可用是常態。
 
 自由作答（fix／trans／cloze／dictate）走 `ExUtil.matchAny()`，已忽略大小寫、標點、彎引號與縮寫（`'s`／`'d` 有歧義故不展開）。`alt` 只需寫真正不同的說法。
 
@@ -45,11 +47,11 @@
 
 `data/curriculum.js` 定義 Stage 0–6 共 75 關。`plan` 只描述「出哪些題、各幾題」，挑哪些字句由 `scheduler.js` 決定。
 
-`Content.isReady(uid)` = `stage.ready` && 有 `plan` && 自己有六種內容任一（vocab／grammar／reading／photo／respond／minpair）。六種都要算：純聽力關沒有單字也沒有文法，魔王關相反 —— 題目全靠 `*UpTo()` 往前借，只有自己的短文。
+`Content.isReady(uid)` = `stage.ready` && 有 `plan` && 自己有七種內容任一（vocab／grammar／reading／photo／respond／minpair／convo）。七種都要算：純聽力關沒有單字也沒有文法，魔王關相反 —— 題目全靠 `*UpTo()` 往前借，只有自己的短文。
 
 `stage.ready` 只代表階段開放，關卡可分批補（沒 `plan` 就顯示「製作中」）。但解鎖是一條鏈，**可玩的關卡必須從頭連續** —— 中間空一關，後面永遠解不開。
 
-id 前綴互斥（共用 `byId` 索引）：vocab `v` / grammar `g` / reading `r` / irregular `i` / Part 1 `p` / Part 2 `q` / 最小音對 `m`，各接四位數。
+id 前綴互斥（共用 `byId` 索引）：vocab `v` / grammar `g` / reading `r` / irregular `i` / Part 1 `p` / Part 2 `q` / 最小音對 `m` / Part 3・4 `c`，各接四位數。
 
 不規則動詞不綁關卡，用 `t` 分 A／B／C 三型（三態同形／過去式＝過去分詞／三態都不同）。關卡設 `irregular: true` 得到一張教學卡，`plan` 加 `['irregular', n]` 出三態練習。
 
@@ -173,7 +175,7 @@ ECDICT（MIT，含 BNC／COCA 詞頻與詞形變化）與 OpenCC 的簡繁對照
 
 ## 弱點怪獸
 
-七種型別記的都是**來源**而非個別題目：
+八種型別記的都是**來源**而非個別題目：
 
 | type | 記的 id | 複習時出什麼 | 消滅條件 |
 |---|---|---|---|
@@ -184,10 +186,11 @@ ECDICT（MIT，含 BNC／COCA 詞頻與詞形變化）與 OpenCC 的簡繁對照
 | photo | 照片 | 同一張再聽一次四個描述 | 答對 |
 | respond | 問句 | 同一句再聽一次三個回應 | 答對 |
 | phoneme | 音對整組 | 從整組再抽一個字聽一次 | 答對 |
+| convo | 對話／獨白 | 整段重聽一次 | 三小題全對 |
 
 `Scheduler.weakQuestion()` 負責型別→題目的映射。**新增型別必須同步改它**，否則怪獸進得了清單卻永遠出不了題、也永遠消不掉。`test-logic.js` 掃 `SRS.addWeak()` 的字串參數比對 `weakQuestion` 有沒有接 —— 呼叫時型別要寫**字面值**，包在變數裡就掃不到（見 `toeic.js` 把評分交回各題型的原因）。
 
-複習佇列中怪獸佔 40% 額度，以**實際排進去的題數**計算（出不了題的不佔名額）；依答錯次數排序；閱讀排最後且每次至多一篇。
+複習佇列中怪獸佔 40% 額度，以**實際排進去的題數**計算（出不了題的不佔名額）；依答錯次數排序；閱讀與 Part 3／4 排最後，兩者合計每次至多一個 —— 它們一題就要好幾分鐘，放行第二個會把整輪複習吃光。
 
 間隔重複**僅涵蓋單字**：文法、閱讀、不規則動詞、發音都不寫入 `State.data.srs`（`buildReview` 的到期迴圈要求項目有 `.w`），只透過弱點怪獸回鍋。
 
@@ -211,12 +214,14 @@ ECDICT（MIT，含 BNC／COCA 詞頻與詞形變化）與 OpenCC 的簡繁對照
 
 ## 現況
 
-- 可玩 Stage 0–2 共 35 關（1028 單字、27 文法點、54 篇短文、63 個不規則動詞、14 題 Part 1、22 題 Part 2、18 組最小音對）。Stage 2 已完整。
-- 可選欄位覆蓋率仍低：`lure` 55 字、`col` 12 字（29 組）、`rt` 32 字、`tl` 7 個文法點。純資料，補充不必動程式。
-- Stage 3–6 共 40 關僅有標題，`ready: false`。
+- 可玩 Stage 0–3 共 45 關（1120 單字、30 文法點、63 篇短文、63 個不規則動詞、14 題 Part 1、22 題 Part 2、6 題 Part 3／4、18 組最小音對）。Stage 3 已完整。
+- 詞庫 12018 字（手寫層 81、自動層 11000、其餘來自課程單字），例句涵蓋率仍低：中英對照 256 筆、英文用法示例 4184 筆，其餘只有詞義與詞形變化。
+- 可選欄位覆蓋率：`lure` 141 字、`col` 30 字（47 組）、`rt` 45 字、`tl` 9 個文法點。純資料，補充不必動程式。
+- Stage 4–6 共 30 關僅有標題，`ready: false`。
 
 ## 下一步 TODO
 
-1. **Stage 3 的 10 關**（被動語態、商務字彙、Part 5 詞性判斷、Part 3/4 長對話）。Part 3/4 要新的 `Ex` 模組（一段長音檔配多題），不是補資料就能解決；Part 5 可直接吃 `rt` 的後綴詞性。
-2. **兩條聲音的路都沒在真機驗過**。麥克風被 `file://` 擋住，`Speech.listen()`／`scoreSpeech()` 要走 Vercel preview；`phoneme` 反過來 —— 邏輯與降級都測得到，但「TTS 唸出來的 bag／beg／big 分不分得出來」只有真機聽得出來。
-3. **畫面層零自動檢查**。CI 只驗語法、資料與組題，`views/*`／`exercises/*` 的 render 全靠手動，而題型模組已增至 16 種。要納入就得引入 Playwright，與零依賴衝突，先想清楚值不值得。
+1. **詞庫的例句**。一萬一千字裡有六千多字連一句例句都沒有，這是詞庫目前最弱的一環。補的方式是往 `lexicon-core.js` 寫（手寫層會蓋掉自動層），優先補商務主題字與第 1–3 級。
+2. **Stage 4 的 10 關**（假設語氣、分詞構句、片語動詞、Part 6／7）。Part 6 段落填空與 Part 7 雙篇閱讀都要新的 `Ex` 模組 —— 前者要在一篇文章裡挖好幾個空，後者要同時顯示兩份文件並跨篇找答案。
+3. **兩條聲音的路都沒在真機驗過**。麥克風被 `file://` 擋住，`Speech.listen()`／`scoreSpeech()` 要走 Vercel preview；`phoneme` 反過來 —— 邏輯與降級都測得到，但「TTS 唸出來的 bag／beg／big 分不分得出來」只有真機聽得出來。Part 3／4 換人說話靠音高，多人對話聽不聽得出分界也一樣要真機。
+4. **畫面層零自動檢查**。CI 只驗語法、資料與組題，`views/*`／`exercises/*` 的 render 全靠手動，而題型模組已增至 17 種。要納入就得引入 Playwright，與零依賴衝突，先想清楚值不值得。

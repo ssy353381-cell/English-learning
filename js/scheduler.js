@@ -278,6 +278,14 @@
         body.push({ type: 'respond', ref: r, unitId: unitId });
       });
     }
+    // Part 3／4 一題要聽一整段再答三小題，和閱讀一樣重，所以跟著放到收尾
+    if (plan.convo) {
+      var cvs = Content.convoOf(unitId);
+      if (!cvs.length) cvs = Content.convoUpTo(unitId);
+      SAMPLE(cvs, plan.convo).forEach(function (c) {
+        tail.push({ type: 'convo', ref: c, unitId: unitId });
+      });
+    }
 
     /* --- 10. 閱讀（放最後，當作這關的收尾） --- */
     if (plan.read) {
@@ -454,6 +462,11 @@
       return { type: 'phoneme', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
+    // Part 3／4 和閱讀一樣是整段重來：三小題全對才算消滅
+    if (w.t === 'convo') {
+      return { type: 'convo', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
     return null;
   }
 
@@ -474,11 +487,12 @@
       .sort(function (a, b) { return b.n - a.n; })
       .forEach(function (w) {
         if (taken() >= budget) return;
-        // 一篇文章要讀好幾分鐘，一次複習最多夾一篇
-        if (w.t === 'reading' && tail.length) return;
+        // 一篇文章要讀好幾分鐘，Part 3／4 要聽完整段再答三小題，一樣重。
+        // 兩種合計一次複習最多夾一個，否則整輪複習會被它們吃光。
+        if ((w.t === 'reading' || w.t === 'convo') && tail.length) return;
         var q = weakQuestion(w);
         if (!q) return;
-        if (q.type === 'read') tail.push(q);
+        if (q.type === 'read' || q.type === 'convo') tail.push(q);
         else out.push(q);
       });
 

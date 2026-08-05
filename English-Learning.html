@@ -842,6 +842,27 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 .opt-text.is-hidden,
 .ask-text.is-hidden { display: none; }
 
+/* ============ Part 3／4 長對話 ============ */
+.convo-head { margin-bottom: 4px; }
+.script {
+  background: var(--bg-alt); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 12px;
+  font-family: var(--font-en); line-height: 1.8;
+}
+/* .script 自帶 display 之外的樣式即可，但這條還是要寫死 ——
+   同樣是一個 class 的權重時比的是先後順序，漏掉就會變成「藏不住的腳本」，
+   而腳本一旦提早露出來，這一題就從聽力變成閱讀了 */
+.script.is-hidden { display: none; }
+.script-line { display: flex; gap: 8px; align-items: baseline; margin-bottom: 6px; }
+.script-line:last-child { margin-bottom: 0; }
+.script-who {
+  flex: 0 0 auto; min-width: 2.4em; font-size: .7rem; font-weight: 800;
+  color: var(--text-soft); text-transform: uppercase;
+}
+.script-line.opt-playing {
+  border-radius: 6px; box-shadow: 0 0 0 3px var(--blue-soft); border: none;
+}
+
 /* 作答後的四選項對照 */
 .opt-review { display: grid; gap: 8px; margin: 4px 0 8px; }
 .opt-review-row {
@@ -958,7 +979,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 </style>
 </head>
 <body>
-<!-- 單檔打包版 build: 2026-08-05 06:16 -->
+<!-- 單檔打包版 build: 2026-08-05 07:58 -->
 
 <!-- ===== 頂部狀態列 ===== -->
 <header id="topbar" class="topbar">
@@ -1037,6 +1058,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
      read      短文閱讀 + 理解題
      photo     多益 Part 1：看圖聽描述（題目在 data/toeic-p1-*.js）
      respond   多益 Part 2：應答問題（題目在 data/toeic-p2-*.js）
+     convo     多益 Part 3／4：一段對話或獨白配三題（題目在 data/toeic-p34-*.js）
    --------------------------------------------------------------------------
    unit.planVocab 是「單字優先」取向（profile.track = 'vocab'）改用的配方，
    目前只有 Stage 0 的五個發音關需要：解鎖是一條鏈，想快點學句子的人也得先走完
@@ -1242,18 +1264,56 @@ window.DATA_CURRICULUM = {
     sub: '被動語態・商務字彙・Part 3/4/5',
     level: '約 TOEIC 650–750',
     desc: '正式進入多益的主戰場：辦公室、會議、訂單、出差、人事。被動語態與商務字彙是這一階段的兩根柱子。',
-    ready: false,
+    ready: true,
     units: [
-      { id:'s3u1', n:36, title:'被動語態 be + p.p.', icon:'🔄' },
-      { id:'s3u2', n:37, title:'主動改被動', icon:'↔️' },
-      { id:'s3u3', n:38, title:'商務字彙：辦公室與設備', icon:'🖨️' },
-      { id:'s3u4', n:39, title:'商務字彙：會議與簡報', icon:'📊' },
-      { id:'s3u5', n:40, title:'商務字彙：訂單與付款', icon:'🧾', boss:true },
-      { id:'s3u6', n:41, title:'商務字彙：出差與交通', icon:'✈️' },
-      { id:'s3u7', n:42, title:'商務字彙：人事與招聘', icon:'👔' },
-      { id:'s3u8', n:43, title:'Part 5 詞性判斷題', icon:'🔍' },
-      { id:'s3u9', n:44, title:'Part 3/4 聽長對話', icon:'🗣️' },
-      { id:'s3u10', n:45, title:'Stage 3 魔王測驗', icon:'👑', boss:true }
+      { id:'s3u1', n:36, title:'被動語態 be + p.p.', icon:'🔄',
+        goal:'公告與通知有一半是被動句 —— 先看懂「事情被做了」怎麼寫',
+        plan:[['collocate',2],['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+              ['cloze',4],['build',3],['read',1]] },
+
+      { id:'s3u2', n:37, title:'主動改被動', icon:'↔️',
+        goal:'認得出主動句與被動句是同一件事，並知道哪些動詞不能改被動',
+        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',7],
+              ['cloze',4],['build',3],['dictate',3],['read',1]] },
+
+      { id:'s3u3', n:38, title:'商務字彙：辦公室與設備', icon:'🖨️',
+        goal:'影印機、檔案櫃、維修、權限 —— 辦公室情境的二十個高頻字',
+        plan:[['collocate',2],['flashcard',12],['recall',7],['listen',5],['spell',4],
+              ['cloze',3],['build',3],['respond',2],['read',1]] },
+
+      { id:'s3u4', n:39, title:'商務字彙：會議與簡報', icon:'📊',
+        goal:'議程、講義、會議紀錄、提案 —— 開會從頭到尾會用到的字',
+        plan:[['collocate',2],['flashcard',12],['recall',7],['listen',5],['spell',4],
+              ['cloze',3],['build',3],['respond',2],['read',1]] },
+
+      { id:'s3u5', n:40, title:'商務字彙：訂單與付款', icon:'🧾', boss:true,
+        goal:'invoice 與 receipt 差在哪、保固涵蓋什麼 —— 多益最常考的一組情境',
+        plan:[['collocate',2],['flashcard',12],['recall',8],['listen',5],['spell',4],
+              ['grammar',4],['cloze',4],['build',3],['photo',2],['respond',2],['read',1]] },
+
+      { id:'s3u6', n:41, title:'商務字彙：出差與交通', icon:'✈️',
+        goal:'行程表、登機、延誤、報帳 —— 出差一趟會遇到的所有字',
+        plan:[['collocate',2],['flashcard',12],['recall',7],['listen',5],['spell',4],
+              ['cloze',3],['build',3],['respond',2],['read',1]] },
+
+      { id:'s3u7', n:42, title:'商務字彙：人事與招聘', icon:'👔',
+        goal:'應徵者、面試、資歷、升遷 —— 徵才啟事與面試對話的核心字',
+        plan:[['collocate',2],['flashcard',12],['recall',7],['listen',5],['spell',4],
+              ['cloze',3],['build',3],['respond',2],['read',1]] },
+
+      { id:'s3u8', n:43, title:'Part 5 詞性判斷題', icon:'🔍',
+        goal:'四個選項是同一個字的四種詞性時，看字尾就能選，不必看懂句子',
+        plan:[['intro',1],['flashcard',12],['recall',6],['grammar',9],['cloze',5],
+              ['listen',3],['build',2]] },
+
+      { id:'s3u9', n:44, title:'Part 3/4 聽長對話', icon:'🗣️',
+        goal:'一段對話配三個問題 —— 練「先看題目再聽」，而不是逐字聽懂',
+        plan:[['convo',3],['recall',5],['listen',4],['respond',2]] },
+
+      { id:'s3u10', n:45, title:'Stage 3 魔王測驗', icon:'👑', boss:true,
+        goal:'被動語態、五組商務字彙、詞性判斷與 Part 3／4 全部混合',
+        plan:[['collocate',2],['convo',2],['grammar',10],['cloze',6],['build',4],['listen',5],
+              ['dictate',4],['photo',2],['respond',3],['recall',10],['read',1]] }
     ]
   },
   {
@@ -2856,6 +2916,137 @@ window.DATA_VOCAB_S2B = [
 {id:'v1026',w:'formal',kk:'ˈfɔrml̩',pos:'adj.',zh:'正式的',ic:'🤵',u:'s2u7',ex:[['The dinner is quite formal.','那場晚餐相當正式。'],['Please use formal language in the email.','信件裡請用正式的語氣。']]},
 {id:'v1027',w:'helpful',kk:'ˈhɛlpfəl',pos:'adj.',zh:'有幫助的',ic:'🙌',u:'s2u7',rt:{r:'help 幫助',s:'-ful 形容詞'},ex:[['Your advice was very helpful.','你的建議很有幫助。'],['The receptionist was extremely helpful.','那位櫃檯人員非常樂意幫忙。']]},
 {id:'v1028',w:'flexible',kk:'ˈflɛksəbl̩',pos:'adj.',zh:'有彈性的',ic:'🤸',u:'s2u7',ex:[['My schedule is flexible this week.','我這週時間很彈性。'],['We offer flexible working hours.','我們提供彈性工時。']]}
+
+];
+
+</script>
+<script>
+/* ===== data/vocab-s3.js ===== */
+/* ==========================================================================
+   vocab-s3.js — Stage 3 單字（Unit 36–43）
+
+   進到多益的主戰場。這一階段的字全部照「情境」分組，因為多益題目本來就是
+   照情境出的：一段對話從頭到尾都在講出貨，會用到的字就是那二十幾個。
+
+   選字時先扣掉 Stage 0–2 教過的 —— 商務字彙從 Stage 1 就開始鋪，
+   invoice、supplier、interview 這些早就上過了，這裡只收真正還沒教到的。
+
+   例句一律日常一句、職場一句，職場那句刻意大量用被動語態 ——
+   這一階段的文法點就是被動，字和句型互相撐住。
+
+   欄位同 vocab-s0：id / w / kk / pos / zh / ic / u / ex，
+   外加可選的 lure（刻意誘答）、col（搭配詞，只掛動詞且詞組必須含目標字）、
+   rt（字根字首）。
+   ========================================================================== */
+window.DATA_VOCAB_S3 = [
+
+/* ===================== U36 被動語態 ===================== */
+{id:'v3001',w:'dispatch',kk:'dɪˈspætʃ',pos:'v./n.',zh:'派送・調度',ic:'🚚',u:'s3u1',lure:['deliver','send'],col:[['dispatch a technician','派技師過去']],ex:[['They dispatched a repair van right away.','他們馬上派了一台維修車。'],['The parts were dispatched from the Taichung depot.','零件從台中集散站發出了。']]},
+{id:'v3002',w:'authorize',kk:'ˈɔθəˌraɪz',pos:'v.',zh:'授權・批准',ic:'🔓',u:'s3u1',lure:['allow','approve'],col:[['authorize a payment','核准一筆付款']],ex:[['Only my mother can authorize the payment.','只有我媽可以批准這筆付款。'],['Access to this floor is authorized by security.','這一層樓的進出由保全授權。']]},
+{id:'v3003',w:'inspect',kk:'ɪnˈspɛkt',pos:'v.',zh:'檢查・視察',ic:'🔎',u:'s3u1',lure:['check','watch'],rt:{p:'in- 向內',r:'spect 看'},col:[['inspect the site','視察現場']],ex:[['A doctor inspected my throat.','醫生檢查了我的喉嚨。'],['The machines are inspected twice a year.','機器每年檢查兩次。']]},
+{id:'v3004',w:'install',kk:'ɪnˈstɔl',pos:'v.',zh:'安裝',ic:'🔧',u:'s3u1',lure:['replace','repair'],col:[['install software','安裝軟體']],ex:[['I installed a new app last night.','我昨晚裝了一個新的應用程式。'],['The new system will be installed over the weekend.','新系統會在週末安裝好。']]},
+{id:'v3005',w:'enclose',kk:'ɪnˈkloz',pos:'v.',zh:'隨函附上・圍住',ic:'📎',u:'s3u1',lure:['send','contact'],rt:{p:'en- 使進入',r:'close 關'},col:[['enclose a copy','附上一份副本']],ex:[['A high wall encloses the garden.','一道高牆圍住了花園。'],['A copy of the receipt is enclosed with this letter.','本信隨函附上收據影本。']]},
+{id:'v3006',w:'circulate',kk:'ˈsɝkjəˌlet',pos:'v.',zh:'傳閱・流通',ic:'🔄',u:'s3u1',lure:['deliver','send'],col:[['circulate a memo','傳閱通知']],ex:[['Fresh air circulates through the room.','新鮮空氣在房裡流通。'],['The revised policy was circulated to all departments.','修訂後的政策已傳閱到各部門。']]},
+{id:'v3007',w:'validate',kk:'ˈvæləˌdet',pos:'v.',zh:'驗證・使生效',ic:'🎟️',u:'s3u1',lure:['confirm','check'],col:[['validate a ticket','驗票']],ex:[['Remember to validate your parking ticket.','記得把停車票蓋章。'],['All entries are validated before the results are announced.','所有報名資料在公布結果前都會查核。']]},
+{id:'v3008',w:'assemble',kk:'əˈsɛmbl',pos:'v.',zh:'組裝・集合',ic:'🧱',u:'s3u1',lure:['complete','join'],col:[['assemble the parts','組裝零件']],ex:[['We assembled the bookshelf in an hour.','我們一小時就把書架組好了。'],['The units are assembled at our Kaohsiung plant.','機組在我們高雄廠組裝。']]},
+{id:'v3009',w:'oversee',kk:'ˌovɚˈsi',pos:'v.',zh:'監督・管理',ic:'👁️',u:'s3u1',lure:['handle','watch'],col:[['oversee a project','監督專案']],ex:[['My aunt oversees the whole kitchen.','我阿姨管理整個廚房。'],['The renovation is overseen by an outside consultant.','整修工程由外部顧問監督。']]},
+{id:'v3010',w:'discard',kk:'dɪsˈkɑrd',pos:'v.',zh:'丟棄・捨棄',ic:'🗑️',u:'s3u1',lure:['cancel','replace'],ex:[['Do not discard the box yet.','先不要把箱子丟掉。'],['Damaged items are discarded after inspection.','損壞的品項在檢查後會被丟棄。']]},
+
+/* ===================== U37 主動改被動 ===================== */
+{id:'v3011',w:'announce',kk:'əˈnaʊns',pos:'v.',zh:'宣布・公告',ic:'📣',u:'s3u2',lure:['tell','say'],col:[['announce the results','公布結果']],ex:[['They announced the winner last night.','他們昨晚宣布了得獎者。'],['The merger was announced this morning.','合併案今天早上公布了。']]},
+{id:'v3012',w:'assign',kk:'əˈsaɪn',pos:'v.',zh:'指派・分配',ic:'📌',u:'s3u2',lure:['give','choose'],col:[['assign a task','指派工作']],ex:[['The teacher assigned us a project.','老師指派我們一個專題。'],['She was assigned to the Osaka branch.','她被派到大阪分公司。']]},
+{id:'v3013',w:'solve',kk:'sɑlv',pos:'v.',zh:'解決',ic:'🧩',u:'s3u2',lure:['answer','repair'],ex:[['She solved the puzzle in five minutes.','她五分鐘就解開了那個謎題。'],['The technical problem was solved overnight.','技術問題一夜之間解決了。']]},
+{id:'v3014',w:'reject',kk:'rɪˈdʒɛkt',pos:'v.',zh:'退回・否決',ic:'🚫',u:'s3u2',lure:['refuse','remain'],rt:{p:'re- 往回',r:'ject 丟'},ex:[['They rejected my idea.','他們否決了我的想法。'],['The application was rejected due to missing documents.','申請因文件不齊被退回。']]},
+{id:'v3015',w:'occur',kk:'əˈkɝ',pos:'v.',zh:'發生',ic:'⚡',u:'s3u2',lure:['remain','stay'],ex:[['The accident occurred at noon.','意外發生在中午。'],['If any error occurs, contact the help desk.','如果發生任何錯誤，請聯絡服務台。']]},
+{id:'v3016',w:'amend',kk:'əˈmɛnd',pos:'v.',zh:'修訂・修正',ic:'✏️',u:'s3u2',lure:['change','complete'],col:[['amend a contract','修訂合約']],ex:[['I amended my answer after checking.','我查過之後改了答案。'],['The safety rules were amended last year.','安全規範去年修訂過。']]},
+{id:'v3017',w:'streamline',kk:'ˈstrimˌlaɪn',pos:'v.',zh:'簡化・使有效率',ic:'🏎️',u:'s3u2',lure:['complete','process'],col:[['streamline the process','簡化流程']],ex:[['We streamlined our morning routine.','我們把早上的流程簡化了。'],['The approval process has been streamlined.','核准流程已經簡化了。']]},
+{id:'v3018',w:'unveil',kk:'ʌnˈvel',pos:'v.',zh:'公開發表・揭幕',ic:'🎭',u:'s3u2',lure:['announce','notice'],ex:[['They unveiled the statue on Sunday.','他們星期天為雕像揭幕。'],['A new model will be unveiled at the trade show.','新款會在商展上發表。']]},
+{id:'v3019',w:'implement',kk:'ˈɪmpləmənt',pos:'v.',zh:'實施・執行',ic:'⚙️',u:'s3u2',lure:['process','complete'],col:[['implement a policy','實施政策']],ex:[['They implemented the new rule last week.','他們上週開始實施新規定。'],['The system will be implemented in three phases.','系統會分三階段導入。']]},
+{id:'v3020',w:'exceed',kk:'ɪkˈsid',pos:'v.',zh:'超過・超出',ic:'📈',u:'s3u2',lure:['increase','complete'],rt:{p:'ex- 向外',r:'ceed 走'},col:[['exceed expectations','超乎預期']],ex:[['Do not exceed the speed limit.','不要超速。'],['Sales exceeded our target by fifteen percent.','業績超出目標一成五。']]},
+
+/* ===================== U38 辦公室與設備 ===================== */
+{id:'v3021',w:'copier',kk:'ˈkɑpɪɚ',pos:'n.',zh:'影印機',ic:'🖨️',u:'s3u3',lure:['machine','equipment'],ex:[['The copier is out of paper again.','影印機又沒紙了。'],['The copier on the third floor is being repaired.','三樓的影印機正在維修。']]},
+{id:'v3022',w:'stationery',kk:'ˈsteʃənˌɛrɪ',pos:'n.',zh:'文具',ic:'✏️',u:'s3u3',lure:['equipment','tool'],ex:[['I bought some stationery for school.','我買了一些上學用的文具。'],['Stationery is stored in the supply room.','文具存放在用品室。']]},
+{id:'v3023',w:'storage',kk:'ˈstorɪdʒ',pos:'n.',zh:'儲存空間・倉儲',ic:'📥',u:'s3u3',lure:['warehouse','cabinet'],ex:[['I put the winter clothes in storage.','我把冬衣收起來了。'],['Extra chairs are kept in the storage room.','多的椅子放在儲藏室。']]},
+{id:'v3024',w:'access',kk:'ˈæksɛs',pos:'n./v.',zh:'使用權・存取',ic:'🔑',u:'s3u3',lure:['entrance','approval'],ex:[['I cannot access my email.','我打不開我的信箱。'],['Only managers are given access to this folder.','只有經理有這個資料夾的權限。']]},
+{id:'v3025',w:'facility',kk:'fəˈsɪlətɪ',pos:'n.',zh:'設施・廠房',ic:'🏭',u:'s3u3',lure:['equipment','lobby'],ex:[['The gym facilities are free for guests.','健身設施對房客免費。'],['The new facility will be opened in June.','新廠房六月啟用。']]},
+{id:'v3026',w:'maintenance',kk:'ˈmentənəns',pos:'n.',zh:'維修保養',ic:'🛠️',u:'s3u3',lure:['repair','equipment'],ex:[['The car needs regular maintenance.','這台車需要定期保養。'],['The elevator is closed for maintenance today.','電梯今天因保養暫停使用。']]},
+{id:'v3027',w:'thermostat',kk:'ˈθɝməˌstæt',pos:'n.',zh:'溫控器',ic:'🌡️',u:'s3u3',lure:['machine','equipment'],ex:[['Please turn down the thermostat.','請把溫度調低一點。'],['The thermostat was set to twenty-five degrees.','溫控器設定在二十五度。']]},
+{id:'v3028',w:'janitor',kk:'ˈdʒænɪtɚ',pos:'n.',zh:'清潔管理員',ic:'🧹',u:'s3u3',lure:['supervisor','colleague'],ex:[['The janitor opens the gate at six.','管理員六點開門。'],['The spill was cleaned up by the janitor.','灑出來的東西由清潔人員清理了。']]},
+{id:'v3029',w:'signage',kk:'ˈsaɪnɪdʒ',pos:'n.',zh:'標示牌',ic:'🪧',u:'s3u3',lure:['notice','entrance'],ex:[['The signage here is confusing.','這裡的指標很難懂。'],['New signage was installed near the entrance.','入口附近裝了新的標示牌。']]},
+{id:'v3030',w:'outage',kk:'ˈaʊtɪdʒ',pos:'n.',zh:'停電・斷線',ic:'🔌',u:'s3u3',lure:['delay','notice'],ex:[['The outage lasted two hours.','停電持續了兩小時。'],['A power outage was reported on the fifth floor.','五樓通報停電。']]},
+{id:'v3031',w:'workplace',kk:'ˈwɝkˌples',pos:'n.',zh:'職場・工作場所',ic:'🏢',u:'s3u3',lure:['facility','lobby'],ex:[['A tidy workplace helps me think.','整齊的工作環境讓我思緒清楚。'],['Safety rules are posted throughout the workplace.','安全規定張貼在工作場所各處。']]},
+{id:'v3032',w:'paperwork',kk:'ˈpepɚˌwɝk',pos:'n.',zh:'文書作業',ic:'🗃️',u:'s3u3',lure:['handout','stationery'],ex:[['I hate doing paperwork on Sunday.','我討厭星期天處理文件。'],['All paperwork must be completed before the deadline.','所有文書作業必須在期限前完成。']]},
+
+/* ===================== U39 會議與簡報 ===================== */
+{id:'v3033',w:'agenda',kk:'əˈdʒɛndə',pos:'n.',zh:'議程',ic:'🗒️',u:'s3u4',lure:['schedule','summary'],ex:[['What is on the agenda tonight?','今晚有什麼安排？'],['The agenda was sent out yesterday.','議程昨天寄出了。']]},
+{id:'v3034',w:'presentation',kk:'ˌprɛznˈteʃən',pos:'n.',zh:'簡報',ic:'📊',u:'s3u4',rt:{r:'present 呈現',s:'-ation 名詞'},ex:[['Her presentation was really clear.','她的簡報很清楚。'],['The presentation has been moved to Room B.','簡報已改到 B 會議室。']]},
+{id:'v3035',w:'handout',kk:'ˈhændˌaʊt',pos:'n.',zh:'講義',ic:'📄',u:'s3u4',lure:['summary','paperwork'],ex:[['The teacher gave us a handout.','老師發了一張講義。'],['Handouts are placed on every seat.','講義放在每個座位上。']]},
+{id:'v3036',w:'keynote',kk:'ˈkiˌnot',pos:'n.',zh:'主題演說',ic:'🎤',u:'s3u4',lure:['presentation','summary'],ex:[['The keynote starts at nine.','主題演說九點開始。'],['The keynote was given by the founder.','主題演說由創辦人主講。']]},
+{id:'v3037',w:'seminar',kk:'ˈsɛməˌnɑr',pos:'n.',zh:'研習會',ic:'🧑‍🏫',u:'s3u4',lure:['conference','interview'],ex:[['I joined a cooking seminar last month.','我上個月參加了一場烹飪講座。'],['The seminar was held in the main hall.','研習會在大廳舉行。']]},
+{id:'v3038',w:'workshop',kk:'ˈwɝkˌʃɑp',pos:'n.',zh:'工作坊',ic:'🧰',u:'s3u4',lure:['seminar','facility'],ex:[['The pottery workshop was fun.','那個陶藝工作坊很好玩。'],['A safety workshop is held every quarter.','每季都會舉辦一次安全工作坊。']]},
+{id:'v3039',w:'memorandum',kk:'ˌmɛməˈrændəm',pos:'n.',zh:'備忘錄・通知單',ic:'📋',u:'s3u4',lure:['notice','summary'],ex:[['He left a short memorandum on my desk.','他在我桌上留了一張便條。'],['A memorandum was circulated to all staff.','一份備忘錄傳閱給了全體同仁。']]},
+{id:'v3040',w:'minutes',kk:'ˈmɪnɪts',pos:'n.',zh:'會議紀錄',ic:'📝',u:'s3u4',lure:['summary','agenda'],ex:[['Wait five minutes, please.','請等五分鐘。'],['The minutes were circulated to all attendees.','會議紀錄發送給了所有與會者。']]},
+{id:'v3041',w:'summary',kk:'ˈsʌmərɪ',pos:'n.',zh:'摘要',ic:'🧾',u:'s3u4',lure:['minutes','handout'],ex:[['Give me a short summary of the book.','幫我簡短講一下這本書。'],['A summary of the results was attached.','結果摘要附在信裡。']]},
+{id:'v3042',w:'proposal',kk:'prəˈpozl',pos:'n.',zh:'提案',ic:'📑',u:'s3u4',rt:{r:'propose 提議',s:'-al 名詞'},lure:['agenda','summary'],ex:[['He turned down my proposal.','他拒絕了我的提議。'],['The proposal was rejected by the committee.','提案被委員會否決了。']]},
+{id:'v3043',w:'attendee',kk:'əˌtɛnˈdi',pos:'n.',zh:'與會者',ic:'👥',u:'s3u4',rt:{r:'attend 出席',s:'-ee 被動的人'},lure:['candidate','colleague'],ex:[['Every attendee gets a name tag.','每位與會者都有名牌。'],['Attendees will be notified by Friday.','與會者將於星期五前收到通知。']]},
+{id:'v3044',w:'brief',kk:'brif',pos:'adj./v.',zh:'簡短的・作簡報說明',ic:'⏱️',u:'s3u4',lure:['short','summary'],ex:[['Let\'s take a brief break.','我們稍微休息一下。'],['The team was briefed on the new policy.','團隊已就新政策接受了簡報。']]},
+
+/* ===================== U40 訂單與付款 ===================== */
+{id:'v3045',w:'quotation',kk:'kwoˈteʃən',pos:'n.',zh:'報價單',ic:'💬',u:'s3u5',lure:['invoice','receipt'],ex:[['I asked three shops for a quotation.','我跟三家店要了報價。'],['A quotation was sent to the client yesterday.','報價單昨天寄給客戶了。']]},
+{id:'v3046',w:'deposit',kk:'dɪˈpɑzɪt',pos:'n./v.',zh:'訂金・押金',ic:'💵',u:'s3u5',lure:['payment','refund'],col:[['deposit a check','存入支票']],ex:[['I deposited the money this morning.','我今天早上把錢存進去了。'],['A deposit of twenty percent is required.','需支付兩成訂金。']]},
+{id:'v3047',w:'installment',kk:'ɪnˈstɔlmənt',pos:'n.',zh:'分期付款',ic:'🗓️',u:'s3u5',lure:['payment','deposit'],ex:[['I pay for my phone in installments.','我的手機是分期付的。'],['The balance may be paid in six installments.','餘額可分六期支付。']]},
+{id:'v3048',w:'surcharge',kk:'ˈsɝˌtʃɑrdʒ',pos:'n.',zh:'附加費',ic:'➕',u:'s3u5',lure:['discount','fee'],ex:[['There is a small surcharge for delivery.','外送要加一點費用。'],['A surcharge is added to weekend bookings.','週末訂位會加收附加費。']]},
+{id:'v3049',w:'rebate',kk:'ˈribet',pos:'n.',zh:'折扣退款',ic:'💸',u:'s3u5',lure:['refund','discount'],ex:[['I got a rebate on my electricity bill.','我的電費帳單拿到了退費。'],['A rebate is offered on all floor models.','所有展示機都提供折扣退款。']]},
+{id:'v3050',w:'voucher',kk:'ˈvaʊtʃɚ',pos:'n.',zh:'兌換券',ic:'🎟️',u:'s3u5',lure:['receipt','discount'],ex:[['I have a voucher for a free coffee.','我有一張免費咖啡券。'],['Each attendee is given a meal voucher.','每位與會者都會拿到一張餐券。']]},
+{id:'v3051',w:'warranty',kk:'ˈwɔrəntɪ',pos:'n.',zh:'保固',ic:'🛡️',u:'s3u5',lure:['receipt','approval'],ex:[['The laptop still has a warranty.','這台筆電還在保固期內。'],['Parts are covered by a two-year warranty.','零件享有兩年保固。']]},
+{id:'v3052',w:'merchandise',kk:'ˈmɝtʃənˌdaɪz',pos:'n.',zh:'商品',ic:'🛍️',u:'s3u5',lure:['package','supply'],ex:[['The store sells sports merchandise.','那家店賣運動商品。'],['Damaged merchandise will be replaced free of charge.','損壞的商品會免費更換。']]},
+{id:'v3053',w:'inventory',kk:'ˈɪnvənˌtorɪ',pos:'n.',zh:'庫存',ic:'📦',u:'s3u5',lure:['warehouse','supply'],ex:[['We take inventory every Sunday.','我們每個星期天盤點。'],['The item is not in our inventory right now.','這個品項目前沒有庫存。']]},
+{id:'v3054',w:'shipment',kk:'ˈʃɪpmənt',pos:'n.',zh:'貨件・出貨',ic:'🚢',u:'s3u5',rt:{r:'ship 運送',s:'-ment 名詞'},lure:['package','supplier'],ex:[['The shipment arrived this morning.','那批貨今天早上到了。'],['Your shipment has been delayed by two days.','您的貨件延遲了兩天。']]},
+{id:'v3055',w:'transaction',kk:'trænˈzækʃən',pos:'n.',zh:'交易',ic:'💳',u:'s3u5',lure:['payment','order'],ex:[['The transaction took only a second.','那筆交易只花了一秒。'],['All transactions are recorded automatically.','所有交易都會自動記錄。']]},
+{id:'v3056',w:'overdue',kk:'ˌovɚˈdu',pos:'adj.',zh:'逾期的',ic:'⏳',u:'s3u5',lure:['delay','complete'],ex:[['My library book is overdue.','我的圖書館書逾期了。'],['The overdue balance must be settled this week.','逾期款項必須在本週結清。']]},
+
+/* ===================== U41 出差與交通 ===================== */
+{id:'v3057',w:'itinerary',kk:'aɪˈtɪnəˌrɛrɪ',pos:'n.',zh:'旅遊行程表',ic:'🗺️',u:'s3u6',ex:[['I printed out our itinerary.','我把我們的行程表印出來了。'],['The itinerary was updated with the new flight.','行程表已更新為新的航班。']]},
+{id:'v3058',w:'boarding',kk:'ˈbordɪŋ',pos:'n.',zh:'登機',ic:'🎫',u:'s3u6',lure:['departure','transit'],ex:[['Boarding starts in ten minutes.','十分鐘後開始登機。'],['Boarding passes are issued at the counter.','登機證在櫃檯領取。']]},
+{id:'v3059',w:'departure',kk:'dɪˈpɑrtʃɚ',pos:'n.',zh:'出發',ic:'🛫',u:'s3u6',rt:{r:'depart 離開',s:'-ure 名詞'},lure:['boarding','destination'],ex:[['Our departure is at six.','我們六點出發。'],['The departure time was changed to 8:40.','出發時間改成八點四十分。']]},
+{id:'v3060',w:'destination',kk:'ˌdɛstəˈneʃən',pos:'n.',zh:'目的地',ic:'📍',u:'s3u6',lure:['departure','terminal'],ex:[['Kyoto is my favorite destination.','京都是我最喜歡的目的地。'],['The destination was changed at the last minute.','目的地在最後一刻更改了。']]},
+{id:'v3061',w:'terminal',kk:'ˈtɝmənl',pos:'n.',zh:'航廈・轉運站',ic:'🛄',u:'s3u6',lure:['destination','entrance'],ex:[['We waited at terminal two.','我們在第二航廈等。'],['Shuttle buses are provided between terminals.','航廈之間有提供接駁車。']]},
+{id:'v3062',w:'transit',kk:'ˈtrænsɪt',pos:'n.',zh:'轉機・運輸',ic:'🚏',u:'s3u6',lure:['transfer','boarding'],ex:[['We have a six-hour transit in Bangkok.','我們在曼谷轉機六小時。'],['The goods were damaged in transit.','貨物在運送途中損壞了。']]},
+{id:'v3063',w:'shuttle',kk:'ˈʃʌtl',pos:'n.',zh:'接駁車',ic:'🚐',u:'s3u6',lure:['transit','terminal'],ex:[['The shuttle runs every fifteen minutes.','接駁車每十五分鐘一班。'],['A shuttle is provided from the airport.','機場有提供接駁車。']]},
+{id:'v3064',w:'fare',kk:'fɛr',pos:'n.',zh:'車資・票價',ic:'💴',u:'s3u6',lure:['fee','price'],ex:[['The bus fare went up again.','公車票價又漲了。'],['Fares are refunded if the train is cancelled.','列車取消時票價會退還。']]},
+{id:'v3065',w:'accommodation',kk:'əˌkɑməˈdeʃən',pos:'n.',zh:'住宿',ic:'🏩',u:'s3u6',lure:['reservation','facility'],ex:[['The accommodation was better than expected.','住宿比預期的好。'],['Accommodation will be arranged by the company.','公司會安排住宿。']]},
+{id:'v3066',w:'mileage',kk:'ˈmaɪlɪdʒ',pos:'n.',zh:'里程・里程數',ic:'🧭',u:'s3u6',lure:['fare','transit'],ex:[['This car has low mileage.','這台車里程數很低。'],['Mileage is reimbursed at ten dollars per kilometer.','里程以每公里十元核銷。']]},
+{id:'v3067',w:'reimburse',kk:'ˌriɪmˈbɝs',pos:'v.',zh:'報銷・償還',ic:'🧾',u:'s3u6',lure:['refund','payment'],col:[['reimburse expenses','報銷費用']],ex:[['My friend reimbursed me for the tickets.','我朋友把票錢還我了。'],['Travel costs are reimbursed within thirty days.','差旅費用三十天內核銷。']]},
+{id:'v3068',w:'allowance',kk:'əˈlaʊəns',pos:'n.',zh:'津貼・額度',ic:'💰',u:'s3u6',lure:['salary','benefit'],ex:[['My weekly allowance is small.','我每週的零用錢不多。'],['A daily meal allowance is provided during business trips.','出差期間提供每日餐費津貼。']]},
+
+/* ===================== U42 人事與招聘 ===================== */
+{id:'v3069',w:'qualification',kk:'ˌkwɑləfəˈkeʃən',pos:'n.',zh:'資格・學經歷',ic:'📜',u:'s3u7',lure:['experience','approval'],ex:[['She has the right qualifications.','她具備合適的資格。'],['Qualifications are verified before hiring.','錄取前會核實學經歷。']]},
+{id:'v3070',w:'recruit',kk:'rɪˈkrut',pos:'v./n.',zh:'招募・新進人員',ic:'🎯',u:'s3u7',lure:['interview','employer'],col:[['recruit new staff','招募新人']],ex:[['The team is recruiting volunteers.','那個團隊正在招募志工。'],['Ten engineers were recruited last quarter.','上一季招募了十位工程師。']]},
+{id:'v3071',w:'intern',kk:'ˈɪntɝn',pos:'n.',zh:'實習生',ic:'🧑‍🎓',u:'s3u7',lure:['candidate','colleague'],ex:[['My cousin is an intern at a hospital.','我表弟在醫院實習。'],['Interns are supervised by a senior engineer.','實習生由資深工程師帶。']]},
+{id:'v3072',w:'personnel',kk:'ˌpɝsnˈɛl',pos:'n.',zh:'人員・人事部',ic:'👔',u:'s3u7',lure:['colleague','supervisor'],ex:[['Only authorized personnel may enter.','僅限授權人員進入。'],['Personnel records are kept confidential.','人事紀錄一律保密。']]},
+{id:'v3073',w:'vacancy',kk:'ˈvekənsɪ',pos:'n.',zh:'職缺・空房',ic:'🪑',u:'s3u7',lure:['interview','entrance'],ex:[['The hotel has no vacancies tonight.','飯店今晚客滿。'],['A vacancy in the marketing team was posted online.','行銷團隊的職缺已在網路上公告。']]},
+{id:'v3074',w:'credential',kk:'krɪˈdɛnʃəl',pos:'n.',zh:'資歷證明',ic:'🪪',u:'s3u7',lure:['qualification','approval'],ex:[['She showed her credentials at the door.','她在門口出示了證件。'],['All credentials are checked by human resources.','所有資歷證明都由人資查核。']]},
+{id:'v3075',w:'retirement',kk:'rɪˈtaɪrmənt',pos:'n.',zh:'退休',ic:'🌴',u:'s3u7',rt:{r:'retire 退休',s:'-ment 名詞'},lure:['promotion','benefit'],ex:[['My father enjoys his retirement.','我爸很享受退休生活。'],['A retirement party was held on Friday.','星期五辦了一場歡送退休派對。']]},
+{id:'v3076',w:'layoff',kk:'ˈleˌɔf',pos:'n.',zh:'裁員',ic:'📉',u:'s3u7',lure:['promotion','retirement'],ex:[['The layoffs were announced in May.','裁員在五月宣布。'],['No layoffs are planned for this year.','今年沒有裁員計畫。']]},
+{id:'v3077',w:'workforce',kk:'ˈwɝkˌfors',pos:'n.',zh:'勞動力・全體員工',ic:'👷',u:'s3u7',lure:['personnel','workplace'],ex:[['The town has a young workforce.','這個鎮的勞動人口很年輕。'],['Half of the workforce was trained last month.','上個月有一半的員工受了訓。']]},
+{id:'v3078',w:'incentive',kk:'ɪnˈsɛntɪv',pos:'n.',zh:'獎勵・誘因',ic:'🏅',u:'s3u7',lure:['benefit','salary'],ex:[['A free coffee is a good incentive.','一杯免費咖啡就是很好的誘因。'],['Sales incentives are paid every quarter.','業績獎金每季發放。']]},
+{id:'v3079',w:'appraisal',kk:'əˈprezl',pos:'n.',zh:'考核・評估',ic:'📊',u:'s3u7',lure:['approval','interview'],ex:[['The house appraisal came back high.','房屋估價出來很高。'],['Annual appraisals are conducted every December.','年度考核在每年十二月進行。']]},
+{id:'v3080',w:'staffing',kk:'ˈstæfɪŋ',pos:'n.',zh:'人力配置',ic:'🧑‍🤝‍🧑',u:'s3u7',lure:['workforce','personnel'],ex:[['Weekend staffing is always tight.','週末人手總是很緊。'],['Staffing levels were increased before the holiday.','假期前增加了人力配置。']]},
+{id:'v3081',w:'resignation',kk:'ˌrɛzɪgˈneʃən',pos:'n.',zh:'辭呈・辭職',ic:'👋',u:'s3u7',lure:['retirement','layoff'],ex:[['He handed in his resignation on Monday.','他星期一遞了辭呈。'],['Her resignation was accepted by the director.','她的辭呈被總監接受了。']]},
+
+/* ===================== U43 Part 5 詞性判斷 ===================== */
+{id:'v3082',w:'significant',kk:'sɪgˈnɪfəkənt',pos:'adj.',zh:'顯著的・重大的',ic:'📶',u:'s3u8',ex:[['There was a significant change.','有一個明顯的改變。'],['Sales showed a significant increase this quarter.','本季業績顯著成長。']]},
+{id:'v3083',w:'efficient',kk:'ɪˈfɪʃənt',pos:'adj.',zh:'有效率的',ic:'⚡',u:'s3u8',lure:['effective','significant'],ex:[['This is a more efficient route.','這條路線比較有效率。'],['The new system is more efficient than the old one.','新系統比舊系統更有效率。']]},
+{id:'v3084',w:'reliable',kk:'rɪˈlaɪəbl',pos:'adj.',zh:'可靠的',ic:'🤝',u:'s3u8',rt:{r:'rely 依靠',s:'-able 可…的'},lure:['durable','efficient'],ex:[['He is a reliable friend.','他是個可靠的朋友。'],['We need a reliable supplier for this part.','這個零件我們需要可靠的供應商。']]},
+{id:'v3085',w:'durable',kk:'ˈdʊrəbl',pos:'adj.',zh:'耐用的',ic:'🧱',u:'s3u8',lure:['reliable','faulty'],ex:[['These boots are very durable.','這雙靴子很耐穿。'],['The case is made of a durable material.','這個外殼是用耐用的材質做的。']]},
+{id:'v3086',w:'faulty',kk:'ˈfɔltɪ',pos:'adj.',zh:'有瑕疵的',ic:'⚠️',u:'s3u8',lure:['durable','overdue'],ex:[['The faulty cable was the problem.','問題出在那條壞掉的線。'],['Faulty items are returned to the manufacturer.','有瑕疵的品項會退回製造商。']]},
+{id:'v3087',w:'mandatory',kk:'ˈmændəˌtorɪ',pos:'adj.',zh:'強制的',ic:'❗',u:'s3u8',lure:['eligible','significant'],ex:[['Helmets are mandatory on this site.','這個工地強制配戴安全帽。'],['Attendance at the briefing is mandatory.','簡報必須出席。']]},
+{id:'v3088',w:'eligible',kk:'ˈɛlɪdʒəbl',pos:'adj.',zh:'符合資格的',ic:'✅',u:'s3u8',lure:['mandatory','reliable'],ex:[['Are you eligible for a discount?','你符合折扣資格嗎？'],['Employees are eligible for the bonus after one year.','員工滿一年後即有資格領獎金。']]},
+{id:'v3089',w:'professional',kk:'prəˈfɛʃənl',pos:'adj./n.',zh:'專業的・專業人士',ic:'💼',u:'s3u8',lure:['reliable','efficient'],ex:[['She looks very professional.','她看起來很專業。'],['The complaint was handled in a professional manner.','客訴以專業的方式處理了。']]},
+{id:'v3090',w:'regional',kk:'ˈridʒənl',pos:'adj.',zh:'區域的',ic:'🌏',u:'s3u8',rt:{r:'region 區域',s:'-al 形容詞'},ex:[['This is a regional dish.','這是道地方菜。'],['Our regional office will be opened in Osaka.','我們的區域辦公室將在大阪開幕。']]},
+{id:'v3091',w:'informative',kk:'ɪnˈfɔrmətɪv',pos:'adj.',zh:'資訊豐富的',ic:'💡',u:'s3u8',rt:{r:'inform 告知',s:'-ative 形容詞'},ex:[['That video was really informative.','那部影片很有料。'],['The workshop was informative and well organized.','工作坊內容豐富又安排得宜。']]},
+{id:'v3092',w:'carefully',kk:'ˈkɛrfəlɪ',pos:'adv.',zh:'仔細地',ic:'🔍',u:'s3u8',ex:[['Drive carefully.','小心開車。'],['Please read the terms carefully before signing.','簽名前請仔細閱讀條款。']]}
 
 ];
 
@@ -4623,6 +4814,253 @@ window.DATA_GRAMMAR_S2 = [
 
 </script>
 <script>
+/* ===== data/grammar-s3.js ===== */
+/* ==========================================================================
+   grammar-s3.js — Stage 3 文法點（Unit 36–37、43）
+
+   被動語態是多益的分水嶺：公告、通知、說明書幾乎全是被動句，因為它們關心
+   「事情有沒有被做」而不是「誰做的」。Part 5 的詞性判斷則是純送分題 ——
+   看字尾就能選，不必看懂句子。
+   ========================================================================== */
+window.DATA_GRAMMAR_S3 = [
+
+/* ============================================================ U36 被動語態 */
+{
+  id:'g3601', u:'s3u1', title:'被動語態 be + p.p.',
+  tl:[{a:'past',t:'事情被做了',hl:1}],
+  teach:{
+    title:'被動語態：重點不是誰做的',
+    lead:'辦公室的英文有一半是被動句。原因很單純：公告在意的是「東西有沒有寄出去」，沒人在意是誰按的寄出鍵。',
+    sections:[
+      { formula:'be 動詞 ＋ 過去分詞（p.p.）',
+        formulaNote:'be 負責時態與單複數，p.p. 永遠不變' },
+      { h:'同一件事的兩種說法',
+        table:{ speak:true, head:['主動','被動'],
+          rows:[['We sent the invoice.','The invoice <b>was sent</b>.'],
+                ['They cancel the meeting.','The meeting <b>is cancelled</b>.'],
+                ['She will fix the copier.','The copier <b>will be fixed</b>.'],
+                ['Someone has approved it.','It <b>has been approved</b>.']] } },
+      { h:'be 跟著時態走',
+        table:{ head:['時態','被動的長相','例子'],
+          rows:[['現在式','am / is / are + p.p.','The office <b>is cleaned</b> every day.'],
+                ['過去式','was / were + p.p.','The order <b>was shipped</b> yesterday.'],
+                ['未來式','will be + p.p.','You <b>will be notified</b> by email.'],
+                ['現在完成','has / have been + p.p.','The report <b>has been approved</b>.'],
+                ['情態動詞','can / must be + p.p.','Tickets <b>must be booked</b> in advance.']] } },
+      { h:'什麼時候用被動',
+        list:['<b>不知道是誰做的</b>：My laptop <b>was stolen</b>.（誰偷的不知道）',
+              '<b>誰做的不重要</b>：The meeting <b>has been rescheduled</b>.（誰改的無所謂）',
+              '<b>公告與規定</b>：Visitors <b>are required</b> to sign in.（不必說「我們要求」）'],
+        ex:[['The package was delivered this morning.','包裹今天早上送到了。'],
+            ['All applications will be reviewed next week.','所有申請下週會被審核。'],
+            ['Payment must be received before shipment.','出貨前必須先收到款項。']] },
+      { h:'要說出是誰做的，用 by',
+        list:['The proposal was approved <b>by the board</b>.（董事會核准的）',
+              '但多益的被動句八成沒有 by —— 有 by 才特別，沒有才是常態。'] },
+      { warn:'最常見的錯：<b>The meeting was cancel.</b> ❌ → <b>The meeting was cancelled.</b> ✅　' +
+             'be 後面一定是過去分詞，不是原形。不規則動詞的 p.p. 背不熟，這一題就一定錯。' }
+    ]
+  },
+  sents:[['The invoice was sent yesterday.','發票昨天寄出去了。'],
+         ['The meeting has been rescheduled.','會議已經改期了。'],
+         ['All visitors are required to sign in.','所有訪客都必須簽到。'],
+         ['The copier is repaired every month.','影印機每個月維修一次。'],
+         ['You will be notified by email.','你會收到電子郵件通知。'],
+         ['The report must be submitted by Friday.','報告必須在星期五前繳交。'],
+         ['Our office is cleaned every evening.','我們辦公室每天晚上都會打掃。'],
+         ['The samples were shipped last week.','樣品上週寄出了。']],
+  qs:[
+    { k:'mc', q:'The invoice ___ yesterday.', opts:['sent','was sent','is sending','send'], a:1,
+      zh:'發票昨天寄出去了。', why:'發票不會自己寄，要用被動；昨天所以是 was + p.p.。' },
+    { k:'mc', q:'All visitors ___ to sign in at the front desk.', opts:['require','are required','requiring','has required'], a:1,
+      zh:'所有訪客都必須在櫃檯簽到。', why:'訪客是被要求的一方，複數用 are + p.p.。' },
+    { k:'mc', q:'The meeting has ___ rescheduled.', opts:['be','been','being','was'], a:1,
+      zh:'會議已經改期了。', why:'現在完成式的被動是 has/have been + p.p.。' },
+    { k:'mc', q:'Payment must ___ before we ship the order.', opts:['receive','be received','received','receiving'], a:1,
+      zh:'我們出貨前必須先收到款項。', why:'情態動詞後面接原形，被動就是 be + p.p.。' },
+    { k:'mc', q:'The copier ___ every month by a technician.', opts:['services','is serviced','serviced','servicing'], a:1,
+      zh:'影印機每個月由技師保養一次。', why:'every month 是現在式的習慣，主詞是被保養的一方。' },
+    { k:'mc', q:'You ___ by email once your application is processed.', opts:['notify','will notify','will be notified','notified'], a:2,
+      zh:'申請處理完後你會收到電子郵件通知。', why:'你是被通知的一方，未來式被動是 will be + p.p.。' },
+    { k:'mc', q:'The samples ___ last week, but they have not arrived.', opts:['ship','shipped','were shipped','are shipping'], a:2,
+      zh:'樣品上週寄出了，但還沒送到。', why:'樣品是被寄的，加上 last week 用 were + p.p.。' },
+    { k:'fix', q:'The meeting was cancel because of the storm.', a:'The meeting was cancelled because of the storm.',
+      zh:'因為暴風雨，會議取消了。', hint:'be 後面要什麼形態？', why:'be 後面接過去分詞，不是原形。' },
+    { k:'fix', q:'The report has been submit already.', a:'The report has been submitted already.',
+      zh:'報告已經繳交了。', hint:'been 後面呢？', why:'has been 後面一樣要過去分詞。' },
+    { k:'cloze', q:'The office ___ every evening. (clean)', a:'is cleaned',
+      zh:'辦公室每天晚上都會打掃。', why:'辦公室是被打掃的，現在式用 is + p.p.。' },
+    { k:'cloze', q:'The parcel ___ this morning. (deliver)', a:'was delivered',
+      zh:'包裹今天早上送到了。', why:'包裹是被送的，早上已經發生所以用 was。' },
+    { k:'cloze', q:'Tickets must ___ in advance. (book)', a:'be booked',
+      zh:'票必須事先預訂。', why:'must 後面接原形 be，再加過去分詞。' },
+    { k:'trans', zh:'這份報告必須在星期五前繳交。', a:'The report must be submitted by Friday.',
+      alt:['This report must be submitted by Friday.'], why:'must + be + p.p.。' },
+    { k:'trans', zh:'所有申請下週會被審核。', a:'All applications will be reviewed next week.',
+      alt:['All the applications will be reviewed next week.'], why:'未來式被動：will be + p.p.。' }
+  ]
+},
+
+/* ============================================================ U37 主動改被動 */
+{
+  id:'g3701', u:'s3u2', title:'主動改被動',
+  tl:[{a:'past',b:'now',t:'同一件事，換一個角度說',hl:1}],
+  teach:{
+    title:'主動改被動：三個步驟',
+    lead:'多益不會直接叫你「改寫句子」，但 Part 7 一定會把主動句改成被動句再問你「文章說了什麼」。認得出兩句是同一件事，就是在拿分。',
+    sections:[
+      { formula:'受詞 → 移到句首　　動詞 → be ＋ p.p.　　主詞 → by …（通常省略）',
+        formulaNote:'時態不變，人稱跟著新主詞走' },
+      { h:'一步一步拆',
+        table:{ head:['步驟','句子'],
+          rows:[['原句','The manager <b>approved</b> <u>the budget</u>.'],
+                ['① 受詞移到句首','<u>The budget</u> …'],
+                ['② 動詞變 be + p.p.（過去式）','The budget <b>was approved</b> …'],
+                ['③ 原主詞加 by（可省略）','The budget was approved <b>by the manager</b>.']] } },
+      { h:'沒有受詞就不能改被動',
+        list:['The train <b>arrived</b> late. → 沒有受詞，改不了被動',
+              'She <b>works</b> here. → 一樣改不了',
+              '這類動詞叫不及物動詞。多益的陷阱題常拿 arrive、happen、occur、rise 來考 —— 看到 <b>was arrived</b> 就是錯的。'],
+        ex:[['The accident happened at noon.','意外發生在中午。'],
+            ['Prices have risen sharply.','價格大幅上漲了。']] },
+      { h:'兩個受詞的動詞可以有兩種被動',
+        table:{ head:['原句','被動'],
+          rows:[['They sent <u>me</u> <u>an email</u>.','<b>I was sent</b> an email.'],
+                ['','<b>An email was sent</b> to me.']] },
+        tip:'give、send、offer、show 這幾個字都可以，多益偏好第二種（東西當主詞）。' },
+      { warn:'不及物動詞沒有被動：<b>The problem was happened.</b> ❌ → <b>The problem happened.</b> ✅' }
+    ]
+  },
+  sents:[['The budget was approved by the manager.','預算經理核准了。'],
+         ['An email was sent to all staff.','一封信寄給了全體員工。'],
+         ['The new policy was announced last month.','新政策上個月公布了。'],
+         ['The documents are kept in the cabinet.','文件放在櫃子裡。'],
+         ['The contract will be signed on Monday.','合約星期一會簽。'],
+         ['The problem was solved in one hour.','問題一小時內解決了。']],
+  qs:[
+    { k:'mc', q:'The manager approved the budget. → The budget ___ by the manager.',
+      opts:['approved','was approved','is approving','has approve'], a:1,
+      zh:'預算經理核准了。', why:'原句是過去式，被動就是 was + p.p.。' },
+    { k:'mc', q:'Which sentence is correct?',
+      opts:['The accident was happened at noon.','The accident happened at noon.',
+            'The accident is happened at noon.','The accident has been happen at noon.'], a:1,
+      zh:'意外發生在中午。', why:'happen 是不及物動詞，沒有被動語態。' },
+    { k:'mc', q:'They will announce the results tomorrow. → The results ___ tomorrow.',
+      opts:['will announce','will be announced','are announcing','announced'], a:1,
+      zh:'結果明天會公布。', why:'未來式被動：will be + p.p.。' },
+    { k:'mc', q:'Someone has cleaned the meeting room. → The meeting room ___.',
+      opts:['has cleaned','has been cleaned','is cleaning','was clean'], a:1,
+      zh:'會議室已經打掃過了。', why:'現在完成式被動：has been + p.p.。' },
+    { k:'mc', q:'They sent me the contract. → The contract ___ to me.',
+      opts:['sent','was sent','were sent','has sent'], a:1,
+      zh:'合約寄給我了。', why:'contract 是單數，過去式用 was sent。' },
+    { k:'mc', q:'Prices ___ sharply this year.', opts:['were risen','have risen','are risen','have been risen'], a:1,
+      zh:'今年價格大幅上漲。', why:'rise 是不及物動詞，只能主動。' },
+    { k:'fix', q:'The meeting was happened yesterday.', a:'The meeting happened yesterday.',
+      zh:'會議昨天舉行了。', hint:'happen 有受詞嗎？', why:'不及物動詞沒有被動。' },
+    { k:'fix', q:'The documents was kept in the cabinet.', a:'The documents were kept in the cabinet.',
+      zh:'文件放在櫃子裡。', hint:'主詞是單數還複數？', why:'documents 是複數，be 要用 were。' },
+    { k:'cloze', q:'The contract ___ on Monday. (sign, 未來式)', a:'will be signed',
+      zh:'合約星期一會簽。', why:'未來式被動 will be + p.p.。' },
+    { k:'cloze', q:'The problem ___ in one hour. (solve, 過去式)', a:'was solved',
+      zh:'問題一小時內解決了。', why:'problem 是被解決的，過去式用 was。' },
+    { k:'cloze', q:'The new policy ___ last month. (announce)', a:'was announced',
+      zh:'新政策上個月公布了。', why:'last month 是過去，政策是被公布的。' },
+    { k:'trans', zh:'一封通知信寄給了全體員工。', a:'A notice was sent to all staff.',
+      alt:['An email was sent to all staff.','A notice was sent to all employees.'], why:'東西當主詞的被動最自然。' },
+    { k:'trans', zh:'這個問題昨天解決了。', a:'The problem was solved yesterday.',
+      alt:['This problem was solved yesterday.'], why:'problem 是被解決的一方。' }
+  ]
+},
+
+/* ============================================================ U43 Part 5 詞性判斷 */
+{
+  id:'g4301', u:'s3u8', title:'Part 5 詞性判斷',
+  teach:{
+    title:'看字尾就能選：Part 5 的送分題',
+    lead:'Part 5 每回有五到八題長這樣：四個選項是同一個字的四種詞性。這種題不必看懂句子，只要知道空格「該站什麼詞」，再從字尾認出誰是那個詞。',
+    sections:[
+      { h:'四個選項長一樣，就是詞性題',
+        formula:'The company announced a ___ increase in sales.',
+        formulaNote:'(A) significant　(B) significantly　(C) significance　(D) signify' },
+      { h:'第一步：空格前後決定要什麼詞',
+        table:{ head:['空格位置','要放什麼','例子'],
+          rows:[['冠詞／形容詞 + ___','名詞','a <b>decision</b>、the new <b>manager</b>'],
+                ['___ + 名詞','形容詞','a <b>significant</b> increase'],
+                ['動詞 / 形容詞 / 全句 + ___','副詞','works <b>efficiently</b>、<b>Unfortunately</b>, …'],
+                ['主詞 + ___','動詞','The board <b>approved</b> it.'],
+                ['介系詞 + ___','名詞或動名詞','after the <b>meeting</b>、before <b>signing</b>']] } },
+      { h:'第二步：看字尾認詞性',
+        table:{ head:['詞性','常見字尾','例子'],
+          rows:[['名詞','-tion -sion -ment -ness -ity -ance -ence -er -or -ist','decision、payment、ability、manager'],
+                ['形容詞','-ive -ous -ful -less -able -ible -al -ic -ant -ent','effective、careful、reliable、financial'],
+                ['副詞','-ly','carefully、recently、significantly'],
+                ['動詞','-ize -ify -en -ate','organize、simplify、strengthen、operate']] } },
+      { h:'兩個容易翻船的地方',
+        list:['<b>-ly 不一定是副詞</b>：friendly、costly、likely、daily 是形容詞。',
+              '<b>-ing／-ed 形容詞</b>：the meeting was <b>boring</b>（會議令人無聊）vs I was <b>bored</b>（我覺得無聊）。事物用 -ing，人用 -ed。'],
+        ex:[['The presentation was informative.','那場簡報很有料。'],
+            ['She handled the complaint professionally.','她很專業地處理了那件客訴。'],
+            ['We need approval from the finance department.','我們需要財務部的核准。']] },
+      { tip:'考場策略：看到四個選項是同一個字根，先遮住句子的意思，只看空格前後兩個字。十秒內就能答完。' },
+      { warn:'別被「看起來像名詞」騙了：<b>a significantly increase</b> ❌ —— increase 前面要形容詞 significant，' +
+             '而 -ly 結尾的是副詞，副詞不能修飾名詞。' }
+    ]
+  },
+  sents:[['The company announced a significant increase in sales.','公司公布了業績大幅成長。'],
+         ['She handled the complaint professionally.','她很專業地處理了那件客訴。'],
+         ['We need approval from the finance department.','我們需要財務部的核准。'],
+         ['The new system operates efficiently.','新系統運作得很有效率。'],
+         ['This is a reliable supplier.','這是一家可靠的供應商。'],
+         ['Unfortunately, the shipment was delayed.','很遺憾，出貨延遲了。']],
+  qs:[
+    { k:'mc', q:'The company announced a ___ increase in sales.',
+      opts:['significant','significantly','significance','signify'], a:0,
+      zh:'公司公布了業績大幅成長。', why:'increase 是名詞，前面要形容詞。-ly 是副詞，不能修飾名詞。' },
+    { k:'mc', q:'She handled the complaint very ___.',
+      opts:['profession','professional','professionally','professionalism'], a:2,
+      zh:'她非常專業地處理了那件客訴。', why:'修飾動詞 handled 要用副詞，字尾 -ly。' },
+    { k:'mc', q:'We are still waiting for ___ from the manager.',
+      opts:['approve','approval','approved','approvingly'], a:1,
+      zh:'我們還在等經理核准。', why:'介系詞 for 後面要名詞，-al 是名詞字尾。' },
+    { k:'mc', q:'The new system operates ___.',
+      opts:['efficient','efficiently','efficiency','efficiencies'], a:1,
+      zh:'新系統運作得很有效率。', why:'修飾動詞 operates，要用副詞。' },
+    { k:'mc', q:'This supplier has been very ___ over the past three years.',
+      opts:['rely','reliable','reliably','reliability'], a:1,
+      zh:'這家供應商過去三年都很可靠。', why:'be 動詞後面接形容詞當主詞補語。' },
+    { k:'mc', q:'___, the shipment was delayed by two days.',
+      opts:['Unfortunate','Unfortunately','Misfortune','Fortune'], a:1,
+      zh:'很遺憾，出貨延遲了兩天。', why:'修飾整個句子要用副詞，放句首加逗號。' },
+    { k:'mc', q:'All staff must attend the ___ session on Monday.',
+      opts:['train','trained','training','trainer'], a:2,
+      zh:'全體員工星期一必須參加培訓課程。', why:'training session 是「培訓課程」，動名詞當形容詞用。' },
+    { k:'mc', q:'The presentation was very ___.',
+      opts:['inform','informed','informative','information'], a:2,
+      zh:'那場簡報很有料。', why:'be 後面接形容詞，-ive 是形容詞字尾。' },
+    { k:'mc', q:'Our ___ office will open in Osaka next spring.',
+      opts:['region','regional','regionally','regions'], a:1,
+      zh:'我們的區域辦公室明年春天會在大阪開幕。', why:'office 是名詞，前面要形容詞。' },
+    { k:'mc', q:'The audience was ___ by the long speech.',
+      opts:['boring','bored','bore','boredom'], a:1,
+      zh:'觀眾被冗長的演說弄得很無聊。', why:'人的感受用 -ed，事物本身才用 -ing。' },
+    { k:'fix', q:'She works very efficient.', a:'She works very efficiently.',
+      zh:'她做事很有效率。', hint:'修飾動詞要用哪一種詞？', why:'修飾動詞 works 要用副詞。' },
+    { k:'fix', q:'We received a confirm email yesterday.', a:'We received a confirmation email yesterday.',
+      zh:'我們昨天收到一封確認信。', hint:'email 前面該放什麼？', why:'名詞前要用名詞或形容詞，confirm 是動詞。' },
+    { k:'cloze', q:'The manager gave a very ___ presentation. (impress)', a:'impressive',
+      zh:'經理做了一場很精彩的簡報。', why:'presentation 是名詞，前面要形容詞 -ive。' },
+    { k:'cloze', q:'Please read the instructions ___. (careful)', a:'carefully',
+      zh:'請仔細閱讀說明。', why:'修飾動詞 read 要用副詞。' },
+    { k:'trans', zh:'我們需要財務部的核准。', a:'We need approval from the finance department.',
+      alt:['We need the approval of the finance department.'], why:'need 後面接名詞 approval。' }
+  ]
+}
+
+];
+
+</script>
+<script>
 /* ===== data/reading-s0.js ===== */
 /* ==========================================================================
    reading-s0.js — Stage 0 短文（20–45 字，全部只用已學過的句型）
@@ -5236,6 +5674,125 @@ window.DATA_READING_S2 = [
     { q:'What was the problem with the email?', opts:['It was too long.','Nobody knew what to confirm.','It was sent to the wrong address.','It arrived late.'], a:1, why:'Nobody knew what the sender wanted us to confirm.' },
     { q:'What had the sender forgotten to do?', opts:['To sign the email','To attach the file','To send it on time','To call the team'], a:1, why:'the sender had forgotten to attach the file.' },
     { q:'What does the team do now?', opts:['They ignore short emails.','They ask people to be specific in the subject line.','They call instead of emailing.','They confirm everything twice.'], a:1, why:'we always ask people to be specific in the subject line.' }
+  ]
+}
+
+];
+
+</script>
+<script>
+/* ===== data/reading-s3.js ===== */
+/* ==========================================================================
+   reading-s3.js — Stage 3 短文（80–120 字）
+
+   體裁開始換成多益 Part 7 真正會出現的東西：公告、電子郵件、通知、政策說明。
+   這些文件本來就大量使用被動語態，剛好把這一階段的文法點考回來。
+   ========================================================================== */
+window.DATA_READING_S3 = [
+
+/* ---------------- U36 被動語態 ---------------- */
+{
+  id:'r3601', u:'s3u1', title:'Notice: Elevator Maintenance',
+  text:'Please be advised that the east elevator will be closed for maintenance from Monday, March 4, to Wednesday, March 6. During this period, the west elevator and the stairs may be used. The work is expected to be completed by Wednesday evening. Deliveries should be received at the side entrance, as the main lobby will be partly blocked. We apologize for any inconvenience. Questions can be directed to the building office at extension 145.',
+  zh:'謹此通知，東側電梯將於三月四日（星期一）至三月六日（星期三）因維修關閉。期間可使用西側電梯與樓梯。工程預計於星期三晚間完成。由於主大廳會有部分區域被擋住，送貨請改至側門收取。造成不便，敬請見諒。有問題請撥分機 145 洽大樓辦公室。',
+  qs:[
+    { q:'How long will the east elevator be closed?', opts:['One day','Three days','One week','Until further notice'], a:1, why:'March 4 到 March 6，共三天。' },
+    { q:'Where should deliveries be received?', opts:['In the main lobby','At the side entrance','On the third floor','At the building office'], a:1, why:'Deliveries should be received at the side entrance.' },
+    { q:'What should people do if they have questions?', opts:['Use the stairs','Wait until Wednesday','Call extension 145','Email the manager'], a:2, why:'Questions can be directed to the building office at extension 145.' }
+  ]
+},
+{
+  id:'r3602', u:'s3u1', title:'New Security Badges',
+  text:'Starting next month, all employees will be issued new security badges. The old badges will be deactivated on April 30 and must be returned to the human resources office. Photographs will be taken in the second-floor meeting room between nine and eleven on Tuesday and Thursday. Staff who cannot attend at those times should contact Ms. Lin to arrange another appointment. Badges are required for entry to the building after seven p.m.',
+  zh:'自下個月起，全體員工都會拿到新的識別證。舊識別證將於四月三十日停用，且必須繳回人資辦公室。拍照時間為星期二與星期四上午九點到十一點，地點在二樓會議室。無法在該時段前往的同仁請聯絡林小姐另約時間。晚上七點後進入大樓需要識別證。',
+  qs:[
+    { q:'What must employees do with their old badges?', opts:['Keep them at home','Return them to human resources','Throw them away','Give them to Ms. Lin'], a:1, why:'must be returned to the human resources office.' },
+    { q:'When are photographs taken?', opts:['Every morning','On Tuesday and Thursday','Only on April 30','After seven p.m.'], a:1, why:'between nine and eleven on Tuesday and Thursday.' }
+  ]
+},
+
+/* ---------------- U37 主動改被動 ---------------- */
+{
+  id:'r3701', u:'s3u2', title:'Email: Order Confirmation',
+  text:'Dear Mr. Alvarez,\nThank you for your order. Your payment has been received and your order is now being processed. The items will be shipped from our Kaohsiung warehouse within two business days. A tracking number will be sent to you once the package leaves our facility.\nPlease note that the blue model was discontinued last month and has been replaced with the newer version at no extra charge. If this is not acceptable, the order can be cancelled before it is shipped.\nBest regards,\nCustomer Service',
+  zh:'親愛的 Alvarez 先生：\n感謝您的訂購。我們已收到您的付款，訂單正在處理中。商品將於兩個工作天內從高雄倉庫出貨。包裹離開我們的倉儲後，追蹤號碼會寄給您。\n請注意，藍色款上個月已停產，已為您更換為較新的版本，不加收費用。若您無法接受，訂單可在出貨前取消。\n敬祝順心\n客服部',
+  qs:[
+    { q:'What has already happened?', opts:['The order was shipped.','The payment was received.','The tracking number was sent.','The order was cancelled.'], a:1, why:'Your payment has been received.' },
+    { q:'Why was the model changed?', opts:['It was out of stock.','It was discontinued.','It was too expensive.','The customer requested it.'], a:1, why:'the blue model was discontinued last month.' },
+    { q:'What can the customer do if he is not satisfied?', opts:['Return the item after delivery','Cancel the order before shipping','Ask for a different warehouse','Pay an extra charge'], a:1, why:'the order can be cancelled before it is shipped.' }
+  ]
+},
+
+/* ---------------- U38 辦公室與設備 ---------------- */
+{
+  id:'r3801', u:'s3u3', title:'Office Supply Request',
+  text:'All requests for office supplies must be submitted through the online form by Wednesday of each week. Orders are placed with our supplier every Thursday and are usually delivered the following Monday. Items that are not on the standard list, such as special stationery or new equipment, require approval from a supervisor. Supplies are stored in the room next to the mail room on the first floor. Please do not take items from the storage room without recording them in the log book.',
+  zh:'所有辦公用品申請必須於每週三前透過線上表單提出。訂單每週四向供應商下單，通常隔週一送達。不在標準清單上的品項，例如特殊文具或新設備，需要主管核准。用品存放在一樓收發室旁的房間。請勿在未登記於登記簿的情況下自行取用儲藏室的物品。',
+  qs:[
+    { q:'When are orders placed with the supplier?', opts:['Every Wednesday','Every Thursday','Every Monday','Twice a month'], a:1, why:'Orders are placed with our supplier every Thursday.' },
+    { q:'What needs a supervisor\'s approval?', opts:['All supply requests','Items not on the standard list','Deliveries on Monday','Using the log book'], a:1, why:'Items that are not on the standard list … require approval.' },
+    { q:'What must staff do when taking supplies?', opts:['Ask the mail room','Record them in the log book','Submit an online form','Pay for them'], a:1, why:'without recording them in the log book.' }
+  ]
+},
+
+/* ---------------- U39 會議與簡報 ---------------- */
+{
+  id:'r3901', u:'s3u4', title:'Meeting Agenda: Quarterly Review',
+  text:'The quarterly review will be held on Friday, June 14, from ten to twelve in Conference Room B. The agenda was sent to all department heads last week. Each department is asked to prepare a short presentation of no more than ten minutes. Handouts should be emailed to Ms. Wu by Wednesday so that copies can be prepared in advance. The minutes of the previous meeting are attached. Participants who cannot attend should send a representative.',
+  zh:'季度檢討會將於六月十四日（星期五）十點至十二點在 B 會議室舉行。議程上週已寄給所有部門主管。各部門請準備不超過十分鐘的簡短簡報。講義請於星期三前以電子郵件寄給吳小姐，以便事先印製。上次會議紀錄附於信中。無法出席者請派代表參加。',
+  qs:[
+    { q:'How long should each presentation be?', opts:['No more than ten minutes','Two hours','Until twelve','One week'], a:0, why:'a short presentation of no more than ten minutes.' },
+    { q:'Why should handouts be sent by Wednesday?', opts:['To be translated','So copies can be prepared','To be approved','To be posted online'], a:1, why:'so that copies can be prepared in advance.' },
+    { q:'What should people do if they cannot attend?', opts:['Cancel the meeting','Send a representative','Email the minutes','Call Ms. Wu'], a:1, why:'should send a representative.' }
+  ]
+},
+
+/* ---------------- U40 訂單與付款 ---------------- */
+{
+  id:'r4001', u:'s3u5', title:'Return and Refund Policy',
+  text:'Items may be returned within thirty days of purchase. A receipt or other proof of purchase is required. Refunds are issued to the original payment method within seven business days after the returned item has been inspected. Items that have been used or damaged cannot be refunded, but they may be repaired if they are still under warranty. Shipping fees are not refunded unless the wrong item was sent. For large orders, a restocking fee of ten percent may be charged.',
+  zh:'商品可於購買後三十天內退貨，需要收據或其他購買證明。退款會在退回商品經檢查後七個工作天內退回原付款方式。已使用或損壞的商品無法退款，但若仍在保固期內可以維修。運費不予退還，除非是寄錯商品。大量訂購可能會收取一成的重新上架費。',
+  qs:[
+    { q:'What is needed to return an item?', opts:['A warranty card','Proof of purchase','A supervisor\'s approval','The original box'], a:1, why:'A receipt or other proof of purchase is required.' },
+    { q:'When are refunds issued?', opts:['Immediately','Within thirty days','Within seven business days after inspection','After the item is repaired'], a:2, why:'within seven business days after the returned item has been inspected.' },
+    { q:'When are shipping fees refunded?', opts:['Never','If the wrong item was sent','For large orders','If the item is under warranty'], a:1, why:'unless the wrong item was sent.' }
+  ]
+},
+
+/* ---------------- U41 出差與交通 ---------------- */
+{
+  id:'r4101', u:'s3u6', title:'Travel Policy Update',
+  text:'Effective July 1, all business travel must be approved by a supervisor before tickets are booked. Economy class should be selected for flights under six hours. Accommodation is arranged by the administration team; employees are asked not to book hotels themselves. Travel expenses are reimbursed within thirty days after the expense form and receipts have been submitted. Receipts are not required for amounts under twenty dollars. Airport shuttle service is provided free of charge and should be used instead of taxis when available.',
+  zh:'自七月一日起，所有商務差旅都必須先經主管核准才能訂票。六小時以內的航班應選擇經濟艙。住宿由行政團隊安排，請員工不要自行訂房。差旅費在費用表與收據送出後三十天內核銷。二十美元以下的金額不需收據。機場接駁服務免費提供，可用時應搭乘接駁車而非計程車。',
+  qs:[
+    { q:'What must happen before tickets are booked?', opts:['Hotels must be reserved.','A supervisor must approve the trip.','Receipts must be submitted.','A shuttle must be arranged.'], a:1, why:'must be approved by a supervisor before tickets are booked.' },
+    { q:'Who arranges accommodation?', opts:['The employee','The administration team','The supervisor','The travel agency'], a:1, why:'Accommodation is arranged by the administration team.' },
+    { q:'When are receipts not required?', opts:['For flights under six hours','For amounts under twenty dollars','For shuttle service','For hotel bookings'], a:1, why:'Receipts are not required for amounts under twenty dollars.' }
+  ]
+},
+
+/* ---------------- U42 人事與招聘 ---------------- */
+{
+  id:'r4201', u:'s3u7', title:'Job Posting: Sales Coordinator',
+  text:'Our regional office is looking for a sales coordinator. The successful candidate will support the sales team, prepare monthly reports, and handle customer inquiries. At least three years of experience in a similar position is required, and a bachelor\'s degree is preferred. Applications must be submitted online by May 20. Selected candidates will be contacted within two weeks for a first interview. The salary will be discussed at the second interview. This position is based in Taichung and some travel is expected.',
+  zh:'我們的區域辦公室正在招募業務協調專員。錄取者將協助業務團隊、製作月報並處理客戶詢問。需要至少三年相關職務經驗，具學士學位者尤佳。申請必須於五月二十日前線上送出。入選者將在兩週內接到第一次面試通知。薪資將於第二次面試時討論。此職位駐點台中，需要部分出差。',
+  qs:[
+    { q:'What is required for this position?', opts:['A bachelor\'s degree','Three years of experience','Fluent Japanese','A driver\'s license'], a:1, why:'At least three years of experience … is required；學位只是 preferred。' },
+    { q:'When will the salary be discussed?', opts:['In the job posting','At the first interview','At the second interview','After May 20'], a:2, why:'The salary will be discussed at the second interview.' },
+    { q:'What is true about the position?', opts:['It is based in Taipei.','It requires some travel.','It is a part-time job.','No experience is needed.'], a:1, why:'some travel is expected.' }
+  ]
+},
+
+/* ---------------- U45 魔王關 ---------------- */
+{
+  id:'r4501', u:'s3u10', title:'Memo: Office Relocation',
+  text:'To: All Staff\nFrom: Facilities Management\nOur Taichung office will be relocated to the new building on Zhongming Road during the last week of August. Packing materials will be delivered to each floor on August 26. All personal items must be packed and labelled by five p.m. on August 28. Computers and other equipment will be moved by the IT team and should not be disconnected by staff. The new office will be opened on September 2. Parking permits for the new building can be collected from the reception desk after August 30. Employees who require access outside normal hours should submit a request to their supervisor before the move.',
+  zh:'致：全體同仁\n來自：設施管理部\n我們的台中辦公室將於八月最後一週搬遷至中明路的新大樓。八月二十六日會將打包材料送到各樓層。所有個人物品必須在八月二十八日下午五點前打包並貼上標籤。電腦與其他設備由資訊團隊搬運，員工請勿自行拆線。新辦公室將於九月二日啟用。新大樓的停車證可於八月三十日後至接待櫃檯領取。需要在正常時間以外進出的同仁，請於搬遷前向主管提出申請。',
+  qs:[
+    { q:'What must staff do by August 28?', opts:['Collect parking permits','Pack and label personal items','Disconnect their computers','Move to the new building'], a:1, why:'All personal items must be packed and labelled by five p.m. on August 28.' },
+    { q:'Who will move the equipment?', opts:['Each employee','The IT team','Facilities Management','The reception desk'], a:1, why:'will be moved by the IT team.' },
+    { q:'When can parking permits be collected?', opts:['On August 26','After August 30','On September 2','Before the move'], a:1, why:'can be collected from the reception desk after August 30.' },
+    { q:'What should employees needing after-hours access do?', opts:['Call the IT team','Submit a request to their supervisor','Wait until September 2','Visit the new building'], a:1, why:'should submit a request to their supervisor before the move.' }
   ]
 }
 
@@ -5941,6 +6498,136 @@ window.DATA_RESPOND_S2 = [
   a:1,
   zh:['在地下室。','問問櫃檯。','從上個月開始。'],
   why:'Who 問人（或單位）。A 答地點、C 答時間，兩個都被 parking 誤導。'
+}
+
+];
+
+</script>
+<script>
+/* ===== data/toeic-p34-s3.js ===== */
+/* ==========================================================================
+   toeic-p34-s3.js — 多益 Part 3／4（Unit 44）
+   id 前綴 c（與 v/g/r/i/p/q/m 互斥）
+
+   kind: 'convo' 兩人對話（Part 3）／'talk' 一人獨白（Part 4）
+   lines: [[說話者, 英文]]　—— 說話者名稱只用來標示與換音高，不會被唸出來
+   qs:    三題，照對話順序出現（多益的實際出題習慣）
+
+   句子刻意控制在這一階段學過的字與句型內，被動語態出現得比平常密 ——
+   Stage 3 的文法點就是被動，聽力題順便把它考回來。
+   ========================================================================== */
+window.DATA_CONVO_S3 = [
+
+{
+  id:'c4401', u:'s3u9', kind:'convo', title:'影印機壞了',
+  lines:[
+    ['M','Hi, Sandra. The copier on the third floor is not working again. I have a presentation at two.'],
+    ['W','I know. Maintenance was called this morning, but the technician cannot come until four.'],
+    ['M','That is too late. Is there another one I can use?'],
+    ['W','There is one in the mail room on the first floor. It was serviced last week, so it should be fine.']
+  ],
+  zh:'男：嗨，Sandra。三樓的影印機又壞了，我兩點有簡報。\n女：我知道。今天早上已經叫維修了，但技師四點才能來。\n男：那太晚了。還有別台可以用嗎？\n女：一樓收發室有一台，上週剛保養過，應該沒問題。',
+  qs:[
+    { q:'What is the man\'s problem?', opts:['He is late for a meeting.','A machine is broken.','He cannot find the mail room.','His presentation was cancelled.'], a:1,
+      why:'男士第一句就說 The copier is not working。' },
+    { q:'When will the technician arrive?', opts:['At two','At four','This morning','Next week'], a:1,
+      why:'the technician cannot come until four。' },
+    { q:'What does the woman suggest?', opts:['Calling maintenance again','Postponing the presentation','Using a copier on another floor','Buying a new machine'], a:2,
+      why:'There is one in the mail room on the first floor。' }
+  ]
+},
+
+{
+  id:'c4402', u:'s3u9', kind:'convo', title:'訂單延遲',
+  lines:[
+    ['W','Good morning. I am calling about order 4471. It was supposed to arrive on Monday.'],
+    ['M','Let me check. I am sorry — the shipment was delayed because our warehouse was closed for maintenance.'],
+    ['W','We need those parts by Thursday. Can that be arranged?'],
+    ['M','Yes. I will send them by express delivery today, and the shipping fee will be removed from your invoice.']
+  ],
+  zh:'女：早安，我想問訂單 4471，原本應該星期一到的。\n男：我查一下。很抱歉，因為倉庫維修關閉，出貨延遲了。\n女：我們星期四前需要那些零件，可以安排嗎？\n男：可以。我今天用快遞寄出，運費也會從您的請款單上扣除。',
+  qs:[
+    { q:'Why was the order delayed?', opts:['The parts were out of stock.','The warehouse was closed.','The address was wrong.','The payment was late.'], a:1,
+      why:'the shipment was delayed because our warehouse was closed for maintenance。' },
+    { q:'When does the woman need the parts?', opts:['On Monday','On Thursday','Today','Next month'], a:1,
+      why:'We need those parts by Thursday。' },
+    { q:'What will the man do for the woman?', opts:['Cancel the order','Offer a full refund','Remove the shipping fee','Visit the warehouse'], a:2,
+      why:'the shipping fee will be removed from your invoice。' }
+  ]
+},
+
+{
+  id:'c4403', u:'s3u9', kind:'convo', title:'面試安排',
+  lines:[
+    ['M','Ms. Chen, three candidates have been selected for the sales position. When would you like to meet them?'],
+    ['W','Tuesday afternoon works for me. Have they all been contacted?'],
+    ['M','Two have. The third one has not replied yet, so I will call her this afternoon.'],
+    ['W','Thank you. Please book the small conference room and send me their resumes before Monday.']
+  ],
+  zh:'男：陳女士，業務職缺已經選出三位人選。您想什麼時候見他們？\n女：星期二下午我可以。他們都聯絡過了嗎？\n男：兩位聯絡過了。第三位還沒回覆，我下午會打給她。\n女：謝謝。請訂小會議室，並在星期一前把他們的履歷寄給我。',
+  qs:[
+    { q:'What are the speakers mainly discussing?', opts:['A training session','Job interviews','A sales report','An office renovation'], a:1,
+      why:'整段都在講 candidates、meet them、resumes。' },
+    { q:'What has not been done yet?', opts:['Selecting the candidates','Contacting one candidate','Booking a flight','Approving the budget'], a:1,
+      why:'The third one has not replied yet。' },
+    { q:'What does the woman ask the man to do?', opts:['Reschedule the interviews','Interview the candidates himself','Reserve a room and send resumes','Post the job online'], a:2,
+      why:'book the small conference room and send me their resumes。' }
+  ]
+},
+
+{
+  id:'c4404', u:'s3u9', kind:'talk', title:'公司公告：系統維護',
+  lines:[
+    ['Announcer','Attention, all staff. The accounting system will be upgraded this Friday evening.'],
+    ['Announcer','The system will be unavailable from six p.m. until midnight, so all invoices must be submitted before five.'],
+    ['Announcer','If you have questions, please contact the IT help desk at extension 220. Thank you for your cooperation.']
+  ],
+  zh:'各位同仁請注意。會計系統將於本週五晚間升級。\n系統將於晚間六點至午夜停止服務，所有請款單必須在五點前送出。\n如有問題，請撥分機 220 聯絡資訊服務台。感謝配合。',
+  qs:[
+    { q:'What is the purpose of the announcement?', opts:['To introduce new staff','To announce a system upgrade','To report a power failure','To change the office hours'], a:1,
+      why:'The accounting system will be upgraded this Friday evening。' },
+    { q:'What must employees do before five?', opts:['Turn off their computers','Submit their invoices','Call the help desk','Leave the building'], a:1,
+      why:'all invoices must be submitted before five。' },
+    { q:'What should listeners do if they have questions?', opts:['Send an email to accounting','Wait until Monday','Call extension 220','Visit the front desk'], a:2,
+      why:'contact the IT help desk at extension 220。' }
+  ]
+},
+
+{
+  id:'c4405', u:'s3u9', kind:'talk', title:'機場廣播：班機延誤',
+  lines:[
+    ['Announcer','Ladies and gentlemen, this is an announcement for passengers on flight BR 108 to Singapore.'],
+    ['Announcer','Departure has been delayed by about ninety minutes because of bad weather. Boarding will now begin at nine fifteen.'],
+    ['Announcer','Meal vouchers are available at the service counter near gate twelve. We apologize for the inconvenience.']
+  ],
+  zh:'各位旅客請注意，這是飛往新加坡的 BR 108 班機廣播。\n因天候不佳，出發時間延誤約九十分鐘，登機時間改為九點十五分。\n十二號登機門旁的服務櫃檯提供餐券。造成不便，敬請見諒。',
+  qs:[
+    { q:'Why is the flight delayed?', opts:['A mechanical problem','Bad weather','A missing crew member','Heavy traffic'], a:1,
+      why:'delayed by about ninety minutes because of bad weather。' },
+    { q:'When will boarding begin?', opts:['At nine fifteen','At ninety minutes','At twelve','At eight'], a:0,
+      why:'Boarding will now begin at nine fifteen。' },
+    { q:'What is available at the service counter?', opts:['Boarding passes','Meal vouchers','Luggage tags','Hotel rooms'], a:1,
+      why:'Meal vouchers are available at the service counter。' }
+  ]
+},
+
+{
+  id:'c4406', u:'s3u9', kind:'convo', title:'出差報帳',
+  lines:[
+    ['W','Daniel, your travel expenses from the Osaka trip have not been submitted yet.'],
+    ['M','I know. I lost one of the receipts — the one for the airport shuttle.'],
+    ['W','That is fine. Small amounts under twenty dollars can be claimed without a receipt.'],
+    ['M','That helps. Then I will complete the form this afternoon and leave it on your desk.']
+  ],
+  zh:'女：Daniel，你大阪出差的差旅費還沒送出。\n男：我知道。我弄丟了一張收據，機場接駁車那張。\n女：沒關係。二十美元以下的小額可以不用收據申請。\n男：那太好了。那我下午把表格填完，放到你桌上。',
+  qs:[
+    { q:'What is the problem?', opts:['A flight was cancelled.','A receipt is missing.','The trip was too expensive.','A form was rejected.'], a:1,
+      why:'I lost one of the receipts。' },
+    { q:'What does the woman say about small amounts?', opts:['They cannot be claimed.','They need a supervisor\'s approval.','They can be claimed without a receipt.','They are paid in cash.'], a:2,
+      why:'Small amounts under twenty dollars can be claimed without a receipt。' },
+    { q:'What will the man do this afternoon?', opts:['Book another flight','Complete the expense form','Call the shuttle company','Meet his supervisor'], a:1,
+      why:'I will complete the form this afternoon。' }
+  ]
 }
 
 ];
@@ -18066,11 +18753,14 @@ window.DATA_LEXICON_6 = [
 
   var VOCAB   = cat(global.DATA_VOCAB_S0,
                     global.DATA_VOCAB_S1A, global.DATA_VOCAB_S1B, global.DATA_VOCAB_S1C,
-                    global.DATA_VOCAB_S2, global.DATA_VOCAB_S2B);
-  var GRAMMAR = cat(global.DATA_GRAMMAR_S0, global.DATA_GRAMMAR_S1, global.DATA_GRAMMAR_S2);
-  var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2);
+                    global.DATA_VOCAB_S2, global.DATA_VOCAB_S2B, global.DATA_VOCAB_S3);
+  var GRAMMAR = cat(global.DATA_GRAMMAR_S0, global.DATA_GRAMMAR_S1, global.DATA_GRAMMAR_S2,
+                    global.DATA_GRAMMAR_S3);
+  var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2,
+                    global.DATA_READING_S3);
   var PHOTO   = cat(global.DATA_PHOTO_S2);      // 多益 Part 1：看圖聽描述
   var RESPOND = cat(global.DATA_RESPOND_S2);    // 多益 Part 2：應答問題
+  var CONVO   = cat(global.DATA_CONVO_S3);      // 多益 Part 3／4：長對話與獨白
   var MINPAIR = cat(global.DATA_MINPAIR);          // 最小音對：發音關唯一考得回來的題型
   var PHONICS = global.DATA_PHONICS || {};
   var IRREG   = global.DATA_IRREGULAR || [];
@@ -18078,7 +18768,7 @@ window.DATA_LEXICON_6 = [
 
   /* ---------- 索引 ---------- */
   var byId = {}, byWord = {}, vocabByUnit = {}, grammarByUnit = {}, readingByUnit = {};
-  var photoByUnit = {}, respondByUnit = {}, minPairByUnit = {};
+  var photoByUnit = {}, respondByUnit = {}, minPairByUnit = {}, convoByUnit = {};
   var unitById = {}, stageOfUnit = {}, unitOrder = [];
 
   VOCAB.forEach(function (v) {
@@ -18109,6 +18799,10 @@ window.DATA_LEXICON_6 = [
     byId[m.id] = m;
     (minPairByUnit[m.u] = minPairByUnit[m.u] || []).push(m);
   });
+  CONVO.forEach(function (c) {
+    byId[c.id] = c;
+    (convoByUnit[c.u] = convoByUnit[c.u] || []).push(c);
+  });
   // 不規則動詞不綁關卡，但要能用 id 查回來（弱點怪獸需要）
   IRREG.forEach(function (iv) { byId[iv.id] = iv; });
 
@@ -18132,6 +18826,7 @@ window.DATA_LEXICON_6 = [
   function photoOf(uid)  { return photoByUnit[uid] || []; }
   function respondOf(uid){ return respondByUnit[uid] || []; }
   function minPairsOf(uid){ return minPairByUnit[uid] || []; }
+  function convoOf(uid)  { return convoByUnit[uid] || []; }
   function phonics(key)  { return PHONICS[key] || null; }
   function irregulars()  { return IRREG; }
   function allVocab()    { return VOCAB; }
@@ -18162,6 +18857,7 @@ window.DATA_LEXICON_6 = [
     return out;
   }
   function minPairsUpTo(uid){ return upTo(minPairByUnit, MINPAIR, uid); }
+  function convoUpTo(uid)   { return upTo(convoByUnit, CONVO, uid); }
   function photoUpTo(uid)   { return upTo(photoByUnit, PHOTO, uid); }
   function respondUpTo(uid) { return upTo(respondByUnit, RESPOND, uid); }
 
@@ -18199,7 +18895,8 @@ window.DATA_LEXICON_6 = [
                      (readingByUnit[uid] && readingByUnit[uid].length) ||
                      (photoByUnit[uid] && photoByUnit[uid].length) ||
                      (respondByUnit[uid] && respondByUnit[uid].length) ||
-                     (minPairByUnit[uid] && minPairByUnit[uid].length);
+                     (minPairByUnit[uid] && minPairByUnit[uid].length) ||
+                     (convoByUnit[uid] && convoByUnit[uid].length);
     return !!hasContent;
   }
 
@@ -18339,6 +19036,7 @@ window.DATA_LEXICON_6 = [
       photo: PHOTO.length,
       respond: RESPOND.length,
       minpair: MINPAIR.length,
+      convo: CONVO.length,
       units: unitOrder.filter(isReady).length,
       unitsAll: unitOrder.length
     };
@@ -18347,9 +19045,10 @@ window.DATA_LEXICON_6 = [
   global.Content = {
     unit: unit, stageOf: stageOf, stages: stages, rules: rules, item: item,
     vocabOf: vocabOf, grammarOf: grammarOf, readingOf: readingOf,
-    photoOf: photoOf, respondOf: respondOf, minPairsOf: minPairsOf,
+    photoOf: photoOf, respondOf: respondOf, minPairsOf: minPairsOf, convoOf: convoOf,
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
     photoUpTo: photoUpTo, respondUpTo: respondUpTo, minPairsUpTo: minPairsUpTo,
+    convoUpTo: convoUpTo,
     phonics: phonics, irregulars: irregulars,
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,
@@ -20069,6 +20768,14 @@ window.DATA_LEXICON_6 = [
         body.push({ type: 'respond', ref: r, unitId: unitId });
       });
     }
+    // Part 3／4 一題要聽一整段再答三小題，和閱讀一樣重，所以跟著放到收尾
+    if (plan.convo) {
+      var cvs = Content.convoOf(unitId);
+      if (!cvs.length) cvs = Content.convoUpTo(unitId);
+      SAMPLE(cvs, plan.convo).forEach(function (c) {
+        tail.push({ type: 'convo', ref: c, unitId: unitId });
+      });
+    }
 
     /* --- 10. 閱讀（放最後，當作這關的收尾） --- */
     if (plan.read) {
@@ -20245,6 +20952,11 @@ window.DATA_LEXICON_6 = [
       return { type: 'phoneme', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
+    // Part 3／4 和閱讀一樣是整段重來：三小題全對才算消滅
+    if (w.t === 'convo') {
+      return { type: 'convo', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
     return null;
   }
 
@@ -20265,11 +20977,12 @@ window.DATA_LEXICON_6 = [
       .sort(function (a, b) { return b.n - a.n; })
       .forEach(function (w) {
         if (taken() >= budget) return;
-        // 一篇文章要讀好幾分鐘，一次複習最多夾一篇
-        if (w.t === 'reading' && tail.length) return;
+        // 一篇文章要讀好幾分鐘，Part 3／4 要聽完整段再答三小題，一樣重。
+        // 兩種合計一次複習最多夾一個，否則整輪複習會被它們吃光。
+        if ((w.t === 'reading' || w.t === 'convo') && tail.length) return;
         var q = weakQuestion(w);
         if (!q) return;
-        if (q.type === 'read') tail.push(q);
+        if (q.type === 'read' || q.type === 'convo') tail.push(q);
         else out.push(q);
       });
 
@@ -22399,6 +23112,178 @@ window.DATA_LEXICON_6 = [
             answerTable(r.opts, r.zh, r.a) +
             (r.why ? '<div class="check-detail">' + esc(r.why) + '</div>' : '');
         }
+      });
+    }
+  };
+})(window);
+
+</script>
+<script>
+/* ===== js/exercises/convo.js ===== */
+/* ==========================================================================
+   exercises/convo.js — 多益 Part 3／4：聽長對話與獨白
+     Ex.convo   一段兩到三人的對話（Part 3）或一段獨白（Part 4），配三個問題
+
+   和 Part 1／2 的關鍵差別：**題目與選項要印出來**。
+   真實測驗裡 Part 3／4 的題目本來就印在題本上，考生一邊聽一邊看題目 ——
+   把選項藏起來反而是在練一種考場上不存在的能力。要藏的是「對話腳本」，
+   那才是耳朵的工作。
+
+   三題一起作答、一起批改，和閱讀題同一個節奏：一段內容問三個面向，
+   分開批改會讓人邊聽邊回頭猜，失去「聽完整段再判斷」的訓練。
+   ========================================================================== */
+(function (global) {
+  'use strict';
+
+  var esc = UI.esc;
+  var LETTERS = ['A', 'B', 'C', 'D'];
+
+  /**
+   * 依序唸完整段對話，正在唸的那一行亮起來。
+   * 換人說話時改變音高 —— 瀏覽器的 TTS 只保證有一個英文語音可用
+   * （chooseVoice 挑的是使用者系統上剛好裝了什麼），沒辦法真的換人。
+   * 音高差 0.25 已經足以讓人聽出「換人了」，這是能穩定做到的極限。
+   */
+  function playScript(lines, nodes, onDone) {
+    var i = 0, stopped = false;
+
+    function unlight() {
+      nodes.forEach(function (n) { if (n) n.classList.remove('opt-playing'); });
+    }
+
+    function step() {
+      if (stopped) return;
+      if (i >= lines.length) { unlight(); if (onDone) onDone(); return; }
+      var n = nodes[i];
+      if (n) n.classList.add('opt-playing');
+      Speech.speak(lines[i][1], { pitch: speakerPitch(lines, i) }).then(function () {
+        if (stopped) return;
+        if (n) n.classList.remove('opt-playing');
+        i++;
+        setTimeout(step, 260);
+      });
+    }
+
+    step();
+    return { stop: function () { stopped = true; Speech.stop(); unlight(); } };
+  }
+
+  /** 第一位說話者用正常音高，之後每多一位就降一階 */
+  function speakerPitch(lines, i) {
+    var order = [];
+    lines.forEach(function (l) { if (order.indexOf(l[0]) < 0) order.push(l[0]); });
+    var k = order.indexOf(lines[i][0]);
+    return Math.max(0.6, 1.1 - k * 0.25);
+  }
+
+  function noVoiceWarning() {
+    if (Speech.available()) return '';
+    return '<div class="warn-box">找不到英文語音，這一題會直接顯示對話原文。' +
+      '（Windows：設定 → 時間與語言 → 語音 → 新增語音 → English）</div>';
+  }
+
+  function scriptHTML(c, forceText) {
+    return '<div class="script' + (forceText ? '' : ' is-hidden') + '" id="script">' +
+      c.lines.map(function (l) {
+        return '<div class="script-line">' +
+          '<span class="script-who">' + esc(l[0]) + '</span>' +
+          '<span class="sentence-en">' + Lexicon.markup(l[1]) + '</span></div>';
+      }).join('') + '</div>';
+  }
+
+  Ex.convo = {
+    scored: true,
+    render: function (q, host, api) {
+      var c = q.ref;
+      var forceText = !Speech.available();
+      var player = null;
+      var isTalk = c.kind === 'talk';
+
+      ExUtil.prompt(host,
+        isTalk ? '聽一段獨白，回答下面的問題' : '聽一段對話，回答下面的問題',
+        isTalk ? 'Part 4：公告、廣播、留言 —— 先看題目再聽，才知道要抓什麼'
+               : 'Part 3：兩個人的對話 —— 三題通常照對話順序出現');
+
+      host.insertAdjacentHTML('beforeend',
+        noVoiceWarning() +
+        '<div class="convo-head">' +
+          '<div class="tag blue">' + esc(c.title || (isTalk ? '獨白' : '對話')) + '</div>' +
+          '<div class="center" style="padding:8px 0">' +
+            '<button class="btn btn-primary" type="button" id="playall">🔊 播放</button>' +
+          '</div>' +
+        '</div>' +
+        scriptHTML(c, forceText) +
+        '<div id="qzone"></div>');
+
+      var lineNodes = UI.$$('.script-line', host);
+
+      function playAll() {
+        if (player) player.stop();
+        player = playScript(c.lines, lineNodes);
+      }
+      UI.$('#playall', host).addEventListener('click', playAll);
+      api.onCleanup(function () { if (player) player.stop(); Lexicon.close(); });
+      if (Speech.available()) setTimeout(playAll, 400);
+
+      /* --- 題目：文字照印，這是 Part 3／4 本來的樣子 --- */
+      var qs = c.qs || [];
+      var picks = [];
+      for (var z = 0; z < qs.length; z++) picks.push(-1);
+      var zone = UI.$('#qzone', host);
+
+      qs.forEach(function (qq, qi) {
+        var box = document.createElement('div');
+        box.className = 'card';
+        box.innerHTML = '<div class="q-prompt" style="font-size:1rem">' +
+          (qi + 1) + '. ' + esc(qq.q) + '</div>';
+        zone.appendChild(box);
+
+        var order = Content.shuffle(qq.opts.map(function (o, i) { return i; }));
+        var ctl = ExUtil.options(box,
+          order.map(function (oi, i) {
+            return { html: '<span class="opt-letter">' + LETTERS[i] + '</span>' + esc(qq.opts[oi]) };
+          }),
+          { onPick: function (idx) {
+              picks[qi] = order[idx];
+              api.enableCheck(picks.every(function (p) { return p >= 0; }));
+            } });
+        ctl.el.classList.add('opts-lettered');
+        qq._ctl = ctl;
+        qq._order = order;
+      });
+
+      api.enableCheck(false);
+
+      api.ready(function () {
+        if (player) player.stop();
+
+        var correct = 0;
+        qs.forEach(function (qq, qi) {
+          var ok = picks[qi] === qq.a;
+          if (ok) correct++;
+          qq._ctl.lock(qq._order.indexOf(qq.a));
+        });
+        var allOk = correct === qs.length;
+
+        // 作答後把腳本露出來 —— 訂正時看不到原文等於白答
+        var sc = UI.$('#script', host);
+        if (sc) sc.classList.remove('is-hidden');
+
+        // 型別寫成字面值：scheduler.weakQuestion 的對映檢查是掃字串跑的
+        if (allOk) SRS.clearWeak('convo', c.id);
+        else SRS.addWeak('convo', c.id, q.unitId || c.u);
+
+        api.result(allOk, {
+          correct: correct, total: qs.length,
+          title: allOk ? '三題全對！' : '答對 ' + correct + ' / ' + qs.length + ' 題',
+          detail:
+            (c.zh ? '<details class="mt8"><summary class="bold" style="cursor:pointer">看中文翻譯</summary>' +
+              '<div class="sentence-zh mt8">' + esc(c.zh).replace(/\n/g, '<br>') + '</div></details>' : '') +
+            (qs.some(function (qq) { return qq.why; })
+              ? '<div class="check-detail">' + qs.filter(function (qq) { return qq.why; })
+                  .map(function (qq) { return '・' + esc(qq.why); }).join('<br>') + '</div>'
+              : '')
+        });
       });
     }
   };

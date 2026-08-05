@@ -647,6 +647,27 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 .opt-text.is-hidden,
 .ask-text.is-hidden { display: none; }
 
+/* ============ Part 3／4 長對話 ============ */
+.convo-head { margin-bottom: 4px; }
+.script {
+  background: var(--bg-alt); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 12px;
+  font-family: var(--font-en); line-height: 1.8;
+}
+/* .script 自帶 display 之外的樣式即可，但這條還是要寫死 ——
+   同樣是一個 class 的權重時比的是先後順序，漏掉就會變成「藏不住的腳本」，
+   而腳本一旦提早露出來，這一題就從聽力變成閱讀了 */
+.script.is-hidden { display: none; }
+.script-line { display: flex; gap: 8px; align-items: baseline; margin-bottom: 6px; }
+.script-line:last-child { margin-bottom: 0; }
+.script-who {
+  flex: 0 0 auto; min-width: 2.4em; font-size: .7rem; font-weight: 800;
+  color: var(--text-soft); text-transform: uppercase;
+}
+.script-line.opt-playing {
+  border-radius: 6px; box-shadow: 0 0 0 3px var(--blue-soft); border: none;
+}
+
 /* 作答後的四選項對照 */
 .opt-review { display: grid; gap: 8px; margin: 4px 0 8px; }
 .opt-review-row {
