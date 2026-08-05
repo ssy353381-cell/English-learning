@@ -11,6 +11,8 @@
      · id 前綴互斥：四種資料共用同一個 byId 索引，撞號會直接蓋掉
      · 課表宣稱 ready 卻沒內容：關卡會鎖住並顯示「製作中」
      · plan 出現 scheduler 不認得的題型：靜靜地少出題
+     · 起步取向（profile.track）換掉配方後組不出題：只有選那個取向的人會遇到
+     · 跳關測驗沒把星寫進去：解鎖鏈靠那顆星，測驗過了卻卡在原地
      · 弱點怪獸新型別沒同步改 weakQuestion：怪獸進得了清單卻永遠消不掉
      · SRS 只涵蓋單字：文法/閱讀/不規則動詞寫進 srs 會讓複習佇列壞掉
 
@@ -185,7 +187,10 @@ function loadApp() {
     querySelectorAll: function () { return []; }
   };
   // 只測邏輯，畫面/語音/音效用最小門面替代
-  sb.UI = { esc: function (s) { return String(s === undefined ? '' : s); }, toast: function () {} };
+  sb.UI = {
+    esc: function (s) { return String(s === undefined ? '' : s); },
+    toast: function () {}, modal: function () {}, refreshChips: function () {}
+  };
   sb.Speech = { btn: function () { return ''; }, similar: function () { return 0; }, say: function () {} };
   sb.Sfx = { play: function () {} };
 
@@ -193,7 +198,8 @@ function loadApp() {
 
   // 順序即相依順序，和 index.html 一致
   var files = listJs('data').concat([
-    'js/state.js', 'js/content.js', 'js/srs.js', 'js/scheduler.js', 'js/exercises/common.js'
+    'js/state.js', 'js/content.js', 'js/srs.js', 'js/gamify.js', 'js/scheduler.js',
+    'js/exercises/common.js'
   ]);
   files.forEach(function (rel) {
     vm.runInContext(fs.readFileSync(path.join(ROOT, rel), 'utf8'), sb, { filename: rel });
@@ -202,7 +208,8 @@ function loadApp() {
 }
 
 var app = loadApp();
-var Content = app.Content, Scheduler = app.Scheduler, SRS = app.SRS, State = app.State, ExUtil = app.ExUtil;
+var Content = app.Content, Scheduler = app.Scheduler, SRS = app.SRS, State = app.State,
+    ExUtil = app.ExUtil, Gamify = app.Gamify;
 
 /* ==========================================================================
    3. 資料完整性
@@ -322,11 +329,21 @@ var handled = {};
 var unknownPlan = {};
 Content.stages().forEach(function (st) {
   (st.units || []).forEach(function (u) {
-    (u.plan || []).forEach(function (p) { if (!handled[p[0]]) unknownPlan[p[0]] = 1; });
+    (u.plan || []).concat(u.planVocab || []).forEach(function (p) { if (!handled[p[0]]) unknownPlan[p[0]] = 1; });
   });
 });
 ok(Object.keys(unknownPlan).length === 0,
    'plan 的題型 scheduler 都處理得到' + (Object.keys(unknownPlan).length ? '：' + Object.keys(unknownPlan).join('、') + ' 沒人接' : ''));
+
+// planVocab 只是同一關的另一種配方。isReady 看的是 plan，只寫 planVocab 的關卡會被當成「製作中」
+var vocabOnly = [];
+Content.stages().forEach(function (st) {
+  (st.units || []).forEach(function (u) {
+    if (u.planVocab && u.planVocab.length && !(u.plan && u.plan.length)) vocabOnly.push(u.id);
+  });
+});
+ok(vocabOnly.length === 0, '有 planVocab 的關卡也有 plan' +
+   (vocabOnly.length ? '：' + vocabOnly.join('、') + ' 只寫了 planVocab，會顯示「製作中」' : ''));
 
 /* ==========================================================================
    5. 組題
@@ -343,14 +360,28 @@ listJs('js/exercises').forEach(function (rel) {
 });
 eq(Object.keys(exTypes).length, 14, '註冊了 14 種題型');
 
+// 兩種起步取向都要組得出題 —— planVocab 只有選「先學單字」的人會走到，壞了不會有人發現
 var emptyLesson = [], badType = [];
-readyUnits.forEach(function (uid) {
-  var q = Scheduler.buildLesson(uid);
-  if (!q.length) emptyLesson.push(uid);
-  q.forEach(function (item) { if (!exTypes[item.type]) badType.push(uid + ' 出現 ' + item.type); });
+['phonics', 'vocab'].forEach(function (track) {
+  State.data.profile.track = track;
+  readyUnits.forEach(function (uid) {
+    var q = Scheduler.buildLesson(uid);
+    if (!q.length) emptyLesson.push(uid + '（' + track + '）');
+    q.forEach(function (item) { if (!exTypes[item.type]) badType.push(uid + ' 出現 ' + item.type); });
+  });
 });
-ok(emptyLesson.length === 0, '每個可玩關卡都組得出題目' + (emptyLesson.length ? '：' + emptyLesson.join('、') : ''));
+ok(emptyLesson.length === 0, '兩種取向下每個可玩關卡都組得出題目' + (emptyLesson.length ? '：' + emptyLesson.join('、') : ''));
 ok(badType.length === 0, '出的題都有對應的 Ex 模組' + (badType.length ? '：' + badType.slice(0, 5).join('、') : ''));
+
+// 取向換的是配方而不是關卡：發音關要真的多教新字，沒有 planVocab 的關卡則完全不受影響
+function cardsOf(uid, track) {
+  State.data.profile.track = track;
+  return Scheduler.buildLesson(uid).filter(function (q) { return q.type === 'flashcard'; }).length;
+}
+var pCards = cardsOf('s0u1', 'phonics'), vCards = cardsOf('s0u1', 'vocab');
+ok(vCards > pCards, '「先學單字」在發音關教更多新字（' + pCards + ' → ' + vCards + '）');
+eq(cardsOf('s0u6', 'vocab'), cardsOf('s0u6', 'phonics'), '沒有 planVocab 的關卡不受取向影響');
+State.data.profile.track = 'phonics';
 
 // 教學卡不計分，但關卡不能只有教學卡
 var onlyIntro = readyUnits.filter(function (uid) {
@@ -359,7 +390,62 @@ var onlyIntro = readyUnits.filter(function (uid) {
 ok(onlyIntro.length === 0, '沒有只剩教學卡的關卡' + (onlyIntro.length ? '：' + onlyIntro.join('、') : ''));
 
 /* ==========================================================================
-   6. 弱點怪獸
+   6. 跳關測驗
+   ========================================================================== */
+describe('跳關測驗');
+
+var RULES = Content.rules();
+ok(RULES.skipPass > RULES.passRate,
+   '跳關的及格線比一般過關嚴（' + RULES.skipPass + ' > ' + RULES.passRate + '）');
+
+State.data.units = {};
+State.data.srs = {};
+ok(Scheduler.skipTestable('s0u1'), '第一關（發音）可以考跳關測驗');
+ok(!Scheduler.skipTestable('s0u2'), '還沒解鎖的關卡不能先跳');
+
+// 光看「s0u6 沒有測驗」會通過得太廉價 —— 它本來就鎖著。
+// 先把前五關標成過關讓它解鎖，這時候唯一擋得住它的理由就只剩「不是發音關」。
+Content.orderedUnitIds().slice(0, 5).forEach(function (uid) { State.unit(uid).s = 1; });
+ok(Content.isUnlocked('s0u6'), '（前置）s0u6 解鎖了');
+ok(!Scheduler.skipTestable('s0u6'), '非發音關沒有跳關測驗');
+State.data.units = {};
+
+var skipQ = Scheduler.buildSkipTest('s0u1');
+eq(skipQ.length, Scheduler.SKIP_N, '測驗題數固定（及格線才有一致的意義）');
+ok(skipQ.every(function (q) { return ['listen', 'spell', 'recall'].indexOf(q.type) >= 0; }),
+   '測驗只出計分題 —— 被教過再答對證明不了什麼');
+var ownVocab = {};
+Content.vocabOf('s0u1').forEach(function (v) { ownVocab[v.id] = 1; });
+ok(skipQ.every(function (q) { return q.ref && ownVocab[q.ref.id]; }), '考的全是這一關自己的單字');
+var seenRef = {}, dupRef = false;
+skipQ.forEach(function (q) { if (seenRef[q.ref.id]) dupRef = true; seenRef[q.ref.id] = 1; });
+ok(!dupRef, '同一個字不會在測驗裡出現兩次');
+
+// 通過 → 一顆星 → 既有的解鎖鏈自己往前推（isUnlocked 一行都沒改）
+State.data.units = {};
+var passRes = Gamify.finishSkipTest('s0u1', Scheduler.SKIP_N, Scheduler.SKIP_N);
+ok(passRes.passed, '全對算通過');
+eq(State.unit('s0u1').s, 1, '通過給一顆星');
+eq(State.unit('s0u1').lv, 0, '不給皇冠（這一關的內容其實沒上過）');
+ok(!!State.unit('s0u1').skip, '存檔記得這顆星是測驗換來的');
+ok(Content.isUnlocked('s0u2'), '下一關跟著解鎖');
+ok(!Scheduler.skipTestable('s0u1'), '過了的關卡不再提供測驗');
+
+// 及格線正好那一題：錯 1 題還能跳，錯 2 題就不行
+State.data.units = {};
+ok(Gamify.finishSkipTest('s0u1', Scheduler.skipPassCount(Scheduler.SKIP_N), Scheduler.SKIP_N).passed,
+   '剛好答對及格題數算通過（' + Scheduler.skipPassCount(Scheduler.SKIP_N) + '/' + Scheduler.SKIP_N + '）');
+
+// 差一題就是沒過：不給星，也不解鎖
+State.data.units = {};
+var failRes = Gamify.finishSkipTest('s0u1', Scheduler.skipPassCount(Scheduler.SKIP_N) - 1, Scheduler.SKIP_N);
+ok(!failRes.passed, '差一題不算通過');
+eq(State.unit('s0u1').s, 0, '沒通過不給星');
+ok(!Content.isUnlocked('s0u2'), '沒通過就不解鎖下一關');
+State.data.units = {};
+
+/* ==========================================================================
+   7. 弱點怪獸
    ========================================================================== */
 describe('弱點怪獸');
 
@@ -408,7 +494,7 @@ Object.keys(weakTypes).forEach(function (t) {
 });
 
 /* ==========================================================================
-   7. SRS 範圍：只有單字進 srs
+   8. SRS 範圍：只有單字進 srs
    ========================================================================== */
 describe('SRS 範圍');
 
@@ -433,7 +519,7 @@ ok(rv.every(function (q) { return q.type !== 'recall' || (q.ref && q.ref.w); }),
    '複習佇列不會把沒有 .w 的項目當單字出題');
 
 /* ==========================================================================
-   8. 自由作答比對
+   9. 自由作答比對
    ========================================================================== */
 describe('自由作答比對');
 

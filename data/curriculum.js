@@ -17,6 +17,11 @@
      photo     多益 Part 1：看圖聽描述（題目在 data/toeic-p1-*.js）
      respond   多益 Part 2：應答問題（題目在 data/toeic-p2-*.js）
    --------------------------------------------------------------------------
+   unit.planVocab 是「單字優先」取向（profile.track = 'vocab'）改用的配方，
+   目前只有 Stage 0 的五個發音關需要：解鎖是一條鏈，想快點學句子的人也得先走完
+   s0u1–s0u5，所以換的不是關卡順序而是同一關裡出哪些題 —— 新字加倍、提早出現排句，
+   聽力與跟讀砍半。沒寫 planVocab 的關卡兩種取向都用 plan。
+   --------------------------------------------------------------------------
    stage.ready = true 只代表「這一階段開放了」，關卡本身要有 plan 與內容才可玩；
    沒有 plan 的關卡會顯示「製作中」並鎖住，所以階段可以分批開放。
    ========================================================================== */
@@ -35,27 +40,32 @@ window.DATA_CURRICULUM = {
       { id:'s0u1', n:1, title:'字母 A–Z', icon:'🔤', boss:false,
         goal:'認得 26 個字母的名字，以及它們各自發什麼音',
         phonics:'alphabet',
-        plan:[['intro',1],['flashcard',6],['listen',6],['recall',4],['speak',2]] },
+        plan:[['intro',1],['flashcard',6],['listen',6],['recall',4],['speak',2]],
+        planVocab:[['intro',1],['flashcard',9],['recall',5],['build',2],['listen',2],['speak',1]] },
 
       { id:'s0u2', n:2, title:'短母音 a e i o u', icon:'🅰️', boss:false,
         goal:'看到 cat / pen / sit / dog / cup 就能直接拼出聲音',
         phonics:'shortVowels',
-        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',2],['recall',4]] },
+        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',2],['recall',4]],
+        planVocab:[['intro',1],['flashcard',11],['recall',5],['build',3],['listen',3],['dictate',2],['speak',1]] },
 
       { id:'s0u3', n:3, title:'子音組合 sh ch th ph ck', icon:'🔊', boss:false,
         goal:'兩個字母黏在一起會變成新的音，這關把五組最常見的搞定',
         phonics:'digraphs',
-        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]] },
+        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]],
+        planVocab:[['intro',1],['flashcard',11],['recall',5],['build',3],['listen',3],['dictate',2],['speak',1]] },
 
       { id:'s0u4', n:4, title:'長母音與魔法 e', icon:'✨', boss:false,
         goal:'cap → cape、hop → hope：字尾多一個 e，母音就唸自己的名字',
         phonics:'magicE',
-        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]] },
+        plan:[['intro',1],['flashcard',8],['listen',6],['dictate',4],['speak',3],['recall',4]],
+        planVocab:[['intro',1],['flashcard',11],['recall',5],['build',3],['listen',3],['dictate',2],['speak',1]] },
 
       { id:'s0u5', n:5, title:'KK 音標與重音', icon:'📖', boss:true,
         goal:'看得懂字典裡的 [ ] 音標，並知道重音要放哪裡',
         phonics:'kk',
-        plan:[['intro',1],['flashcard',6],['listen',8],['recall',6],['speak',3],['dictate',4]] },
+        plan:[['intro',1],['flashcard',6],['listen',8],['recall',6],['speak',3],['dictate',4]],
+        planVocab:[['intro',1],['flashcard',11],['recall',6],['build',3],['listen',4],['dictate',2],['speak',1]] },
 
       { id:'s0u6', n:6, title:'詞性入門：名詞・動詞・形容詞', icon:'🧩', boss:false,
         goal:'知道一個英文字在句子裡「扮演什麼角色」，這是全部文法的地基',
@@ -288,6 +298,7 @@ window.DATA_CURRICULUM = {
   /* ---------- 過關標準 ---------- */
   rules: {
     passRate: 0.7,        // 正確率 70% 以上才算過關
+    skipPass: 0.85,       // 跳關測驗的及格線：要證明「這關不用上」就得比過關更嚴（8 題只能錯 1 題）
     star2: 0.85,          // 2 星
     star3: 1.0,           // 3 星（全對）
     xpPerCorrect: 4,

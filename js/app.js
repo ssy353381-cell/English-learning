@@ -80,6 +80,15 @@
         '</div>' +
         '<p class="small muted mt8 mb0">之後可以在設定裡改。</p>' +
       '</div>' +
+      '<div class="card">' +
+        '<div class="card-title">你想從哪裡下手？</div>' +
+        '<div class="seg" id="wtrack">' +
+          '<button data-t="phonics" class="on">先練發音</button>' +
+          '<button data-t="vocab">先學單字</button>' +
+        '</div>' +
+        '<p class="small muted mt8 mb0">兩邊走的是同一條路、同樣的關卡，' +
+        '差別只在前五關一堂課裡練幾題發音、學幾個新字。之後可以在設定裡改。</p>' +
+      '</div>' +
       '<p class="center small muted">目前內容：' + c.vocab + ' 個單字　・　' +
         c.units + ' 個可玩關卡</p>' +
       '<button class="btn btn-primary btn-lg" id="wstart">開始第一關</button>'
@@ -92,6 +101,15 @@
         State.data.profile.goalMin = +b.getAttribute('data-g');
         State.save(true);
         UI.refreshChips();
+      };
+    });
+
+    UI.$$('#wtrack [data-t]').forEach(function (b) {
+      b.onclick = function () {
+        UI.$$('#wtrack [data-t]').forEach(function (x) { x.classList.remove('on'); });
+        b.classList.add('on');
+        State.data.profile.track = b.getAttribute('data-t');
+        State.save(true);
       };
     });
 

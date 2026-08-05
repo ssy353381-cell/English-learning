@@ -38,6 +38,9 @@
       profile: {
         nickname: '',
         goalMin: 40,          // 每日目標分鐘數：20 / 40 / 60
+        // 起步取向：phonics 先把發音練穩 / vocab 先衝單字與句子。
+        // 只換發音關卡的出題配方，不動解鎖鏈 —— 舊存檔補進來會拿到 phonics，體感不變。
+        track: 'phonics',
         rate: 0.85,           // TTS 語速
         voice: '',            // 指定的語音名稱（空 = 自動挑）
         theme: 'auto',        // auto / light / dark
@@ -46,6 +49,7 @@
         showKK: true          // 顯示 KK 音標
       },
       // 關卡進度： { 's0u1': { s:2, best:0.92, n:3, at:'2026-08-04' } }  s=星數
+      // skip=1 代表這顆星是跳關測驗換來的，關卡內容其實沒上過
       units: {},
       // 間隔重複： { 's0_001': { ef:2.5, iv:1, rep:2, due:'2026-08-06', lap:0 } }
       srs: {},
@@ -220,7 +224,7 @@
 
   /* ---------- 常用小工具 ---------- */
   function unit(id) {
-    if (!data.units[id]) data.units[id] = { s: 0, lv: 0, best: 0, n: 0, at: '' };
+    if (!data.units[id]) data.units[id] = { s: 0, lv: 0, best: 0, n: 0, at: '', skip: 0 };
     if (data.units[id].lv === undefined) data.units[id].lv = data.units[id].s > 0 ? 1 : 0;
     return data.units[id];
   }

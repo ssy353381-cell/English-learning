@@ -96,7 +96,8 @@
      ========================================================================== */
   function buildLesson(unitId) {
     var u = Content.unit(unitId);
-    if (!u || !u.plan) return [];
+    var recipe = Content.planOf(unitId);   // 起步取向可能會換掉發音關卡的配方
+    if (!u || !recipe) return [];
 
     var queue = [];
     var intro = [];
@@ -106,7 +107,7 @@
 
     var focus = [];   // 這關新教的字，其他題型優先用它們
     var plan = {};
-    u.plan.forEach(function (p) { plan[p[0]] = p[1]; });
+    recipe.forEach(function (p) { plan[p[0]] = p[1]; });
 
     // 有教新字的關卡就自動配拼字題（課表沒特別指定時）。
     // 「認得出來」和「拼得出來」是兩件事，後者才撐得住寫作與聽寫。
@@ -297,6 +298,62 @@
   }
 
   /* ==========================================================================
+     跳關測驗：證明「這一關不用上」
+     發音關是解鎖鏈上最容易卡住已經有底子的人的地方。與其開第二條鏈，不如讓他
+     直接考一次 —— 過了就拿既有的一顆星，解鎖鏈自己往前推。
+     ========================================================================== */
+  var SKIP_N = 8;
+
+  function skipTestable(unitId) {
+    var u = Content.unit(unitId);
+    if (!u || !u.phonics) return false;                          // 只有發音關需要
+    if (!Content.isReady(unitId) || !Content.isUnlocked(unitId)) return false;
+    if (State.isUnitDone(unitId)) return false;                  // 已經過了就沒得跳
+    return Content.vocabOf(unitId).length >= SKIP_N;
+  }
+
+  /**
+   * 只出「聽得懂、拼得出、認得意思」三種題，而且全部來自這一關自己的單字。
+   * 沒有教學卡也沒有單字卡 —— 先被教一次再答對，證明不了任何事。
+   * 答對答錯照樣進 SRS 與弱點怪獸（題型模組自己會做），跳掉的關卡才不會變成黑洞。
+   */
+  function buildSkipTest(unitId) {
+    if (!skipTestable(unitId)) return [];
+
+    var pool = Content.vocabOf(unitId);
+    var used = {}, out = [];
+
+    function take(list, n, make) {
+      SAMPLE(list.filter(function (v) { return !used[v.id]; }), n).forEach(function (v) {
+        used[v.id] = 1;
+        out.push(make(v, out.length));
+      });
+    }
+
+    take(pool, 3, function (v) {
+      return { type: 'listen', mode: 'word', ref: v, unitId: unitId };
+    });
+    take(pool.filter(function (v) {
+      return v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w);
+    }), 3, function (v) {
+      return { type: 'spell', ref: v, unitId: unitId };
+    });
+    // 可拼的字不夠就用中英互選補滿：題數固定，及格線才有一致的意義
+    take(pool, SKIP_N - out.length, function (v, i) {
+      return { type: 'recall', ref: v, dir: i % 2 ? 'zh2en' : 'en2zh', unitId: unitId };
+    });
+
+    out = S(out);
+    out.forEach(function (q, i) { q.i = i; });
+    return out;
+  }
+
+  /** 及格要答對幾題（結算畫面與說明文字都用它，才不會兩邊講的數字不一樣） */
+  function skipPassCount(total) {
+    return Math.ceil(total * (Content.rules().skipPass || 0.85));
+  }
+
+  /* ==========================================================================
      每日複習佇列（首頁「暖身」與複習頁共用）
      ========================================================================== */
   /**
@@ -464,6 +521,16 @@
         hash: '#/lesson/' + cur, cta: lv > 0 ? '再打一次' : '開始學習'
       });
     }
+    // 跳關測驗只推給「先學單字」的人。選「先練發音」的是自己要求練發音的，
+    // 不該在首頁被慫恿跳過 —— 地圖上兩種取向都找得到。
+    if (State.data.profile.track === 'vocab' && skipTestable(cur)) {
+      items.push({
+        key: 'skip', icon: '⏭️', title: '跳關測驗',
+        desc: '已經會了？' + SKIP_N + ' 題證明給我看，直接解鎖下一關',
+        hint: '約 2 分鐘',
+        hash: '#/lesson/' + cur + '?skip=1', cta: '我要跳關'
+      });
+    }
     if (weak > 0) {
       items.push({
         key: 'weak', icon: '👾', title: '弱點怪獸',
@@ -488,6 +555,10 @@
     buildLesson: buildLesson,
     buildReview: buildReview,
     buildChallenge: buildChallenge,
+    buildSkipTest: buildSkipTest,
+    skipTestable: skipTestable,
+    skipPassCount: skipPassCount,
+    SKIP_N: SKIP_N,
     todayPlan: todayPlan,
     unseenOf: unseenOf,
     sentencesFrom: sentencesFrom
