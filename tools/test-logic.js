@@ -230,7 +230,7 @@ var Content = app.Content, Scheduler = app.Scheduler, SRS = app.SRS, State = app
 describe('資料完整性');
 
 var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond',
-               m: 'minpair', c: 'convo', x: 'part6', d: 'part7' };
+               m: 'minpair', c: 'convo', x: 'part6', d: 'part7', b: 'parse' };
 var seen = {}, dupes = [], badPrefix = [];
 
 function checkIds(list, kind) {
@@ -242,7 +242,7 @@ function checkIds(list, kind) {
 }
 checkIds(Content.allVocab(), 'vocab');
 var allGrammar = [], allReading = [], allPhoto = [], allRespond = [], allMinPair = [], allConvo = [];
-var allPart6 = [], allPart7 = [];
+var allPart6 = [], allPart7 = [], allParse = [];
 Content.orderedUnitIds().forEach(function (uid) {
   allGrammar = allGrammar.concat(Content.grammarOf(uid));
   allReading = allReading.concat(Content.readingOf(uid));
@@ -252,6 +252,7 @@ Content.orderedUnitIds().forEach(function (uid) {
   allConvo = allConvo.concat(Content.convoOf(uid));
   allPart6 = allPart6.concat(Content.part6Of(uid));
   allPart7 = allPart7.concat(Content.part7Of(uid));
+  allParse = allParse.concat(Content.parseOf(uid));
 });
 checkIds(allGrammar, 'grammar');
 checkIds(allReading, 'reading');
@@ -262,15 +263,16 @@ checkIds(allMinPair, 'minpair');
 checkIds(allConvo, 'convo');
 checkIds(allPart6, 'part6');
 checkIds(allPart7, 'part7');
+checkIds(allParse, 'parse');
 
 ok(dupes.length === 0, 'id 全域唯一（四種資料共用 byId 索引）' + (dupes.length ? '：' + dupes.slice(0, 5).join('、') : ''));
-ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m/c/x/d）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
+ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m/c/x/d/b）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
 
 var unitIds = {};
 Content.orderedUnitIds().forEach(function (u) { unitIds[u] = 1; });
 var orphan = [];
 Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond, allMinPair, allConvo,
-                          allPart6, allPart7).forEach(function (x) {
+                          allPart6, allPart7, allParse).forEach(function (x) {
   if (!unitIds[x.u]) orphan.push(x.id + ' → ' + x.u);
 });
 ok(orphan.length === 0, '每筆資料的 u 都指到存在的關卡' + (orphan.length ? '：' + orphan.slice(0, 5).join('、') : ''));
@@ -500,7 +502,7 @@ listJs('js/exercises').forEach(function (rel) {
     exTypes[m.replace(/^\s*Ex\./, '').replace(/\s*=$/, '')] = 1;
   });
 });
-eq(Object.keys(exTypes).length, 19, '註冊了 19 種題型');
+eq(Object.keys(exTypes).length, 20, '註冊了 20 種題型');
 
 // 兩種起步取向都要組得出題 —— planVocab 只有選「先學單字」的人會走到，壞了不會有人發現
 var emptyLesson = [], badType = [];
@@ -805,7 +807,8 @@ var samples = {
   phoneme: (allMinPair[0] || {}).id,
   convo: (allConvo[0] || {}).id,
   part6: (allPart6[0] || {}).id,
-  part7: (allPart7[0] || {}).id
+  part7: (allPart7[0] || {}).id,
+  parse: (allParse[0] || {}).id
 };
 Object.keys(weakTypes).forEach(function (t) {
   var refId = samples[t];
@@ -1010,6 +1013,26 @@ ok(irr2 && irr2.entry.w === 'say', '不規則動詞的過去式查得回原形�
 var lf = Lexicon.lookup('left');
 ok(lf && lf.entry.w === 'left' && !lf.via, '自己就是詞條的字不會被當成別人的變化形');
 
+/* 一個變化形被兩個字搶走時，兩筆都要留住。
+   -f 名詞的複數剛好等於 -ve 動詞的第三人稱（leaves／lives／halves／shelves／calves），
+   先進索引的贏 —— 贏的那一邊是對的，輸的那一邊也是對的，所以卡片上兩個都要出現。
+   只檢查「有沒有第二筆」而不釘死誰先誰後：誰先進索引由詞頻決定，不是這一條在保證的事。 */
+var oneWay = ['leaves', 'lives', 'halves'].filter(function (w) {
+  var h = Lexicon.lookup(w);
+  return !(h && h.alt && h.alt.w && h.alt.w !== h.entry.w);
+});
+ok(oneWay.length === 0, '被兩個字共用的變化形，查詢卡兩筆都列得出來' +
+   (oneWay.length ? '：' + oneWay.join('、') + ' 只查得到一邊' : ''));
+
+/* -f → -ves 的複數：課程單字沒有 forms 欄，規則推出來的是 shelfs，
+   真正會被點到的 shelves 以前整個查不到（沒有第二個候選，就只是查得到而已） */
+var shv = Lexicon.lookup('shelves');
+ok(shv && shv.entry.w === 'shelf', 'shelves 查得回 shelf（課程單字的 -f 複數）');
+
+/* 只有一個主人的變化形不該冒出第二筆 —— alt 要是真的有歧義才給 */
+var solo = Lexicon.lookup('gone');
+ok(solo && !solo.alt, '沒有歧義的變化形不會多出一筆候選');
+
 /* markup：先轉義再包 span，實體不能被拆開 */
 var mk = Lexicon.markup('Tom & Amy said "run".');
 ok(mk.indexOf('&amp;') >= 0, 'markup 保留 HTML 實體（& 沒有被拆成 amp）');
@@ -1079,15 +1102,21 @@ ok(/class="lexw known" data-lexw="Wi-Fi"/.test(Lexicon.markup('free Wi-Fi here')
    數量門檻擋不住這種事（少一個字還在門檻內），所以這裡不設門檻，直接要求歸零。 */
 var deadClicks = {};
 var deadRe = /<span class="lexw" data-lexw="([^"]*)">/g;
+function scanClicks(text) {
+  if (!text) return;
+  var html = Lexicon.markup(String(text)), m;
+  deadRe.lastIndex = 0;
+  while ((m = deadRe.exec(html))) deadClicks[m[1]] = 1;
+}
 Lexicon.all().forEach(function (e) {
   if (e.src === 'auto') return;             // WordNet 那批句子滿是專有名詞，不是本 repo 寫的
-  (e.ex || []).forEach(function (p) {
-    if (!p || !p[0]) return;
-    var html = Lexicon.markup(p[0]), m;
-    deadRe.lastIndex = 0;
-    while ((m = deadRe.exec(html))) deadClicks[m[1]] = 1;
-  });
+  (e.ex || []).forEach(function (p) { if (p && p[0]) scanClicks(p[0]); });
 });
+// 文法點的練習句與長難句的原句／骨架也走 markup()，一樣點得開。
+// 短文與 Part 6／7 的內文刻意不掃：那些文件滿是虛構的人名地名，
+// 而過濾條件是「小寫開頭」，擋不掉 the Kestrel account 這種夾在句中的專有名詞。
+allGrammar.forEach(function (g) { (g.sents || []).forEach(function (p) { scanClicks(p[0]); }); });
+allParse.forEach(function (b) { scanClicks(b.full); scanClicks(b.core[0]); });
 var deadReal = Object.keys(deadClicks).filter(function (w) {
   return w.length > 1 && w.charAt(0) === w.charAt(0).toLowerCase();
 });
@@ -1238,6 +1267,65 @@ var lxDue = Scheduler.buildReview(20).filter(function (q) {
 });
 ok(lxDue.length > 0, '詞庫的字到期後排得進複習佇列');
 delete State.data.srs[lxWord.id];
+
+/* ==========================================================================
+   Stage 5：長難句拆解與三篇閱讀
+   ========================================================================== */
+describe('Stage 5');
+
+/* 十關全部可玩 —— 和 Stage 4 同一條規則：解鎖是一條鏈，中間空一關後面永遠開不了 */
+var s5 = Content.orderedUnitIds().filter(function (u) { return u.indexOf('s5u') === 0; });
+var s5NotReady = s5.filter(function (u) { return !Content.isReady(u); });
+ok(s5.length === 10 && s5NotReady.length === 0,
+   'Stage 5 十關都可玩' + (s5NotReady.length ? '：' + s5NotReady.join('、') + ' 還是製作中' : ''));
+
+/* 長難句的 seg 用一個空格接起來要還原成 full。
+   這是這個題型唯一會無聲壞掉的地方：少一個逗號、多一個空格，畫面照樣排得出來，
+   但學的人讀到的就不是原句了 —— 而拆解練的正好是「照著原句找骨架」。 */
+var parseBad = [];
+allParse.forEach(function (b) {
+  var seg = b.seg || [];
+  if (seg.length < 3) { parseBad.push(b.id + ' 不到三段'); return; }
+  var joined = seg.map(function (s) { return s[0]; }).join(' ');
+  if (joined !== b.full) parseBad.push(b.id + ' 接不回 full');
+  var roles = seg.map(function (s) { return s[1]; });
+  if (roles.filter(function (r) { return r === 'S'; }).length !== 1) parseBad.push(b.id + ' 主詞不是剛好一段');
+  if (roles.filter(function (r) { return r === 'V'; }).length !== 1) parseBad.push(b.id + ' 主要動詞不是剛好一段');
+  if (roles.some(function (r) { return !r; })) parseBad.push(b.id + ' 有一段沒寫角色');
+  if (!Array.isArray(b.core) || !b.core[0] || !b.core[1]) parseBad.push(b.id + ' 的 core 不是 [英, 中]');
+  if (!b.why) parseBad.push(b.id + ' 沒有解析');
+});
+ok(parseBad.length === 0, '長難句的各段接得回原句，主詞與主要動詞各剛好一段（' +
+   allParse.length + ' 句）' + (parseBad.length ? '：' + parseBad.slice(0, 5).join('、') : ''));
+
+/* 骨架必須真的比原句短。core 直接照抄整句的話，這個題型就只剩「點兩下」，
+   而它存在的理由就是「抽掉修飾語之後短得驚人」。 */
+var coreLong = allParse.filter(function (b) {
+  return b.core[0].split(/\s+/).length > b.full.split(/\s+/).length * 0.7;
+});
+ok(coreLong.length === 0, '骨架比原句短得夠明顯（不到七成長度）' +
+   (coreLong.length ? '：' + coreLong.map(function (b) { return b.id; }).slice(0, 5).join('、') : ''));
+
+/* Part 7 三篇：至少要有一組真的是三份文件，否則 Stage 5 那一關還在練雙篇 */
+var triples = allPart7.filter(function (d) { return (d.docs || []).length >= 3; });
+ok(triples.length >= 1, 'Part 7 有三篇閱讀的題組（' + triples.length + ' 組）');
+
+/* 三篇的跨篇題要多於雙篇 —— 只在前兩份之間對照的話，第三份就只是裝飾 */
+var thinTriple = triples.filter(function (d) {
+  return d.qs.filter(function (q) { return q.both; }).length < 3;
+});
+ok(thinTriple.length === 0, '三篇的題組至少有三題跨篇' +
+   (thinTriple.length ? '：' + thinTriple.map(function (d) { return d.id; }).join('、') : ''));
+
+/* 長難句答錯後要出得了題。weakQuestion 漏接新型別的話，怪獸進得了清單卻永遠消不掉 ——
+   前面那一項掃的是 SRS.addWeak 的字串參數，這裡直接把怪獸餵進去跑一次。 */
+State.data.weak.length = 0;
+SRS.addWeak('parse', allParse[0].id, allParse[0].u);
+var parseWeak = Scheduler.buildReview(20).filter(function (q) { return q.type === 'parse'; });
+ok(parseWeak.length > 0, '長難句變成弱點怪獸後出得了題');
+ok(parseWeak.length === 0 || parseWeak[0].ref.id === allParse[0].id,
+   '重問的是同一句（換一句只是再猜一次）');
+State.data.weak.length = 0;
 
 /* ==========================================================================
    結果

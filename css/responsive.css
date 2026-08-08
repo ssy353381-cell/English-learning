@@ -35,6 +35,18 @@
   .p7docs { grid-template-columns: 1fr; }
 }
 
+/* 三篇的門檻要更早：三欄在 1024px 以下一欄不到 300px，比雙篇更早撐不住。
+   直接掉回一欄而不是兩欄 —— 兩欄會剩一份文件孤零零掉到第二排，
+   看起來像「另外那一份是附註」，可是三篇的重點正是三份地位相同。 */
+@media (max-width: 1024px) {
+  .p7docs.n3 { grid-template-columns: 1fr; }
+}
+
+/* 長難句拆解：窄畫面兩個空格擠在一行會被切成兩三行字，改成上下排 */
+@media (max-width: 560px) {
+  .parse-slots { grid-template-columns: 1fr; }
+}
+
 /* ---------- 桌機：導覽移到左側，內容置中 ---------- */
 @media (min-width: 900px) {
   :root { --nav-h: 0px; }

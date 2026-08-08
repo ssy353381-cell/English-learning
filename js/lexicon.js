@@ -58,6 +58,11 @@
   /* ---------- 索引 ---------- */
   var byWord = null;     // 小寫字 → entry
   var byForm = null;     // 變化形 → 原形字（原形本身不列入）
+  /* 同一個變化形被兩個字搶走時的第二名。leaves 是 leaf 的複數，也是 leave 的
+     第三人稱；lives、halves、shelves、calves 全是同一回事（-f 名詞的複數剛好
+     等於 -ve 動詞的第三人稱）。兩邊都是對的字，所以不是挑一個丟一個，
+     而是查詢卡上兩筆都列出來，讓使用者自己認。 */
+  var byFormAlt = null;
   var ordered = null;    // 依級數、字母排好的全部 entry
 
   function makeAuto(rec, lv) {
@@ -98,11 +103,18 @@
   /* 不規則複數推不出來，但它是一個封閉的小集合，寫死就寫死。
      不規則動詞有 data/irregular-verbs.js —— 那是課程要教的內容，有 A／B／C 三型；
      這幾個名詞沒有人要教，純粹是查不查得到的問題，所以放在規則旁邊而不是 data/。
-     刻意不收 life／leaf／shelf 那組 -f→-ves：lives 與 leaves 同時是 live 與 leave
-     的第三人稱，收進來等於跟動詞搶同一個鍵，而動詞天天出現、名詞複數難得一見。 */
+     -f／-fe → -ves 那組也收進來。自動層的 ECDICT 給得出 leaves、knives，
+     但 half、shelf、wife 是課程單字（src 'vocab'，沒有 forms 欄），規則推出來的
+     halfs／shelfs 沒有人會查，真正會被點到的 shelves 反而整個查不到。
+     **只能寫成封閉清單，不能寫成規則**：-f 結尾的字大多是加 s（roof、chief、
+     belief），推成 believes 會跑去跟 believe 的第三人稱擠同一個鍵，
+     然後在卡片上騙人說「believes 也可能是 belief 的複數」。 */
   var IRREGULAR_PLURAL = {
     child: 'children', man: 'men', woman: 'women', person: 'people',
-    tooth: 'teeth', foot: 'feet', goose: 'geese', mouse: 'mice', ox: 'oxen'
+    tooth: 'teeth', foot: 'feet', goose: 'geese', mouse: 'mice', ox: 'oxen',
+    half: 'halves', shelf: 'shelves', wife: 'wives', knife: 'knives',
+    life: 'lives', leaf: 'leaves', wolf: 'wolves', thief: 'thieves',
+    loaf: 'loaves', calf: 'calves', self: 'selves', scarf: 'scarves'
   };
 
   /* 規則變化：手寫層與課程單字都沒有 ECDICT 的 exchange 欄，只能照拼字規則推。
@@ -146,6 +158,7 @@
   function build() {
     byWord = {};
     byForm = {};
+    byFormAlt = {};
     ordered = [];
 
     function put(e) {
@@ -226,7 +239,13 @@
     function form(f, base) {
       if (!f) return;
       f = f.toLowerCase();
-      if (byWord[f] || byForm[f]) return;   // 本身就是詞條，或已經有人認領
+      if (byWord[f]) return;                // 本身就是詞條，變化形搶不走
+      if (byForm[f]) {
+        // 已經有人認領：不搶，但把第二個候選記下來（leaves 既是 leaf 也是 leave）。
+        // 只留一個 —— 第三個候選在真實資料裡不存在，留著只會讓卡片變成清單。
+        if (byForm[f] !== base && !byFormAlt[f]) byFormAlt[f] = base;
+        return;
+      }
       byForm[f] = base;
     }
     ordered.forEach(function (e) {
@@ -314,19 +333,27 @@
 
     var base = byForm[k] || byForm[poss];
     if (base && byWord[base]) {
-      var e = byWord[base], via = '變化形';
-      for (var f in e.forms) {
-        if (Object.prototype.hasOwnProperty.call(e.forms, f) &&
-            String(e.forms[f]).toLowerCase() === k) { via = FORM_LABEL[f] || via; break; }
+      var altBase = byFormAlt[k] || byFormAlt[poss];
+      var hit = { entry: byWord[base], via: viaOf(byWord[base], k) };
+      // 第二個候選也是一個對的答案，不是備胎 —— 卡片上要看得到，而且點得過去
+      if (altBase && byWord[altBase]) {
+        hit.alt = { w: byWord[altBase].w, via: viaOf(byWord[altBase], k) };
       }
-      if (via === '變化形') {
-        if (/ing$/.test(k)) via = '現在分詞';
-        else if (/ied$|ed$/.test(k)) via = '過去式／過去分詞';
-        else if (/ies$|es$|s$/.test(k)) via = '複數／第三人稱';
-      }
-      return { entry: e, via: via };
+      return hit;
     }
     return null;
+  }
+
+  /** 「你點的這個字是它的哪一種變化」。資料有寫就用資料的，沒寫才看字尾猜。 */
+  function viaOf(e, k) {
+    for (var f in e.forms) {
+      if (Object.prototype.hasOwnProperty.call(e.forms, f) &&
+          String(e.forms[f]).toLowerCase() === k) return FORM_LABEL[f] || '變化形';
+    }
+    if (/ing$/.test(k)) return '現在分詞';
+    if (/ied$|ed$/.test(k)) return '過去式／過去分詞';
+    if (/ies$|es$|s$/.test(k)) return '複數／第三人稱';
+    return '變化形';
   }
 
   function item(id) {
@@ -503,6 +530,10 @@
       '</div>' +
       (hit.via ? '<div class="lexvia">你點的是 <b>' + esc(hit.word || '') + '</b>　' +
         esc(e.w) + ' 的' + esc(hit.via) + '</div>' : '') +
+      // 同一個變化形被兩個字共用時（leaves ＝ leaf 的複數，也是 leave 的第三人稱），
+      // 兩筆都列出來。挑一邊顯示的話，另一邊那個意思在這個 App 裡就永遠查不到。
+      (hit.alt ? '<div class="lexvia alt">也可能是 ' + wordChip(hit.alt.w) +
+        ' 的' + esc(hit.alt.via) + '</div>' : '') +
       '<div class="lexzh"><span class="word-pos">' + esc(e.pos || '') + '</span>' + esc(e.zh) + '</div>' +
       (tagHtml ? '<div class="lextags">' + tagHtml + '</div>' : '') +
       extendHTML(e) +

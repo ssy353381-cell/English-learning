@@ -12,6 +12,7 @@
   --blue-soft:    #ddf4ff;
   --purple:       #ce82ff;
   --purple-dark:  #a568cc;
+  --purple-soft:  #f3e3ff;
   --gold:         #ffc800;
   --gold-dark:    #e6a400;
   --red:          #ff4b4b;
@@ -59,6 +60,7 @@ html[data-theme="dark"] {
   --green-soft:   #24401a;
   --blue-soft:    #16333f;
   --red-soft:     #3d1f22;
+  --purple-soft:  #2f2340;
 }
 
 /* ---------- reset ---------- */
