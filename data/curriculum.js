@@ -264,7 +264,8 @@ window.DATA_CURRICULUM = {
 
       { id:'s3u8', n:43, title:'Part 5 詞性判斷題', icon:'🔍',
         goal:'四個選項是同一個字的四種詞性時，看字尾就能選，不必看懂句子',
-        plan:[['intro',1],['flashcard',12],['recall',6],['grammar',9],['cloze',5],
+        /* flashcard 是 11 不是 12：這一關只收了 11 個字，寫 12 只會少排一題 */
+        plan:[['intro',1],['flashcard',11],['recall',6],['grammar',9],['cloze',5],
               ['listen',3],['build',2]] },
 
       { id:'s3u9', n:44, title:'Part 3/4 聽長對話', icon:'🗣️',
@@ -282,18 +283,55 @@ window.DATA_CURRICULUM = {
     sub: '假設語氣・分詞構句・Part 6/7',
     level: '約 TOEIC 800–860',
     desc: '句子開始變長變複雜。假設語氣、分詞構句、片語動詞，加上雙篇閱讀的跨篇找答案技巧。',
-    ready: false,
+    ready: true,
     units: [
-      { id:'s4u1', n:46, title:'假設語氣 if 三種型', icon:'🌀' },
-      { id:'s4u2', n:47, title:'分詞構句', icon:'✂️' },
-      { id:'s4u3', n:48, title:'片語動詞 100 組', icon:'🧷' },
-      { id:'s4u4', n:49, title:'易混淆字組', icon:'👯' },
-      { id:'s4u5', n:50, title:'Part 6 段落填空', icon:'📝', boss:true },
-      { id:'s4u6', n:51, title:'Part 7 單篇閱讀', icon:'📄' },
-      { id:'s4u7', n:52, title:'Part 7 雙篇閱讀', icon:'📑' },
-      { id:'s4u8', n:53, title:'同義改寫辨識', icon:'🔤' },
-      { id:'s4u9', n:54, title:'閱讀速度訓練', icon:'⚡' },
-      { id:'s4u10', n:55, title:'Stage 4 魔王測驗', icon:'👑', boss:true }
+      { id:'s4u1', n:46, title:'假設語氣 if 三種型', icon:'🌀',
+        goal:'分得出「有可能」「純假設」「後悔」三種 if，而且知道時態要往回退一格',
+        plan:[['collocate',2],['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',8],
+              ['cloze',4],['build',3],['read',1]] },
+
+      { id:'s4u2', n:47, title:'分詞構句', icon:'✂️',
+        goal:'看懂句首那串 -ing／-ed 是誰做的 —— 主詞被省略了，但它一定是後半句的主詞',
+        plan:[['intro',1],['flashcard',10],['recall',6],['listen',4],['grammar',8],
+              ['cloze',4],['build',3],['dictate',3],['read',1]] },
+
+      { id:'s4u3', n:48, title:'片語動詞', icon:'🧷',
+        goal:'動詞加一個介系詞就換一個意思 —— 這些字每個都認得，合起來卻看不懂',
+        /* spell 寫 0：這一關的字全是片語動詞，中間有空格，
+           用字母銀行拼「hand over」根本拼不出那個空格。不寫的話會被自動配上。 */
+        plan:[['collocate',2],['intro',1],['flashcard',12],['recall',8],['listen',5],['spell',0],
+              ['cloze',4],['build',3],['grammar',4],['read',1]] },
+
+      { id:'s4u4', n:49, title:'易混淆字組', icon:'👯',
+        goal:'長得像、詞性不同的字組 —— 多益 Part 5 有一整批題目就在考這個',
+        plan:[['intro',1],['flashcard',12],['recall',8],['listen',5],['spell',4],
+              ['grammar',5],['cloze',4],['build',3],['read',1]] },
+
+      { id:'s4u5', n:50, title:'Part 6 段落填空', icon:'📝', boss:true,
+        goal:'空格的答案在別的句子裡 —— 這是 Part 6 和 Part 5 唯一的差別',
+        plan:[['part6',2],['grammar',5],['cloze',4],['recall',6],['listen',3],['read',1]] },
+
+      { id:'s4u6', n:51, title:'Part 7 單篇閱讀', icon:'📄',
+        goal:'一篇長文章配三到四題 —— 練「先看題目再回頭找」，不要從第一個字讀到最後',
+        plan:[['read',2],['recall',6],['cloze',3],['listen',3],['grammar',3]] },
+
+      { id:'s4u7', n:52, title:'Part 7 雙篇閱讀', icon:'📑',
+        goal:'兩份文件配五題，其中一定有一題的答案要兩篇合起來看才找得到',
+        plan:[['part7',1],['recall',6],['cloze',3],['listen',3],['grammar',3]] },
+
+      { id:'s4u8', n:53, title:'同義改寫辨識', icon:'🔤',
+        goal:'選項不會照抄原文 —— 認得出「同一件事換句話說」才選得對',
+        plan:[['intro',1],['flashcard',10],['recall',7],['grammar',8],['cloze',4],
+              ['listen',4],['build',3],['read',1]] },
+
+      { id:'s4u9', n:54, title:'閱讀速度訓練', icon:'⚡',
+        goal:'把速度推到多益要求的 150 字／分 —— 讀完一篇的時間比讀懂每個字重要',
+        plan:[['read',3],['recall',8],['listen',4],['cloze',3]] },
+
+      { id:'s4u10', n:55, title:'Stage 4 魔王測驗', icon:'👑', boss:true,
+        goal:'假設語氣、分詞構句、片語動詞、易混淆字，加上 Part 6 與雙篇閱讀全部混合',
+        plan:[['collocate',2],['part6',1],['part7',1],['grammar',10],['cloze',6],['build',4],
+              ['listen',5],['dictate',4],['recall',10],['read',1]] }
     ]
   },
   {

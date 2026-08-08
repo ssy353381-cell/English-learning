@@ -28,6 +28,13 @@
   .modal-box { padding: 18px 16px; }
 }
 
+/* 雙篇閱讀：窄畫面改成上下疊，但兩份文件仍然都在畫面上 ——
+   捲動一下就看得到第二篇，跟折疊起來是兩回事。
+   並排到 780px 就撐不住了：Part 7 的文件本來就長，一欄剩不到 20 個字元寬。 */
+@media (max-width: 780px) {
+  .p7docs { grid-template-columns: 1fr; }
+}
+
 /* ---------- 桌機：導覽移到左側，內容置中 ---------- */
 @media (min-width: 900px) {
   :root { --nav-h: 0px; }

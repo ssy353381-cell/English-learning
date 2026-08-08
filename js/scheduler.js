@@ -27,6 +27,9 @@
   }
 
   /** 練習用字：這關的字 + 一部分舊字（讓複習自然發生） */
+  /* 練習池至少要湊到這麼多個字，配方裡最多的一項（魔王關的 recall 10）才排得滿 */
+  var MIN_POOL = 16;
+
   function practicePool(unitId, focus) {
     var here = Content.vocabOf(unitId);
     var older = Content.vocabUpTo(unitId).filter(function (v) { return v.u !== unitId && SRS.has(v.id); });
@@ -138,6 +141,14 @@
     }
 
     var pool = dedupe(practicePool(unitId, focus));
+    /* 魔王關與純聽力關（Part 1／2、Part 3／4、Part 6／7）沒有自己的單字，
+       練習池全靠 practicePool 收的「學過**而且進過 SRS**」的舊字。SRS 還空著的時候
+       —— 剛匯入存檔、或靠跳關測驗一路上來 —— 那些關卡會靜靜地少掉一整批題：
+       配方寫了 recall 10、listen 5，實際一題都沒有。
+       抽到還沒複習到期的舊字，總比整組題目消失好。 */
+    if (pool.length < MIN_POOL) {
+      pool = dedupe(pool.concat(SAMPLE(Content.vocabUpTo(unitId), MIN_POOL - pool.length)));
+    }
     var focusOrPool = focus.length ? focus : pool;
 
     /* --- 3. 單字回想（中英互選） --- */
@@ -153,10 +164,14 @@
     /* --- 3.5 字母銀行拼字：認得 → 拼得出來 --- */
     if (plan.spell) {
       // 優先拼「剛學過但還不熟」的字，長度 3–10 才適合拼
-      var spellPool = pool.filter(function (v) {
-        return v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w) && SRS.levelOf(v.id) < 3;
-      });
-      if (!spellPool.length) spellPool = focusOrPool;
+      function spellable(v) {
+        return v.w.length >= 3 && v.w.length <= 10 && !/\s/.test(v.w);
+      }
+      var spellPool = pool.filter(function (v) { return spellable(v) && SRS.levelOf(v.id) < 3; });
+      // 退而求其次時也要守住「拼得出來」這一條：片語動詞那一關的字全部有空格，
+      // 不濾就會出現用字母銀行拼 hand over 的題目 —— 空格根本不在字母裡。
+      // 濾完真的一個都不剩就不出拼字題，配方那一項寫 0 即可。
+      if (!spellPool.length) spellPool = focusOrPool.filter(spellable);
       SAMPLE(spellPool, plan.spell).forEach(function (v) {
         body.push({ type: 'spell', ref: v, unitId: unitId });
       });
@@ -287,10 +302,32 @@
       });
     }
 
+    /* --- 9.7 多益 Part 6／Part 7：和閱讀一樣重，一律放到收尾 --- */
+    // Part 6 一篇要填四格、Part 7 雙篇要讀兩份文件再答五題，
+    // 夾在單字題中間會把節奏切斷，所以跟閱讀與 Part 3／4 一起排在最後。
+    if (plan.part6) {
+      var p6 = Content.part6Of(unitId);
+      if (!p6.length) p6 = Content.part6UpTo(unitId);
+      SAMPLE(p6, plan.part6).forEach(function (x) {
+        tail.push({ type: 'part6', ref: x, unitId: unitId });
+      });
+    }
+    if (plan.part7) {
+      var p7 = Content.part7Of(unitId);
+      if (!p7.length) p7 = Content.part7UpTo(unitId);
+      SAMPLE(p7, plan.part7).forEach(function (d) {
+        tail.push({ type: 'part7', ref: d, unitId: unitId });
+      });
+    }
+
     /* --- 10. 閱讀（放最後，當作這關的收尾） --- */
     if (plan.read) {
+      // 自己沒有短文就一路往前找，而不是只看前一關 ——
+      // Stage 4 有連著三關都是純題型關（Part 6、Part 7 單篇、雙篇），
+      // 只退一格會退到同樣沒有短文的關卡，read 那一項就靜靜地消失。
       var arts = Content.readingOf(unitId);
-      if (!arts.length) arts = Content.readingOf(Content.prevUnitId(unitId) || '');
+      var back = unitId;
+      while (!arts.length && (back = Content.prevUnitId(back))) arts = Content.readingOf(back);
       SAMPLE(arts, plan.read).forEach(function (a) {
         tail.push({ type: 'read', ref: a, unitId: unitId });
       });
@@ -467,8 +504,24 @@
       return { type: 'convo', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
+    // Part 6 記的是整篇文章。只補做答錯那一格沒有意義 ——
+    // 這一題型的訓練目標就是「從整篇找線索」，抽出單格等於降級成 Part 5。
+    if (w.t === 'part6') {
+      return { type: 'part6', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
+    // Part 7 雙篇同理：兩份文件一起重讀，五小題全對才算消滅
+    if (w.t === 'part7') {
+      return { type: 'part7', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
     return null;
   }
+
+  /* 「一題就要好幾分鐘」的那幾種。怪獸型別與題型名稱不一樣（reading／read），
+     兩張表分開列，才不會有人改了一邊忘了另一邊。 */
+  var HEAVY_WEAK = { reading: 1, convo: 1, part6: 1, part7: 1 };
+  var HEAVY_TYPE = { read: 1, convo: 1, part6: 1, part7: 1 };
 
   function buildReview(limit) {
     limit = limit || 20;
@@ -487,12 +540,13 @@
       .sort(function (a, b) { return b.n - a.n; })
       .forEach(function (w) {
         if (taken() >= budget) return;
-        // 一篇文章要讀好幾分鐘，Part 3／4 要聽完整段再答三小題，一樣重。
-        // 兩種合計一次複習最多夾一個，否則整輪複習會被它們吃光。
-        if ((w.t === 'reading' || w.t === 'convo') && tail.length) return;
+        // 一篇文章要讀好幾分鐘，Part 3／4 要聽完整段再答三小題，
+        // Part 6 要填四格、Part 7 雙篇更要讀兩份文件再答五題 —— 全都一樣重。
+        // 四種合計一次複習最多夾一個，否則整輪複習會被它們吃光。
+        if (HEAVY_WEAK[w.t] && tail.length) return;
         var q = weakQuestion(w);
         if (!q) return;
-        if (q.type === 'read' || q.type === 'convo') tail.push(q);
+        if (HEAVY_TYPE[q.type]) tail.push(q);
         else out.push(q);
       });
 

@@ -230,7 +230,7 @@ var Content = app.Content, Scheduler = app.Scheduler, SRS = app.SRS, State = app
 describe('資料完整性');
 
 var PREFIX = { v: 'vocab', g: 'grammar', r: 'reading', i: 'irregular', p: 'photo', q: 'respond',
-               m: 'minpair', c: 'convo' };
+               m: 'minpair', c: 'convo', x: 'part6', d: 'part7' };
 var seen = {}, dupes = [], badPrefix = [];
 
 function checkIds(list, kind) {
@@ -242,6 +242,7 @@ function checkIds(list, kind) {
 }
 checkIds(Content.allVocab(), 'vocab');
 var allGrammar = [], allReading = [], allPhoto = [], allRespond = [], allMinPair = [], allConvo = [];
+var allPart6 = [], allPart7 = [];
 Content.orderedUnitIds().forEach(function (uid) {
   allGrammar = allGrammar.concat(Content.grammarOf(uid));
   allReading = allReading.concat(Content.readingOf(uid));
@@ -249,6 +250,8 @@ Content.orderedUnitIds().forEach(function (uid) {
   allRespond = allRespond.concat(Content.respondOf(uid));
   allMinPair = allMinPair.concat(Content.minPairsOf(uid));
   allConvo = allConvo.concat(Content.convoOf(uid));
+  allPart6 = allPart6.concat(Content.part6Of(uid));
+  allPart7 = allPart7.concat(Content.part7Of(uid));
 });
 checkIds(allGrammar, 'grammar');
 checkIds(allReading, 'reading');
@@ -257,14 +260,17 @@ checkIds(allPhoto, 'photo');
 checkIds(allRespond, 'respond');
 checkIds(allMinPair, 'minpair');
 checkIds(allConvo, 'convo');
+checkIds(allPart6, 'part6');
+checkIds(allPart7, 'part7');
 
 ok(dupes.length === 0, 'id 全域唯一（四種資料共用 byId 索引）' + (dupes.length ? '：' + dupes.slice(0, 5).join('、') : ''));
-ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
+ok(badPrefix.length === 0, 'id 前綴與型別相符（v/g/r/i/p/q/m/c/x/d）' + (badPrefix.length ? '：' + badPrefix.slice(0, 5).join('、') : ''));
 
 var unitIds = {};
 Content.orderedUnitIds().forEach(function (u) { unitIds[u] = 1; });
 var orphan = [];
-Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond, allMinPair, allConvo).forEach(function (x) {
+Content.allVocab().concat(allGrammar, allReading, allPhoto, allRespond, allMinPair, allConvo,
+                          allPart6, allPart7).forEach(function (x) {
   if (!unitIds[x.u]) orphan.push(x.id + ' → ' + x.u);
 });
 ok(orphan.length === 0, '每筆資料的 u 都指到存在的關卡' + (orphan.length ? '：' + orphan.slice(0, 5).join('、') : ''));
@@ -494,7 +500,7 @@ listJs('js/exercises').forEach(function (rel) {
     exTypes[m.replace(/^\s*Ex\./, '').replace(/\s*=$/, '')] = 1;
   });
 });
-eq(Object.keys(exTypes).length, 17, '註冊了 17 種題型');
+eq(Object.keys(exTypes).length, 19, '註冊了 19 種題型');
 
 // 兩種起步取向都要組得出題 —— planVocab 只有選「先學單字」的人會走到，壞了不會有人發現
 var emptyLesson = [], badType = [];
@@ -797,7 +803,9 @@ var samples = {
   photo: (allPhoto[0] || {}).id,
   respond: (allRespond[0] || {}).id,
   phoneme: (allMinPair[0] || {}).id,
-  convo: (allConvo[0] || {}).id
+  convo: (allConvo[0] || {}).id,
+  part6: (allPart6[0] || {}).id,
+  part7: (allPart7[0] || {}).id
 };
 Object.keys(weakTypes).forEach(function (t) {
   var refId = samples[t];
@@ -1085,6 +1093,125 @@ var deadReal = Object.keys(deadClicks).filter(function (w) {
 });
 ok(deadReal.length === 0, '手寫例句裡的一般字沒有一個點開是空的' +
    (deadReal.length ? '，還缺 ' + deadReal.length + '：' + deadReal.slice(0, 10).join('、') : ''));
+
+/* ==========================================================================
+   Stage 4：Part 6 段落填空與 Part 7 雙篇閱讀
+   ========================================================================== */
+describe('Stage 4');
+
+/* 每一個可玩的關卡，配方要的題數都要真的排得出來。
+   這是最容易無聲壞掉的地方：出不來的題型不會噴錯，只是靜靜地不出現 ——
+   魔王關寫了 recall 10 卻一題都沒有，玩起來只覺得「這關好短」。 */
+var planShort = [];
+Content.orderedUnitIds().forEach(function (uid) {
+  if (!Content.isReady(uid)) return;
+  var got = {};
+  Scheduler.buildLesson(uid).forEach(function (q) { got[q.type] = (got[q.type] || 0) + 1; });
+  (Content.planOf(uid) || []).forEach(function (p) {
+    // intro 是教學卡，有幾個文法點就幾張，配方寫 1 只是「要不要」
+    if (p[0] === 'intro') return;
+    if ((got[p[0]] || 0) < p[1]) planShort.push(uid + ' 的 ' + p[0] + '（' + (got[p[0]] || 0) + '/' + p[1] + '）');
+  });
+});
+ok(planShort.length === 0, '每個可玩關卡的配方都排得滿' +
+   (planShort.length ? '：' + planShort.slice(0, 6).join('、') : ''));
+
+/* Part 6 的空格標號要從 1 連號到 blanks.length —— 題型模組是照號碼把選到的字
+   填回文章裡的，少一個號碼就會有一格永遠填不上，多一個則指向不存在的題目 */
+var p6Bad = [];
+allPart6.forEach(function (x) {
+  var nums = (String(x.text).match(/___(\d+)___/g) || [])
+    .map(function (m) { return +m.replace(/_/g, ''); });
+  var want = (x.blanks || []).length;
+  if (!want) { p6Bad.push(x.id + ' 沒有 blanks'); return; }
+  if (nums.length !== want) { p6Bad.push(x.id + ' 文章有 ' + nums.length + ' 個空格但 blanks 有 ' + want + ' 題'); return; }
+  nums.slice().sort(function (a, b) { return a - b; }).forEach(function (n, i) {
+    if (n !== i + 1) p6Bad.push(x.id + ' 的空格標號不是 1..' + want);
+  });
+  (x.blanks || []).forEach(function (b, i) {
+    if (!b.opts || b.opts.length < 2) p6Bad.push(x.id + ' 第 ' + (i + 1) + ' 格選項不足');
+    else if (!(b.a >= 0 && b.a < b.opts.length)) p6Bad.push(x.id + ' 第 ' + (i + 1) + ' 格的答案索引超出範圍');
+    if (!b.why) p6Bad.push(x.id + ' 第 ' + (i + 1) + ' 格沒有解析');
+  });
+});
+ok(p6Bad.length === 0, 'Part 6 的空格標號連號、選項與解析齊全（' + allPart6.length + ' 篇）' +
+   (p6Bad.length ? '：' + p6Bad.slice(0, 5).join('、') : ''));
+
+/* 每篇 Part 6 都要有一題整句插入題 —— 那是這個題型和 Part 5 差最多的一種，
+   而且真實測驗每篇必有一題 */
+ok(allPart6.every(function (x) {
+  return (x.blanks || []).some(function (b) { return b.kind === 'sentence'; });
+}), '每篇 Part 6 都有一題整句插入題');
+
+/* Part 7 雙篇的重點就是跨篇對照。沒有 both:true 的那一組，
+   等於把兩篇單篇擺在一起，這個題型就白做了 */
+var p7Bad = [];
+allPart7.forEach(function (d) {
+  if (!d.docs || d.docs.length < 2) { p7Bad.push(d.id + ' 不到兩份文件'); return; }
+  d.docs.forEach(function (doc, i) {
+    if (!doc.text) p7Bad.push(d.id + ' 第 ' + (i + 1) + ' 份文件沒有內文');
+  });
+  if (!(d.qs || []).length) { p7Bad.push(d.id + ' 沒有題目'); return; }
+  if (!d.qs.some(function (q) { return q.both; })) p7Bad.push(d.id + ' 沒有任何跨篇題');
+  d.qs.forEach(function (q, i) {
+    if (!q.opts || q.opts.length < 2) p7Bad.push(d.id + ' 第 ' + (i + 1) + ' 題選項不足');
+    else if (!(q.a >= 0 && q.a < q.opts.length)) p7Bad.push(d.id + ' 第 ' + (i + 1) + ' 題的答案索引超出範圍');
+  });
+});
+ok(p7Bad.length === 0, 'Part 7 每組都有兩份文件與至少一題跨篇題（' + allPart7.length + ' 組）' +
+   (p7Bad.length ? '：' + p7Bad.slice(0, 5).join('、') : ''));
+
+/* Part 6／7 一題就要好幾分鐘，和閱讀、Part 3／4 一樣重。
+   沒有一起限流的話，一輪複習可能排進兩篇雙篇閱讀，整個複習就毀了。
+   用行為測而不是掃原始碼 —— 掃字串的話，兩張表只改對一張也會過。 */
+function heavyCount(list) {
+  State.data.srs = {};
+  State.data.weak.length = 0;
+  list.forEach(function (p, i) {
+    State.data.weak.push({ k: p[0] + ':' + p[1], t: p[0], r: p[1], u: '', n: 9 - i, at: State.dayStr() });
+  });
+  var q = Scheduler.buildReview(20);
+  State.data.weak.length = 0;
+  return q.filter(function (x) {
+    return x.type === 'read' || x.type === 'convo' || x.type === 'part6' || x.type === 'part7';
+  }).length;
+}
+// part7 排在最前面（n 最大）是刻意的：它要先被處理，才驗得到「有沒有被放進 tail」。
+// 放後面的話，前面那個 part6 已經佔滿 tail，後面全被擋掉，兩張表只改對一張也會過。
+var heavyPairs = [];
+if (allPart7.length >= 2) heavyPairs.push(['part7', allPart7[0].id], ['part7', allPart7[1].id]);
+if (allPart6.length >= 2) heavyPairs.push(['part6', allPart6[0].id], ['part6', allPart6[1].id]);
+if (allReading.length) heavyPairs.push(['reading', allReading[0].id]);
+ok(heavyPairs.length >= 4 && heavyCount(heavyPairs) === 1,
+   '一輪複習最多只排進一個「重」的項目（閱讀／Part 3・4／Part 6／Part 7 合計，實得 ' +
+   heavyCount(heavyPairs) + '）');
+
+/* 拼字題是字母銀行，有空格的字拼不出那個空格 —— 片語動詞那一關全部是這種字 */
+var spellSpaced = [];
+Content.orderedUnitIds().forEach(function (uid) {
+  if (!Content.isReady(uid)) return;
+  Scheduler.buildLesson(uid).forEach(function (q) {
+    if (q.type === 'spell' && /\s/.test(q.ref.w)) spellSpaced.push(uid + ' → ' + q.ref.w);
+  });
+});
+ok(spellSpaced.length === 0, '拼字題不會出有空格的字（字母銀行拼不出空格）' +
+   (spellSpaced.length ? '：' + spellSpaced.slice(0, 5).join('、') : ''));
+
+/* 弱點怪獸的型別在複習頁要有中文名字，否則畫面上會印出 part6 這種內部代號。
+   掃 review.js 的對照表，和 addWeak 用到的型別比對。 */
+var revSrc = fs.readFileSync(path.join(ROOT, 'js/views/review.js'), 'utf8');
+var revBlock = revSrc.slice(revSrc.indexOf('var WEAK_LABEL'), revSrc.indexOf('var tab'));
+var noLabel = Object.keys(weakTypes).filter(function (t) {
+  return !new RegExp('(^|[^a-zA-Z])' + t + '\\s*:').test(revBlock);
+});
+ok(noLabel.length === 0, '每種弱點怪獸在複習頁都有中文名字' +
+   (noLabel.length ? '：' + noLabel.join('、') + ' 會印出內部代號' : ''));
+
+/* Stage 4 十關全部可玩 —— 解鎖是一條鏈，中間空一關後面就永遠開不了 */
+var s4 = Content.orderedUnitIds().filter(function (u) { return u.indexOf('s4u') === 0; });
+var s4NotReady = s4.filter(function (u) { return !Content.isReady(u); });
+ok(s4.length === 10 && s4NotReady.length === 0,
+   'Stage 4 十關都可玩' + (s4NotReady.length ? '：' + s4NotReady.join('、') + ' 還是製作中' : ''));
 
 /* 詞庫特訓 */
 var drillWords = Lexicon.byLevel(3).slice(0, 8);
