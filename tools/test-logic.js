@@ -1009,6 +1009,83 @@ ok(mk.indexOf('>amp<') < 0, 'markup 不會把實體裡的字母包成單字');
 ok(/data-lexw="run"/.test(mk), 'markup 把句子裡的字包成可點的 span');
 ok(Lexicon.markup('a<b>c').indexOf('<b>') < 0, 'markup 會轉義使用者資料裡的標籤');
 
+/* 重音字母：課程例句裡就有 café 與 résumé。TOKEN_RE 少了重音範圍的話，
+   café 會斷成可點的 caf 加一個掉在 span 外面的 é。 */
+var mkAcc = Lexicon.markup('Meet me at the café.');
+ok(/data-lexw="café"/.test(mkAcc), 'markup 把重音字母含進同一個字（café 不會斷成 caf）');
+ok(mkAcc.indexOf('</span>é') < 0, 'é 沒有掉在 span 外面');
+var accHit = Lexicon.lookup('café');
+ok(accHit && accHit.entry.w === 'cafe', 'norm 把 é 摺成 e，café 查得到 cafe');
+
+/* 縮寫：esc() 會把 ' 轉成 &#39;，TOKEN_RE 不把那個實體吃進單字裡的話，
+   每一個縮寫都被切成兩半（doesn ／ t），兩半都查不到。 */
+var mkC = Lexicon.markup("It doesn't work.");
+ok(/data-lexw="doesn&#39;t"/.test(mkC), 'markup 不會在縮寫的那一撇切開（doesn\'t 是一個字）');
+ok(mkC.indexOf('data-lexw="doesn"') < 0, '縮寫沒有留下查不到的半截');
+var contr = [["can't", 'can'], ["won't", 'will'], ["I'm", 'I'], ["I'll", 'I'], ["didn't", 'do']];
+var contrBad = [];
+contr.forEach(function (p) {
+  var h = Lexicon.lookup(p[0]);
+  if (!h || h.entry.w.toLowerCase() !== p[1].toLowerCase()) {
+    contrBad.push(p[0] + ' → ' + (h ? h.entry.w : '查不到'));
+  }
+});
+ok(contrBad.length === 0, '縮寫查得回開頭那個字（ExUtil.matchAny 早就會展開，查詢這側也要）' +
+   (contrBad.length ? '：' + contrBad.join('、') : ''));
+
+/* ruleForms 推不出來的那幾類。每一個都在本 repo 的例句裡真的出現過。 */
+var formCases = [['cheaper', 'cheap'], ['biggest', 'big'], ['busier', 'busy'], ['latest', 'late'],
+                 ['photos', 'photo'], ['children', 'child'], ['men', 'man'], ['teeth', 'tooth'],
+                 ['permitted', 'permit'], ['occurred', 'occur'], ['transferred', 'transfer'],
+                 ['feelings', 'feel'], ['savings', 'save'], ['meant', 'mean'], ['hung', 'hang']];
+var formBad = [];
+formCases.forEach(function (p) {
+  var h = Lexicon.lookup(p[0]);
+  if (!h || h.entry.w.toLowerCase() !== p[1]) formBad.push(p[0] + ' → ' + (h ? h.entry.w : '查不到'));
+});
+ok(formBad.length === 0, '比較級、不規則複數、重複子音與動名詞複數都查得回原形' +
+   (formBad.length ? '：' + formBad.join('、') : ''));
+
+/* 課程單字沒有 forms 欄，自動層有的話要補進去。拿 oversee 測而不是 occur：
+   occurred 靠重複子音的規則也推得出來，overseen／oversaw 只有 ECDICT 給得出，
+   補不進去就只剩規則推得到的那幾種變化。 */
+var ovs = Lexicon.lookup('overseen');
+ok(ovs && ovs.entry.w === 'oversee' && ovs.entry.u,
+   '課程單字補得到自動層的詞形變化（overseen → oversee，且 oversee 有綁關卡）');
+
+/* 複數所有格只有一撇 */
+var possP = Lexicon.lookup("weeks'");
+ok(possP && possP.entry.w === 'week', '複數的所有格查得回原形（two weeks\' notice）');
+
+/* 連字號複合字收不完，但拆開後每一段都查得到 —— 整串不可點才是最糟的 */
+var mkH = Lexicon.markup('a two-year contract');
+ok(/data-lexw="two"/.test(mkH) && /data-lexw="year"/.test(mkH),
+   '查不到的連字號複合字拆成各段分別可點（two-year → two ／ year）');
+ok(/class="lexw known" data-lexw="Wi-Fi"/.test(Lexicon.markup('free Wi-Fi here')),
+   '整串查得到的連字號字不拆開（Wi-Fi 是一個詞條）');
+
+/* 例句點字的覆蓋率。本 repo 手寫的例句掃一遍，包成 span 卻查不到的字全部撿出來，
+   再只留「小寫開頭且不只一個字母」的 —— 剩下的專有名詞（Taipei、Amy、June）查不到
+   是對的，a.m. 拆出來的孤字 m 也不是字。過濾完應該一個都不剩：留下來的每一個
+   都是真的有人點得到、點開卻是空的字。
+   數量門檻擋不住這種事（少一個字還在門檻內），所以這裡不設門檻，直接要求歸零。 */
+var deadClicks = {};
+var deadRe = /<span class="lexw" data-lexw="([^"]*)">/g;
+Lexicon.all().forEach(function (e) {
+  if (e.src === 'auto') return;             // WordNet 那批句子滿是專有名詞，不是本 repo 寫的
+  (e.ex || []).forEach(function (p) {
+    if (!p || !p[0]) return;
+    var html = Lexicon.markup(p[0]), m;
+    deadRe.lastIndex = 0;
+    while ((m = deadRe.exec(html))) deadClicks[m[1]] = 1;
+  });
+});
+var deadReal = Object.keys(deadClicks).filter(function (w) {
+  return w.length > 1 && w.charAt(0) === w.charAt(0).toLowerCase();
+});
+ok(deadReal.length === 0, '手寫例句裡的一般字沒有一個點開是空的' +
+   (deadReal.length ? '，還缺 ' + deadReal.length + '：' + deadReal.slice(0, 10).join('、') : ''));
+
 /* 詞庫特訓 */
 var drillWords = Lexicon.byLevel(3).slice(0, 8);
 var drill = Scheduler.buildLexiconDrill(drillWords);

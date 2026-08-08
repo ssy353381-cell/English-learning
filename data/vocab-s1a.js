@@ -62,7 +62,9 @@ window.DATA_VOCAB_S1A = [
 {id:'v0356',w:'believe',kk:'bɪˈliv',pos:'v.',zh:'相信',ic:'🙌',u:'s1u2',ex:[['I believe you.','我相信你。'],['I believe the price is fair.','我認為價格合理。']]},
 {id:'v0357',w:'hate',kk:'het',pos:'v.',zh:'討厭',ic:'😖',u:'s1u2',ex:[['I hate waiting.','我討厭等待。'],['I hate long meetings.','我討厭冗長的會議。']]},
 {id:'v0358',w:'enjoy',kk:'ɪnˈdʒɔɪ',pos:'v.',zh:'享受',ic:'😄',u:'s1u2',ex:[['I enjoy reading.','我喜歡閱讀。'],['We enjoy working with your team.','我們很喜歡跟你們團隊合作。']]},
-{id:'v0359',w:'mean',kk:'min',pos:'v.',zh:'意思是',ic:'💭',u:'s1u2',ex:[['What do you mean?','你是什麼意思？'],['What does this code mean?','這個代號是什麼意思？']]},
+/* forms：不規則變化推不出來又沒收進 irregular-verbs.js（那份是魔王關要教的 63 個），
+   不寫的話例句裡的 meant 點開會是空的 */
+{id:'v0359',w:'mean',kk:'min',pos:'v.',zh:'意思是',ic:'💭',u:'s1u2',forms:{p:'meant',d:'meant'},ex:[['What do you mean?','你是什麼意思？'],['What does this code mean?','這個代號是什麼意思？']]},
 {id:'v0360',w:'cost',kk:'kɔst',pos:'v./n.',zh:'花費・成本',ic:'💰',u:'s1u2',lure:['spend','pay','price'],ex:[['How much does it cost?','這個多少錢？'],['We need to lower the cost.','我們需要降低成本。']]},
 {id:'v0361',w:'take care of',kk:'tek kɛr əv',pos:'phr.',zh:'照顧・處理',ic:'🫶',u:'s1u2',ex:[['I take care of my dog.','我照顧我的狗。'],['I\'ll take care of the paperwork.','文件我來處理。']]},
 {id:'v0362',w:'look for',kk:'lʊk fɔr',pos:'phr.',zh:'尋找',ic:'🔎',u:'s1u2',ex:[['I\'m looking for my keys.','我在找鑰匙。'],['We are looking for a new supplier.','我們在找新的供應商。']]},
@@ -105,7 +107,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0397',w:'push',kk:'pʊʃ',pos:'v.',zh:'推',ic:'🫸',u:'s1u3',ex:[['He is pushing a cart.','他正在推推車。'],['A worker is pushing a box.','一名工人正在推箱子。']]},
 {id:'v0398',w:'pull',kk:'pʊl',pos:'v.',zh:'拉',ic:'🫷',u:'s1u3',ex:[['She is pulling the door.','她正在拉門。'],['He is pulling a suitcase.','他正在拉行李箱。']]},
 {id:'v0399',w:'lift',kk:'lɪft',pos:'v.',zh:'舉起',ic:'🏋️',u:'s1u3',ex:[['He is lifting a box.','他正在舉起箱子。'],['Two men are lifting the table.','兩個人正在抬桌子。']]},
-{id:'v0400',w:'hang',kk:'hæŋ',pos:'v.',zh:'懸掛',ic:'🖼️',u:'s1u3',ex:[['A picture is hanging on the wall.','一幅畫掛在牆上。'],['Coats are hanging by the door.','外套掛在門邊。']]},
+{id:'v0400',w:'hang',kk:'hæŋ',pos:'v.',zh:'懸掛',ic:'🖼️',u:'s1u3',forms:{p:'hung',d:'hung'},ex:[['A picture is hanging on the wall.','一幅畫掛在牆上。'],['Coats are hanging by the door.','外套掛在門邊。']]},
 {id:'v0401',w:'cross',kk:'krɔs',pos:'v.',zh:'穿越',ic:'🚸',u:'s1u3',ex:[['They are crossing the street.','他們正在過馬路。'],['A woman is crossing the road.','一名女子正在過馬路。']]},
 {id:'v0402',w:'wait for',kk:'wet fɔr',pos:'phr.',zh:'等候',ic:'⏳',u:'s1u3',ex:[['I am waiting for the bus.','我在等公車。'],['We are waiting for the client.','我們在等客戶。']]},
 {id:'v0403',w:'talk',kk:'tɔk',pos:'v.',zh:'談話',ic:'🗨️',u:'s1u3',lure:['speak','say'],ex:[['They are talking outside.','他們在外面聊天。',['speaking']],['She is talking on the phone.','她正在講電話。',['speaking']]]},

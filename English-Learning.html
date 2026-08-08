@@ -979,7 +979,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 </style>
 </head>
 <body>
-<!-- 單檔打包版 build: 2026-08-05 13:05 -->
+<!-- 單檔打包版 build: 2026-08-08 14:37 -->
 
 <!-- ===== 頂部狀態列 ===== -->
 <header id="topbar" class="topbar">
@@ -2162,7 +2162,9 @@ window.DATA_VOCAB_S1A = [
 {id:'v0356',w:'believe',kk:'bɪˈliv',pos:'v.',zh:'相信',ic:'🙌',u:'s1u2',ex:[['I believe you.','我相信你。'],['I believe the price is fair.','我認為價格合理。']]},
 {id:'v0357',w:'hate',kk:'het',pos:'v.',zh:'討厭',ic:'😖',u:'s1u2',ex:[['I hate waiting.','我討厭等待。'],['I hate long meetings.','我討厭冗長的會議。']]},
 {id:'v0358',w:'enjoy',kk:'ɪnˈdʒɔɪ',pos:'v.',zh:'享受',ic:'😄',u:'s1u2',ex:[['I enjoy reading.','我喜歡閱讀。'],['We enjoy working with your team.','我們很喜歡跟你們團隊合作。']]},
-{id:'v0359',w:'mean',kk:'min',pos:'v.',zh:'意思是',ic:'💭',u:'s1u2',ex:[['What do you mean?','你是什麼意思？'],['What does this code mean?','這個代號是什麼意思？']]},
+/* forms：不規則變化推不出來又沒收進 irregular-verbs.js（那份是魔王關要教的 63 個），
+   不寫的話例句裡的 meant 點開會是空的 */
+{id:'v0359',w:'mean',kk:'min',pos:'v.',zh:'意思是',ic:'💭',u:'s1u2',forms:{p:'meant',d:'meant'},ex:[['What do you mean?','你是什麼意思？'],['What does this code mean?','這個代號是什麼意思？']]},
 {id:'v0360',w:'cost',kk:'kɔst',pos:'v./n.',zh:'花費・成本',ic:'💰',u:'s1u2',lure:['spend','pay','price'],ex:[['How much does it cost?','這個多少錢？'],['We need to lower the cost.','我們需要降低成本。']]},
 {id:'v0361',w:'take care of',kk:'tek kɛr əv',pos:'phr.',zh:'照顧・處理',ic:'🫶',u:'s1u2',ex:[['I take care of my dog.','我照顧我的狗。'],['I\'ll take care of the paperwork.','文件我來處理。']]},
 {id:'v0362',w:'look for',kk:'lʊk fɔr',pos:'phr.',zh:'尋找',ic:'🔎',u:'s1u2',ex:[['I\'m looking for my keys.','我在找鑰匙。'],['We are looking for a new supplier.','我們在找新的供應商。']]},
@@ -2205,7 +2207,7 @@ window.DATA_VOCAB_S1A = [
 {id:'v0397',w:'push',kk:'pʊʃ',pos:'v.',zh:'推',ic:'🫸',u:'s1u3',ex:[['He is pushing a cart.','他正在推推車。'],['A worker is pushing a box.','一名工人正在推箱子。']]},
 {id:'v0398',w:'pull',kk:'pʊl',pos:'v.',zh:'拉',ic:'🫷',u:'s1u3',ex:[['She is pulling the door.','她正在拉門。'],['He is pulling a suitcase.','他正在拉行李箱。']]},
 {id:'v0399',w:'lift',kk:'lɪft',pos:'v.',zh:'舉起',ic:'🏋️',u:'s1u3',ex:[['He is lifting a box.','他正在舉起箱子。'],['Two men are lifting the table.','兩個人正在抬桌子。']]},
-{id:'v0400',w:'hang',kk:'hæŋ',pos:'v.',zh:'懸掛',ic:'🖼️',u:'s1u3',ex:[['A picture is hanging on the wall.','一幅畫掛在牆上。'],['Coats are hanging by the door.','外套掛在門邊。']]},
+{id:'v0400',w:'hang',kk:'hæŋ',pos:'v.',zh:'懸掛',ic:'🖼️',u:'s1u3',forms:{p:'hung',d:'hung'},ex:[['A picture is hanging on the wall.','一幅畫掛在牆上。'],['Coats are hanging by the door.','外套掛在門邊。']]},
 {id:'v0401',w:'cross',kk:'krɔs',pos:'v.',zh:'穿越',ic:'🚸',u:'s1u3',ex:[['They are crossing the street.','他們正在過馬路。'],['A woman is crossing the road.','一名女子正在過馬路。']]},
 {id:'v0402',w:'wait for',kk:'wet fɔr',pos:'phr.',zh:'等候',ic:'⏳',u:'s1u3',ex:[['I am waiting for the bus.','我在等公車。'],['We are waiting for the client.','我們在等客戶。']]},
 {id:'v0403',w:'talk',kk:'tɔk',pos:'v.',zh:'談話',ic:'🗨️',u:'s1u3',lure:['speak','say'],ex:[['They are talking outside.','他們在外面聊天。',['speaking']],['She is talking on the phone.','她正在講電話。',['speaking']]]},
@@ -10641,7 +10643,151 @@ window.DATA_LEXICON_CORE = [
  note:'形容詞是 high，名詞卻是 height（不是 highness）。動詞 heighten 是「提高」。',
  fam:['high','heighten'],
  ex:[['What is your height?','你身高多少？'],
-     ['Please note the height limit at the entrance.','請注意入口的限高。']]}
+     ['Please note the height limit at the entrance.','請注意入口的限高。']]},
+
+/* ===================== 詞庫沒收到的常用字 =====================
+   這一批不是為了蓋掉自動層的詞義，而是自動層根本沒有。
+   ECDICT 那份的選字停在網路普及之前 —— online 在本 App 自己的例句裡就出現十七次，
+   卻查不到；app、smartphone、upload、Wi-Fi 同理。方位詞收了 south／east／west
+   獨漏 north 則單純是那份資料的缺口。
+   收字的界線是「一般名詞與縮寫收，專有名詞不收」：Taipei、Tokyo、Amy 查不到是對的。 */
+
+{w:'online',kk:'ˈɑnˌlaɪn',pos:'adj./adv.',zh:'線上的・在線上',lv:1,tags:['biz'],
+ note:'形容詞與副詞同形：an online course（線上課程）是形容詞，apply online（線上申請）是副詞。多益的報名、訂位、下單幾乎都掛這個字。',
+ ex:[['I bought these shoes online.','這雙鞋我在網路上買的。'],
+     ['Applicants who apply online get a faster reply.','線上申請的人回覆比較快。']]},
+
+{w:'app',kk:'æp',pos:'n.',zh:'應用程式',lv:1,tags:['biz'],
+ note:'application 的縮寫，但兩個字不能互換：application 在多益多半是「申請（書）」，手機上的那個一律說 app。',
+ fam:['application'],
+ ex:[['I use an app to study English.','我用一個 app 學英文。'],
+     ['Staff can book meeting rooms in the company app.','員工可以在公司的 app 訂會議室。']]},
+
+{w:'smartphone',kk:'ˈsmɑrtˌfon',pos:'n.',zh:'智慧型手機',lv:2,tags:['biz'],
+ ex:[['She left her smartphone on the bus.','她把手機忘在公車上了。'],
+     ['Please put your smartphone away during the presentation.','簡報時請收起手機。']]},
+
+/* email 課程已經教過（詞義與例句以 vocab 為準），這裡只是為了那條 note */
+{w:'email',kk:'ˈiˌmel',pos:'n./v.',zh:'電子郵件・寄電子郵件',lv:1,tags:['biz'],
+ note:'名詞動詞同形，動詞後面直接接人：email me the file（把檔案寄給我），不用 email to me。',
+ ex:[['I got your email this morning.','我今天早上收到你的信了。'],
+     ['Please email the invoice to the accounting department.','請把發票寄給會計部。']]},
+
+{w:'upload',kk:'ʌpˈlod',pos:'v./n.',zh:'上傳',lv:2,tags:['biz'],
+ note:'和 download（下載）方向相反，多益的系統公告題最愛把兩個字放在一起考。',
+ fam:['download'],
+ ex:[['Upload your photo here.','在這裡上傳你的照片。'],
+     ['Please upload the signed contract before Friday.','請在星期五前上傳簽好的合約。']]},
+
+{w:'Wi-Fi',kk:'ˈwaɪˌfaɪ',pos:'n.',zh:'無線網路',lv:2,tags:['biz'],
+ ex:[['The Wi-Fi here is very slow.','這裡的無線網路很慢。'],
+     ['Guests can use the free Wi-Fi in the lobby.','訪客可以使用大廳的免費無線網路。']]},
+
+{w:'TV',kk:'ˌtiˈvi',pos:'n.',zh:'電視',lv:1,tags:[],
+ note:'television 的縮寫，日常一律說 TV。on TV 是「在電視上（播出）」，on the TV 是「放在電視機上面」。',
+ fam:['television'],
+ ex:[['We watch TV after dinner.','我們晚餐後看電視。'],
+     ['The company ran an ad on TV last month.','公司上個月在電視上打了廣告。']]},
+
+{w:'cannot',kk:'ˈkænɑt',pos:'v.',zh:'不能・無法',lv:1,tags:[],
+ note:'can not 要寫成一個字 cannot，這是英文裡唯一這樣合寫的否定；縮寫則是 can\'t。',
+ fam:['can'],
+ ex:[['I cannot hear you.','我聽不到你說話。'],
+     ['We cannot ship the order until payment clears.','款項入帳前我們無法出貨。']]},
+
+{w:'anytime',kk:'ˈɛnɪˌtaɪm',pos:'adv.',zh:'隨時・任何時候',lv:2,tags:['biz'],
+ note:'副詞寫成一個字；any time 分開寫是名詞片語（at any time）。回覆 Thank you 時說 Anytime! 等於「不客氣，隨時樂意」。',
+ ex:[['Call me anytime.','隨時打給我。'],
+     ['You can cancel the booking anytime before Monday.','星期一之前你隨時可以取消訂位。']]},
+
+{w:'north',kk:'nɔrθ',pos:'n./adj./adv.',zh:'北方・北邊的・向北',lv:1,tags:[],
+ note:'方位詞當形容詞用 northern（北部的），當方向用 north。地圖題問 north of the station 是「車站以北」，不是「車站的北邊那一面」。',
+ fam:['northern'],
+ ex:[['The park is north of the station.','公園在車站北邊。'],
+     ['Our new branch will open in the north of the city.','我們的新分店會開在城市北邊。']]},
+
+{w:'booking',kk:'ˈbʊkɪŋ',pos:'n.',zh:'預訂・訂位',lv:2,tags:['biz'],
+ note:'英式說 booking，美式多說 reservation，多益兩種都出現。動詞 book 就是「預訂」，和「書」是同一個字。',
+ fam:['book'],
+ ex:[['I made a booking for two.','我訂了兩個人的位子。'],
+     ['All bookings must be confirmed by email.','所有訂位都必須以電子郵件確認。']]},
+
+{w:'finding',kk:'ˈfaɪndɪŋ',pos:'n.',zh:'調查結果・研究發現',lv:3,tags:['biz'],
+ note:'多益幾乎只用複數 findings，指報告或調查得出的結論，不是「找到東西」。',
+ fam:['find'],
+ ex:[['The findings surprised everyone.','這些結果讓所有人都很意外。'],
+     ['She will present the survey findings at the meeting.','她會在會議上報告問卷調查的結果。']]},
+
+{w:'demo',kk:'ˈdɛmo',pos:'n./v.',zh:'示範・展示（版）',lv:2,tags:['biz'],
+ note:'demonstration 的縮寫。a demo unit 是店裡的展示機，give a demo 是做產品示範。',
+ fam:['demonstrate','demonstration'],
+ ex:[['Can I see a demo first?','我可以先看示範嗎？'],
+     ['The engineer will give a demo of the new system.','工程師會示範新系統。']]},
+
+{w:'finalize',kk:'ˈfaɪnəˌlaɪz',pos:'v.',zh:'定案・敲定',lv:3,tags:['biz'],
+ note:'不是「完成」而是「把還沒定的部分決定下來」：finalize the details（把細節敲定）。英式拼作 finalise。',
+ fam:['final','finally'],
+ ex:[['Let\'s finalize the plan tonight.','我們今晚把計畫定案吧。'],
+     ['We need to finalize the budget before the board meeting.','董事會前我們必須把預算定案。']]},
+
+{w:'refocus',kk:'riˈfokəs',pos:'v.',zh:'重新聚焦・把重心移回',lv:3,tags:['biz'],
+ fam:['focus'],
+ ex:[['Let\'s refocus on the main question.','我們把重點拉回主要問題吧。'],
+     ['The company refocused its efforts on overseas markets.','公司把重心移回海外市場。']]},
+
+{w:'reassign',kk:'ˌriəˈsaɪn',pos:'v.',zh:'重新指派・改派',lv:3,tags:['biz'],
+ fam:['assign','assignment'],
+ ex:[['They reassigned my seat.','他們把我的座位改了。'],
+     ['Two engineers were reassigned to the Tainan project.','兩位工程師被改派到台南的專案。']]},
+
+{w:'refundable',kk:'rɪˈfʌndəbl',pos:'adj.',zh:'可退費的',lv:3,tags:['biz'],
+ note:'多益的退換貨題常考反義的 non-refundable（不可退費），票務與訂房公告裡幾乎必出現。',
+ fam:['refund'],
+ ex:[['Is this ticket refundable?','這張票可以退嗎？'],
+     ['The deposit is refundable if you cancel a week ahead.','提前一週取消的話訂金可以退。']]},
+
+{w:'paperless',kk:'ˈpepɚlɪs',pos:'adj.',zh:'無紙化的',lv:3,tags:['biz'],
+ note:'-less 是「沒有」：a paperless office（無紙化辦公室）。多益的公司政策公告很愛用。',
+ fam:['paper'],
+ ex:[['The bank went paperless last year.','這家銀行去年開始無紙化。'],
+     ['We are moving to a paperless filing system.','我們正在改用無紙化的檔案系統。']]},
+
+{w:'mailroom',kk:'ˈmelˌrum',pos:'n.',zh:'收發室',lv:3,tags:['biz'],
+ note:'辦公大樓收發信件包裹的地方，Part 1 與 Part 3 的辦公室場景常出現。',
+ fam:['mail'],
+ ex:[['The mailroom is downstairs.','收發室在樓下。'],
+     ['Please drop the package off at the mailroom.','請把包裹拿到收發室。']]},
+
+{w:'blurry',kk:'ˈblɜrɪ',pos:'adj.',zh:'模糊的',lv:3,tags:[],
+ fam:['blur'],
+ ex:[['This photo is blurry.','這張照片很模糊。'],
+     ['The slides looked blurry on the big screen.','投影片在大螢幕上看起來很模糊。']]},
+
+{w:'unplug',kk:'ʌnˈplʌg',pos:'v.',zh:'拔掉插頭',lv:3,tags:[],
+ note:'plug in 是插上，unplug 是拔掉。設備故障的對話題很常聽到 unplug it and plug it back in。',
+ fam:['plug'],
+ ex:[['Unplug the printer before you move it.','搬印表機之前先拔掉插頭。'],
+     ['Please unplug the machine at the end of the day.','下班時請把機器插頭拔掉。']]},
+
+{w:'kilometer',kk:'kɪˈlɑmətɚ',pos:'n.',zh:'公里',lv:2,tags:[],
+ note:'英式拼作 kilometre，多益兩種拼法都可能出現，縮寫是 km。',
+ ex:[['The station is one kilometer away.','車站在一公里外。'],
+     ['The new branch is only two kilometers from the airport.','新分店離機場只有兩公里。']]},
+
+{w:'X-ray',kk:'ˈɛksˌre',pos:'n./v.',zh:'X 光・照 X 光',lv:3,tags:['biz'],
+ note:'機場安檢與醫院都用得到：go through the X-ray（過 X 光機）、take an X-ray（照 X 光）。',
+ ex:[['The doctor took an X-ray of my arm.','醫生幫我的手臂照了 X 光。'],
+     ['All bags must go through the X-ray machine.','所有行李都必須通過 X 光機。']]},
+
+{w:'HR',kk:'ˌetʃˈɑr',pos:'n.',zh:'人力資源（部門）',lv:2,tags:['biz'],
+ note:'human resources 的縮寫，多益的徵才、到職、請假通知幾乎都由 HR 發出。',
+ ex:[['Ask HR about your contract.','合約的事去問人資。'],
+     ['HR will send the new employee handbook on Monday.','人資部星期一會寄出新版員工手冊。']]},
+
+{w:'MRT',kk:'ˌɛmɑrˈti',pos:'n.',zh:'捷運',lv:2,tags:[],
+ note:'mass rapid transit 的縮寫，台灣與新加坡這樣說；其他地方多說 subway、metro 或 underground。',
+ ex:[['I take the MRT to work.','我搭捷運上班。'],
+     ['The office is a five-minute walk from the MRT station.','辦公室離捷運站走路五分鐘。']]}
 
 ];
 
@@ -23400,6 +23546,20 @@ window.DATA_LEXICON_6 = [
 
   var UNKNOWN_ZH = '這個字還沒收進詞庫，先聽聽發音';
 
+  /* 重音字母摺回 a–z。課程例句裡就有 café 與 résumé，而詞庫的鍵一律是純 ASCII
+     （ECDICT 那份就是這樣），不摺的話點了也查不到。
+     摺完剛好都查得到對的字：cafe 是咖啡館，resume 的手寫層第一個意思就是履歷。
+     用配對字串現場展開而不是手寫一張對照表 —— 兩排字元要等長才不會錯位，
+     而等長這件事沒有人檢查得出來。 */
+  var FOLD = {};
+  (function () {
+    var groups = ['aàáâãäåāăą', 'eèéêëēĕėęě', 'iìíîïĩīĭįı', 'oòóôõöøōŏő',
+                  'uùúûüũūŭůűų', 'cçćĉċč', 'nñńņň', 'yýÿŷ', 'sšśŝş', 'zžźż'];
+    for (var i = 0; i < groups.length; i++) {
+      for (var j = 1; j < groups[i].length; j++) FOLD[groups[i].charAt(j)] = groups[i].charAt(0);
+    }
+  })();
+
   /* ---------- 索引 ---------- */
   var byWord = null;     // 小寫字 → entry
   var byForm = null;     // 變化形 → 原形字（原形本身不列入）
@@ -23440,24 +23600,50 @@ window.DATA_LEXICON_6 = [
     return v;
   }
 
-  /* 規則變化：手寫層沒有 ECDICT 的 exchange 欄，只能照拼字規則推。
-     推錯了頂多是查不到，不會查到別的字 —— byWord 永遠優先於 byForm。 */
+  /* 不規則複數推不出來，但它是一個封閉的小集合，寫死就寫死。
+     不規則動詞有 data/irregular-verbs.js —— 那是課程要教的內容，有 A／B／C 三型；
+     這幾個名詞沒有人要教，純粹是查不查得到的問題，所以放在規則旁邊而不是 data/。
+     刻意不收 life／leaf／shelf 那組 -f→-ves：lives 與 leaves 同時是 live 與 leave
+     的第三人稱，收進來等於跟動詞搶同一個鍵，而動詞天天出現、名詞複數難得一見。 */
+  var IRREGULAR_PLURAL = {
+    child: 'children', man: 'men', woman: 'women', person: 'people',
+    tooth: 'teeth', foot: 'feet', goose: 'geese', mouse: 'mice', ox: 'oxen'
+  };
+
+  /* 規則變化：手寫層與課程單字都沒有 ECDICT 的 exchange 欄，只能照拼字規則推。
+     推錯了頂多是查不到，不會查到別的字 —— byWord 永遠優先於 byForm，而自動層
+     那些「資料是真的」的變化形又比規則先進索引（見 build()），form() 也不會去搶
+     已經有人認領的鍵。所以這裡寧可多推：多推的沒有人會查，漏掉的天天被點到。 */
   function ruleForms(w) {
-    var out = [];
-    if (/[^aeiou]y$/.test(w)) {
-      var stem = w.slice(0, -1);
-      out.push(stem + 'ies', stem + 'ied', w + 'ing');
-    } else if (/(s|x|z|ch|sh|o)$/.test(w)) {
+    var out = [], stem;
+    if (/[^aeiou]y$/.test(w)) {                       // study → studies、busy → busier
+      stem = w.slice(0, -1);
+      out.push(stem + 'ies', stem + 'ied', w + 'ing', stem + 'ier', stem + 'iest');
+    } else if (/(s|x|z|ch|sh)$/.test(w)) {
       out.push(w + 'es', w + 'ed', w + 'ing');
-    } else if (/e$/.test(w)) {
-      out.push(w + 's', w + 'd', w.slice(0, -1) + 'ing');
+    } else if (/o$/.test(w)) {
+      // -o 結尾兩種複數都真的存在：potato → potatoes，photo → photos
+      out.push(w + 's', w + 'es', w + 'ed', w + 'ing');
+    } else if (/e$/.test(w)) {                        // late → later／latest
+      stem = w.slice(0, -1);
+      out.push(w + 's', w + 'd', stem + 'ing', w + 'r', w + 'st');
     } else {
-      out.push(w + 's', w + 'ed', w + 'ing');
-      // 短母音結尾的單音節字會重複子音：stop → stopped
-      if (/^[^aeiou]*[aeiou][^aeiouwxy]$/.test(w)) {
-        var dbl = w + w.charAt(w.length - 1);
-        out.push(dbl + 'ed', dbl + 'ing');
-      }
+      out.push(w + 's', w + 'ed', w + 'ing', w + 'er', w + 'est');
+    }
+    // 短母音＋子音結尾就重複子音：stop → stopped、big → biggest、permit → permitted。
+    // 只看最後三個字元而不管音節：英文其實是重音落在最後一音節才重複（permit 會、
+    // visit 不會），但拼字看不出重音。多推的 visitted 沒有人會查，
+    // 漏掉的 permitted、occurred、admitted、transferred 卻是職場例句的常客。
+    if (/[^aeiou][aeiou][^aeiouwxy]$/.test(w)) {
+      var dbl = w + w.charAt(w.length - 1);
+      out.push(dbl + 'ed', dbl + 'ing', dbl + 'er', dbl + 'est');
+    }
+    if (IRREGULAR_PLURAL[w]) out.push(IRREGULAR_PLURAL[w]);
+    if (/man$/.test(w)) out.push(w.slice(0, -3) + 'men');   // businessman → businessmen
+    // 動名詞當名詞用就數得出來：feel → feeling → feelings，save → savings。
+    // 從上面已經推好的 -ing 再加 s，各分支才不必各寫一次。
+    for (var i = out.length - 1; i >= 0; i--) {
+      if (/ing$/.test(out[i])) out.push(out[i] + 's');
     }
     return out;
   }
@@ -23528,7 +23714,15 @@ window.DATA_LEXICON_6 = [
         var e = makeAuto(arr[i], lv);
         e.src = 'auto';
         var seat = byWord[e.w.toLowerCase()];
-        if (seat) { if (seat.src === 'core') backfill(seat, e); continue; }
+        if (seat) {
+          if (seat.src === 'core') backfill(seat, e);
+          // 課程單字只補詞形變化。詞義、例句、音標都是手寫校過的，不能被蓋掉，
+          // 但 data/vocab-*.js 從來沒有 forms 這一欄 —— 沒補的話，課程教過的字
+          // 反而只剩規則推得出來的變化，occur 的 occurred、oversee 的 overseen
+          // 這些 ECDICT 明明給了的變化形全部掉在地上（77 個字有這個問題）。
+          else if (seat.src === 'vocab' && !hasKey(seat.forms) && hasKey(e.forms)) seat.forms = e.forms;
+          continue;
+        }
         put(e);
       }
     }
@@ -23543,7 +23737,12 @@ window.DATA_LEXICON_6 = [
     ordered.forEach(function (e) {
       var base = e.w.toLowerCase();
       for (var k in e.forms) {
-        if (Object.prototype.hasOwnProperty.call(e.forms, k)) form(e.forms[k], base);
+        if (!Object.prototype.hasOwnProperty.call(e.forms, k)) continue;
+        form(e.forms[k], base);
+        // 動名詞當名詞用就數得出來：feelings、savings、drawings。
+        // ECDICT 的 exchange 只給到 -ing，複數得自己接 —— 自動層不跑 ruleForms()，
+        // 這一個字尾是唯一從真資料接得出來、又真的常被點到的變化。
+        if (k === 'i') form(e.forms[k] + 's', base);
       }
     });
     ordered.forEach(function (e) {
@@ -23572,7 +23771,27 @@ window.DATA_LEXICON_6 = [
      整個詞組本身就是一筆詞條，去掉空白就查不到了 */
   function norm(w) {
     return String(w || '').toLowerCase().replace(/[’‘]/g, "'")
+      .replace(/[^\x00-\x7f]/g, function (c) { return FOLD[c] || c; })
       .replace(/[^a-z' -]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  /**
+   * 縮寫剝成開頭那個字：點到 can't 要開的是 can 的卡。
+   *
+   * ExUtil.matchAny() 也展開縮寫，但那是為了比對整句，展開成完整寫法
+   * （I'm → I am）；查詢這一側要的是單一個詞條，所以只留開頭那個字。
+   * 's 與 'd 在比對那側因為有歧義（is/has、would/had）刻意不展開，
+   * 在這裡沒有這個問題 —— it's 和 it'd 都是問 it 這個字。
+   */
+  function contractionHead(k) {
+    // 這三個剝不出開頭那個字：n 是 can 自己的、won't 與 shan't 連字都換了
+    if (k === "can't") return 'can';
+    if (k === "won't") return 'will';
+    if (k === "shan't") return 'shall';
+    if (k === "let's") return 'let';
+    if (/n't$/.test(k)) return k.slice(0, -3);          // isn't → is、didn't → did
+    var m = k.match(/^(.+?)'(m|re|ll|ve|d)$/);
+    return m ? m[1] : '';
   }
 
   /**
@@ -23587,9 +23806,16 @@ window.DATA_LEXICON_6 = [
     if (!k) return null;
     if (byWord[k]) return { entry: byWord[k], via: '' };
 
-    // 所有格：the manager's → manager
-    var poss = k.replace(/'s$/, '');
+    // 所有格：the manager's → manager。複數的所有格只有一撇（two weeks' notice）
+    var poss = k.replace(/'s$|'$/, '');
     if (poss !== k && byWord[poss]) return { entry: byWord[poss], via: '所有格' };
+
+    // 縮寫在變化形之前試：I'm 的 m 不是任何字的變化形，剝掉才查得到 I
+    var head = contractionHead(k);
+    if (head && head !== k) {
+      var hh = lookup(head);
+      if (hh) return { entry: hh.entry, via: '縮寫' };
+    }
 
     var base = byForm[k] || byForm[poss];
     if (base && byWord[base]) {
@@ -23651,16 +23877,34 @@ window.DATA_LEXICON_6 = [
    * 先轉義再包 span，所以字串裡會有 &amp; &#39; 這些實體 ——
    * 正規表示式必須先把實體整段吃掉，否則 &amp; 裡的 amp 會被當成一個英文字包起來。
    */
-  var TOKEN_RE = /&[a-zA-Z]+;|&#\d+;|([A-Za-z][A-Za-z'’-]*)/g;
+  /**
+   * 字母範圍含重音字母，否則 café 會斷成可點的 caf 加一個掉在 span 外面的 é。
+   *
+   * `&#39;` 要當成字中的那一撇吃進單字裡：先轉義再包 span，所以 doesn't 走到這裡
+   * 已經是 doesn&#39;t —— 不吃的話每一個縮寫都被那個實體切成兩半（doesn ／ t），
+   * 兩半都查不到，contractionHead() 根本沒機會出手。
+   * 其餘實體照舊整段吃掉，否則 &amp; 裡的 amp 會被當成一個英文字包起來。
+   */
+  var TOKEN_RE = /&[a-zA-Z]+;|&#\d+;|([A-Za-zÀ-ÖØ-öø-ÿ](?:[A-Za-zÀ-ÖØ-öø-ÿ’-]|&#39;)*)/g;
+
+  /** word 是「已經轉義過」的字，查詢與 data 屬性都要用還原後的寫法 */
+  function span(word) {
+    var plain = word.replace(/&#39;/g, "'");
+    return '<span class="lexw' + (lookup(plain) ? ' known' : '') + '" data-lexw="' +
+      esc(plain) + '">' + word + '</span>';
+  }
 
   function markup(text, opts) {
     opts = opts || {};
     ready();
     var html = esc(text).replace(TOKEN_RE, function (m, word) {
       if (!word) return m;                       // HTML 實體，原樣放回
-      var hit = lookup(word);
-      return '<span class="lexw' + (hit ? ' known' : '') + '" data-lexw="' +
-        esc(word) + '">' + word + '</span>';
+      // 連字號複合字整串查不到就拆開分別包（two-year → two ／ year）。
+      // 這種字詞庫收不完，但拆開後每一段都查得到，整串不可點才是最糟的結果。
+      if (word.indexOf('-') > 0 && !lookup(word.replace(/&#39;/g, "'"))) {
+        return word.replace(/[^-]+/g, span);
+      }
+      return span(word);
     });
     return opts.br === false ? html : html.replace(/\n/g, '<br>');
   }

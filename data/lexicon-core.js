@@ -3905,6 +3905,150 @@ window.DATA_LEXICON_CORE = [
  note:'形容詞是 high，名詞卻是 height（不是 highness）。動詞 heighten 是「提高」。',
  fam:['high','heighten'],
  ex:[['What is your height?','你身高多少？'],
-     ['Please note the height limit at the entrance.','請注意入口的限高。']]}
+     ['Please note the height limit at the entrance.','請注意入口的限高。']]},
+
+/* ===================== 詞庫沒收到的常用字 =====================
+   這一批不是為了蓋掉自動層的詞義，而是自動層根本沒有。
+   ECDICT 那份的選字停在網路普及之前 —— online 在本 App 自己的例句裡就出現十七次，
+   卻查不到；app、smartphone、upload、Wi-Fi 同理。方位詞收了 south／east／west
+   獨漏 north 則單純是那份資料的缺口。
+   收字的界線是「一般名詞與縮寫收，專有名詞不收」：Taipei、Tokyo、Amy 查不到是對的。 */
+
+{w:'online',kk:'ˈɑnˌlaɪn',pos:'adj./adv.',zh:'線上的・在線上',lv:1,tags:['biz'],
+ note:'形容詞與副詞同形：an online course（線上課程）是形容詞，apply online（線上申請）是副詞。多益的報名、訂位、下單幾乎都掛這個字。',
+ ex:[['I bought these shoes online.','這雙鞋我在網路上買的。'],
+     ['Applicants who apply online get a faster reply.','線上申請的人回覆比較快。']]},
+
+{w:'app',kk:'æp',pos:'n.',zh:'應用程式',lv:1,tags:['biz'],
+ note:'application 的縮寫，但兩個字不能互換：application 在多益多半是「申請（書）」，手機上的那個一律說 app。',
+ fam:['application'],
+ ex:[['I use an app to study English.','我用一個 app 學英文。'],
+     ['Staff can book meeting rooms in the company app.','員工可以在公司的 app 訂會議室。']]},
+
+{w:'smartphone',kk:'ˈsmɑrtˌfon',pos:'n.',zh:'智慧型手機',lv:2,tags:['biz'],
+ ex:[['She left her smartphone on the bus.','她把手機忘在公車上了。'],
+     ['Please put your smartphone away during the presentation.','簡報時請收起手機。']]},
+
+/* email 課程已經教過（詞義與例句以 vocab 為準），這裡只是為了那條 note */
+{w:'email',kk:'ˈiˌmel',pos:'n./v.',zh:'電子郵件・寄電子郵件',lv:1,tags:['biz'],
+ note:'名詞動詞同形，動詞後面直接接人：email me the file（把檔案寄給我），不用 email to me。',
+ ex:[['I got your email this morning.','我今天早上收到你的信了。'],
+     ['Please email the invoice to the accounting department.','請把發票寄給會計部。']]},
+
+{w:'upload',kk:'ʌpˈlod',pos:'v./n.',zh:'上傳',lv:2,tags:['biz'],
+ note:'和 download（下載）方向相反，多益的系統公告題最愛把兩個字放在一起考。',
+ fam:['download'],
+ ex:[['Upload your photo here.','在這裡上傳你的照片。'],
+     ['Please upload the signed contract before Friday.','請在星期五前上傳簽好的合約。']]},
+
+{w:'Wi-Fi',kk:'ˈwaɪˌfaɪ',pos:'n.',zh:'無線網路',lv:2,tags:['biz'],
+ ex:[['The Wi-Fi here is very slow.','這裡的無線網路很慢。'],
+     ['Guests can use the free Wi-Fi in the lobby.','訪客可以使用大廳的免費無線網路。']]},
+
+{w:'TV',kk:'ˌtiˈvi',pos:'n.',zh:'電視',lv:1,tags:[],
+ note:'television 的縮寫，日常一律說 TV。on TV 是「在電視上（播出）」，on the TV 是「放在電視機上面」。',
+ fam:['television'],
+ ex:[['We watch TV after dinner.','我們晚餐後看電視。'],
+     ['The company ran an ad on TV last month.','公司上個月在電視上打了廣告。']]},
+
+{w:'cannot',kk:'ˈkænɑt',pos:'v.',zh:'不能・無法',lv:1,tags:[],
+ note:'can not 要寫成一個字 cannot，這是英文裡唯一這樣合寫的否定；縮寫則是 can\'t。',
+ fam:['can'],
+ ex:[['I cannot hear you.','我聽不到你說話。'],
+     ['We cannot ship the order until payment clears.','款項入帳前我們無法出貨。']]},
+
+{w:'anytime',kk:'ˈɛnɪˌtaɪm',pos:'adv.',zh:'隨時・任何時候',lv:2,tags:['biz'],
+ note:'副詞寫成一個字；any time 分開寫是名詞片語（at any time）。回覆 Thank you 時說 Anytime! 等於「不客氣，隨時樂意」。',
+ ex:[['Call me anytime.','隨時打給我。'],
+     ['You can cancel the booking anytime before Monday.','星期一之前你隨時可以取消訂位。']]},
+
+{w:'north',kk:'nɔrθ',pos:'n./adj./adv.',zh:'北方・北邊的・向北',lv:1,tags:[],
+ note:'方位詞當形容詞用 northern（北部的），當方向用 north。地圖題問 north of the station 是「車站以北」，不是「車站的北邊那一面」。',
+ fam:['northern'],
+ ex:[['The park is north of the station.','公園在車站北邊。'],
+     ['Our new branch will open in the north of the city.','我們的新分店會開在城市北邊。']]},
+
+{w:'booking',kk:'ˈbʊkɪŋ',pos:'n.',zh:'預訂・訂位',lv:2,tags:['biz'],
+ note:'英式說 booking，美式多說 reservation，多益兩種都出現。動詞 book 就是「預訂」，和「書」是同一個字。',
+ fam:['book'],
+ ex:[['I made a booking for two.','我訂了兩個人的位子。'],
+     ['All bookings must be confirmed by email.','所有訂位都必須以電子郵件確認。']]},
+
+{w:'finding',kk:'ˈfaɪndɪŋ',pos:'n.',zh:'調查結果・研究發現',lv:3,tags:['biz'],
+ note:'多益幾乎只用複數 findings，指報告或調查得出的結論，不是「找到東西」。',
+ fam:['find'],
+ ex:[['The findings surprised everyone.','這些結果讓所有人都很意外。'],
+     ['She will present the survey findings at the meeting.','她會在會議上報告問卷調查的結果。']]},
+
+{w:'demo',kk:'ˈdɛmo',pos:'n./v.',zh:'示範・展示（版）',lv:2,tags:['biz'],
+ note:'demonstration 的縮寫。a demo unit 是店裡的展示機，give a demo 是做產品示範。',
+ fam:['demonstrate','demonstration'],
+ ex:[['Can I see a demo first?','我可以先看示範嗎？'],
+     ['The engineer will give a demo of the new system.','工程師會示範新系統。']]},
+
+{w:'finalize',kk:'ˈfaɪnəˌlaɪz',pos:'v.',zh:'定案・敲定',lv:3,tags:['biz'],
+ note:'不是「完成」而是「把還沒定的部分決定下來」：finalize the details（把細節敲定）。英式拼作 finalise。',
+ fam:['final','finally'],
+ ex:[['Let\'s finalize the plan tonight.','我們今晚把計畫定案吧。'],
+     ['We need to finalize the budget before the board meeting.','董事會前我們必須把預算定案。']]},
+
+{w:'refocus',kk:'riˈfokəs',pos:'v.',zh:'重新聚焦・把重心移回',lv:3,tags:['biz'],
+ fam:['focus'],
+ ex:[['Let\'s refocus on the main question.','我們把重點拉回主要問題吧。'],
+     ['The company refocused its efforts on overseas markets.','公司把重心移回海外市場。']]},
+
+{w:'reassign',kk:'ˌriəˈsaɪn',pos:'v.',zh:'重新指派・改派',lv:3,tags:['biz'],
+ fam:['assign','assignment'],
+ ex:[['They reassigned my seat.','他們把我的座位改了。'],
+     ['Two engineers were reassigned to the Tainan project.','兩位工程師被改派到台南的專案。']]},
+
+{w:'refundable',kk:'rɪˈfʌndəbl',pos:'adj.',zh:'可退費的',lv:3,tags:['biz'],
+ note:'多益的退換貨題常考反義的 non-refundable（不可退費），票務與訂房公告裡幾乎必出現。',
+ fam:['refund'],
+ ex:[['Is this ticket refundable?','這張票可以退嗎？'],
+     ['The deposit is refundable if you cancel a week ahead.','提前一週取消的話訂金可以退。']]},
+
+{w:'paperless',kk:'ˈpepɚlɪs',pos:'adj.',zh:'無紙化的',lv:3,tags:['biz'],
+ note:'-less 是「沒有」：a paperless office（無紙化辦公室）。多益的公司政策公告很愛用。',
+ fam:['paper'],
+ ex:[['The bank went paperless last year.','這家銀行去年開始無紙化。'],
+     ['We are moving to a paperless filing system.','我們正在改用無紙化的檔案系統。']]},
+
+{w:'mailroom',kk:'ˈmelˌrum',pos:'n.',zh:'收發室',lv:3,tags:['biz'],
+ note:'辦公大樓收發信件包裹的地方，Part 1 與 Part 3 的辦公室場景常出現。',
+ fam:['mail'],
+ ex:[['The mailroom is downstairs.','收發室在樓下。'],
+     ['Please drop the package off at the mailroom.','請把包裹拿到收發室。']]},
+
+{w:'blurry',kk:'ˈblɜrɪ',pos:'adj.',zh:'模糊的',lv:3,tags:[],
+ fam:['blur'],
+ ex:[['This photo is blurry.','這張照片很模糊。'],
+     ['The slides looked blurry on the big screen.','投影片在大螢幕上看起來很模糊。']]},
+
+{w:'unplug',kk:'ʌnˈplʌg',pos:'v.',zh:'拔掉插頭',lv:3,tags:[],
+ note:'plug in 是插上，unplug 是拔掉。設備故障的對話題很常聽到 unplug it and plug it back in。',
+ fam:['plug'],
+ ex:[['Unplug the printer before you move it.','搬印表機之前先拔掉插頭。'],
+     ['Please unplug the machine at the end of the day.','下班時請把機器插頭拔掉。']]},
+
+{w:'kilometer',kk:'kɪˈlɑmətɚ',pos:'n.',zh:'公里',lv:2,tags:[],
+ note:'英式拼作 kilometre，多益兩種拼法都可能出現，縮寫是 km。',
+ ex:[['The station is one kilometer away.','車站在一公里外。'],
+     ['The new branch is only two kilometers from the airport.','新分店離機場只有兩公里。']]},
+
+{w:'X-ray',kk:'ˈɛksˌre',pos:'n./v.',zh:'X 光・照 X 光',lv:3,tags:['biz'],
+ note:'機場安檢與醫院都用得到：go through the X-ray（過 X 光機）、take an X-ray（照 X 光）。',
+ ex:[['The doctor took an X-ray of my arm.','醫生幫我的手臂照了 X 光。'],
+     ['All bags must go through the X-ray machine.','所有行李都必須通過 X 光機。']]},
+
+{w:'HR',kk:'ˌetʃˈɑr',pos:'n.',zh:'人力資源（部門）',lv:2,tags:['biz'],
+ note:'human resources 的縮寫，多益的徵才、到職、請假通知幾乎都由 HR 發出。',
+ ex:[['Ask HR about your contract.','合約的事去問人資。'],
+     ['HR will send the new employee handbook on Monday.','人資部星期一會寄出新版員工手冊。']]},
+
+{w:'MRT',kk:'ˌɛmɑrˈti',pos:'n.',zh:'捷運',lv:2,tags:[],
+ note:'mass rapid transit 的縮寫，台灣與新加坡這樣說；其他地方多說 subway、metro 或 underground。',
+ ex:[['I take the MRT to work.','我搭捷運上班。'],
+     ['The office is a five-minute walk from the MRT station.','辦公室離捷運站走路五分鐘。']]}
 
 ];
