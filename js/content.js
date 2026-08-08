@@ -16,14 +16,17 @@
 
   var VOCAB   = cat(global.DATA_VOCAB_S0,
                     global.DATA_VOCAB_S1A, global.DATA_VOCAB_S1B, global.DATA_VOCAB_S1C,
-                    global.DATA_VOCAB_S2, global.DATA_VOCAB_S2B, global.DATA_VOCAB_S3);
+                    global.DATA_VOCAB_S2, global.DATA_VOCAB_S2B, global.DATA_VOCAB_S3,
+                    global.DATA_VOCAB_S4);
   var GRAMMAR = cat(global.DATA_GRAMMAR_S0, global.DATA_GRAMMAR_S1, global.DATA_GRAMMAR_S2,
-                    global.DATA_GRAMMAR_S3);
+                    global.DATA_GRAMMAR_S3, global.DATA_GRAMMAR_S4);
   var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2,
-                    global.DATA_READING_S3);
+                    global.DATA_READING_S3, global.DATA_READING_S4);
   var PHOTO   = cat(global.DATA_PHOTO_S2);      // 多益 Part 1：看圖聽描述
   var RESPOND = cat(global.DATA_RESPOND_S2);    // 多益 Part 2：應答問題
   var CONVO   = cat(global.DATA_CONVO_S3);      // 多益 Part 3／4：長對話與獨白
+  var PART6   = cat(global.DATA_PART6_S4);      // 多益 Part 6：段落填空
+  var PART7   = cat(global.DATA_PART7_S4);      // 多益 Part 7：雙篇閱讀
   var MINPAIR = cat(global.DATA_MINPAIR);          // 最小音對：發音關唯一考得回來的題型
   var PHONICS = global.DATA_PHONICS || {};
   var IRREG   = global.DATA_IRREGULAR || [];
@@ -32,6 +35,7 @@
   /* ---------- 索引 ---------- */
   var byId = {}, byWord = {}, vocabByUnit = {}, grammarByUnit = {}, readingByUnit = {};
   var photoByUnit = {}, respondByUnit = {}, minPairByUnit = {}, convoByUnit = {};
+  var part6ByUnit = {}, part7ByUnit = {};
   var unitById = {}, stageOfUnit = {}, unitOrder = [];
 
   VOCAB.forEach(function (v) {
@@ -66,6 +70,14 @@
     byId[c.id] = c;
     (convoByUnit[c.u] = convoByUnit[c.u] || []).push(c);
   });
+  PART6.forEach(function (x) {
+    byId[x.id] = x;
+    (part6ByUnit[x.u] = part6ByUnit[x.u] || []).push(x);
+  });
+  PART7.forEach(function (d) {
+    byId[d.id] = d;
+    (part7ByUnit[d.u] = part7ByUnit[d.u] || []).push(d);
+  });
   // 不規則動詞不綁關卡，但要能用 id 查回來（弱點怪獸需要）
   IRREG.forEach(function (iv) { byId[iv.id] = iv; });
 
@@ -90,6 +102,8 @@
   function respondOf(uid){ return respondByUnit[uid] || []; }
   function minPairsOf(uid){ return minPairByUnit[uid] || []; }
   function convoOf(uid)  { return convoByUnit[uid] || []; }
+  function part6Of(uid)  { return part6ByUnit[uid] || []; }
+  function part7Of(uid)  { return part7ByUnit[uid] || []; }
   function phonics(key)  { return PHONICS[key] || null; }
   function irregulars()  { return IRREG; }
   function allVocab()    { return VOCAB; }
@@ -123,6 +137,8 @@
   function convoUpTo(uid)   { return upTo(convoByUnit, CONVO, uid); }
   function photoUpTo(uid)   { return upTo(photoByUnit, PHOTO, uid); }
   function respondUpTo(uid) { return upTo(respondByUnit, RESPOND, uid); }
+  function part6UpTo(uid)   { return upTo(part6ByUnit, PART6, uid); }
+  function part7UpTo(uid)   { return upTo(part7ByUnit, PART7, uid); }
 
   /* ---------- 關卡順序與解鎖 ---------- */
   function orderedUnitIds() { return unitOrder.slice(); }
@@ -153,13 +169,16 @@
     if (!st || !st.ready || !u.plan || !u.plan.length) return false;
     // 有任何一種自己的內容就算數：純聽力關卡（Part 1／Part 2）沒有單字也沒有文法，
     // 魔王關則相反 —— 題目全往前借，只有自己的短文。
+    // 九種都要算：Part 6 那一關只有段落填空，雙篇閱讀那一關只有兩份文件。
     var hasContent = (vocabByUnit[uid] && vocabByUnit[uid].length) ||
                      (grammarByUnit[uid] && grammarByUnit[uid].length) ||
                      (readingByUnit[uid] && readingByUnit[uid].length) ||
                      (photoByUnit[uid] && photoByUnit[uid].length) ||
                      (respondByUnit[uid] && respondByUnit[uid].length) ||
                      (minPairByUnit[uid] && minPairByUnit[uid].length) ||
-                     (convoByUnit[uid] && convoByUnit[uid].length);
+                     (convoByUnit[uid] && convoByUnit[uid].length) ||
+                     (part6ByUnit[uid] && part6ByUnit[uid].length) ||
+                     (part7ByUnit[uid] && part7ByUnit[uid].length);
     return !!hasContent;
   }
 
@@ -300,6 +319,8 @@
       respond: RESPOND.length,
       minpair: MINPAIR.length,
       convo: CONVO.length,
+      part6: PART6.length,
+      part7: PART7.length,
       units: unitOrder.filter(isReady).length,
       unitsAll: unitOrder.length
     };
@@ -309,9 +330,10 @@
     unit: unit, stageOf: stageOf, stages: stages, rules: rules, item: item,
     vocabOf: vocabOf, grammarOf: grammarOf, readingOf: readingOf,
     photoOf: photoOf, respondOf: respondOf, minPairsOf: minPairsOf, convoOf: convoOf,
+    part6Of: part6Of, part7Of: part7Of,
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
     photoUpTo: photoUpTo, respondUpTo: respondUpTo, minPairsUpTo: minPairsUpTo,
-    convoUpTo: convoUpTo,
+    convoUpTo: convoUpTo, part6UpTo: part6UpTo, part7UpTo: part7UpTo,
     phonics: phonics, irregulars: irregulars,
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,

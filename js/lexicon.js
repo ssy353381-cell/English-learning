@@ -41,6 +41,20 @@
 
   var UNKNOWN_ZH = '這個字還沒收進詞庫，先聽聽發音';
 
+  /* 重音字母摺回 a–z。課程例句裡就有 café 與 résumé，而詞庫的鍵一律是純 ASCII
+     （ECDICT 那份就是這樣），不摺的話點了也查不到。
+     摺完剛好都查得到對的字：cafe 是咖啡館，resume 的手寫層第一個意思就是履歷。
+     用配對字串現場展開而不是手寫一張對照表 —— 兩排字元要等長才不會錯位，
+     而等長這件事沒有人檢查得出來。 */
+  var FOLD = {};
+  (function () {
+    var groups = ['aàáâãäåāăą', 'eèéêëēĕėęě', 'iìíîïĩīĭįı', 'oòóôõöøōŏő',
+                  'uùúûüũūŭůűų', 'cçćĉċč', 'nñńņň', 'yýÿŷ', 'sšśŝş', 'zžźż'];
+    for (var i = 0; i < groups.length; i++) {
+      for (var j = 1; j < groups[i].length; j++) FOLD[groups[i].charAt(j)] = groups[i].charAt(0);
+    }
+  })();
+
   /* ---------- 索引 ---------- */
   var byWord = null;     // 小寫字 → entry
   var byForm = null;     // 變化形 → 原形字（原形本身不列入）
@@ -81,24 +95,50 @@
     return v;
   }
 
-  /* 規則變化：手寫層沒有 ECDICT 的 exchange 欄，只能照拼字規則推。
-     推錯了頂多是查不到，不會查到別的字 —— byWord 永遠優先於 byForm。 */
+  /* 不規則複數推不出來，但它是一個封閉的小集合，寫死就寫死。
+     不規則動詞有 data/irregular-verbs.js —— 那是課程要教的內容，有 A／B／C 三型；
+     這幾個名詞沒有人要教，純粹是查不查得到的問題，所以放在規則旁邊而不是 data/。
+     刻意不收 life／leaf／shelf 那組 -f→-ves：lives 與 leaves 同時是 live 與 leave
+     的第三人稱，收進來等於跟動詞搶同一個鍵，而動詞天天出現、名詞複數難得一見。 */
+  var IRREGULAR_PLURAL = {
+    child: 'children', man: 'men', woman: 'women', person: 'people',
+    tooth: 'teeth', foot: 'feet', goose: 'geese', mouse: 'mice', ox: 'oxen'
+  };
+
+  /* 規則變化：手寫層與課程單字都沒有 ECDICT 的 exchange 欄，只能照拼字規則推。
+     推錯了頂多是查不到，不會查到別的字 —— byWord 永遠優先於 byForm，而自動層
+     那些「資料是真的」的變化形又比規則先進索引（見 build()），form() 也不會去搶
+     已經有人認領的鍵。所以這裡寧可多推：多推的沒有人會查，漏掉的天天被點到。 */
   function ruleForms(w) {
-    var out = [];
-    if (/[^aeiou]y$/.test(w)) {
-      var stem = w.slice(0, -1);
-      out.push(stem + 'ies', stem + 'ied', w + 'ing');
-    } else if (/(s|x|z|ch|sh|o)$/.test(w)) {
+    var out = [], stem;
+    if (/[^aeiou]y$/.test(w)) {                       // study → studies、busy → busier
+      stem = w.slice(0, -1);
+      out.push(stem + 'ies', stem + 'ied', w + 'ing', stem + 'ier', stem + 'iest');
+    } else if (/(s|x|z|ch|sh)$/.test(w)) {
       out.push(w + 'es', w + 'ed', w + 'ing');
-    } else if (/e$/.test(w)) {
-      out.push(w + 's', w + 'd', w.slice(0, -1) + 'ing');
+    } else if (/o$/.test(w)) {
+      // -o 結尾兩種複數都真的存在：potato → potatoes，photo → photos
+      out.push(w + 's', w + 'es', w + 'ed', w + 'ing');
+    } else if (/e$/.test(w)) {                        // late → later／latest
+      stem = w.slice(0, -1);
+      out.push(w + 's', w + 'd', stem + 'ing', w + 'r', w + 'st');
     } else {
-      out.push(w + 's', w + 'ed', w + 'ing');
-      // 短母音結尾的單音節字會重複子音：stop → stopped
-      if (/^[^aeiou]*[aeiou][^aeiouwxy]$/.test(w)) {
-        var dbl = w + w.charAt(w.length - 1);
-        out.push(dbl + 'ed', dbl + 'ing');
-      }
+      out.push(w + 's', w + 'ed', w + 'ing', w + 'er', w + 'est');
+    }
+    // 短母音＋子音結尾就重複子音：stop → stopped、big → biggest、permit → permitted。
+    // 只看最後三個字元而不管音節：英文其實是重音落在最後一音節才重複（permit 會、
+    // visit 不會），但拼字看不出重音。多推的 visitted 沒有人會查，
+    // 漏掉的 permitted、occurred、admitted、transferred 卻是職場例句的常客。
+    if (/[^aeiou][aeiou][^aeiouwxy]$/.test(w)) {
+      var dbl = w + w.charAt(w.length - 1);
+      out.push(dbl + 'ed', dbl + 'ing', dbl + 'er', dbl + 'est');
+    }
+    if (IRREGULAR_PLURAL[w]) out.push(IRREGULAR_PLURAL[w]);
+    if (/man$/.test(w)) out.push(w.slice(0, -3) + 'men');   // businessman → businessmen
+    // 動名詞當名詞用就數得出來：feel → feeling → feelings，save → savings。
+    // 從上面已經推好的 -ing 再加 s，各分支才不必各寫一次。
+    for (var i = out.length - 1; i >= 0; i--) {
+      if (/ing$/.test(out[i])) out.push(out[i] + 's');
     }
     return out;
   }
@@ -169,7 +209,15 @@
         var e = makeAuto(arr[i], lv);
         e.src = 'auto';
         var seat = byWord[e.w.toLowerCase()];
-        if (seat) { if (seat.src === 'core') backfill(seat, e); continue; }
+        if (seat) {
+          if (seat.src === 'core') backfill(seat, e);
+          // 課程單字只補詞形變化。詞義、例句、音標都是手寫校過的，不能被蓋掉，
+          // 但 data/vocab-*.js 從來沒有 forms 這一欄 —— 沒補的話，課程教過的字
+          // 反而只剩規則推得出來的變化，occur 的 occurred、oversee 的 overseen
+          // 這些 ECDICT 明明給了的變化形全部掉在地上（77 個字有這個問題）。
+          else if (seat.src === 'vocab' && !hasKey(seat.forms) && hasKey(e.forms)) seat.forms = e.forms;
+          continue;
+        }
         put(e);
       }
     }
@@ -184,7 +232,12 @@
     ordered.forEach(function (e) {
       var base = e.w.toLowerCase();
       for (var k in e.forms) {
-        if (Object.prototype.hasOwnProperty.call(e.forms, k)) form(e.forms[k], base);
+        if (!Object.prototype.hasOwnProperty.call(e.forms, k)) continue;
+        form(e.forms[k], base);
+        // 動名詞當名詞用就數得出來：feelings、savings、drawings。
+        // ECDICT 的 exchange 只給到 -ing，複數得自己接 —— 自動層不跑 ruleForms()，
+        // 這一個字尾是唯一從真資料接得出來、又真的常被點到的變化。
+        if (k === 'i') form(e.forms[k] + 's', base);
       }
     });
     ordered.forEach(function (e) {
@@ -213,7 +266,27 @@
      整個詞組本身就是一筆詞條，去掉空白就查不到了 */
   function norm(w) {
     return String(w || '').toLowerCase().replace(/[’‘]/g, "'")
+      .replace(/[^\x00-\x7f]/g, function (c) { return FOLD[c] || c; })
       .replace(/[^a-z' -]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  /**
+   * 縮寫剝成開頭那個字：點到 can't 要開的是 can 的卡。
+   *
+   * ExUtil.matchAny() 也展開縮寫，但那是為了比對整句，展開成完整寫法
+   * （I'm → I am）；查詢這一側要的是單一個詞條，所以只留開頭那個字。
+   * 's 與 'd 在比對那側因為有歧義（is/has、would/had）刻意不展開，
+   * 在這裡沒有這個問題 —— it's 和 it'd 都是問 it 這個字。
+   */
+  function contractionHead(k) {
+    // 這三個剝不出開頭那個字：n 是 can 自己的、won't 與 shan't 連字都換了
+    if (k === "can't") return 'can';
+    if (k === "won't") return 'will';
+    if (k === "shan't") return 'shall';
+    if (k === "let's") return 'let';
+    if (/n't$/.test(k)) return k.slice(0, -3);          // isn't → is、didn't → did
+    var m = k.match(/^(.+?)'(m|re|ll|ve|d)$/);
+    return m ? m[1] : '';
   }
 
   /**
@@ -228,9 +301,16 @@
     if (!k) return null;
     if (byWord[k]) return { entry: byWord[k], via: '' };
 
-    // 所有格：the manager's → manager
-    var poss = k.replace(/'s$/, '');
+    // 所有格：the manager's → manager。複數的所有格只有一撇（two weeks' notice）
+    var poss = k.replace(/'s$|'$/, '');
     if (poss !== k && byWord[poss]) return { entry: byWord[poss], via: '所有格' };
+
+    // 縮寫在變化形之前試：I'm 的 m 不是任何字的變化形，剝掉才查得到 I
+    var head = contractionHead(k);
+    if (head && head !== k) {
+      var hh = lookup(head);
+      if (hh) return { entry: hh.entry, via: '縮寫' };
+    }
 
     var base = byForm[k] || byForm[poss];
     if (base && byWord[base]) {
@@ -292,16 +372,34 @@
    * 先轉義再包 span，所以字串裡會有 &amp; &#39; 這些實體 ——
    * 正規表示式必須先把實體整段吃掉，否則 &amp; 裡的 amp 會被當成一個英文字包起來。
    */
-  var TOKEN_RE = /&[a-zA-Z]+;|&#\d+;|([A-Za-z][A-Za-z'’-]*)/g;
+  /**
+   * 字母範圍含重音字母，否則 café 會斷成可點的 caf 加一個掉在 span 外面的 é。
+   *
+   * `&#39;` 要當成字中的那一撇吃進單字裡：先轉義再包 span，所以 doesn't 走到這裡
+   * 已經是 doesn&#39;t —— 不吃的話每一個縮寫都被那個實體切成兩半（doesn ／ t），
+   * 兩半都查不到，contractionHead() 根本沒機會出手。
+   * 其餘實體照舊整段吃掉，否則 &amp; 裡的 amp 會被當成一個英文字包起來。
+   */
+  var TOKEN_RE = /&[a-zA-Z]+;|&#\d+;|([A-Za-zÀ-ÖØ-öø-ÿ](?:[A-Za-zÀ-ÖØ-öø-ÿ’-]|&#39;)*)/g;
+
+  /** word 是「已經轉義過」的字，查詢與 data 屬性都要用還原後的寫法 */
+  function span(word) {
+    var plain = word.replace(/&#39;/g, "'");
+    return '<span class="lexw' + (lookup(plain) ? ' known' : '') + '" data-lexw="' +
+      esc(plain) + '">' + word + '</span>';
+  }
 
   function markup(text, opts) {
     opts = opts || {};
     ready();
     var html = esc(text).replace(TOKEN_RE, function (m, word) {
       if (!word) return m;                       // HTML 實體，原樣放回
-      var hit = lookup(word);
-      return '<span class="lexw' + (hit ? ' known' : '') + '" data-lexw="' +
-        esc(word) + '">' + word + '</span>';
+      // 連字號複合字整串查不到就拆開分別包（two-year → two ／ year）。
+      // 這種字詞庫收不完，但拆開後每一段都查得到，整串不可點才是最糟的結果。
+      if (word.indexOf('-') > 0 && !lookup(word.replace(/&#39;/g, "'"))) {
+        return word.replace(/[^-]+/g, span);
+      }
+      return span(word);
     });
     return opts.br === false ? html : html.replace(/\n/g, '<br>');
   }

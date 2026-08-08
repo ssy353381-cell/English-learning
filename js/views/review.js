@@ -7,6 +7,14 @@
   var esc = UI.esc;
   global.Views = global.Views || {};
 
+  /* 弱點怪獸的型別名稱。新增型別時這裡要一起加 —— 對不到就直接把
+     part6、respond 這種內部代號印在畫面上。 */
+  var WEAK_LABEL = {
+    vocab: '單字', grammar: '文法', reading: '閱讀', irregular: '動詞三態',
+    photo: 'Part 1 看圖', respond: 'Part 2 應答', phoneme: '最小音對',
+    convo: 'Part 3／4 對話', part6: 'Part 6 填空', part7: 'Part 7 雙篇'
+  };
+
   var tab = 'due';
 
   Views.review = function (params) {
@@ -114,7 +122,8 @@
         ? (it.v ? it.v + ' → ' + it.p + ' → ' + it.pp
                 : (it.zh || (it.title ? '閱讀理解' : '文法題')))
         : '';
-      var typeTag = { vocab: '單字', grammar: '文法', reading: '閱讀', irregular: '動詞三態' }[w.t] || w.t;
+      // 八種怪獸都要有中文名字 —— 對不到的話畫面上會直接印出 part6 這種內部代號
+      var typeTag = WEAK_LABEL[w.t] || w.t;
       return '<div class="list-row">' +
         (word ? Speech.btn(word) : '<span style="font-size:1.4rem">👾</span>') +
         '<div class="grow"><div class="sentence-en">' + esc(label) + '</div>' +

@@ -677,3 +677,37 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 .opt-review-row.is-answer { background: var(--green-soft); }
 .opt-review-row.is-ask { background: var(--blue-soft); margin-bottom: 8px; }
 .opt-review-row .opt-letter { margin-right: 0; flex: 0 0 auto; }
+
+/* ============ Part 6 段落填空 ============ */
+/* 空格留在文章原本的位置上 —— 把句子抽出來單獨問，Part 6 就降級成 Part 5 了 */
+.p6article { white-space: pre-wrap; }
+.p6slot {
+  display: inline-block; min-width: 5.5em; padding: 0 8px; margin: 0 2px;
+  border-bottom: 2px solid var(--blue); border-radius: 4px 4px 0 0;
+  background: var(--blue-soft); font-weight: 800; text-align: center;
+}
+.p6slot.filled { min-width: 0; }
+.p6slot.good { background: var(--green-soft); border-bottom-color: var(--green-dark); }
+.p6slot.bad  { background: var(--red-soft);   border-bottom-color: var(--red-dark); }
+
+/* 整句插入題：四個完整句子並排會擠到讀不了，強制一行一個 */
+.opts.opts-stack { grid-template-columns: 1fr; }
+
+/* ============ Part 7 雙篇閱讀 ============ */
+/* 兩份文件一定要同時看得見 —— 這一題型練的就是跨篇對照，
+   做成分頁或一次只顯示一篇，練到的就只剩單篇閱讀。 */
+.p7docs { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; margin-bottom: 14px; }
+.p7doc {
+  background: var(--surface); border: 2px solid var(--border);
+  border-radius: var(--radius); padding: 14px; min-width: 0;
+}
+.p7doc-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.p7doc-body {
+  font-family: var(--font-en); font-size: .98rem; line-height: 1.85;
+  white-space: pre-wrap; overflow-wrap: break-word;
+}
+.p7both {
+  display: inline-block; padding: 1px 8px; border-radius: 999px;
+  background: var(--blue-soft); color: var(--blue-dark);
+  font-size: .7rem; font-weight: 800; vertical-align: middle;
+}
