@@ -967,15 +967,18 @@ Lexicon.byTag('biz').forEach(function (e) {
 ok(bizDry.length === 0, '商務標籤的字都給得出例句（' + Lexicon.byTag('biz').length + ' 字）' +
    (bizDry.length ? '，還缺 ' + bizDry.length + '：' + bizDry.slice(0, 8).join('、') : ''));
 
-/* 第 1 級是詞頻最高的那一批，interest、case、power 這種一字多義的字沒有例句，
-   詞義欄裡並排的三四個意思就分不出哪個常用在哪裡。這一級已經補完，別讓它退回去。 */
-var lv1Dry = [];
-Lexicon.byLevel(1).forEach(function (e) {
-  var has = (e.ex || []).some(function (p) { return p && p[0]; }) || e.use;
-  if (!has) lv1Dry.push(e.w);
+/* 補完一級就在這裡釘一級。第 1 級是詞頻最高的那一批（interest、case、power 這種
+   一字多義的字沒有例句，詞義欄裡並排的三四個意思就分不出哪個常用在哪裡）；
+   第 2 級是「看得懂、講不出來」的那一層。補完的級數只會往下加，不會往回退。 */
+[1, 2].forEach(function (lv) {
+  var dry = [];
+  Lexicon.byLevel(lv).forEach(function (e) {
+    var has = (e.ex || []).some(function (p) { return p && p[0]; }) || e.use;
+    if (!has) dry.push(e.w);
+  });
+  ok(dry.length === 0, '第 ' + lv + ' 級的字都給得出例句（' + Lexicon.byLevel(lv).length + ' 字）' +
+     (dry.length ? '，還缺 ' + dry.length + '：' + dry.slice(0, 8).join('、') : ''));
 });
-ok(lv1Dry.length === 0, '第 1 級的字都給得出例句（' + Lexicon.byLevel(1).length + ' 字）' +
-   (lv1Dry.length ? '，還缺 ' + lv1Dry.length + '：' + lv1Dry.slice(0, 8).join('、') : ''));
 
 // 手寫層碰上課程已經教過的字：詞義以課程為準，但延伸用法要補上去
 var ad = Lexicon.lookup('address');
