@@ -97,6 +97,10 @@
     v.tags = v.tags || [];
     v.forms = v.forms || {};
     v.src = src;
+    // 手寫層那筆資料裡沒有 id（課程單字才有 v0001 這種），但詞庫特訓答錯時
+    // 存進弱點怪獸的就是這個 id —— 沒有的話存進去一個 undefined，
+    // 那隻怪獸從此出不了題也消不掉。自動層在 makeAuto() 就配好了，這裡補上同樣的形狀。
+    if (src === 'core' && !v.id) v.id = 'lx:' + v.w.toLowerCase();
     return v;
   }
 

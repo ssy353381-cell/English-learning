@@ -874,6 +874,20 @@ lexAll.forEach(function (e) {
 ok(lexBad.length === 0, '每筆都有英文與中文，欄位沒有錯位' +
    (lexBad.length ? '：' + lexBad.slice(0, 5).join('、') : ''));
 
+/* 詞庫特訓答錯時，存進弱點怪獸的是這一筆的 id。手寫層的資料裡沒有 id 欄
+   （課程單字才有 v0001 這種），adopt() 忘了補的話存進去的是 undefined ——
+   那隻怪獸從此出不了題也消不掉，而且畫面上完全看不出來。
+   自動層在 makeAuto() 就配好了，所以只有手寫層會踩到，
+   而測試又只從 byLevel() 抽前幾個，抽到自動層那筆就會假綠 —— 這裡直接掃全部。 */
+var noId = lexAll.filter(function (e) { return !e.id; });
+ok(noId.length === 0, '詞庫每一筆都有 id（弱點怪獸靠它才消得掉）' +
+   (noId.length ? '，還缺 ' + noId.length + '：' + noId.slice(0, 5).map(function (e) {
+     return e.w + '（' + e.src + '）';
+   }).join('、') : ''));
+var coreId = Lexicon.lookup('surveyor');
+ok(coreId && Lexicon.item(coreId.entry.id) === coreId.entry,
+   '手寫層的字用自己的 id 查得回同一筆（surveyor → ' + (coreId ? coreId.entry.id : '?') + '）');
+
 var lexDup = {}, dupWord = [];
 lexAll.forEach(function (e) {
   var k = e.w.toLowerCase();
@@ -958,6 +972,23 @@ var exBad = [];
 ok(exBad.length === 0, '手寫層每一筆都有日常與職場兩句中英對照例句' +
    (exBad.length ? '：' + exBad.slice(0, 5).join('、') : ''));
 
+/* 中英兩欄不能互相混進去。一句英文裡混進一個中文字（打字時輸入法沒切換），
+   markup() 的 TOKEN_RE 會在那個字前面停住，於是句子照樣包得出 span、
+   dead click 那項也照樣綠 —— 只有真的把卡片打開來看才會發現。
+   反過來中譯整句忘了翻，也是同一種無聲的錯。
+   不能改成「英文欄一律 ASCII」：café、résumé 是真的會出現的字。 */
+var CJK = /[　-〿㐀-䶿一-鿿＀-￯]/;
+var mixBad = [];
+(app.DATA_LEXICON_CORE || []).forEach(function (v) {
+  (v.ex || []).forEach(function (p) {
+    if (!p) return;
+    if (p[0] && CJK.test(p[0])) mixBad.push(v.w + ' 英文句混進中文：' + p[0]);
+    if (p[1] && !CJK.test(p[1])) mixBad.push(v.w + ' 中譯沒有中文：' + p[1]);
+  });
+});
+ok(mixBad.length === 0, '例句的英文欄沒混進中文、中譯欄沒漏翻' +
+   (mixBad.length ? '，' + mixBad.length + ' 處：' + mixBad.slice(0, 3).join('、') : ''));
+
 /* 商務字是這個 App 的目標，一個例句都給不出來的商務字就是查了也學不到東西 */
 var bizDry = [];
 Lexicon.byTag('biz').forEach(function (e) {
@@ -967,15 +998,19 @@ Lexicon.byTag('biz').forEach(function (e) {
 ok(bizDry.length === 0, '商務標籤的字都給得出例句（' + Lexicon.byTag('biz').length + ' 字）' +
    (bizDry.length ? '，還缺 ' + bizDry.length + '：' + bizDry.slice(0, 8).join('、') : ''));
 
-/* 第 1 級是詞頻最高的那一批，interest、case、power 這種一字多義的字沒有例句，
-   詞義欄裡並排的三四個意思就分不出哪個常用在哪裡。這一級已經補完，別讓它退回去。 */
-var lv1Dry = [];
-Lexicon.byLevel(1).forEach(function (e) {
-  var has = (e.ex || []).some(function (p) { return p && p[0]; }) || e.use;
-  if (!has) lv1Dry.push(e.w);
+/* 補完一級就在這裡釘一級。第 1 級是詞頻最高的那一批（interest、case、power 這種
+   一字多義的字沒有例句，詞義欄裡並排的三四個意思就分不出哪個常用在哪裡）；
+   第 2 級是「看得懂、講不出來」的那一層；第 3 級再往外一圈，多半連看都不一定看得懂。
+   補完的級數只會往下加，不會往回退。 */
+[1, 2, 3].forEach(function (lv) {
+  var dry = [];
+  Lexicon.byLevel(lv).forEach(function (e) {
+    var has = (e.ex || []).some(function (p) { return p && p[0]; }) || e.use;
+    if (!has) dry.push(e.w);
+  });
+  ok(dry.length === 0, '第 ' + lv + ' 級的字都給得出例句（' + Lexicon.byLevel(lv).length + ' 字）' +
+     (dry.length ? '，還缺 ' + dry.length + '：' + dry.slice(0, 8).join('、') : ''));
 });
-ok(lv1Dry.length === 0, '第 1 級的字都給得出例句（' + Lexicon.byLevel(1).length + ' 字）' +
-   (lv1Dry.length ? '，還缺 ' + lv1Dry.length + '：' + lv1Dry.slice(0, 8).join('、') : ''));
 
 // 手寫層碰上課程已經教過的字：詞義以課程為準，但延伸用法要補上去
 var ad = Lexicon.lookup('address');
