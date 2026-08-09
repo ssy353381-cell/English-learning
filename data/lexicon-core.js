@@ -5665,6 +5665,1172 @@ window.DATA_LEXICON_CORE = [
  note:'gentle 是「輕、不粗魯」，不是「有禮貌」—— 有禮貌是 polite。a gentle reminder（溫馨提醒）是商業信件的常用開場。',
  fam:['gently','gentleman'],
  ex:[['A gentle wind came through the window.','一陣微風從窗戶吹進來。'],
-     ['This is just a gentle reminder about the deadline.','這只是關於期限的溫馨提醒。']]}
+     ['This is just a gentle reminder about the deadline.','這只是關於期限的溫馨提醒。']]},
+
+{w:'geography',pos:'n.',zh:'地理・地理學',lv:2,tags:[],
+ ex:[['She teaches geography at a high school.','她在高中教地理。'],
+     ['The geography of the area makes delivery slow.','當地的地形讓配送變慢。']]},
+
+{w:'ghost',pos:'n.',zh:'鬼・幽靈',lv:2,tags:[],
+ note:'代筆的作家叫 a ghost writer，商業文章偶爾用得到。',
+ ex:[['She does not believe in ghosts.','她不相信有鬼。'],
+     ['The old hotel is said to have a ghost.','據說那間舊旅館鬧鬼。']]},
+
+{w:'giant',pos:'n./adj.',zh:'巨人・巨大的・大企業',lv:2,tags:[],
+ note:'產業新聞裡的 a retail giant 是「零售業巨頭」，指規模很大的公司。',
+ ex:[['The child read a story about a giant.','那個孩子讀了一個巨人的故事。'],
+     ['Two retail giants opened stores in the same street.','兩家零售業巨頭在同一條街開店。']]},
+
+{w:'glove',pos:'n.',zh:'手套',lv:2,tags:[],
+ note:'成雙出現時說 a pair of gloves。工地與實驗室的安全公告常寫 wear gloves。',
+ ex:[['I lost one of my gloves.','我掉了一隻手套。'],
+     ['Staff must wear gloves in the kitchen.','廚房內員工必須戴手套。']]},
+
+{w:'golf',pos:'n.',zh:'高爾夫球',lv:2,tags:[],
+ note:'多益的商務社交情境常見：play golf with a client（和客戶打高爾夫）。',
+ ex:[['He plays golf on Sundays.','他星期天打高爾夫。'],
+     ['The company holds a golf day every spring.','公司每年春天辦一次高爾夫球日。']]},
+
+{w:'goodbye',pos:'int.',zh:'再見',lv:2,tags:[],
+ note:'也寫作 good-bye 或 bye。say goodbye to someone 是「向某人道別」。',
+ ex:[['She said goodbye and left.','她道了再見就走了。'],
+     ['We had a small party to say goodbye to him.','我們辦了個小派對為他送行。']]},
+
+{w:'grammar',pos:'n.',zh:'文法・語法',lv:2,tags:[],
+ note:'不可數。拼法字尾是 -ar 不是 -er。',
+ ex:[['Her grammar is very good.','她的文法很好。'],
+     ['Please check the grammar before you send it.','寄出前請檢查文法。']]},
+
+{w:'grandchild',pos:'n.',zh:'孫子女',lv:2,tags:[],
+ note:'複數是 grandchildren。',
+ forms:{s:'grandchildren'},
+ ex:[['They have four grandchildren.','他們有四個孫子女。'],
+     ['She keeps photos of her grandchildren on the desk.','她把孫子女的照片放在桌上。']]},
+
+{w:'grandfather',pos:'n.',zh:'祖父・外公',lv:2,tags:[],
+ ex:[['My grandfather was a teacher.','我祖父以前是老師。'],
+     ['The shop was started by his grandfather.','這家店是他祖父開的。']]},
+
+{w:'grandmother',pos:'n.',zh:'祖母・外婆',lv:2,tags:[],
+ ex:[['My grandmother makes the best soup.','我祖母煮的湯最好喝。'],
+     ['She learned the recipe from her grandmother.','這道食譜是她跟祖母學的。']]},
+
+{w:'grandparent',pos:'n.',zh:'祖父母・外祖父母',lv:2,tags:[],
+ ex:[['We visit my grandparents every summer.','我們每年夏天去看祖父母。'],
+     ['The park is popular with grandparents and children.','這座公園很受祖孫兩代歡迎。']]},
+
+{w:'grandson',pos:'n.',zh:'孫子・外孫',lv:2,tags:[],
+ ex:[['Her grandson is starting school.','她的孫子要上學了。'],
+     ['He handed the business to his grandson.','他把事業交給了孫子。']]},
+
+{w:'grave',pos:'n./adj.',zh:'墳墓・嚴重的',lv:2,tags:[],
+ note:'形容詞的 grave 是「嚴重、嚴肅」，比 serious 更沉重：a grave mistake（重大的錯誤）。',
+ ex:[['They put flowers on the grave.','他們在墳前放了花。'],
+     ['The report raises a grave concern about safety.','這份報告提出了嚴重的安全疑慮。']]},
+
+{w:'gray',pos:'n./adj.',zh:'灰色・灰色的',lv:2,tags:[],
+ note:'美式拼 gray，英式拼 grey，兩種都對。a gray area 是「灰色地帶」。',
+ ex:[['He wore a gray suit.','他穿了一套灰色西裝。'],
+     ['The rule leaves a gray area about overtime.','這條規定在加班上留了一塊灰色地帶。']]},
+
+{w:'gross',pos:'adj./n.',zh:'總的・毛的・總額',lv:2,tags:[],
+ note:'薪資單上的 gross 是「稅前」，net 才是實拿 —— 兩個字一定成對看。gross profit 是毛利。',
+ ex:[['My gross pay is higher than what I take home.','我的稅前薪資比實拿的高。'],
+     ['The film made ten million in gross sales.','這部電影總票房一千萬。']]},
+
+{w:'guidance',pos:'n.',zh:'指導・指引',lv:2,tags:[],
+ note:'不可數。公司發布的 guidance 也可以是「指引文件」或財測。',
+ fam:['guide'],
+ ex:[['She gave me some guidance on the form.','她指導我怎麼填這份表格。'],
+     ['New staff work under guidance for a month.','新進人員有一個月在指導下工作。']]},
+
+{w:'guitar',pos:'n.',zh:'吉他',lv:2,tags:[],
+ fam:['guitarist'],
+ ex:[['He plays the guitar every evening.','他每天晚上彈吉他。'],
+     ['The shop repairs guitars and other instruments.','這家店修吉他和其他樂器。']]},
+
+/* ===================== H ===================== */
+{w:'happiness',pos:'n.',zh:'快樂・幸福',lv:2,tags:[],
+ fam:['happy'],
+ ex:[['Money is not the same as happiness.','錢和幸福不是同一回事。'],
+     ['The survey asked staff about happiness at work.','這份調查詢問員工工作上的幸福感。']]},
+
+{w:'harbour',pos:'n.',zh:'港口・海港',lv:2,tags:[],
+ note:'英式拼法，美式寫 harbor。港口是 harbour，港口城市的商業區則常說 port —— 貨運文件多半用 port。',
+ ex:[['Boats came into the harbour at dawn.','船隻在天亮時進港。'],
+     ['The new harbour can take larger ships.','新港口可以停靠更大的船。']]},
+
+{w:'harmless',pos:'adj.',zh:'無害的',lv:2,tags:[],
+ fam:['harm','harmful'],
+ ex:[['The spider looks bad but is harmless.','那隻蜘蛛看起來嚇人，其實無害。'],
+     ['The cleaning liquid is harmless to skin.','這種清潔液對皮膚無害。']]},
+
+{w:'hatred',pos:'n.',zh:'憎恨・仇恨',lv:2,tags:[],
+ fam:['hate'],
+ ex:[['The film is about love and hatred.','這部電影講的是愛與恨。'],
+     ['The policy aims to stop hatred at work.','這項政策旨在制止職場仇恨言行。']]},
+
+{w:'headache',pos:'n.',zh:'頭痛・令人頭痛的事',lv:2,tags:[],
+ note:'口語常用來說「麻煩事」：The new system is a real headache。',
+ ex:[['I have a bad headache.','我頭很痛。'],
+     ['Parking downtown is a real headache.','市中心停車真是件頭痛的事。']]},
+
+{w:'headline',pos:'n.',zh:'標題・頭條',lv:2,tags:[],
+ note:'多益 Part 7 常給一則新聞標題再問內容，headline 通常省略動詞與冠詞，所以讀起來不像完整句子。',
+ ex:[['The story was on the front page headline.','那則報導上了頭版標題。'],
+     ['The company made the headlines last week.','這家公司上週上了新聞頭條。']]},
+
+{w:'heal',pos:'v.',zh:'痊癒・治好',lv:2,tags:[],
+ note:'和 heel（腳跟）同音，拼字題常成對出現。傷口自己好起來也用 heal。',
+ ex:[['The cut healed in a week.','那道傷口一週就好了。'],
+     ['Time will heal the damage to the brand.','時間會修復品牌受到的傷害。']]},
+
+{w:'heaven',pos:'n.',zh:'天堂・天空',lv:2,tags:[],
+ fam:['heavenly'],
+ ex:[['They believe in heaven.','他們相信有天堂。'],
+     ['A quiet office after five is heaven.','五點以後安靜的辦公室簡直是天堂。']]},
+
+{w:'heel',pos:'n.',zh:'腳跟・鞋跟',lv:2,tags:[],
+ note:'高跟鞋是 high heels，口語直接說 heels。和 heal（痊癒）同音。',
+ ex:[['My new shoes hurt my heel.','我的新鞋磨到腳跟。'],
+     ['She changed into flat shoes because the heels hurt.','高跟鞋太痛，她換成了平底鞋。']]},
+
+{w:'helicopter',pos:'n.',zh:'直升機',lv:2,tags:[],
+ ex:[['A helicopter flew over the beach.','一架直升機飛過海灘。'],
+     ['The company uses a helicopter to reach the island.','公司用直升機前往那座島。']]},
+
+{w:'henry',pos:'n.',zh:'亨利（電感單位）',lv:2,tags:[],
+ note:'物理單位，符號 H。大寫的 Henry 則是常見的人名。',
+ ex:[['The henry is a unit used in electrical work.','亨利是電學上用的單位。'],
+     ['The coil is rated at one henry.','這個線圈的規格是一亨利。']]},
+
+{w:'hint',pos:'n./v.',zh:'暗示・提示・些許',lv:2,tags:[],
+ note:'a hint of 是「一點點」：a hint of salt（一點鹽味）。give someone a hint 是給提示。',
+ ex:[['Give me a hint about the answer.','給我一點提示。'],
+     ['There was a hint of doubt in his reply.','他的回覆裡帶著一點懷疑。']]},
+
+{w:'hip',pos:'n.',zh:'臀部・髖部',lv:2,tags:[],
+ ex:[['She hurt her hip when she fell.','她跌倒時傷到了髖部。'],
+     ['Keep the bag close to your hip on the bus.','在公車上把包包貼身放好。']]},
+
+{w:'historian',pos:'n.',zh:'歷史學家',lv:2,tags:[],
+ fam:['history','historic'],
+ ex:[['The historian wrote three books on the war.','那位歷史學家寫了三本關於那場戰爭的書。'],
+     ['A historian was invited to speak at the museum.','博物館請了一位歷史學家來演講。']]},
+
+{w:'holy',pos:'adj.',zh:'神聖的',lv:2,tags:[],
+ ex:[['The city is a holy place for many people.','這座城市對許多人來說是聖地。'],
+     ['The book describes several holy days.','這本書介紹了幾個宗教節日。']]},
+
+{w:'honey',pos:'n.',zh:'蜂蜜',lv:2,tags:[],
+ note:'也可以當親暱的稱呼（＝darling），職場上一樣不適合用。',
+ ex:[['She puts honey in her tea.','她在茶裡加蜂蜜。'],
+     ['The shop sells honey from local farms.','這家店賣當地農場的蜂蜜。']]},
+
+{w:'honour',pos:'n./v.',zh:'榮譽・尊敬・履行',lv:2,tags:[],
+ note:'英式拼法，美式寫 honor。商業上還有一個重要意思：honour a contract／a coupon 是「履行、承認（合約或折價券）」。',
+ fam:['honourable'],
+ ex:[['It is an honour to meet you.','很榮幸見到你。'],
+     ['The store will honour the coupon until June.','這家店的折價券可用到六月。']]},
+
+{w:'humour',pos:'n.',zh:'幽默・幽默感',lv:2,tags:[],
+ note:'英式拼法，美式寫 humor。a sense of humour 是「幽默感」。',
+ fam:['humorous'],
+ ex:[['She has a great sense of humour.','她很有幽默感。'],
+     ['The talk used humour to keep everyone awake.','那場演講用幽默讓大家保持清醒。']]},
+
+{w:'hunt',pos:'v./n.',zh:'打獵・搜尋',lv:2,tags:[],
+ note:'job hunting（找工作）與 house hunting（找房子）都是這個字，多益的求職情境常見。',
+ ex:[['They hunt in the forest in winter.','他們冬天在森林裡打獵。'],
+     ['She has been job hunting for a month.','她找工作找了一個月。']]},
+
+{w:'hurry',pos:'v./n.',zh:'趕快・匆忙',lv:2,tags:[],
+ note:'in a hurry 是「趕時間」，hurry up 是催人「快一點」。',
+ ex:[['Hurry up or we will be late.','快一點，不然我們要遲到了。'],
+     ['I am in a hurry, so let us talk later.','我在趕時間，我們晚點再談。']]},
+
+/* ===================== I ===================== */
+{w:'illness',pos:'n.',zh:'疾病・生病',lv:2,tags:[],
+ note:'illness 是「生病這件事」，disease 多半指某一種特定的病。請假單上寫 due to illness。',
+ fam:['ill'],
+ ex:[['He missed a week of school through illness.','他因病缺課一週。'],
+     ['Staff must report a long illness to the office.','員工長期生病必須通報公司。']]},
+
+{w:'imaginary',pos:'adj.',zh:'想像的・虛構的',lv:2,tags:[],
+ note:'三個容易混的字：imaginary（虛構的）、imaginative（有想像力的）、imaginable（想像得到的）。多益的字尾題最愛出這一組。',
+ fam:['imagine','imagination'],
+ ex:[['The child has an imaginary friend.','那個孩子有個想像出來的朋友。'],
+     ['The line on the map is imaginary.','地圖上那條線是假想線。']]},
+
+{w:'imagination',pos:'n.',zh:'想像力・想像',lv:2,tags:[],
+ fam:['imagine','imaginary'],
+ ex:[['The story needs some imagination.','這個故事需要一點想像力。'],
+     ['The design shows real imagination.','這個設計很有想像力。']]},
+
+{w:'immigrant',pos:'n.',zh:'（外來的）移民',lv:2,tags:[],
+ note:'immigrant 是「移入的人」，emigrant 是「移出的人」——同一個人在兩個國家有不同的叫法。',
+ fam:['immigration'],
+ ex:[['Her parents were immigrants.','她的父母是移民。'],
+     ['The city offers language classes for immigrants.','這座城市為移民開設語言課程。']]},
+
+{w:'import',pos:'n./v.',zh:'進口・進口貨',lv:2,tags:[],
+ note:'名詞重音在前（IM-port），動詞重音在後（im-PORT）—— 多益聽力靠重音分詞性。反義是 export。',
+ fam:['importer','export'],
+ ex:[['The country imports most of its oil.','這個國家的石油多半仰賴進口。'],
+     ['Imports rose by five percent last year.','去年進口成長了百分之五。']]},
+
+{w:'impress',pos:'v.',zh:'使印象深刻',lv:2,tags:[],
+ fam:['impression','impressive','impressed'],
+ ex:[['The show impressed everyone.','那場表演讓所有人印象深刻。'],
+     ['Her answers impressed the interviewer.','她的回答讓面試官印象深刻。']]},
+
+{w:'impressed',pos:'adj.',zh:'印象深刻的',lv:2,tags:[],
+ note:'人「覺得」印象深刻用 impressed，令人印象深刻的事物用 impressive。be impressed by／with 兩個介系詞都可以。',
+ fam:['impress','impressive'],
+ ex:[['I was impressed by her work.','我對她的作品印象深刻。'],
+     ['The client was impressed with the new design.','客戶對新設計印象深刻。']]},
+
+{w:'inability',pos:'n.',zh:'無能力・做不到',lv:2,tags:[],
+ note:'後面接不定詞：the inability to pay（無力支付）。',
+ fam:['ability','unable'],
+ ex:[['His inability to sleep made him tired.','睡不著讓他很疲倦。'],
+     ['The delay was caused by an inability to get parts.','延誤是因為拿不到零件。']]},
+
+{w:'inch',pos:'n.',zh:'英吋',lv:2,tags:[],
+ note:'一英吋等於 2.54 公分，十二英吋是一英尺。螢幕與紙張尺寸常用它。',
+ ex:[['The board is twelve inches long.','這塊板子十二英吋長。'],
+     ['The screen measures fifteen inches.','這個螢幕是十五吋。']]},
+
+{w:'indirect',pos:'adj.',zh:'間接的・迂迴的',lv:2,tags:[],
+ note:'會計上的 indirect costs 是「間接成本」，文法上的 indirect speech 是「間接引述」。',
+ fam:['direct','indirectly'],
+ ex:[['We took an indirect route home.','我們繞路回家。'],
+     ['The report lists direct and indirect costs.','這份報告列出直接與間接成本。']]},
+
+{w:'inevitably',pos:'adv.',zh:'不可避免地・必然',lv:2,tags:[],
+ fam:['inevitable'],
+ ex:[['Prices inevitably went up.','價格必然上漲了。'],
+     ['A change this big will inevitably take time.','這麼大的改變必然需要時間。']]},
+
+{w:'infant',pos:'n.',zh:'嬰兒・幼兒',lv:2,tags:[],
+ note:'比 baby 正式，出現在說明書與法規上：not suitable for infants（不適合幼兒）。',
+ ex:[['The seat is for an infant.','這個座椅是給嬰兒用的。'],
+     ['This product is not suitable for infants.','本產品不適合嬰幼兒使用。']]},
+
+{w:'infection',pos:'n.',zh:'感染',lv:2,tags:[],
+ fam:['infect','infectious'],
+ ex:[['The cut led to an infection.','那道傷口造成了感染。'],
+     ['Washing hands lowers the risk of infection.','洗手能降低感染風險。']]},
+
+{w:'informal',pos:'adj.',zh:'非正式的・輕鬆的',lv:2,tags:[],
+ note:'邀請函上的 informal dress 是「輕便服裝」，不是可以隨便穿。工作場合的 an informal chat 是「私下聊聊」。',
+ fam:['formal'],
+ ex:[['It is an informal party, so wear what you like.','這是輕鬆的聚會，穿什麼都可以。'],
+     ['We had an informal chat about the job.','我們私下聊了一下那份工作。']]},
+
+{w:'ingredient',pos:'n.',zh:'成分・材料',lv:2,tags:[],
+ note:'食品標示上的成分表就是 ingredients。抽象用法是「要素」：a key ingredient of success。',
+ ex:[['The ingredients are listed on the box.','成分列在盒子上。'],
+     ['Trust is a key ingredient of good service.','信任是良好服務的關鍵要素。']]},
+
+{w:'initially',pos:'adv.',zh:'起初・最初',lv:2,tags:[],
+ note:'常和後面的轉折搭配：Initially we planned…, but later…。多益閱讀的時序題靠它。',
+ fam:['initial'],
+ ex:[['Initially the plan looked simple.','起初這個計畫看起來很簡單。'],
+     ['We initially ordered ten, then added five more.','我們一開始訂十個，後來又加了五個。']]},
+
+{w:'injure',pos:'v.',zh:'弄傷・使受傷',lv:2,tags:[],
+ note:'名詞是 injury，形容詞 injured。工安公告常見 no one was injured（無人受傷）。',
+ fam:['injury','injured'],
+ ex:[['He injured his knee playing football.','他踢球時弄傷了膝蓋。'],
+     ['No one was injured in the accident.','這場意外沒有人受傷。']]},
+
+{w:'input',pos:'n./v.',zh:'輸入・投入・意見',lv:2,tags:[],
+ note:'會議裡的 your input 是「你的意見」，不是「輸入」。反義是 output（產出）。',
+ fam:['output'],
+ ex:[['Thank you for your input at the meeting.','謝謝你在會議上提供的意見。'],
+     ['Please input the numbers into the form.','請把數字輸入表格。']]},
+
+{w:'insect',pos:'n.',zh:'昆蟲',lv:2,tags:[],
+ ex:[['An insect landed on the window.','一隻昆蟲停在窗上。'],
+     ['The garden is sprayed to keep insects away.','花園會噴藥防蟲。']]},
+
+{w:'insight',pos:'n.',zh:'洞見・深入的了解',lv:2,tags:[],
+ note:'報告與簡報的常用字：give an insight into（讓人深入了解）。',
+ fam:['insightful'],
+ ex:[['The book gives an insight into daily life there.','這本書讓人深入了解當地的日常生活。'],
+     ['The survey offers useful insights about our customers.','這份調查提供了關於客戶的有用洞見。']]},
+
+{w:'inspector',pos:'n.',zh:'檢查員・稽查員',lv:2,tags:[],
+ note:'工廠、食安、消防都有 inspector。多益的稽核通知常寫 an inspector will visit。',
+ fam:['inspect','inspection'],
+ ex:[['The inspector checked every room.','檢查員檢查了每個房間。'],
+     ['A safety inspector will visit on Thursday.','安全稽查員星期四會來。']]},
+
+{w:'inspire',pos:'v.',zh:'啟發・激勵',lv:2,tags:[],
+ fam:['inspiration','inspiring'],
+ ex:[['Her story inspired me to try again.','她的故事激勵我再試一次。'],
+     ['The talk inspired the team to work harder.','那場演講激勵團隊更加努力。']]},
+
+{w:'instance',pos:'n.',zh:'例子・情況',lv:2,tags:[],
+ note:'for instance 就是 for example。in this instance 是「在這個情況下」。',
+ ex:[['For instance, we could meet on Tuesday.','舉例來說，我們可以星期二見面。'],
+     ['In this instance the rule does not apply.','在這個情況下這條規定不適用。']]},
+
+{w:'instruct',pos:'v.',zh:'指示・教導',lv:2,tags:[],
+ note:'名詞複數的 instructions 是「使用說明」，多益的產品情境常見 follow the instructions。',
+ fam:['instruction','instructor'],
+ ex:[['The teacher instructed us to wait.','老師要我們等一下。'],
+     ['Staff were instructed to lock the door at six.','員工被要求六點鎖門。']]},
+
+{w:'integrate',pos:'v.',zh:'整合・融入',lv:2,tags:[],
+ note:'系統整合是 integrate the systems，名詞 integration。人「融入」新環境也用它。',
+ fam:['integration'],
+ ex:[['The two systems are hard to integrate.','這兩套系統很難整合。'],
+     ['New staff need time to integrate into the team.','新進人員需要時間融入團隊。']]},
+
+{w:'intense',pos:'adj.',zh:'強烈的・激烈的',lv:2,tags:[],
+ note:'intense（強烈的）與 intensive（密集的）不同：intensive course 是密集課程，intense heat 是酷熱。',
+ fam:['intensity','intensive'],
+ ex:[['The heat was intense that afternoon.','那天下午熱得厲害。'],
+     ['There is intense competition in this market.','這個市場競爭激烈。']]},
+
+{w:'interaction',pos:'n.',zh:'互動・交流',lv:2,tags:[],
+ fam:['interact'],
+ ex:[['There was little interaction between the two groups.','兩組人之間很少互動。'],
+     ['The training focuses on interaction with customers.','這項訓練著重與客戶的互動。']]},
+
+{w:'interpret',pos:'v.',zh:'解讀・口譯',lv:2,tags:[],
+ note:'口譯是 interpret（口說），筆譯是 translate（書面）—— 多益的會議情境分得很清楚。名詞 interpreter 是口譯員。',
+ fam:['interpretation','interpreter'],
+ ex:[['How do you interpret this result?','你怎麼解讀這個結果？'],
+     ['She interpreted for the visitors at the meeting.','她在會議上為訪客口譯。']]},
+
+{w:'interval',pos:'n.',zh:'間隔・（英式）中場休息',lv:2,tags:[],
+ note:'at regular intervals 是「每隔固定時間」。英式劇場的中場休息也叫 interval，美式說 intermission。',
+ ex:[['Buses run at ten-minute intervals.','公車每十分鐘一班。'],
+     ['We will take a short interval after the first talk.','第一場演講後會有短暫休息。']]},
+
+{w:'invent',pos:'v.',zh:'發明・杜撰',lv:2,tags:[],
+ note:'invent 是做出本來沒有的東西，discover 是找到本來就存在的東西 —— 多益的字詞題常拿這組對比。',
+ fam:['invention','inventor'],
+ ex:[['Who invented the telephone?','電話是誰發明的？'],
+     ['He invented an excuse for being late.','他為遲到編了個藉口。']]},
+
+{w:'invention',pos:'n.',zh:'發明・發明品',lv:2,tags:[],
+ fam:['invent','inventor'],
+ ex:[['The wheel was an important invention.','輪子是重要的發明。'],
+     ['The company holds patents on three inventions.','這家公司有三項發明的專利。']]},
+
+{w:'invest',pos:'v.',zh:'投資・投入',lv:2,tags:[],
+ note:'invest in something。除了錢，也可以投入時間：invest time in training。',
+ fam:['investment','investor'],
+ ex:[['She invested in a small shop.','她投資了一家小店。'],
+     ['The firm invests heavily in training.','這家公司在訓練上投入很多。']]},
+
+{w:'investor',pos:'n.',zh:'投資人',lv:2,tags:[],
+ fam:['invest','investment'],
+ ex:[['The investor asked for more details.','那位投資人要求更多細節。'],
+     ['The company held a meeting for investors.','公司為投資人辦了說明會。']]},
+
+{w:'involvement',pos:'n.',zh:'參與・涉入',lv:2,tags:[],
+ fam:['involve','involved'],
+ ex:[['Her involvement in the club started last year.','她從去年開始參與這個社團。'],
+     ['The report questions his involvement in the deal.','報告質疑他在這樁交易中的涉入。']]},
+
+/* ===================== J ===================== */
+{w:'jail',pos:'n./v.',zh:'監獄・關進監獄',lv:2,tags:[],
+ note:'和 prison 幾乎同義，美式用 jail 較多。',
+ ex:[['He spent two years in jail.','他坐了兩年牢。'],
+     ['The court can jail anyone who breaks the order.','違反這項命令的人可能被法院判刑入獄。']]},
+
+{w:'jam',pos:'n./v.',zh:'果醬・堵塞・卡住',lv:2,tags:[],
+ note:'a traffic jam 是塞車，機器 jam 是「卡紙、卡住」—— 影印機故障的對話最常出現這個字。',
+ ex:[['She had bread and jam for breakfast.','她早餐吃了麵包配果醬。'],
+     ['The printer jammed again this morning.','影印機今天早上又卡紙了。']]},
+
+{w:'jeans',pos:'n.',zh:'牛仔褲',lv:2,tags:[],
+ note:'永遠是複數：a pair of jeans。公司的 dress code 常寫 no jeans on client days。',
+ ex:[['She bought a new pair of jeans.','她買了一件新牛仔褲。'],
+     ['Jeans are fine on Fridays.','星期五可以穿牛仔褲。']]},
+
+{w:'jewellery',pos:'n.',zh:'首飾・珠寶',lv:2,tags:[],
+ note:'英式拼法（兩個 l），美式寫 jewelry。不可數，一件要說 a piece of jewellery。',
+ fam:['jewel'],
+ ex:[['She keeps her jewellery in a box.','她把首飾收在盒子裡。'],
+     ['Please remove jewellery before entering the lab.','進實驗室前請取下首飾。']]},
+
+{w:'journalist',pos:'n.',zh:'記者・新聞從業者',lv:2,tags:[],
+ fam:['journalism','journal'],
+ ex:[['A journalist called to ask about the fire.','一位記者打電話來詢問火災的事。'],
+     ['The company invited journalists to the launch.','公司邀請記者參加發表會。']]},
+
+{w:'judgement',pos:'n.',zh:'判斷・判決',lv:2,tags:[],
+ note:'英式拼法，美式寫 judgment（沒有中間那個 e）。use your judgement 是「自己判斷」。',
+ fam:['judge'],
+ ex:[['Use your own judgement on this one.','這件事你自己判斷。'],
+     ['The court gave its judgement last week.','法院上週作出判決。']]},
+
+{w:'jury',pos:'n.',zh:'陪審團・評審團',lv:2,tags:[],
+ note:'比賽的「評審團」也是 jury，多益的競賽公告用得到。',
+ ex:[['The jury took two days to decide.','陪審團花了兩天做決定。'],
+     ['A jury of three will choose the winner.','三人評審團會選出優勝者。']]},
+
+/* ===================== K ===================== */
+{w:'keyboard',pos:'n.',zh:'鍵盤',lv:2,tags:[],
+ note:'電腦鍵盤與電子琴的鍵盤都是這個字。多益的辦公設備報修常見。',
+ ex:[['My keyboard stopped working.','我的鍵盤壞了。'],
+     ['Please order a new keyboard for the front desk.','請幫櫃檯訂一個新鍵盤。']]},
+
+{w:'kilometre',pos:'n.',zh:'公里',lv:2,tags:[],
+ note:'英式拼法，美式寫 kilometer；縮寫都是 km。重音在第一音節。',
+ ex:[['The park is two kilometres away.','公園在兩公里外。'],
+     ['The delivery van covers a hundred kilometres a day.','送貨車一天跑一百公里。']]},
+
+{w:'kindness',pos:'n.',zh:'善意・親切',lv:2,tags:[],
+ fam:['kind'],
+ ex:[['Thank you for your kindness.','謝謝你的好意。'],
+     ['The letter thanked the staff for their kindness.','那封信感謝員工的親切招待。']]},
+
+{w:'km',pos:'abbr.',zh:'公里（kilometre 的縮寫）',lv:2,tags:[],
+ note:'單複數同形，不加 s：10 km。路標與規格表上幾乎只寫縮寫。',
+ ex:[['The sign says 5 km to the airport.','路標寫著離機場五公里。'],
+     ['The site is 20 km from the port.','這個場址離港口二十公里。']]},
+
+{w:'knot',pos:'n./v.',zh:'結・打結・（航速）節',lv:2,tags:[],
+ note:'k 不發音。船速的單位「節」也是 knot（一節等於一小時一海浬）。',
+ ex:[['She tied a knot in the rope.','她在繩子上打了個結。'],
+     ['The ship was moving at twelve knots.','那艘船以十二節的速度前進。']]},
+
+/* ===================== L ===================== */
+{w:'lab',pos:'n.',zh:'實驗室',lv:2,tags:[],
+ note:'laboratory 的縮寫，日常與職場都用縮寫居多。',
+ fam:['laboratory'],
+ ex:[['The lab is on the second floor.','實驗室在二樓。'],
+     ['Samples must be sent to the lab the same day.','樣本必須當天送到實驗室。']]},
+
+{w:'lad',pos:'n.',zh:'小伙子・男孩',lv:2,tags:[],
+ note:'英式口語，帶點親切的意味，正式場合不用。',
+ ex:[['He is a good lad.','他是個好小伙子。'],
+     ['A young lad helped us carry the boxes.','一個年輕小伙子幫我們搬了箱子。']]},
+
+{w:'lap',pos:'n.',zh:'大腿（坐著時）・（跑道）一圈',lv:2,tags:[],
+ note:'筆電叫 laptop 就是因為放得上大腿。比賽的「一圈」也是 lap。',
+ ex:[['The cat sat on my lap.','貓坐在我腿上。'],
+     ['She was two seconds faster on the last lap.','她最後一圈快了兩秒。']]},
+
+{w:'lawn',pos:'n.',zh:'草坪・草地',lv:2,tags:[],
+ note:'多益 Part 1 的照片說明常見 mowing the lawn（在割草）。',
+ ex:[['He cuts the lawn every Saturday.','他每個星期六割草。'],
+     ['The party will be held on the lawn.','派對會在草坪上舉行。']]},
+
+{w:'lawsuit',pos:'n.',zh:'訴訟・官司',lv:2,tags:[],
+ note:'file a lawsuit 是「提起訴訟」，settle a lawsuit 是「和解」。',
+ fam:['law','sue'],
+ ex:[['The two firms settled the lawsuit.','兩家公司和解了這場官司。'],
+     ['A customer filed a lawsuit over the faulty part.','一位客戶為了那個瑕疵零件提起訴訟。']]},
+
+{w:'leather',pos:'n.',zh:'皮革',lv:2,tags:[],
+ ex:[['The bag is made of leather.','這個包是皮革做的。'],
+     ['We chose leather seats for the meeting room.','我們為會議室選了皮椅。']]},
+
+{w:'lecture',pos:'n./v.',zh:'講座・演講・訓話',lv:2,tags:[],
+ note:'大學的課也叫 lecture。當動詞還有「說教」的意思，語氣不好：Do not lecture me。',
+ fam:['lecturer'],
+ ex:[['The lecture starts at seven.','講座七點開始。'],
+     ['She gave a lecture on new safety rules.','她針對新的安全規定做了一場講解。']]},
+
+{w:'lemon',pos:'n.',zh:'檸檬',lv:2,tags:[],
+ note:'美式口語裡 a lemon 也指「買到的爛貨（尤指車）」。',
+ ex:[['She put lemon in her water.','她在水裡加了檸檬。'],
+     ['The cake is made with lemon and butter.','這個蛋糕用檸檬和奶油做的。']]},
+
+{w:'liberal',pos:'adj./n.',zh:'開明的・自由派的・大方的',lv:2,tags:[],
+ note:'政治上是「自由派」，日常用法是「不拘小節、給得大方」：a liberal helping（一大份）。',
+ ex:[['She has liberal views on most issues.','她在多數議題上看法開明。'],
+     ['The company is liberal with holiday time.','這家公司在休假上很大方。']]},
+
+{w:'licence',pos:'n.',zh:'執照・許可證',lv:2,tags:[],
+ note:'英式的名詞拼 licence、動詞拼 license；美式一律 license。駕照是 a driving licence（英）／driver license（美）。',
+ fam:['license'],
+ ex:[['He left his licence at home.','他把駕照忘在家裡了。'],
+     ['The shop needs a licence to sell alcohol.','這家店賣酒需要執照。']]},
+
+{w:'lifetime',pos:'n.',zh:'一生・（產品的）使用年限',lv:2,tags:[],
+ note:'保固文件上的 a lifetime warranty 是「終身保固」，多益的產品說明常見。',
+ ex:[['She lived in the same town all her lifetime.','她一輩子都住在同一個鎮上。'],
+     ['The tool comes with a lifetime warranty.','這個工具附終身保固。']]},
+
+{w:'lion',pos:'n.',zh:'獅子',lv:2,tags:[],
+ ex:[['The children saw a lion at the zoo.','孩子們在動物園看到獅子。'],
+     ['The team uses a lion as its symbol.','這支隊伍以獅子為標誌。']]},
+
+{w:'liquid',pos:'n./adj.',zh:'液體・液態的',lv:2,tags:[],
+ note:'安檢公告常見：大瓶的 liquids 不能帶上飛機。財務上的 liquid assets 則是「流動資產」。',
+ ex:[['Do not put liquid near the computer.','不要把液體放在電腦旁邊。'],
+     ['Large bottles of liquid are not allowed on board.','大瓶的液體不能帶上飛機。']]},
+
+{w:'litre',pos:'n.',zh:'公升',lv:2,tags:[],
+ note:'英式拼法，美式寫 liter；縮寫都是 L 或 l。',
+ ex:[['Please buy two litres of milk.','請買兩公升牛奶。'],
+     ['The tank holds fifty litres.','這個桶子裝五十公升。']]},
+
+{w:'lively',pos:'adj.',zh:'活潑的・熱鬧的',lv:2,tags:[],
+ note:'字尾是 -ly 卻是形容詞，不是副詞 —— friendly、lonely 同一類，多益的詞性題常拿來設陷阱。',
+ ex:[['The market is lively on Sundays.','這個市場星期天很熱鬧。'],
+     ['We had a lively discussion about the plan.','我們針對計畫熱烈討論了一番。']]},
+
+{w:'locate',pos:'v.',zh:'找出位置・設於',lv:2,tags:[],
+ note:'be located in／at 是「位於」，公司簡介與地址說明的固定說法。',
+ fam:['location'],
+ ex:[['I could not locate the file.','我找不到那份檔案。'],
+     ['The new office is located near the station.','新辦公室位於車站附近。']]},
+
+{w:'lorry',pos:'n.',zh:'（英式）卡車・貨車',lv:2,tags:[],
+ note:'英式用字，美式說 truck。多益的物流題兩種都出現。',
+ ex:[['A lorry blocked the narrow road.','一輛卡車擋住了窄路。'],
+     ['The goods will go by lorry on Monday.','貨物星期一以卡車運送。']]},
+
+{w:'lover',pos:'n.',zh:'愛好者・情人',lv:2,tags:[],
+ note:'a music lover 是「音樂愛好者」，這個用法比「情人」中性也常見得多。',
+ fam:['love'],
+ ex:[['She is a great lover of old films.','她非常喜愛老電影。'],
+     ['The shop is popular with coffee lovers.','這家店很受咖啡愛好者歡迎。']]},
+
+{w:'loyal',pos:'adj.',zh:'忠誠的・忠實的',lv:2,tags:[],
+ note:'行銷的 loyal customers（忠實顧客）與 a loyalty card（集點卡）是同一家的字。',
+ fam:['loyalty'],
+ ex:[['He has been a loyal friend for years.','他多年來一直是忠實的朋友。'],
+     ['The shop rewards its loyal customers.','這家店會回饋忠實顧客。']]},
+
+{w:'lump',pos:'n.',zh:'塊・腫塊',lv:2,tags:[],
+ note:'a lump sum 是「一次付清的整筆金額」，多益的薪資與保險題常見。',
+ ex:[['There is a lump of sugar in the cup.','杯子裡有一塊方糖。'],
+     ['The bonus is paid as a lump sum in June.','獎金在六月一次付清。']]},
+
+{w:'lung',pos:'n.',zh:'肺',lv:2,tags:[],
+ ex:[['Smoking harms the lungs.','抽菸傷肺。'],
+     ['The health talk covered lung and heart problems.','這場健康講座談了肺與心臟的問題。']]},
+
+/* ===================== M ===================== */
+{w:'magic',pos:'n./adj.',zh:'魔法・魔術・神奇的',lv:2,tags:[],
+ fam:['magical','magician'],
+ ex:[['The children believe in magic.','孩子們相信魔法。'],
+     ['There is no magic answer to this problem.','這個問題沒有神奇的解方。']]},
+
+{w:'magistrate',pos:'n.',zh:'地方法官・治安法官',lv:2,tags:[],
+ note:'英國處理輕微案件的法官，比 judge 的層級低。',
+ ex:[['The case went before a magistrate.','這個案子送到地方法官那裡。'],
+     ['A magistrate can issue a fine but not a long sentence.','治安法官可以開罰，但不能判長期徒刑。']]},
+
+{w:'maker',pos:'n.',zh:'製造商・製作者',lv:2,tags:[],
+ note:'常和產品連寫：a car maker（汽車製造商）、a coffee maker（咖啡機）。',
+ fam:['make'],
+ ex:[['The coffee maker is in the kitchen.','咖啡機在廚房。'],
+     ['The car maker will open a plant here.','那家汽車製造商將在這裡設廠。']]},
+
+{w:'mall',pos:'n.',zh:'購物中心',lv:2,tags:[],
+ note:'美式用字，英式常說 shopping centre。多益的購物情境幾乎每回出現。',
+ ex:[['We spent the afternoon at the mall.','我們在購物中心待了一下午。'],
+     ['The new mall opens next to the station.','新的購物中心在車站旁邊開幕。']]},
+
+{w:'manufacture',pos:'v./n.',zh:'製造・生產',lv:2,tags:[],
+ note:'名詞 manufacturer 是「製造商」，多益的供應鏈題常和 supplier（供應商）、distributor（經銷商）一起考。',
+ fam:['manufacturer','manufacturing'],
+ ex:[['The company manufactures bicycles.','這家公司製造腳踏車。'],
+     ['The parts are manufactured in two plants.','這些零件在兩座廠房生產。']]},
+
+{w:'manufacturing',pos:'n./adj.',zh:'製造業・製造的',lv:2,tags:[],
+ fam:['manufacture','manufacturer'],
+ ex:[['He works in manufacturing.','他在製造業工作。'],
+     ['Manufacturing costs rose again this year.','今年製造成本又上升了。']]},
+
+{w:'math',pos:'n.',zh:'數學',lv:2,tags:[],
+ note:'美式縮寫，英式縮成 maths（有 s）。兩邊都當單數用。',
+ fam:['mathematics'],
+ ex:[['She is good at math.','她數學很好。'],
+     ['Check the math on this invoice.','把這張發票的數字算一算。']]},
+
+{w:'mathematics',pos:'n.',zh:'數學',lv:2,tags:[],
+ note:'字尾有 s 但當單數：Mathematics is hard。口語幾乎只說 math 或 maths。',
+ fam:['math','mathematical'],
+ ex:[['Mathematics is her favourite subject.','數學是她最喜歡的科目。'],
+     ['The job needs a degree in mathematics.','這份工作需要數學學位。']]},
+
+{w:'maximum',pos:'n./adj.',zh:'最大值・最高的',lv:2,tags:[],
+ note:'公告上的 a maximum of ten people 是「最多十人」。縮寫 max，反義是 minimum。',
+ fam:['maximize','minimum'],
+ ex:[['The maximum speed here is fifty.','這裡的最高速限是五十。'],
+     ['A maximum of ten people may use the room.','這個房間最多容納十人。']]},
+
+{w:'mayor',pos:'n.',zh:'市長',lv:2,tags:[],
+ ex:[['The mayor opened the new library.','市長為新圖書館揭幕。'],
+     ['The mayor will speak at the opening.','市長會在開幕典禮上致詞。']]},
+
+{w:'medal',pos:'n.',zh:'獎牌・勳章',lv:2,tags:[],
+ note:'和 metal（金屬）只差一個字母的位置，聽力題容易聽混。',
+ ex:[['She won a gold medal.','她贏得一面金牌。'],
+     ['The company gave him a medal for thirty years of service.','公司頒給他三十年服務獎章。']]},
+
+{w:'melt',pos:'v.',zh:'融化・熔化',lv:2,tags:[],
+ ex:[['The ice melted in the sun.','冰在太陽下融化了。'],
+     ['Keep the boxes cool so the goods do not melt.','箱子要放涼處，貨品才不會融化。']]},
+
+{w:'merchant',pos:'n.',zh:'商人・（貿易）商行',lv:2,tags:[],
+ note:'刷卡收單的文件上，merchant 指「特約商店」。歷史文章裡則是「商人」。',
+ ex:[['The town was full of merchants.','這座城鎮商賈雲集。'],
+     ['The bank charges the merchant a small fee.','銀行向特約商店收取少額手續費。']]},
+
+{w:'mere',pos:'adj.',zh:'僅僅的・不過是',lv:2,tags:[],
+ note:'只放在名詞前面，用來強調「才這麼一點」：a mere two days（才兩天）。副詞 merely 是「只不過」。',
+ fam:['merely'],
+ ex:[['The whole trip took a mere two days.','整趟旅程才花兩天。'],
+     ['The delay was a mere ten minutes.','延誤不過十分鐘。']]},
+
+{w:'metre',pos:'n.',zh:'公尺',lv:2,tags:[],
+ note:'英式拼法，美式寫 meter；縮寫都是 m。美式的 meter 另有「計費表」的意思（水表、停車計時器），英式那個也拼 meter。',
+ ex:[['The room is four metres wide.','這個房間四公尺寬。'],
+     ['Leave one metre between the shelves.','架子之間留一公尺。']]},
+
+{w:'mhm',pos:'int.',zh:'嗯（表示同意或在聽）',lv:2,tags:[],
+ note:'閉著嘴發出的鼻音，表示「我在聽、我同意」。多益聽力的對話裡常出現，聽到它不必查意思 —— 它只是表示對方還在線上。',
+ ex:[['She said mhm and kept writing.','她嗯了一聲，繼續寫。'],
+     ['A quiet mhm on the phone means the other side is still listening.','電話裡輕輕的一聲嗯，表示對方還在聽。']]},
+
+{w:'miner',pos:'n.',zh:'礦工',lv:2,tags:[],
+ note:'和 minor（次要的、未成年者）同音，拼字題常成對出現。',
+ fam:['mine','mining'],
+ ex:[['His father was a miner.','他父親以前是礦工。'],
+     ['The company hired fifty miners last year.','這家公司去年僱用了五十名礦工。']]},
+
+{w:'minimum',pos:'n./adj.',zh:'最小值・最低的',lv:2,tags:[],
+ note:'the minimum wage 是「最低工資」，a minimum order 是「最低訂購量」—— 兩個都是多益常客。反義是 maximum。',
+ fam:['minimize','maximum'],
+ ex:[['You need a minimum of six people.','你至少需要六個人。'],
+     ['There is a minimum order of one hundred units.','最低訂購量是一百件。']]},
+
+{w:'miracle',pos:'n.',zh:'奇蹟',lv:2,tags:[],
+ ex:[['It was a miracle that no one was hurt.','沒有人受傷真是奇蹟。'],
+     ['Do not expect a miracle from one advert.','別指望一則廣告就能創造奇蹟。']]},
+
+{w:'missile',pos:'n.',zh:'飛彈・投射物',lv:2,tags:[],
+ ex:[['The museum shows an old missile.','那間博物館展示了一枚舊飛彈。'],
+     ['The report deals with missile safety rules.','這份報告談的是飛彈的安全規範。']]},
+
+{w:'mode',pos:'n.',zh:'模式・方式',lv:2,tags:[],
+ note:'裝置上的 sleep mode（睡眠模式）、運輸的 mode of transport（運輸方式）都用它。',
+ ex:[['Put your phone in silent mode.','把手機調成靜音模式。'],
+     ['The form asks for your mode of transport.','這份表格要填你的交通方式。']]},
+
+{w:'module',pos:'n.',zh:'模組・（課程）單元',lv:2,tags:[],
+ note:'訓練課程分成幾個 module，多益的教育訓練通知常見。',
+ ex:[['The course has six modules.','這門課有六個單元。'],
+     ['Staff must finish the safety module first.','員工必須先完成安全單元。']]},
+
+{w:'molecule',pos:'n.',zh:'分子',lv:2,tags:[],
+ fam:['molecular'],
+ ex:[['Water is made of very small molecules.','水由非常小的分子構成。'],
+     ['The lab studies how the molecules join.','實驗室研究這些分子如何結合。']]},
+
+{w:'monetary',pos:'adj.',zh:'貨幣的・金錢的',lv:2,tags:[],
+ note:'財經新聞的 monetary policy 是「貨幣政策」。日常說錢多半用 financial，monetary 偏總體經濟。',
+ fam:['money'],
+ ex:[['The gift has little monetary value.','這份禮物沒什麼金錢價值。'],
+     ['The bank changed its monetary policy.','央行調整了貨幣政策。']]},
+
+{w:'mood',pos:'n.',zh:'心情・氣氛',lv:2,tags:[],
+ note:'in the mood for 是「想要（做某事）」：I am in the mood for coffee。',
+ ex:[['She is in a good mood today.','她今天心情很好。'],
+     ['The mood in the office changed after the news.','消息傳出後辦公室的氣氛就變了。']]},
+
+{w:'motivate',pos:'v.',zh:'激勵・促使',lv:2,tags:[],
+ fam:['motivation','motive'],
+ ex:[['Good pay does not motivate everyone.','高薪不見得能激勵每個人。'],
+     ['The manager knows how to motivate the team.','那位經理很懂得激勵團隊。']]},
+
+{w:'motorcycle',pos:'n.',zh:'摩托車・機車',lv:2,tags:[],
+ note:'口語常說 motorbike 或 bike。多益 Part 1 的街景照片常見。',
+ ex:[['He rides a motorcycle to work.','他騎機車上班。'],
+     ['Motorcycles must park in the lower level.','機車必須停在地下層。']]},
+
+{w:'mud',pos:'n.',zh:'泥・爛泥',lv:2,tags:[],
+ fam:['muddy'],
+ ex:[['Her boots were covered in mud.','她的靴子沾滿泥巴。'],
+     ['Rain turned the site into mud.','雨把工地變成一片爛泥。']]},
+
+{w:'multiple',pos:'adj./n.',zh:'多個的・多重的・倍數',lv:2,tags:[],
+ note:'multiple choice 是「選擇題」。當名詞是數學的「倍數」。',
+ fam:['multiply'],
+ ex:[['The test has multiple choice questions.','這份測驗是選擇題。'],
+     ['We received multiple requests for the same file.','我們收到多筆索取同一份檔案的請求。']]},
+
+{w:'mum',pos:'n.',zh:'（英式）媽媽',lv:2,tags:[],
+ note:'英式說 mum，美式說 mom。另有片語 keep mum（保持沉默），和媽媽無關。',
+ ex:[['She called her mum from the station.','她從車站打電話給媽媽。'],
+     ['My mum still works three days a week.','我媽現在還一週工作三天。']]},
+
+{w:'musician',pos:'n.',zh:'音樂家・樂手',lv:2,tags:[],
+ fam:['music','musical'],
+ ex:[['The musician played for an hour.','那位樂手演奏了一小時。'],
+     ['We hired two musicians for the opening.','我們為開幕請了兩位樂手。']]},
+
+{w:'mutual',pos:'adj.',zh:'相互的・共同的',lv:2,tags:[],
+ note:'a mutual friend 是「共同的朋友」，mutual agreement 是「雙方同意」。多益的合約文字常見 by mutual agreement。',
+ fam:['mutually'],
+ ex:[['We have a mutual friend.','我們有共同的朋友。'],
+     ['The contract ended by mutual agreement.','這份合約經雙方同意終止。']]},
+
+{w:'myth',pos:'n.',zh:'神話・迷思',lv:2,tags:[],
+ note:'除了古代神話，也指「以訛傳訛的說法」：It is a myth that…（…是個迷思）。',
+ ex:[['The book collects old myths.','這本書收錄了古老的神話。'],
+     ['It is a myth that longer hours mean more work done.','工時愈長做得愈多，這是個迷思。']]},
+
+/* ===================== N ===================== */
+{w:'nail',pos:'n./v.',zh:'釘子・指甲・釘牢',lv:2,tags:[],
+ note:'同一個字兩個意思：牆上的釘子與手上的指甲。hit the nail on the head 是「說到重點」。',
+ ex:[['She hung the picture on a nail.','她把畫掛在釘子上。'],
+     ['Your answer hit the nail on the head.','你的回答正中要點。']]},
+
+{w:'namely',pos:'adv.',zh:'也就是・即',lv:2,tags:[],
+ note:'用來把前面說的東西點名說清楚：two people, namely Ann and Bob。書面用語，多益閱讀常見。',
+ ex:[['Only one thing matters, namely safety.','只有一件事最重要，就是安全。'],
+     ['Two teams are affected, namely sales and support.','有兩個團隊受影響，也就是業務與客服。']]},
+
+{w:'navy',pos:'n.',zh:'海軍・深藍色',lv:2,tags:[],
+ note:'navy blue 是「海軍藍」，服裝與制服說明常見。',
+ ex:[['His brother is in the navy.','他哥哥在海軍服役。'],
+     ['The uniform is navy with white lines.','制服是深藍色配白線。']]},
+
+{w:'neighbourhood',pos:'n.',zh:'鄰近地區・社區',lv:2,tags:[],
+ note:'英式拼法，美式寫 neighborhood。in the neighbourhood of 除了「在…附近」，也可以是「大約」：in the neighbourhood of ten thousand。',
+ fam:['neighbour'],
+ ex:[['They live in a quiet neighbourhood.','他們住在一個安靜的社區。'],
+     ['The shop has served this neighbourhood for years.','這家店服務這個社區很多年了。']]},
+
+{w:'nephew',pos:'n.',zh:'姪子・外甥',lv:2,tags:[],
+ ex:[['My nephew starts school this year.','我姪子今年上學。'],
+     ['He gave his nephew a summer job.','他給了外甥一份暑期工作。']]},
+
+{w:'nerve',pos:'n.',zh:'神經・膽量',lv:2,tags:[],
+ note:'複數的 nerves 常指「緊張」：calm your nerves（穩住情緒）。單數的 nerve 則可以是「膽量」。',
+ fam:['nervous'],
+ ex:[['The cold air hurt a nerve in my tooth.','冷空氣刺激到我的牙神經。'],
+     ['She had the nerve to ask for a raise on day one.','她第一天上班就敢開口要求加薪。']]},
+
+{w:'niece',pos:'n.',zh:'姪女・外甥女',lv:2,tags:[],
+ note:'拼法是 i 在 e 前面（niece），和 receive 的順序相反。',
+ ex:[['My niece is learning the piano.','我姪女在學鋼琴。'],
+     ['She wrote a letter to her niece.','她寫了一封信給外甥女。']]},
+
+{w:'nineteen',pos:'num.',zh:'十九',lv:2,tags:[],
+ ex:[['He was nineteen when he started work.','他開始工作時十九歲。'],
+     ['Nineteen orders came in today.','今天進來十九筆訂單。']]},
+
+{w:'nineteenth',pos:'num.',zh:'第十九',lv:2,tags:[],
+ ex:[['Her birthday is on the nineteenth.','她的生日在十九號。'],
+     ['The store opens on the nineteenth of April.','這家店四月十九日開幕。']]},
+
+{w:'ninety',pos:'num.',zh:'九十',lv:2,tags:[],
+ ex:[['The film is ninety minutes long.','這部電影九十分鐘。'],
+     ['About ninety people came to the talk.','大約九十人來聽這場演講。']]},
+
+{w:'nonsense',pos:'n.',zh:'胡說・沒有意義的話',lv:2,tags:[],
+ note:'不可數，所以是 that is nonsense 而不是 a nonsense。',
+ ex:[['That is complete nonsense.','那完全是胡說。'],
+     ['The manager has no time for nonsense.','那位經理沒空理會胡鬧。']]},
+
+{w:'numerous',pos:'adj.',zh:'許多的・為數眾多的',lv:2,tags:[],
+ note:'比 many 正式，後面接可數名詞的複數：numerous requests。書面報告常用。',
+ ex:[['She has visited the city numerous times.','她去過那座城市很多次。'],
+     ['We received numerous requests for the same form.','我們收到許多索取同一份表格的請求。']]},
+
+{w:'nut',pos:'n.',zh:'堅果・螺帽',lv:2,tags:[],
+ note:'機械上鎖螺絲的「螺帽」也是 nut，和 bolt（螺栓）成對。食品標示常見 may contain nuts（可能含堅果）。',
+ ex:[['This cake contains nuts.','這個蛋糕含有堅果。'],
+     ['Tighten the nut before you use the shelf.','使用架子前先鎖緊螺帽。']]},
+
+/* ===================== O ===================== */
+{w:'obey',pos:'v.',zh:'服從・遵守',lv:2,tags:[],
+ note:'後面直接接受詞，不加介系詞：obey the rules（遵守規定）。',
+ fam:['obedient'],
+ ex:[['Everyone must obey the rules.','每個人都必須遵守規定。'],
+     ['Drivers who do not obey the signs will be fined.','不遵守標誌的駕駛會被罰款。']]},
+
+{w:'objection',pos:'n.',zh:'反對・異議',lv:2,tags:[],
+ note:'have no objection to something 是「不反對」，後面的 to 是介系詞，接名詞或動名詞。',
+ fam:['object'],
+ ex:[['I have no objection to the new time.','我不反對改成新的時間。'],
+     ['Two members raised an objection at the meeting.','兩位成員在會議上提出異議。']]},
+
+{w:'observation',pos:'n.',zh:'觀察・觀察結果',lv:2,tags:[],
+ fam:['observe','observer'],
+ ex:[['His observation turned out to be right.','他的觀察後來證明是對的。'],
+     ['The report is based on two weeks of observation.','這份報告根據兩週的觀察寫成。']]},
+
+{w:'observer',pos:'n.',zh:'觀察者・觀察員',lv:2,tags:[],
+ note:'會議上的 observer 是「列席但沒有表決權的人」。',
+ fam:['observe','observation'],
+ ex:[['She joined the meeting as an observer.','她以列席身分參加會議。'],
+     ['Observers say the market will stay flat.','觀察人士認為市場會持平。']]},
+
+{w:'occasional',pos:'adj.',zh:'偶爾的・不定期的',lv:2,tags:[],
+ note:'副詞 occasionally（偶爾）比形容詞常見。拼法有兩個 c 一個 s。',
+ fam:['occasion','occasionally'],
+ ex:[['We get the occasional call at night.','我們晚上偶爾會接到電話。'],
+     ['There is an occasional delay during the rainy season.','雨季偶爾會有延誤。']]},
+
+{w:'occupation',pos:'n.',zh:'職業・佔用',lv:2,tags:[],
+ note:'表格上的 occupation 欄就是填職業。飯店的 occupancy（住房率）是同一家的字。',
+ fam:['occupy','occupational'],
+ ex:[['Please write your occupation here.','請在這裡填寫職業。'],
+     ['The form asks for your name, age and occupation.','這份表格要填姓名、年齡與職業。']]},
+
+{w:'offensive',pos:'adj.',zh:'冒犯的・令人不快的',lv:2,tags:[],
+ note:'職場守則常見：offensive language（不當言語）。運動與軍事上則是「進攻的」。',
+ fam:['offend','offense'],
+ ex:[['The joke was offensive to some people.','那個笑話冒犯了一些人。'],
+     ['Offensive language is against company policy.','不當言語違反公司規定。']]},
+
+{w:'onion',pos:'n.',zh:'洋蔥',lv:2,tags:[],
+ ex:[['Cut the onion into small pieces.','把洋蔥切小塊。'],
+     ['The soup has onion and garlic in it.','這道湯裡有洋蔥和大蒜。']]},
+
+{w:'opera',pos:'n.',zh:'歌劇',lv:2,tags:[],
+ note:'soap opera 是電視上的「肥皂劇」，和歌劇無關。',
+ ex:[['They went to the opera last night.','他們昨晚去看歌劇。'],
+     ['The new opera house opens in the autumn.','新的歌劇院秋天開幕。']]},
+
+{w:'orange',pos:'n./adj.',zh:'柳橙・橘色的',lv:2,tags:[],
+ ex:[['She had an orange after lunch.','她午餐後吃了一顆柳橙。'],
+     ['The warning light turns orange first.','警示燈會先變成橘色。']]},
+
+{w:'organisation',pos:'n.',zh:'組織・機構',lv:2,tags:[],
+ note:'英式拼法（-s-），美式寫 organization。非營利組織是 a non-profit organisation。',
+ fam:['organise','organisational'],
+ ex:[['She works for a health organisation.','她在一個衛生組織工作。'],
+     ['The organisation has offices in five cities.','這個組織在五個城市設有辦公室。']]},
+
+{w:'organise',pos:'v.',zh:'籌辦・整理',lv:2,tags:[],
+ note:'英式拼法，美式寫 organize。organise an event（籌辦活動）是多益的活動情境常用說法。',
+ fam:['organisation','organiser'],
+ ex:[['She organised the whole trip.','整趟行程都是她安排的。'],
+     ['We need someone to organise the training day.','我們需要有人來籌辦訓練日。']]},
+
+{w:'originally',pos:'adv.',zh:'原本・起初',lv:2,tags:[],
+ note:'常帶著「後來改了」的意味：The event was originally planned for May（本來排在五月）。多益閱讀的改期通知必用。',
+ fam:['original','origin'],
+ ex:[['The house was originally a school.','這棟房子原本是學校。'],
+     ['The event was originally planned for May.','這場活動原本排在五月。']]},
+
+{w:'ought',pos:'aux.',zh:'應該',lv:2,tags:[],
+ note:'後面一定接 to：You ought to call him。語氣比 should 稍重一點，但用法幾乎一樣，否定是 ought not to。',
+ ex:[['You ought to call her back.','你應該回電給她。'],
+     ['We ought to check the figures again.','我們應該再核對一次數字。']]},
+
+{w:'outdoor',pos:'adj.',zh:'戶外的',lv:2,tags:[],
+ note:'形容詞是 outdoor（an outdoor party），副詞是 outdoors（eat outdoors）—— 差一個 s。',
+ ex:[['They held an outdoor party.','他們辦了一場戶外派對。'],
+     ['The outdoor seats are closed when it rains.','下雨時戶外座位不開放。']]},
+
+{w:'oven',pos:'n.',zh:'烤箱',lv:2,tags:[],
+ ex:[['Put the cake in the oven.','把蛋糕放進烤箱。'],
+     ['The kitchen has two ovens.','這間廚房有兩台烤箱。']]},
+
+{w:'ownership',pos:'n.',zh:'所有權',lv:2,tags:[],
+ note:'公司易主的公告常寫 under new ownership（新東家經營）。',
+ fam:['own','owner'],
+ ex:[['The shop is under new ownership.','這家店換了新老闆。'],
+     ['Ownership of the land passed to the city.','這塊地的所有權轉給了市政府。']]},
+
+/* ===================== P ===================== */
+{w:'pacific',pos:'adj.',zh:'平靜的・和平的',lv:2,tags:[],
+ note:'小寫的 pacific 是「平靜的」，大寫的 the Pacific 才是太平洋 —— 兩個意思同源，因為當年的航海者覺得那片海很平靜。',
+ ex:[['The lake was calm and pacific.','那座湖平靜無波。'],
+     ['They took a pacific approach to the dispute.','他們以和平的方式處理這場爭議。']]},
+
+{w:'packet',pos:'n.',zh:'小包・包裹',lv:2,tags:[],
+ note:'英式的 a packet of biscuits 就是美式的 a package。網路傳輸的「封包」也是 packet。',
+ fam:['pack','package'],
+ ex:[['She opened a packet of biscuits.','她打開一包餅乾。'],
+     ['A packet of forms was left at the desk.','桌上留了一包表格。']]},
+
+{w:'painful',pos:'adj.',zh:'疼痛的・痛苦的',lv:2,tags:[],
+ fam:['pain','painless'],
+ ex:[['My knee is still painful.','我的膝蓋還在痛。'],
+     ['The change was slow and painful for everyone.','這次改變對每個人來說都又慢又難受。']]},
+
+{w:'painter',pos:'n.',zh:'畫家・油漆工',lv:2,tags:[],
+ note:'兩種都是 painter：畫畫的人和刷油漆的人，看上下文分。',
+ fam:['paint','painting'],
+ ex:[['She is a well-known painter.','她是知名畫家。'],
+     ['A painter will come to do the meeting room.','會有油漆工來粉刷會議室。']]},
+
+{w:'palm',pos:'n.',zh:'手掌・棕櫚樹',lv:2,tags:[],
+ note:'l 不發音。手掌和棕櫚樹用同一個字 —— 葉子張開的樣子像手掌。',
+ ex:[['He held the key in his palm.','他把鑰匙握在手掌裡。'],
+     ['Palm trees line the road to the hotel.','通往飯店的路兩旁種著棕櫚樹。']]},
+
+{w:'pant',pos:'v.',zh:'喘氣',lv:2,tags:[],
+ note:'單數的 pant 是動詞「喘氣」，複數的 pants 才是褲子 —— 兩個字沒有關係。',
+ ex:[['The dog panted after the walk.','散步後那隻狗一直喘氣。'],
+     ['He was panting when he reached the top floor.','他爬到頂樓時喘個不停。']]},
+
+{w:'pants',pos:'n.',zh:'（美式）長褲・（英式）內褲',lv:2,tags:[],
+ note:'美式的 pants 是長褲，英式的 pants 卻是內褲（長褲要說 trousers）—— 這是英美用字最容易鬧笑話的一組。',
+ fam:['trousers'],
+ ex:[['He bought a pair of black pants.','他買了一條黑長褲。'],
+     ['The dress code says no short pants.','服裝規定寫著不能穿短褲。']]},
+
+{w:'parish',pos:'n.',zh:'教區',lv:2,tags:[],
+ note:'英國的地方行政區也叫 parish，是最小的一級。',
+ ex:[['The church serves a small parish.','這間教堂服務一個小教區。'],
+     ['The parish office keeps the old records.','教區辦公室保管著舊紀錄。']]},
+
+{w:'parliamentary',pos:'adj.',zh:'國會的・議會的',lv:2,tags:[],
+ note:'英國的國會是 Parliament，美國的是 Congress，形容詞也各有一個：parliamentary 與 congressional。',
+ fam:['parliament'],
+ ex:[['The bill faces a parliamentary vote.','這項法案要交付國會表決。'],
+     ['A parliamentary report was published today.','今天公布了一份國會報告。']]},
+
+{w:'participant',pos:'n.',zh:'參與者・與會者',lv:2,tags:[],
+ note:'活動通知的常用字：participants must register（參加者須報名）。',
+ fam:['participate'],
+ ex:[['Each participant gets a name badge.','每位參加者都有名牌。'],
+     ['Participants must register before Friday.','參加者必須在星期五前報名。']]},
+
+{w:'participate',pos:'v.',zh:'參加・參與',lv:2,tags:[],
+ note:'後面接 in：participate in the meeting。比 join 正式，公告與通知常用。',
+ fam:['participant','participation'],
+ ex:[['Everyone is welcome to participate.','歡迎大家參加。'],
+     ['All staff must participate in the safety course.','全體員工都必須參加安全課程。']]},
+
+{w:'particle',pos:'n.',zh:'微粒・粒子',lv:2,tags:[],
+ ex:[['Dust particles float in the light.','光線裡飄著灰塵微粒。'],
+     ['The filter removes small particles from the air.','這個濾網會濾掉空氣中的細小微粒。']]},
+
+{w:'passenger',pos:'n.',zh:'乘客・旅客',lv:2,tags:[],
+ note:'多益的交通廣播必用：passengers for flight 302（搭乘 302 班機的旅客）。',
+ ex:[['The bus was full of passengers.','公車上滿是乘客。'],
+     ['Passengers should be at the gate by six.','旅客請在六點前抵達登機門。']]},
+
+{w:'passion',pos:'n.',zh:'熱情・熱愛',lv:2,tags:[],
+ note:'求職信常見 a passion for design（對設計的熱情），比 like 強烈得多。',
+ fam:['passionate'],
+ ex:[['Cooking is her passion.','烹飪是她的熱愛。'],
+     ['She has a real passion for design.','她對設計有真正的熱情。']]},
+
+{w:'patch',pos:'n./v.',zh:'補丁・一小塊・修補',lv:2,tags:[],
+ note:'軟體的「修補程式」也叫 patch：install the latest patch。',
+ ex:[['There is a wet patch on the floor.','地板上有一小塊溼的地方。'],
+     ['We patched the roof before the rain came.','下雨前我們把屋頂補好了。']]},
+
+{w:'patience',pos:'n.',zh:'耐心',lv:2,tags:[],
+ note:'不可數。客服信件的固定說法：Thank you for your patience（感謝您的耐心等候）。和 patients（病人）同音。',
+ fam:['patient'],
+ ex:[['Teaching children takes patience.','教小孩需要耐心。'],
+     ['Thank you for your patience during the repair.','維修期間感謝您的耐心等候。']]},
+
+{w:'peasant',pos:'n.',zh:'農民・佃農',lv:2,tags:[],
+ note:'多半用在歷史或發展中國家的脈絡；現代的農民說 farmer。',
+ ex:[['The story is about a poor peasant.','這個故事講的是一個貧窮的農民。'],
+     ['The book describes peasant life in the last century.','這本書描寫上個世紀的農民生活。']]},
+
+{w:'pence',pos:'n.',zh:'便士（penny 的複數）',lv:2,tags:[],
+ note:'英國幣制：一英鎊等於一百 pence，縮寫 p。單數是 penny。',
+ fam:['penny'],
+ ex:[['The apple cost fifty pence.','那顆蘋果五十便士。'],
+     ['The price went up by twenty pence.','價格漲了二十便士。']]},
+
+{w:'penny',pos:'n.',zh:'便士・一分錢',lv:2,tags:[],
+ note:'複數是 pence（講金額）或 pennies（講硬幣本身）。美式的 penny 是一分錢的硬幣。',
+ forms:{s:'pennies'},
+ fam:['pence'],
+ ex:[['I do not have a penny on me.','我身上一毛錢也沒有。'],
+     ['Every penny of the fee goes to the fund.','這筆費用一分不少全數進入基金。']]},
+
+{w:'percentage',pos:'n.',zh:'百分比・比例',lv:2,tags:[],
+ note:'percent 前面要有數字（ten percent），percentage 前面不用（a large percentage）—— 多益的圖表題就考這個差別。',
+ fam:['percent'],
+ ex:[['What percentage of staff replied?','有多少比例的員工回覆了？'],
+     ['A large percentage of orders come from online.','很大比例的訂單來自網路。']]},
+
+{w:'perfectly',pos:'adv.',zh:'完美地・完全地',lv:2,tags:[],
+ note:'除了「完美地」，也常當「完全、非常」用：perfectly clear（再清楚不過）。',
+ fam:['perfect'],
+ ex:[['The dress fits perfectly.','這件洋裝非常合身。'],
+     ['It is perfectly fine to ask questions.','提問完全沒有問題。']]},
+
+{w:'performer',pos:'n.',zh:'表演者',lv:2,tags:[],
+ note:'職場上的 a top performer 是「表現最好的人」，考核文件常見。',
+ fam:['perform','performance'],
+ ex:[['The performer thanked the crowd.','表演者向觀眾致謝。'],
+     ['She was the top performer on the team last year.','她是團隊去年表現最好的人。']]},
+
+{w:'perspective',pos:'n.',zh:'觀點・角度',lv:2,tags:[],
+ note:'from my perspective 是「就我的角度」。繪畫的「透視法」也是這個字。',
+ ex:[['Try to see it from her perspective.','試著從她的角度看這件事。'],
+     ['The report gives a customer perspective on the service.','這份報告從顧客的角度看這項服務。']]},
+
+{w:'peter',pos:'v.',zh:'逐漸消失（peter out）',lv:2,tags:[],
+ note:'幾乎只用在 peter out 這個片語裡：慢慢變小、終至消失。大寫的 Peter 是人名。',
+ ex:[['The path petered out in the trees.','那條小徑在樹林裡漸漸沒了。'],
+     ['Interest in the product petered out after a year.','一年後大家對這項產品的興趣就慢慢淡了。']]},
+
+{w:'petrol',pos:'n.',zh:'（英式）汽油',lv:2,tags:[],
+ note:'英式用字，美式說 gasoline 或 gas。加油站英式是 a petrol station。',
+ ex:[['We stopped for petrol on the way.','我們路上停下來加油。'],
+     ['The price of petrol rose again.','汽油又漲價了。']]},
+
+{w:'phenomenon',pos:'n.',zh:'現象',lv:2,tags:[],
+ note:'複數是 phenomena（不是 phenomenons）—— 和 criterion／criteria 同一種變化。',
+ forms:{s:'phenomena'},
+ ex:[['Rain in June is a common phenomenon here.','六月下雨在這裡是常見的現象。'],
+     ['The report studies two phenomena in the market.','這份報告研究市場上的兩種現象。']]},
+
+{w:'photographer',pos:'n.',zh:'攝影師',lv:2,tags:[],
+ note:'重音在第二音節（pho-TOG-rapher），和 photograph（重音在第一音節）不同 —— 多益聽力常靠重音辨字。',
+ fam:['photograph','photography'],
+ ex:[['The photographer took our picture.','攝影師幫我們拍了照。'],
+     ['We hired a photographer for the opening.','我們為開幕請了攝影師。']]},
+
+{w:'photography',pos:'n.',zh:'攝影',lv:2,tags:[],
+ note:'photography 是「攝影這件事」，一張照片是 a photograph。',
+ fam:['photograph','photographer'],
+ ex:[['Photography is not allowed inside.','館內禁止攝影。'],
+     ['She took a course in photography.','她上了一門攝影課。']]},
+
+{w:'physician',pos:'n.',zh:'（內科）醫師',lv:2,tags:[],
+ note:'美式正式用語，等於 doctor；動手術的是 surgeon（外科醫師）。',
+ ex:[['See a physician if the pain continues.','如果持續疼痛請就醫。'],
+     ['The company pays for a physician to visit each year.','公司每年出錢請醫師來看診。']]},
+
+{w:'pig',pos:'n.',zh:'豬',lv:2,tags:[],
+ note:'豬肉是 pork，動物才是 pig —— 和 cow／beef 同一個規則。',
+ ex:[['The farm keeps pigs and cows.','那座農場養豬和牛。'],
+     ['The price of pig feed went up.','豬飼料的價格上漲了。']]},
+
+{w:'pile',pos:'n./v.',zh:'一堆・堆起',lv:2,tags:[],
+ note:'a pile of paperwork 是「一堆文件」，辦公室情境常見。',
+ ex:[['There is a pile of books on the desk.','桌上有一疊書。'],
+     ['Do not pile the boxes higher than this line.','箱子不要堆得高過這條線。']]},
+
+{w:'pine',pos:'n.',zh:'松樹・松木',lv:2,tags:[],
+ ex:[['The hill is covered with pine trees.','山上長滿松樹。'],
+     ['The table is made of pine.','這張桌子是松木做的。']]},
+
+{w:'pink',pos:'n./adj.',zh:'粉紅色・粉紅色的',lv:2,tags:[],
+ ex:[['She wore a pink shirt.','她穿了一件粉紅色襯衫。'],
+     ['The form is pink and the copy is yellow.','正本是粉紅色，副本是黃色。']]},
+
+{w:'pint',pos:'n.',zh:'品脫',lv:2,tags:[],
+ note:'英制一品脫約 568 毫升，美制約 473 毫升。英國酒吧點啤酒就說 a pint。',
+ ex:[['He ordered a pint of beer.','他點了一品脫啤酒。'],
+     ['Buy two pints of milk on the way back.','回來時買兩品脫牛奶。']]},
+
+{w:'plain',pos:'adj./n.',zh:'樸素的・清楚的・平原',lv:2,tags:[],
+ note:'plain English 是「淺白的英文」，公文改革的口號。和 plane（飛機、平面）同音。',
+ fam:['plainly'],
+ ex:[['She wore a plain white shirt.','她穿了一件素白襯衫。'],
+     ['Please write the notice in plain English.','公告請用淺白的英文寫。']]},
+
+{w:'poem',pos:'n.',zh:'詩',lv:2,tags:[],
+ fam:['poet','poetry'],
+ ex:[['She read a short poem.','她讀了一首短詩。'],
+     ['The card had a poem inside.','那張卡片裡有一首詩。']]},
+
+{w:'poet',pos:'n.',zh:'詩人',lv:2,tags:[],
+ fam:['poem','poetry'],
+ ex:[['He is a poet and a teacher.','他是詩人，也是老師。'],
+     ['The library invited a poet to speak.','圖書館邀請了一位詩人演講。']]},
+
+{w:'poetry',pos:'n.',zh:'詩・詩歌（總稱）',lv:2,tags:[],
+ note:'不可數的總稱，一首詩要說 a poem。',
+ fam:['poem','poet'],
+ ex:[['She likes poetry more than novels.','她喜歡詩勝過小說。'],
+     ['The shop has a small poetry section.','這家店有個小小的詩集區。']]},
+
+{w:'policeman',pos:'n.',zh:'警察',lv:2,tags:[],
+ note:'複數是 policemen。現在的公告與新聞多半改用不分性別的 police officer。',
+ forms:{s:'policemen'},
+ fam:['police'],
+ ex:[['A policeman was standing at the corner.','一位警察站在轉角。'],
+     ['Two policemen came to check the alarm.','兩位警察來查看警報。']]},
+
+{w:'poll',pos:'n./v.',zh:'民調・投票',lv:2,tags:[],
+ note:'the polls（複數）是「投票所」。公司內部的意見調查也可以說 run a poll。',
+ ex:[['A new poll shows people want change.','最新民調顯示民眾希望改變。'],
+     ['We ran a quick poll among the staff.','我們在員工之間做了一次快速調查。']]},
+
+{w:'pollution',pos:'n.',zh:'汙染',lv:2,tags:[],
+ note:'不可數。air pollution（空氣汙染）、noise pollution（噪音汙染）都是多益的環境題常客。',
+ fam:['pollute'],
+ ex:[['Air pollution is worse in winter.','空氣汙染在冬天比較嚴重。'],
+     ['The new rule aims to cut pollution from trucks.','新規定要降低卡車造成的汙染。']]},
+
+{w:'portion',pos:'n.',zh:'部分・一份',lv:2,tags:[],
+ note:'餐廳的「份量」也是 portion：a large portion（大份）。',
+ ex:[['The portion was too big for me.','這份份量對我來說太多了。'],
+     ['A portion of the fee is returned if you cancel.','取消的話會退還部分費用。']]},
+
+{w:'pose',pos:'v./n.',zh:'擺姿勢・構成（問題）',lv:2,tags:[],
+ note:'商業文章常用 pose a risk／a problem（構成風險、造成問題），這個用法比「擺姿勢」還常考。',
+ ex:[['They posed for a photo.','他們擺好姿勢拍照。'],
+     ['The delay poses a risk to the whole plan.','這次延誤對整個計畫構成風險。']]},
+
+{w:'possess',pos:'v.',zh:'擁有・具有',lv:2,tags:[],
+ note:'比 have 正式，多半出現在法律與正式文件裡。名詞是 possession。',
+ fam:['possession'],
+ ex:[['He possesses a rare skill.','他擁有一項罕見的技能。'],
+     ['Anyone who possesses a valid pass may enter.','持有有效通行證的人都可以進入。']]},
+
+{w:'pot',pos:'n.',zh:'鍋・壺・盆',lv:2,tags:[],
+ note:'a pot of tea（一壺茶）、a flower pot（花盆）都是它。',
+ ex:[['Put the pot on the stove.','把鍋子放到爐子上。'],
+     ['She ordered a pot of tea for the table.','她為這桌點了一壺茶。']]},
+
+{w:'potato',pos:'n.',zh:'馬鈴薯',lv:2,tags:[],
+ note:'複數要加 es：potatoes。tomato 同理。',
+ forms:{s:'potatoes'},
+ ex:[['We had potatoes with dinner.','我們晚餐配了馬鈴薯。'],
+     ['The shop buys potatoes from a local farm.','這家店向當地農場買馬鈴薯。']]},
+
+{w:'poverty',pos:'n.',zh:'貧窮・貧困',lv:2,tags:[],
+ fam:['poor'],
+ ex:[['The charity works to end poverty.','這個慈善機構致力於消除貧窮。'],
+     ['The report looks at poverty in large cities.','這份報告探討大城市裡的貧窮問題。']]},
+
+{w:'powder',pos:'n.',zh:'粉末',lv:2,tags:[],
+ note:'洗衣粉是 washing powder，奶粉是 milk powder。',
+ ex:[['Add the powder to warm water.','把粉末加進溫水裡。'],
+     ['The box of powder must be kept dry.','這箱粉末必須保持乾燥。']]},
+
+{w:'practically',pos:'adv.',zh:'幾乎・實際上',lv:2,tags:[],
+ note:'口語裡多半是「幾乎」：practically everyone（幾乎每個人），不是「實際地」。',
+ fam:['practical'],
+ ex:[['Practically everyone came to the party.','幾乎每個人都來了派對。'],
+     ['The room is practically empty in the morning.','這個房間早上幾乎沒人。']]},
+
+{w:'practise',pos:'v.',zh:'練習・執業',lv:2,tags:[],
+ note:'英式把動詞拼成 practise、名詞拼成 practice；美式一律 practice。多益兩種拼法都會出現。',
+ fam:['practice'],
+ ex:[['She practises the piano every day.','她每天練鋼琴。'],
+     ['He has practised law for twenty years.','他執業當律師二十年了。']]},
+
+{w:'prayer',pos:'n.',zh:'祈禱・禱告',lv:2,tags:[],
+ fam:['pray'],
+ ex:[['They said a short prayer.','他們做了簡短的禱告。'],
+     ['The hall is kept quiet for prayer.','這個廳保持安靜供人祈禱。']]},
+
+{w:'pregnant',pos:'adj.',zh:'懷孕的',lv:2,tags:[],
+ note:'人資與交通公告常見：seats for pregnant women（孕婦座位）、maternity leave（產假）。',
+ fam:['pregnancy'],
+ ex:[['She is six months pregnant.','她懷孕六個月了。'],
+     ['These seats are for pregnant passengers.','這些座位是給孕婦乘客的。']]},
+
+{w:'preparation',pos:'n.',zh:'準備・籌備',lv:2,tags:[],
+ note:'in preparation for 是「為…做準備」。複數的 preparations 指具體的準備工作。',
+ fam:['prepare'],
+ ex:[['The preparation took longer than the meal.','準備的時間比吃飯還久。'],
+     ['Preparations for the show start next week.','展覽的籌備工作下週開始。']]}
 
 ];
