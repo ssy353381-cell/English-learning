@@ -1159,6 +1159,17 @@ var deadReal = Object.keys(deadClicks).filter(function (w) {
 ok(deadReal.length === 0, '手寫例句裡的一般字沒有一個點開是空的' +
    (deadReal.length ? '，還缺 ' + deadReal.length + '：' + deadReal.slice(0, 10).join('、') : ''));
 
+/* 「同家族」那一排是按鈕，點下去就查那個字 —— 和例句裡的可點字是同一件事，
+   只是它不經過 markup()，所以上面那項掃不到。手寫層寫 fam 時很容易順手寫出
+   一個詞庫根本沒收的衍生字（bookkeeper、liquidate、February），卡片上照樣
+   印成按鈕，點開卻是空的。 */
+var famDead = [];
+(app.DATA_LEXICON_CORE || []).forEach(function (v) {
+  (v.fam || []).forEach(function (w) { if (!Lexicon.lookup(w)) famDead.push(v.w + ' → ' + w); });
+});
+ok(famDead.length === 0, '手寫層的「同家族」每一個字都查得到' +
+   (famDead.length ? '，還缺 ' + famDead.length + '：' + famDead.slice(0, 8).join('、') : ''));
+
 /* ==========================================================================
    Stage 4：Part 6 段落填空與 Part 7 雙篇閱讀
    ========================================================================== */

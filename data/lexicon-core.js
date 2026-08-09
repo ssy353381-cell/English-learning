@@ -648,7 +648,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'bookkeeping',kk:'ˈbʊkˌkipɪŋ',pos:'n.',zh:'簿記・記帳',lv:4,tags:['biz'],
  note:'記帳這件事本身；accounting（會計）還包含分析與報表，範圍大得多。徵才啟事常寫 basic bookkeeping skills。',
- fam:['bookkeeper'],
  ex:[['She does the bookkeeping for a small bakery.','她幫一家小烘焙坊記帳。'],
      ['The role includes bookkeeping and payroll.','這個職位包含記帳與薪資作業。']]},
 
@@ -674,13 +673,11 @@ window.DATA_LEXICON_CORE = [
 {w:'liquidation',kk:'ˌlɪkwɪˈdeʃən',pos:'n.',zh:'清算・變現・清倉',lv:3,tags:['biz'],
  note:'公司收掉、把資產變現的程序。go into liquidation 是「進入清算」，商店的 liquidation sale 則是清倉大拍賣。',
  col:[['go into liquidation','進入清算'],['liquidation sale','清倉拍賣']],
- fam:['liquidate'],
  ex:[['The store is having a liquidation sale.','這家店正在清倉大拍賣。'],
      ['The company went into liquidation last year.','那家公司去年進入清算。']]},
 
 {w:'disburse',kk:'dɪsˈbɝs',pos:'v.',zh:'撥款・支付',lv:4,tags:['biz'],
  note:'機構「撥款」用它，日常付錢用 pay。名詞 disbursement 在補助與報帳文件裡才看得到。',
- fam:['disbursement'],
  ex:[['The fund disburses money twice a year.','這筆基金一年撥款兩次。'],
      ['Travel allowances are disbursed at the end of the month.','差旅津貼在月底撥付。']]},
 
@@ -834,7 +831,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'subcontractor',kk:'ˈsʌbkənˌtræktɚ',pos:'n.',zh:'分包商・下游承包商',lv:4,tags:['biz'],
  note:'承包商再發包出去的那一層。工程延誤題常說 the delay was caused by a subcontractor。',
- fam:['contractor','subcontract'],
+ fam:['contractor'],
  ex:[['A subcontractor installed the windows.','窗戶是分包商裝的。'],
      ['The main contractor is responsible for its subcontractors.','主承包商要為它的分包商負責。']]},
 
@@ -847,7 +844,6 @@ window.DATA_LEXICON_CORE = [
 {w:'franchise',kk:'ˈfrænˌtʃaɪz',pos:'n./v.',zh:'加盟店・加盟權・授權加盟',lv:2,tags:['biz'],
  note:'速食店那種加盟。買下加盟權的是 franchisee，授權出去的公司是 franchisor —— 兩個角色在閱讀題裡不能弄反。',
  col:[['franchise fee','加盟金']],
- fam:['franchisee'],
  ex:[['They own two coffee franchises.','他們擁有兩家咖啡加盟店。'],
      ['The company plans to franchise its brand overseas.','公司打算把品牌授權到海外加盟。']]},
 
@@ -878,7 +874,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'innovation',kk:'ˌɪnəˈveʃən',pos:'n.',zh:'創新・革新的事物',lv:2,tags:['biz'],
  note:'可數也不可數：the pace of innovation（創新的速度）、a major innovation（一項重大創新）。形容詞 innovative 是誇獎產品的固定用字。',
- fam:['innovate','innovative'],
+ fam:['innovative'],
  ex:[['This phone is full of small innovations.','這支手機有很多小巧思。'],
      ['The award recognizes innovation in packaging.','這個獎表揚包裝上的創新。']]},
 
@@ -975,7 +971,6 @@ window.DATA_LEXICON_CORE = [
  en:'a public sale at which goods are sold to the person who offers the most',
  note:'出價叫 bid，出價的人是 bidder，最高價得標。慈善活動的文章常見 charity auction。',
  col:[['put up for auction','拿出來拍賣']],
- fam:['auctioneer'],
  ex:[['She bought the lamp at an auction.','她在拍賣會買下那盞燈。'],
      ['The paintings will be auctioned to raise funds.','這些畫將拍賣以募集資金。']]},
 
@@ -1050,7 +1045,6 @@ window.DATA_LEXICON_CORE = [
 {w:'solicit',kk:'səˈlɪsɪt',pos:'v.',zh:'徵求・招攬',lv:2,tags:['biz'],
  note:'正式的「徵求」：solicit feedback（徵求意見）、solicit donations（募款）。門口貼的 No soliciting 是「謝絕推銷」。',
  col:[['solicit feedback','徵求意見']],
- fam:['solicitation'],
  ex:[['The sign says no soliciting.','告示上寫著謝絕推銷。'],
      ['We are soliciting feedback from all departments.','我們正在向各部門徵求意見。']]},
 
@@ -1092,7 +1086,6 @@ window.DATA_LEXICON_CORE = [
 /* ===================== 物流與供應 ===================== */
 {w:'logistics',kk:'loˈdʒɪstɪks',pos:'n.',zh:'物流・調度安排',lv:3,tags:['biz'],
  note:'商務上是「物流」，不是字典寫的「後勤學」。字尾雖然有 s，動詞用單數：Logistics is handled by an outside firm。',
- fam:['logistical'],
  ex:[['The logistics of the trip took weeks to plan.','這趟行程的調度籌劃了好幾週。'],
      ['A third-party company handles our logistics.','我們的物流交給第三方公司處理。']]},
 
@@ -1116,7 +1109,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'consignment',kk:'kənˈsaɪnmənt',pos:'n.',zh:'託運貨物・寄售',lv:3,tags:['biz'],
  note:'兩個意思：一批託運的貨，或「寄售」（賣掉才付錢）。動詞是 consign，收貨的一方叫 consignee。',
- fam:['consign','consignee'],
+ fam:['consign'],
  ex:[['The shop sells clothes on consignment.','那家店以寄售的方式賣衣服。'],
      ['The consignment cleared customs yesterday.','那批貨昨天通關了。']]},
 
@@ -1362,7 +1355,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'dermatologist',kk:'ˌdɝməˈtɑlədʒɪst',pos:'n.',zh:'皮膚科醫師',lv:3,tags:['biz'],
  note:'-ologist 結尾都是「某一科的醫師或學者」。醫療對話常見 refer you to a dermatologist（把你轉診到皮膚科）。',
- fam:['dermatology'],
  ex:[['I have an appointment with a dermatologist.','我約了皮膚科。'],
      ['Your doctor can refer you to a dermatologist.','你的醫師可以把你轉診到皮膚科。']]},
 
@@ -2059,7 +2051,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'chairman',kk:'ˈtʃɛrmən',pos:'n.',zh:'主席・董事長',lv:1,tags:[],
  note:'複數是 chairmen。現在多半改用中性的 chair 或 chairperson，多益兩種都會看到。',
- fam:['chair','chairperson'],
+ fam:['chair'],
  ex:[['The chairman opened the meeting.','主席宣布開會。'],
      ['The chairman will step down at the end of the year.','董事長將於年底卸任。']]},
 
@@ -2616,7 +2608,7 @@ window.DATA_LEXICON_CORE = [
  en:'something that must be dealt with before other things',
  note:'top priority（第一優先）、give priority to（優先處理）。郵寄的 priority mail 是「限時郵件」。',
  col:[['top priority','最優先'],['give priority to','優先處理']],
- fam:['prior','prioritize'],
+ fam:['prior'],
  ex:[['Sleep is my priority right now.','睡覺是我現在的第一要務。'],
      ['Safety is our top priority.','安全是我們的最優先事項。']]},
 
@@ -3239,7 +3231,7 @@ window.DATA_LEXICON_CORE = [
      ['There is no obvious reason for the delay.','延誤沒有明顯的原因。']]},
 
 {w:'global',kk:'ˈglobl',pos:'adj.',zh:'全球的・全面的',lv:1,tags:[],
- fam:['globe','globally'],
+ fam:['globe'],
  ex:[['Plastic waste is a global problem.','塑膠廢棄物是全球性的問題。'],
      ['The firm has a global network of partners.','這家公司有遍布全球的合作夥伴。']]},
 
@@ -3271,7 +3263,6 @@ window.DATA_LEXICON_CORE = [
 {w:'internal',kk:'ɪnˈtɝnl',pos:'adj.',zh:'內部的・體內的',lv:1,tags:[],
  note:'公司文件的 internal use only（僅供內部使用）是常見標註。反義是 external。',
  col:[['internal use only','僅供內部使用']],
- fam:['internally'],
  ex:[['The doctor checked for internal injuries.','醫生檢查有沒有內傷。'],
      ['This document is for internal use only.','這份文件僅供內部使用。']]},
 
@@ -6571,7 +6562,7 @@ window.DATA_LEXICON_CORE = [
      ['A packet of forms was left at the desk.','桌上留了一包表格。']]},
 
 {w:'painful',pos:'adj.',zh:'疼痛的・痛苦的',lv:2,tags:[],
- fam:['pain','painless'],
+ fam:['pain'],
  ex:[['My knee is still painful.','我的膝蓋還在痛。'],
      ['The change was slow and painful for everyone.','這次改變對每個人來說都又慢又難受。']]},
 
@@ -6855,7 +6846,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'preserve',pos:'v.',zh:'保存・維護',lv:2,tags:[],
  note:'食物的「保存」與古蹟的「維護」都用它。名詞 preservative 是食品標示上的「防腐劑」。',
- fam:['preservation','preservative'],
+ fam:['preservation'],
  ex:[['Salt was used to preserve meat.','以前用鹽來保存肉類。'],
      ['The city wants to preserve the old market.','市政府想保留這座老市場。']]},
 
@@ -8317,7 +8308,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'ample',pos:'adj.',zh:'充足的・寬敞的',lv:3,tags:[],
  note:'廣告愛用：ample parking（停車位充足）、ample space（空間寬敞）。',
- fam:['amply'],
  ex:[['There is ample parking behind the shop.','店後面有充足的停車位。'],
      ['We have ample time before the flight.','我們離登機還有充裕的時間。']]},
 
@@ -9054,7 +9044,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'commence',pos:'v.',zh:'開始・展開',lv:3,tags:[],
  note:'公告與法律文件才用的正式字，日常說 start 或 begin：Work will commence on Monday。',
- fam:['commencement'],
  ex:[['Work will commence on Monday.','工程星期一開工。'],
      ['The meeting commenced at nine sharp.','會議九點整開始。']]},
 
@@ -9184,7 +9173,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'configuration',pos:'n.',zh:'配置・設定',lv:3,tags:[],
  note:'資訊情境的常用字：the default configuration（預設設定）。動詞 configure。',
- fam:['configure'],
  ex:[['The default configuration works for most people.','預設設定適用於大多數人。'],
      ['Please check the configuration of the new machine.','請檢查新機器的設定。']]},
 
@@ -9258,7 +9246,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'convey',pos:'v.',zh:'傳達・運送',lv:3,tags:[],
  note:'傳達訊息或感受用得最多：convey a message。輸送帶 conveyor belt 是同一家的字。',
- fam:['conveyor'],
  ex:[['The photo conveys the mood of the day.','那張照片傳達出當天的氣氛。'],
      ['Please convey my thanks to the team.','請代我向團隊致謝。']]},
 
@@ -9908,7 +9895,7 @@ window.DATA_LEXICON_CORE = [
      ['The music added to everyone enjoyment of the evening.','音樂讓大家更享受那個晚上。']]},
 
 {w:'enlarge',pos:'v.',zh:'放大・擴大',lv:3,tags:[],
- fam:['large','enlargement'],
+ fam:['large'],
  ex:[['Can you enlarge the photo?','可以把照片放大嗎？'],
      ['The company plans to enlarge the store.','公司打算擴大這家店面。']]},
 
@@ -10135,7 +10122,6 @@ window.DATA_LEXICON_CORE = [
 {w:'feb',pos:'abbr.',zh:'二月（February 的縮寫）',lv:3,tags:[],
  en:'the short written form of February',
  note:'書面縮寫寫作 Feb.，只用在表格與日期上，講話一律說整個字。',
- fam:['February'],
  ex:[['The date on the form says 3 Feb.','表格上的日期寫著二月三日。'],
      ['Deliveries stop from Feb. to March.','二月到三月之間暫停配送。']]},
 
@@ -10275,7 +10261,6 @@ window.DATA_LEXICON_CORE = [
 {w:'foresee',pos:'v.',zh:'預見・預料',lv:3,tags:[],
  note:'三態是 foresee／foresaw／foreseen。合約裡的 unforeseen circumstances 是「不可預見的情況」。',
  forms:{p:'foresaw',d:'foreseen'},
- fam:['unforeseen'],
  ex:[['No one could foresee the delay.','沒有人能預見這次延誤。'],
      ['We do not foresee any problem with the date.','我們認為日期應該不會有問題。']]},
 
@@ -10793,7 +10778,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'icon',pos:'n.',zh:'圖示・偶像',lv:3,tags:[],
  note:'螢幕上的小圖示與文化上的「代表人物」都用它。',
- fam:['iconic'],
  ex:[['Click the icon to open the app.','點圖示開啟這個 app。'],
      ['She became an icon in her field.','她成了這個領域的代表人物。']]},
 
@@ -10934,7 +10918,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'innovative',pos:'adj.',zh:'創新的',lv:3,tags:[],
  note:'產品與提案的稱讚語。名詞 innovation，動詞 innovate。',
- fam:['innovation','innovate'],
+ fam:['innovation'],
  ex:[['The design is truly innovative.','這個設計真的很有創意。'],
      ['The firm is known for innovative products.','這家公司以創新產品聞名。']]},
 
@@ -11024,7 +11008,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'invariably',pos:'adv.',zh:'總是・不變地',lv:3,tags:[],
  note:'等於 always，但語氣像在陳述一條規律：The train is invariably late。',
- fam:['invariable'],
  ex:[['He is invariably late on Mondays.','他星期一總是遲到。'],
      ['The first draft invariably needs changes.','初稿一定都要改。']]},
 
@@ -11789,7 +11772,6 @@ window.DATA_LEXICON_CORE = [
 {w:'nov',pos:'abbr.',zh:'十一月（November 的縮寫）',lv:3,tags:[],
  en:'the short written form of November',
  note:'書面寫作 Nov.，只用在表格與日期上。',
- fam:['November'],
  ex:[['The form is dated 12 Nov.','表格上的日期是十一月十二日。'],
      ['The sale runs from Nov. to January.','特賣從十一月到一月。']]},
 
@@ -11861,7 +11843,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'oct',pos:'abbr.',zh:'十月（October 的縮寫）',lv:3,tags:[],
  en:'the short written form of October',
- fam:['October'],
  ex:[['The invoice is dated 5 Oct.','發票日期是十月五日。'],
      ['Bookings open in Oct.','十月開放預訂。']]},
 
@@ -12351,7 +12332,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'precaution',pos:'n.',zh:'預防措施',lv:3,tags:[],
  note:'take precautions 是「做好預防」，工安公告的固定說法。',
- fam:['precautionary'],
  ex:[['Take the usual precautions.','照平常的方式做好預防。'],
      ['As a precaution the road was closed.','為了預防起見，道路封閉。']]},
 
@@ -13920,7 +13900,7 @@ window.DATA_LEXICON_CORE = [
      ['There is an uneasy silence in the room.','房裡瀰漫著不安的沉默。']]},
 
 {w:'unexpectedly',pos:'adv.',zh:'出乎意料地',lv:3,tags:[],
- fam:['unexpected','expect'],
+ fam:['expect'],
  ex:[['He arrived unexpectedly.','他出乎意料地來了。'],
      ['Sales rose unexpectedly in July.','七月的銷售出乎意料地成長。']]},
 
@@ -14887,7 +14867,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'authorise',pos:'v.',zh:'授權・核准',lv:4,tags:['biz'],
  note:'英式拼法，美式寫 authorize，兩種都對。名詞同理：authorisation／authorization。',
- fam:['authority','authorisation'],
+ fam:['authority'],
  ex:[['Only a manager can authorise a refund.','只有經理可以核准退款。'],
      ['Who authorised this purchase?','這筆採購是誰核准的？']]},
 
@@ -15201,7 +15181,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'bribe',pos:'n./v.',zh:'賄賂',lv:4,tags:['biz'],
  note:'法遵訓練的必考字。名詞 bribery 是「行賄這件事」，bribe 是「那筆錢」。',
- fam:['bribery'],
  ex:[['He refused to take a bribe.','他拒絕收賄。'],
      ['Offering a bribe breaks our code of conduct.','行賄違反我們的行為準則。']]},
 
@@ -15666,13 +15645,11 @@ window.DATA_LEXICON_CORE = [
 
 {w:'commemorate',pos:'v.',zh:'紀念',lv:4,tags:[],
  note:'紀念的是事件或人物，形式是儀式、碑、郵票。拼法兩個 m 兩個 m。',
- fam:['commemoration'],
  ex:[['The plaque commemorates the fire.','這面牌子紀念那場大火。'],
      ['A dinner will commemorate fifty years of the firm.','將舉辦晚宴紀念公司成立五十年。']]},
 
 {w:'commend',pos:'v.',zh:'讚揚・推薦',lv:4,tags:['biz'],
  note:'正式的稱讚，公文常見：be commended for（因…受表揚）。和 recommend 差一個 re，語氣正式得多。',
- fam:['commendation'],
  ex:[['She was commended for her quick thinking.','她因反應迅速受到表揚。'],
      ['The report commends the team for meeting the deadline.','報告表揚團隊如期完成。']]},
 
@@ -15736,7 +15713,6 @@ window.DATA_LEXICON_CORE = [
      ['The health campaign hands out free condoms.','這項衛教活動免費發放保險套。']]},
 
 {w:'confederation',pos:'n.',zh:'邦聯・聯盟',lv:4,tags:[],
- fam:['confederate'],
  ex:[['The states formed a confederation.','那些州組成了邦聯。'],
      ['A confederation of small firms lobbied together.','一個小企業聯盟共同進行遊說。']]},
 
@@ -15770,7 +15746,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'connotation',pos:'n.',zh:'言外之意・弦外之音',lv:4,tags:['biz'],
  note:'字面意思是 denotation，附帶的感覺才是 connotation —— 用字挑不對，弦外之音就會出錯。',
- fam:['connote'],
  ex:[['That word has a negative connotation.','那個字帶有負面的意涵。'],
      ['Choose a name with no odd connotations abroad.','挑一個在國外沒有奇怪聯想的名字。']]},
 
@@ -15939,7 +15914,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'coward',pos:'n.',zh:'膽小鬼・懦夫',lv:4,tags:[],
  note:'和 cowardly（形容詞）成組。別和 coworker 混，拼法完全不同。',
- fam:['cowardly'],
  ex:[['Do not call him a coward.','別說他是懦夫。'],
      ['Hiding behind a fake name is the coward\'s way.','躲在假名後面是懦夫的做法。']]},
 
@@ -16099,7 +16073,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'cynical',pos:'adj.',zh:'憤世嫉俗的・不信任的',lv:4,tags:[],
  note:'指「認定別人都有私心」。說 a cynical move 是批評對方「別有居心」。',
- fam:['cynic','cynicism'],
+ fam:['cynicism'],
  ex:[['He is cynical about politics.','他對政治很不抱期待。'],
      ['Staff are cynical about another restructure.','員工對又一次重組抱著懷疑態度。']]},
 
@@ -16165,7 +16139,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'deduct',pos:'v.',zh:'扣除',lv:4,tags:['biz'],
  note:'薪資單的高頻字：tax is deducted at source（稅在發薪時就扣掉）。別和 deduce（推論）混。',
- fam:['deduction','deductible'],
+ fam:['deduction'],
  ex:[['They deducted the deposit from the bill.','他們從帳單裡扣掉了訂金。'],
      ['Tax is deducted before the salary is paid.','薪水發放前就會先扣稅。']]},
 
@@ -16177,7 +16151,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'defer',pos:'v.',zh:'延後・順從',lv:4,tags:['biz'],
  note:'兩個意思靠介系詞分：defer a payment（延後付款）；defer to someone（尊重某人的意見）。',
- fam:['deferral'],
  ex:[['They deferred the decision to next week.','他們把決定延到下週。'],
      ['I defer to your judgement on this.','這件事我尊重你的判斷。']]},
 
@@ -16218,7 +16191,6 @@ window.DATA_LEXICON_CORE = [
 {w:'demographic',pos:'adj./n.',zh:'人口結構的・客層',lv:4,tags:['biz'],
  en:'relating to the make-up of a population; as a noun, a particular group of consumers',
  note:'行銷會議的高頻字：our key demographic 是「我們的主力客層」。複數 demographics 指「人口結構資料」。',
- fam:['demography'],
  ex:[['The town has an ageing demographic.','這個鎮的人口正在老化。'],
      ['Our key demographic is under thirty.','我們的主力客層在三十歲以下。']]},
 
@@ -16464,7 +16436,7 @@ window.DATA_LEXICON_CORE = [
      ['He left the company in disgrace.','他名譽掃地地離開了公司。']]},
 
 {w:'dishonest',pos:'adj.',zh:'不誠實的',lv:4,tags:['biz'],
- fam:['honest','dishonesty'],
+ fam:['honest'],
  ex:[['That was a dishonest answer.','那個回答並不誠實。'],
      ['Hiding the defect would be dishonest.','隱瞞瑕疵是不誠實的。']]},
 
@@ -16739,7 +16711,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'eloquent',pos:'adj.',zh:'雄辯的・表達動人的',lv:4,tags:['biz'],
  note:'稱讚人「話說得又清楚又有感染力」。名詞是 eloquence。',
- fam:['eloquence'],
  ex:[['She gave an eloquent speech.','她發表了一場動人的演說。'],
      ['His eloquent summary won the room over.','他精彩的總結說服了全場。']]},
 
@@ -16847,7 +16818,7 @@ window.DATA_LEXICON_CORE = [
 
 {w:'evade',pos:'v.',zh:'閃避・規避',lv:4,tags:['biz'],
  note:'避稅有兩個字：avoid（合法節稅）與 evade（違法逃稅），差別很大。',
- fam:['evasion','evasive'],
+ fam:['evasion'],
  ex:[['He evaded the question twice.','他兩次閃避那個問題。'],
      ['Evading tax is a criminal offence.','逃稅是刑事犯罪。']]},
 
@@ -16945,7 +16916,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'extravagant',pos:'adj.',zh:'奢侈的・誇張的',lv:4,tags:['biz'],
  note:'除了花錢，也形容說法「太誇張」：extravagant claims（誇大的宣稱）。',
- fam:['extravagance'],
  ex:[['That was an extravagant gift.','那份禮物太奢華了。'],
      ['Avoid extravagant claims in the advert.','廣告裡避免誇大的宣稱。']]},
 
@@ -17286,7 +17256,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'fuss',pos:'n./v.',zh:'大驚小怪・小題大作',lv:4,tags:['biz'],
  note:'常說 make a fuss（大驚小怪、鬧一下）與 without any fuss（俐落不囉嗦）。',
- fam:['fussy'],
  ex:[['Do not make a fuss about it.','別為這件事大驚小怪。'],
      ['She fixed it without any fuss.','她乾淨俐落地把它處理好了。']]},
 
@@ -17804,13 +17773,11 @@ window.DATA_LEXICON_CORE = [
 
 {w:'hygiene',pos:'n.',zh:'衛生',lv:4,tags:['biz'],
  note:'唸 HY-jeen。餐飲業的 food hygiene 是稽核重點。',
- fam:['hygienic'],
  ex:[['Hand hygiene matters most.','手部衛生最重要。'],
      ['The kitchen passed its hygiene inspection.','廚房通過了衛生稽查。']]},
 
 {w:'hypocrisy',pos:'n.',zh:'偽善・雙重標準',lv:4,tags:[],
  note:'唸 hi-POK-ri-see，重音在第二音節。形容詞是 hypocritical。',
- fam:['hypocrite'],
  forms:{s:'hypocrisies'},
  ex:[['She called out the hypocrisy.','她點破了那種偽善。'],
      ['Asking staff to save while managers fly first class is hypocrisy.','要員工省錢卻讓主管搭頭等艙，這就是雙重標準。']]},
@@ -18547,7 +18514,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'litigation',pos:'n.',zh:'訴訟',lv:4,tags:['biz'],
  note:'法務部門的常用字，指「打官司這件事」整體。',
- fam:['litigate'],
  ex:[['The case went to litigation.','這個案子進入了訴訟。'],
      ['We settled to avoid litigation.','我們和解以避免訴訟。']]},
 
@@ -19106,7 +19072,6 @@ window.DATA_LEXICON_CORE = [
      ['The report describes muscular strain from lifting.','報告描述了搬運造成的肌肉拉傷。']]},
 
 {w:'mutation',pos:'n.',zh:'突變',lv:4,tags:[],
- fam:['mutate'],
  ex:[['The mutation is harmless.','這個突變是無害的。'],
      ['A single mutation changed how it spreads.','一個突變改變了它的傳播方式。']]},
 
@@ -19713,7 +19678,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'perish',pos:'v.',zh:'喪生・（橡膠）劣化',lv:4,tags:[],
  note:'書面體的「死亡」，另有一個實用的意思：橡膠或塑膠因老化而「脆掉」。',
- fam:['perishable'],
  ex:[['Many trees perished in the fire.','許多樹木毀於那場火。'],
      ['The rubber seal has perished.','那個橡膠墊圈已經脆化了。']]},
 
@@ -19821,7 +19785,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'pirate',pos:'n./v.',zh:'海盜・盜版',lv:4,tags:['biz'],
  note:'商業上更常見的是動詞與形容詞：pirated software（盜版軟體）。',
- fam:['piracy'],
  ex:[['The film is about pirates.','這部電影講的是海盜。'],
      ['Pirated copies appeared online within days.','盜版幾天內就出現在網路上。']]},
 
@@ -19906,7 +19869,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'polar',pos:'adj.',zh:'極地的・截然相反的',lv:4,tags:['biz'],
  note:'片語 polar opposites 是「完全相反的兩個極端」。',
- fam:['pole'],
  ex:[['Polar ice is melting.','極地的冰正在融化。'],
      ['Their views are polar opposites.','他們的看法完全相反。']]},
 
@@ -20014,7 +19976,6 @@ window.DATA_LEXICON_CORE = [
 {w:'pragmatic',pos:'adj.',zh:'務實的',lv:4,tags:['biz'],
  en:'dealing with things in a practical way rather than by theory or ideals',
  note:'職場的稱讚用字：a pragmatic approach（務實的做法），指「先解決問題，別談理想」。',
- fam:['pragmatism'],
  ex:[['She took a pragmatic view.','她採取了務實的看法。'],
      ['We need a pragmatic fix, not a perfect one.','我們需要一個能用的解法，不是完美的解法。']]},
 
@@ -20528,7 +20489,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'regression',pos:'n.',zh:'倒退・迴歸分析',lv:4,tags:['biz'],
  note:'統計的 regression（迴歸）與軟體測試的 regression（改壞了舊功能）都很常見。',
- fam:['regress'],
  ex:[['The model uses simple regression.','這個模型用的是簡單迴歸。'],
      ['We run regression tests before each release.','每次發版前我們都會跑回歸測試。']]},
 
@@ -20591,7 +20551,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'renowned',pos:'adj.',zh:'著名的',lv:4,tags:['biz'],
  note:'後面接 for：renowned for its service（以服務聞名）。比 famous 正式。',
- fam:['renown'],
  ex:[['The town is renowned for its cheese.','這個鎮以起司聞名。'],
      ['The firm is renowned for on-time delivery.','這家公司以準時交貨著稱。']]},
 
@@ -20663,7 +20622,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'respiratory',pos:'adj.',zh:'呼吸的',lv:4,tags:[],
  note:'唸 RESS-pi-ra-tory（英式）或 res-PIR-a-tory（美式）。',
- fam:['respiration'],
  ex:[['He has a respiratory problem.','他有呼吸方面的毛病。'],
      ['Dust masks protect the respiratory system.','防塵口罩可以保護呼吸系統。']]},
 
@@ -20919,7 +20877,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'scorn',pos:'n./v.',zh:'輕蔑',lv:4,tags:[],
  note:'比 dislike 強得多，帶著「看不起」的意思。',
- fam:['scornful'],
  ex:[['She poured scorn on the idea.','她對那個想法嗤之以鼻。'],
      ['The plan met with scorn from the floor.','這個計畫在會場上遭到輕蔑對待。']]},
 
@@ -21978,7 +21935,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'thrift',pos:'n.',zh:'節儉',lv:4,tags:['biz'],
  note:'美式的 a thrift store 是「二手義賣店」（英式說 charity shop）。',
- fam:['thrifty'],
  ex:[['She was raised to value thrift.','她從小被教導要節儉。'],
      ['The clothes came from a thrift store.','這些衣服是二手店買的。']]},
 
@@ -23144,7 +23100,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'animation',pos:'n.',zh:'動畫・生氣',lv:5,tags:['biz'],
  note:'兩個意思：影片的「動畫」，以及說話時的「神采」（with animation）。',
- fam:['animate'],
  ex:[['The film uses hand-drawn animation.','這部片用的是手繪動畫。'],
      ['She spoke with real animation.','她說話時神采飛揚。']]},
 
@@ -23337,7 +23292,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'austerity',pos:'n.',zh:'撙節・緊縮',lv:5,tags:['biz'],
  note:'財經新聞的高頻字：austerity measures（撙節措施），指政府大砍支出。',
- fam:['austere'],
  forms:{s:'austerities'},
  ex:[['The country lived through years of austerity.','那個國家經歷了多年的撙節。'],
      ['Austerity measures cut the training budget.','撙節措施砍掉了訓練預算。']]},
@@ -23350,7 +23304,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'autism',pos:'n.',zh:'自閉症',lv:5,tags:[],
  note:'現在多半說 autistic people 或 people on the autism spectrum；避免說 suffers from autism。',
- fam:['autistic'],
  ex:[['The centre supports children with autism.','這個中心協助自閉症兒童。'],
      ['The workplace made changes for staff with autism.','公司為自閉症員工做了調整。']]},
 
@@ -23539,7 +23492,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'bereavement',pos:'n.',zh:'喪親',lv:5,tags:['biz'],
  note:'人資的 bereavement leave 是「喪假」，是正式的用字。',
- fam:['bereaved'],
  ex:[['She took time off after a bereavement.','家人過世後她請了假。'],
      ['The policy allows five days of bereavement leave.','制度允許五天喪假。']]},
 
@@ -23550,7 +23502,6 @@ window.DATA_LEXICON_CORE = [
      ['Give that supplier a wide berth.','那家供應商離遠一點比較好。']]},
 
 {w:'bewildered',pos:'adj.',zh:'一頭霧水的',lv:5,tags:['biz'],
- fam:['bewilder'],
  ex:[['He looked bewildered.','他一臉茫然。'],
      ['New users are bewildered by the menu.','新使用者被那個選單搞得一頭霧水。']]},
 
@@ -23818,7 +23769,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'buoyant',pos:'adj.',zh:'有浮力的・（市場）暢旺的',lv:5,tags:['biz'],
  note:'唸 BOY-ant。財經新聞的 a buoyant market 是「氣氛熱絡的市場」。',
- fam:['buoy'],
  ex:[['The wood is buoyant.','這種木頭浮得起來。'],
      ['Demand stayed buoyant all summer.','整個夏天需求都很暢旺。']]},
 
@@ -24079,7 +24029,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'civilisation',pos:'n.',zh:'文明',lv:5,tags:[],
  note:'英式拼法，美式寫 civilization，兩種都對。',
- fam:['civilise'],
  forms:{s:'civilisations'},
  ex:[['The exhibition covers three civilisations.','這場展覽涵蓋三個文明。'],
      ['Writing changed civilisation.','文字改變了文明。']]},
@@ -24320,7 +24269,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'congestion',pos:'n.',zh:'壅塞・鼻塞',lv:5,tags:['biz'],
  note:'交通的「壅塞」與鼻子的「鼻塞」共用一個字。倫敦的 congestion charge 是「塞車費」。',
- fam:['congested'],
  ex:[['Traffic congestion is worst at eight.','八點的交通最壅塞。'],
      ['The congestion charge applies on weekdays.','塞車費在平日收取。']]},
 
@@ -24336,7 +24284,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'conservatism',pos:'n.',zh:'保守主義・保守作風',lv:5,tags:['biz'],
  note:'政治上的「保守主義」，也指組織裡「不願冒險」的作風。',
- fam:['conservative'],
  ex:[['The party stands for conservatism.','這個政黨主張保守主義。'],
      ['Financial conservatism kept us solvent.','財務上的保守讓我們撐了下來。']]},
 
@@ -24348,7 +24295,6 @@ window.DATA_LEXICON_CORE = [
 
 {w:'consul',pos:'n.',zh:'領事',lv:5,tags:['biz'],
  note:'領事館是 consulate；大使是 ambassador，大使館是 embassy。',
- fam:['consulate'],
  ex:[['The consul signed the papers.','領事簽署了文件。'],
      ['Contact the consul if the passport is lost.','護照遺失請聯絡領事。']]},
 
@@ -24427,7 +24373,6 @@ window.DATA_LEXICON_CORE = [
      ['The log corroborates what she said.','那份紀錄佐證了她的說法。']]},
 
 {w:'corrosion',pos:'n.',zh:'腐蝕',lv:5,tags:['biz'],
- fam:['corrode'],
  ex:[['Salt speeds up corrosion.','鹽會加速腐蝕。'],
      ['The coating protects against corrosion.','這層塗料可以防腐蝕。']]},
 
@@ -24515,6 +24460,820 @@ window.DATA_LEXICON_CORE = [
 {w:'cumbersome',pos:'adj.',zh:'笨重的・繁瑣的',lv:5,tags:['biz'],
  note:'除了東西笨重，更常形容流程「繁瑣難用」：a cumbersome process。',
  ex:[['The case is cumbersome to carry.','這個箱子很難搬。'],
-     ['The approval process is cumbersome.','這個核准流程太繁瑣了。']]}
+     ['The approval process is cumbersome.','這個核准流程太繁瑣了。']]},
+
+{w:'curfew',pos:'n.',zh:'宵禁・門禁',lv:5,tags:['biz'],
+ note:'官方的「宵禁」，也指家裡給小孩的「門禁時間」。',
+ ex:[['The town is under curfew.','那個鎮實施宵禁。'],
+     ['The site has a ten o\'clock noise curfew.','工地十點後禁止發出噪音。']]},
+
+{w:'curry',pos:'n.',zh:'咖哩',lv:5,tags:['biz'],
+ note:'片語 curry favour with 是「刻意討好」，和食物無關。',
+ forms:{s:'curries'},
+ ex:[['They ordered a curry.','他們點了咖哩。'],
+     ['He is currying favour with the new boss.','他正在討好新老闆。']]},
+
+{w:'cyberspace',pos:'n.',zh:'網路空間',lv:5,tags:['biz'],
+ note:'一九九〇年代的說法，現在多半直接說 online 或 the internet。',
+ ex:[['The idea of cyberspace is from the 1980s.','網路空間這個概念來自一九八〇年代。'],
+     ['Older policies still say cyberspace.','舊的政策文件還在用 cyberspace 這個字。']]},
+
+{w:'dagger',pos:'n.',zh:'匕首',lv:5,tags:[],
+ note:'片語 look daggers at someone 是「用眼神殺人」。',
+ ex:[['The museum shows an old dagger.','博物館展出一把古老的匕首。'],
+     ['She looked daggers at him across the table.','她隔著桌子瞪了他一眼。']]},
+
+{w:'daisy',pos:'n.',zh:'雛菊',lv:5,tags:[],
+ note:'片語 fresh as a daisy 是「精神奕奕」。也是女子名。',
+ forms:{s:'daisies'},
+ ex:[['The lawn is full of daisies.','草地上開滿雛菊。'],
+     ['She arrived fresh as a daisy.','她一到就精神奕奕。']]},
+
+{w:'dale',pos:'n.',zh:'（英北）山谷',lv:5,tags:[],
+ note:'英格蘭北部用字，Yorkshire Dales（約克郡谷地）是知名的國家公園。也是男子名。',
+ ex:[['The path runs down the dale.','小徑沿著山谷往下。'],
+     ['They walked the dales all weekend.','他們整個週末都在谷地健行。']]},
+
+{w:'dampen',pos:'v.',zh:'弄溼・澆熄（熱情）',lv:5,tags:['biz'],
+ note:'比喻用得更多：dampen demand（打壓需求）、dampen enthusiasm（澆熄熱情）。',
+ fam:['damp'],
+ ex:[['Dampen the cloth first.','先把布弄溼。'],
+     ['Higher prices dampened demand.','漲價打壓了需求。']]},
+
+{w:'dana',pos:'n.',zh:'黛娜（人名）',lv:5,tags:[],
+ en:'a given name used for both women and men',
+ note:'這是人名，寫的時候要大寫，男女都可以用。',
+ ex:[['Dana will send the file.','黛娜會把檔案寄出。'],
+     ['Please copy Dana on the reply.','回信時請副本給黛娜。']]},
+
+{w:'deceit',pos:'n.',zh:'欺騙',lv:5,tags:['biz'],
+ note:'不可數居多。形容詞 deceitful。',
+ fam:['deceive'],
+ ex:[['The whole story was deceit.','整件事都是騙局。'],
+     ['The claim was rejected for deceit.','那筆請款因涉及不實而被駁回。']]},
+
+{w:'decency',pos:'n.',zh:'體面・基本的分寸',lv:5,tags:['biz'],
+ note:'常說 have the decency to（起碼有那個分寸去做…）。',
+ fam:['decent'],
+ forms:{s:'decencies'},
+ ex:[['He had the decency to apologize.','他起碼有那個分寸道了歉。'],
+     ['Common decency says you reply.','起碼的禮貌是回個信。']]},
+
+{w:'decor',pos:'n.',zh:'裝潢・佈置',lv:5,tags:['biz'],
+ note:'法文借字，也寫成 décor，唸 DAY-kor。指整體的裝潢風格。',
+ ex:[['The decor is very simple.','裝潢很簡潔。'],
+     ['The new decor lifted the whole shop.','新的裝潢讓整家店都不一樣了。']]},
+
+{w:'dee',pos:'n.',zh:'迪伊河（英國河名）',lv:5,tags:[],
+ en:'the name of several rivers in Britain, notably in Wales and Scotland',
+ note:'這是地名，寫的時候要大寫。也是字母 D 的英文寫法。',
+ ex:[['The bridge crosses the Dee.','那座橋橫跨迪伊河。'],
+     ['Spell it with a dee at the end.','字尾用一個 d。']]},
+
+{w:'degenerate',pos:'v./adj.',zh:'惡化・退化',lv:5,tags:['biz'],
+ note:'常說 degenerate into（淪為…）：the meeting degenerated into an argument。',
+ ex:[['The talks degenerated into a row.','那場會談淪為一場爭吵。'],
+     ['The material degenerates in sunlight.','這種材料在陽光下會劣化。']]},
+
+{w:'deity',pos:'n.',zh:'神祇',lv:5,tags:[],
+ note:'唸 DEE-i-ty 或 DAY-i-ty。',
+ forms:{s:'deities'},
+ ex:[['The temple honours a local deity.','這座廟供奉一位在地神祇。'],
+     ['The exhibition covers several deities.','這場展覽涵蓋多位神祇。']]},
+
+{w:'delhi',pos:'n.',zh:'德里（印度城市）',lv:5,tags:[],
+ en:'a large city in northern India; New Delhi is the country\'s capital',
+ note:'這是地名，寫的時候要大寫。h 不發音，唸 DEL-ee。印度首都嚴格說是 New Delhi。',
+ ex:[['She flew to Delhi last week.','她上週飛去德里。'],
+     ['Our Delhi office opens at nine.','我們德里辦公室九點開門。']]},
+
+{w:'delineate',pos:'v.',zh:'劃分・清楚界定',lv:5,tags:['biz'],
+ note:'職責與範圍的正式用字：clearly delineated roles（權責劃分清楚）。',
+ ex:[['The map delineates the border.','這張地圖劃出了邊界。'],
+     ['Roles must be clearly delineated.','權責必須清楚劃分。']]},
+
+{w:'demeanor',pos:'n.',zh:'舉止・態度',lv:5,tags:['biz'],
+ note:'美式拼法，英式寫 demeanour。指「給人的整體感覺」，面試評語常見。',
+ ex:[['Her demeanor was calm.','她的舉止很沉穩。'],
+     ['A calm demeanor helps in customer service.','沉穩的態度在客服工作上很有幫助。']]},
+
+{w:'dementia',pos:'n.',zh:'失智症',lv:5,tags:[],
+ note:'唸 di-MEN-sha。現在多半說 living with dementia，避免說 suffering from。',
+ ex:[['Her mother has dementia.','她母親有失智症。'],
+     ['The centre supports people living with dementia.','這個中心協助失智症患者。']]},
+
+{w:'democratization',pos:'n.',zh:'民主化',lv:5,tags:['biz'],
+ note:'美式拼法，英式寫 democratisation。也用在比喻：the democratization of design（設計的普及化）。',
+ fam:['democratic'],
+ ex:[['The book traces democratization.','這本書追溯民主化的歷程。'],
+     ['Cheap tools led to the democratization of design.','便宜的工具讓設計普及開來。']]},
+
+{w:'denim',pos:'n.',zh:'丹寧布・牛仔布',lv:5,tags:['biz'],
+ note:'不可數。牛仔褲是 jeans，布料才是 denim。',
+ ex:[['The jacket is denim.','這件外套是牛仔布的。'],
+     ['The range uses recycled denim.','這個系列用的是回收丹寧布。']]},
+
+{w:'depiction',pos:'n.',zh:'描繪',lv:5,tags:['biz'],
+ fam:['depict'],
+ ex:[['The depiction is not accurate.','這樣的描繪並不準確。'],
+     ['The advert\'s depiction of staff drew complaints.','廣告對員工的描繪引來抗議。']]},
+
+{w:'deplete',pos:'v.',zh:'耗盡',lv:5,tags:['biz'],
+ note:'耗盡的是庫存、資源、體力這類會用完的東西。',
+ fam:['depletion'],
+ ex:[['The trip depleted their savings.','那趟旅行把他們的存款用光了。'],
+     ['The rush depleted our stock in two days.','搶購兩天內就把庫存清光了。']]},
+
+{w:'depletion',pos:'n.',zh:'耗竭',lv:5,tags:['biz'],
+ fam:['deplete'],
+ ex:[['Ozone depletion is slowing.','臭氧層的耗損正在減緩。'],
+     ['Stock depletion happens fastest in December.','庫存在十二月消耗得最快。']]},
+
+{w:'deport',pos:'v.',zh:'驅逐出境',lv:5,tags:[],
+ fam:['deportation'],
+ ex:[['He was deported last year.','他去年被驅逐出境。'],
+     ['Workers without a visa may be deported.','沒有簽證的工作者可能被遣返。']]},
+
+{w:'deportation',pos:'n.',zh:'驅逐出境',lv:5,tags:[],
+ fam:['deport'],
+ ex:[['She is appealing the deportation.','她正在對驅逐出境提出上訴。'],
+     ['The deportation order was withdrawn.','驅逐令被撤回了。']]},
+
+{w:'deregulation',pos:'n.',zh:'解除管制',lv:5,tags:['biz'],
+ note:'和 regulation（管制）相對，財經新聞的高頻字。',
+ fam:['regulate'],
+ ex:[['Deregulation opened the market.','解除管制打開了這個市場。'],
+     ['Deregulation cut prices but hit quality.','解除管制壓低了價格，卻傷了品質。']]},
+
+{w:'designation',pos:'n.',zh:'指定・稱號',lv:5,tags:['biz'],
+ fam:['designate'],
+ ex:[['The area has protected designation.','這個區域被指定為保護區。'],
+     ['Each product needs a clear designation.','每項產品都需要明確的品名標示。']]},
+
+{w:'desolate',pos:'adj.',zh:'荒涼的・淒涼的',lv:5,tags:[],
+ note:'既形容地方荒涼，也形容人「心裡空落落的」。',
+ ex:[['The moor looked desolate.','那片荒原看起來很淒涼。'],
+     ['She felt desolate after the news.','聽到消息後她心裡一片空落。']]},
+
+{w:'desperation',pos:'n.',zh:'絕望・走投無路',lv:5,tags:['biz'],
+ note:'常說 out of desperation（因為走投無路才…）。',
+ fam:['desperate'],
+ ex:[['He took the job out of desperation.','他是走投無路才接下那份工作。'],
+     ['The discount smells of desperation.','那個折扣聞起來就是走投無路。']]},
+
+{w:'detachment',pos:'n.',zh:'超然・分遣隊',lv:5,tags:['biz'],
+ note:'兩個意思：情緒上的「抽離、超然」，以及軍事的「分遣隊」。',
+ fam:['detach'],
+ ex:[['She watched with detachment.','她冷眼旁觀。'],
+     ['Some detachment helps when you review your own work.','檢視自己的作品時，抽離一點比較有幫助。']]},
+
+{w:'detainee',pos:'n.',zh:'被拘留者',lv:5,tags:[],
+ note:'字尾 -ee 表示「被拘留的那一方」。',
+ fam:['detain'],
+ ex:[['The detainees were released.','那些被拘留者獲釋了。'],
+     ['Lawyers visited the detainees.','律師探視了被拘留者。']]},
+
+{w:'detergent',pos:'n.',zh:'清潔劑・洗衣精',lv:5,tags:['biz'],
+ ex:[['Add one scoop of detergent.','加一匙洗衣精。'],
+     ['The site switched to a milder detergent.','廠區改用了溫和一點的清潔劑。']]},
+
+{w:'deterioration',pos:'n.',zh:'惡化・劣化',lv:5,tags:['biz'],
+ fam:['deteriorate'],
+ ex:[['The doctor noted a deterioration.','醫生記錄到病情惡化。'],
+     ['The report tracks deterioration of the roof.','報告追蹤屋頂的劣化情形。']]},
+
+{w:'detriment',pos:'n.',zh:'損害',lv:5,tags:['biz'],
+ note:'固定片語 to the detriment of（有損於…）。',
+ fam:['detrimental'],
+ ex:[['He works late, to the detriment of his health.','他常加班，有損健康。'],
+     ['Speed was gained to the detriment of quality.','速度提升了，品質卻犧牲掉了。']]},
+
+{w:'detrimental',pos:'adj.',zh:'有害的',lv:5,tags:['biz'],
+ note:'後面接 to。比 bad 正式，報告與合約常用。',
+ fam:['detriment'],
+ ex:[['Smoking is detrimental to health.','吸菸有害健康。'],
+     ['Constant changes are detrimental to morale.','一直改來改去會傷士氣。']]},
+
+{w:'devaluation',pos:'n.',zh:'貶值',lv:5,tags:['biz'],
+ fam:['devalue'],
+ ex:[['The devaluation hit importers hard.','貶值重創了進口商。'],
+     ['A devaluation makes exports cheaper.','貶值會讓出口變便宜。']]},
+
+{w:'devalue',pos:'v.',zh:'使貶值・貶低',lv:5,tags:['biz'],
+ note:'除了貨幣，也用在抽象的「貶低」：devalue someone\'s work。',
+ fam:['devaluation'],
+ ex:[['The currency was devalued.','那個貨幣貶值了。'],
+     ['Do not devalue the work the team did.','別貶低團隊做過的努力。']]},
+
+{w:'devoid',pos:'adj.',zh:'全無的',lv:5,tags:['biz'],
+ note:'後面固定接 of：devoid of meaning（毫無意義）。只放在 be 動詞後。',
+ ex:[['The room was devoid of furniture.','那個房間空無一物。'],
+     ['The report is devoid of detail.','這份報告完全沒有細節。']]},
+
+{w:'devolution',pos:'n.',zh:'權力下放',lv:5,tags:['biz'],
+ note:'英國政治的高頻字，指中央把權力下放給蘇格蘭、威爾斯等地方議會。',
+ fam:['devolve'],
+ ex:[['Devolution changed how the country is run.','權力下放改變了這個國家的運作方式。'],
+     ['Devolution of budgets gave teams more say.','預算下放讓各團隊更有話語權。']]},
+
+{w:'devout',pos:'adj.',zh:'虔誠的',lv:5,tags:[],
+ note:'多半形容宗教信仰；也可以說 a devout supporter（死忠支持者）。',
+ ex:[['She comes from a devout family.','她出身虔誠的家庭。'],
+     ['He is a devout believer in early nights.','他是早睡的死忠信徒。']]},
+
+{w:'diabetic',pos:'adj./n.',zh:'糖尿病的・糖尿病患者',lv:5,tags:['biz'],
+ note:'現在多半說 a person with diabetes，比直接叫 a diabetic 得體。',
+ fam:['diabetes'],
+ ex:[['The menu marks diabetic options.','菜單標出了適合糖尿病患者的選擇。'],
+     ['Please note any diabetic guests.','請註明是否有糖尿病的來賓。']]},
+
+{w:'differential',pos:'n./adj.',zh:'差額・差異的',lv:5,tags:['biz'],
+ note:'薪資的 a pay differential 是「薪資差距」，勞資協商的常見字。',
+ fam:['differ'],
+ ex:[['There is a pay differential between the two roles.','這兩個職位之間有薪資差距。'],
+     ['The differential narrowed this year.','今年差距縮小了。']]},
+
+{w:'diffuse',pos:'v./adj.',zh:'擴散・分散的',lv:5,tags:['biz'],
+ note:'別和 defuse（拆彈、化解）混：defuse a situation 才是「化解緊張」，diffuse 是「擴散」。',
+ fam:['diffusion'],
+ ex:[['The smell diffused through the room.','那個氣味在房間裡擴散開來。'],
+     ['Responsibility is too diffuse in this team.','這個團隊的權責太分散了。']]},
+
+{w:'diffusion',pos:'n.',zh:'擴散',lv:5,tags:['biz'],
+ fam:['diffuse'],
+ ex:[['Diffusion spreads the gas evenly.','擴散讓氣體均勻散開。'],
+     ['The diffusion of the idea took years.','這個想法花了好幾年才擴散開來。']]},
+
+{w:'digestive',pos:'adj.',zh:'消化的',lv:5,tags:[],
+ note:'英國的 a digestive 也指一種全麥餅乾。',
+ fam:['digest'],
+ ex:[['The leaflet covers digestive health.','這份手冊談消化健康。'],
+     ['She had tea and a digestive.','她喝了茶配一片消化餅。']]},
+
+{w:'digit',pos:'n.',zh:'（數）位・手指',lv:5,tags:['biz'],
+ note:'客服的高頻字：the last four digits of your card（卡號末四碼）。',
+ fam:['digital'],
+ ex:[['The code has six digits.','這組代碼有六位數。'],
+     ['Give the last four digits of the card.','請提供卡號末四碼。']]},
+
+{w:'dinghy',pos:'n.',zh:'小艇・橡皮艇',lv:5,tags:[],
+ note:'唸 DING-ee。',
+ forms:{s:'dinghies'},
+ ex:[['They rowed out in a dinghy.','他們划著小艇出去。'],
+     ['Each boat carries a dinghy.','每艘船上都有一艘小艇。']]},
+
+{w:'diocese',pos:'n.',zh:'教區',lv:5,tags:[],
+ note:'唸 DY-a-sis。主教管轄的範圍。',
+ forms:{s:'dioceses'},
+ ex:[['The diocese covers three counties.','這個教區涵蓋三個郡。'],
+     ['The diocese funds two schools.','教區資助兩所學校。']]},
+
+{w:'disillusion',pos:'v./n.',zh:'幻滅・使不再抱幻想',lv:5,tags:['biz'],
+ note:'形容詞 disillusioned 更常用：disillusioned with the job（對工作失望透了）。',
+ ex:[['The year left her disillusioned.','那一年讓她心灰意冷。'],
+     ['Staff are disillusioned with the process.','員工對這個流程已經失望了。']]},
+
+{w:'dismal',pos:'adj.',zh:'慘澹的・陰鬱的',lv:5,tags:['biz'],
+ note:'財經新聞常說 dismal figures（慘澹的數字）。經濟學被戲稱為 the dismal science。',
+ ex:[['The weather was dismal.','天氣很陰鬱。'],
+     ['Sales were dismal in January.','一月的銷售很慘澹。']]},
+
+{w:'dissect',pos:'v.',zh:'解剖・逐一剖析',lv:5,tags:['biz'],
+ note:'職場常說 dissect the numbers（把數字一項項拆開看）。',
+ ex:[['The class dissected a frog.','那堂課解剖了一隻青蛙。'],
+     ['We dissected the numbers line by line.','我們把數字一行一行拆開看。']]},
+
+{w:'disseminate',pos:'v.',zh:'散布・傳播',lv:5,tags:['biz'],
+ note:'正式用字，散布的是資訊：disseminate the findings（把研究結果傳播出去）。',
+ ex:[['The findings were disseminated widely.','那些研究結果被廣泛傳播。'],
+     ['We disseminate the update by email.','我們用電子郵件發布更新。']]},
+
+{w:'dissertation',pos:'n.',zh:'學位論文',lv:5,tags:[],
+ note:'英式的 dissertation 多半是碩士論文，博士的叫 thesis；美式剛好相反。',
+ ex:[['She is writing her dissertation.','她正在寫論文。'],
+     ['The dissertation is due in September.','論文九月要交。']]},
+
+{w:'dissident',pos:'n./adj.',zh:'異議人士',lv:5,tags:[],
+ note:'政治新聞的用字，指公開反對政府的人。',
+ ex:[['The dissident was released.','那位異議人士獲釋了。'],
+     ['Dissidents met in secret.','異議人士祕密集會。']]},
+
+{w:'distal',pos:'adj.',zh:'遠端的',lv:5,tags:[],
+ note:'解剖學用字，指離身體中心較遠的一端；反義是 proximal。',
+ ex:[['The break is at the distal end.','骨折在遠端。'],
+     ['The report names the distal joint.','報告指出是遠端的關節。']]},
+
+{w:'distil',pos:'v.',zh:'蒸餾・提煉出精髓',lv:5,tags:['biz'],
+ note:'英式拼一個 l，美式寫 distill。比喻用法很常用：distil it into one page（濃縮成一頁）。',
+ forms:{p:'distilled',d:'distilled'},
+ ex:[['The plant distils water.','這座廠蒸餾水。'],
+     ['Can you distil that into three points?','可以把那些濃縮成三點嗎？']]},
+
+{w:'disused',pos:'adj.',zh:'廢棄不用的',lv:5,tags:['biz'],
+ note:'和 unused（沒用過的）不同：disused 是「以前有用、現在不用了」。',
+ ex:[['The line has been disused for years.','那條路線已經廢棄多年。'],
+     ['The office moved into a disused mill.','辦公室搬進了一間廢棄的工廠。']]},
+
+{w:'divisive',pos:'adj.',zh:'造成分裂的',lv:5,tags:['biz'],
+ note:'唸 di-VY-siv。形容議題「一講就吵起來」。',
+ fam:['divide'],
+ ex:[['The topic is divisive.','這個話題容易引起分裂。'],
+     ['The decision proved divisive.','那個決定造成了分裂。']]},
+
+{w:'doctoral',pos:'adj.',zh:'博士的',lv:5,tags:[],
+ note:'重音在第一音節：DOC-toral。',
+ fam:['doctorate'],
+ ex:[['She began doctoral research.','她開始了博士研究。'],
+     ['The post requires a doctoral degree.','這個職位需要博士學位。']]},
+
+{w:'doe',pos:'n.',zh:'母鹿',lv:5,tags:[],
+ note:'和 dough（麵團）同音。公鹿是 buck 或 stag。',
+ ex:[['A doe crossed the field.','一隻母鹿穿過田野。'],
+     ['The park has several does.','公園裡有幾隻母鹿。']]},
+
+{w:'dolly',pos:'n.',zh:'（攝影）移動車・洋娃娃',lv:5,tags:['biz'],
+ note:'影視的 a dolly 是「攝影機移動台車」，dolly shot 是推軌鏡頭。大寫的 Dolly 是女子名。',
+ forms:{s:'dollies'},
+ ex:[['The camera sits on a dolly.','攝影機架在移動台車上。'],
+     ['We need a dolly for that shot.','那個鏡頭需要一台推軌車。']]},
+
+{w:'doo',pos:'n.',zh:'（無意義的）襯字',lv:5,tags:[],
+ en:'a nonsense syllable sung in music, and a spelling used in casual compounds',
+ note:'不是正式的單字，是歌裡唱的襯字，也出現在幾個口語複合詞裡。單獨看到它多半是拼字遊戲或歌詞。',
+ ex:[['The chorus is just doo sung over and over.','副歌就是一直唱著這個襯字。'],
+     ['The word has no meaning on its own.','這個字單獨看沒有意思。']]},
+
+{w:'dorsal',pos:'adj.',zh:'背側的',lv:5,tags:[],
+ note:'生物學用字：a dorsal fin 是「背鰭」。腹側是 ventral。',
+ ex:[['The dolphin has a curved dorsal fin.','海豚有彎彎的背鰭。'],
+     ['The diagram labels the dorsal side.','圖上標示了背側。']]},
+
+{w:'doughnut',pos:'n.',zh:'甜甜圈',lv:5,tags:['biz'],
+ note:'英式寫 doughnut，美式常寫 donut，兩種都對。',
+ ex:[['She bought two doughnuts.','她買了兩個甜甜圈。'],
+     ['The shop sells doughnuts by the box.','這家店的甜甜圈是整盒賣的。']]},
+
+{w:'downplay',pos:'v.',zh:'淡化・輕描淡寫',lv:5,tags:['biz'],
+ note:'公關的高頻字：downplay the risk（把風險講得很輕）。',
+ ex:[['He downplayed the delay.','他把延誤說得很輕。'],
+     ['Do not downplay a safety issue.','安全問題不能輕描淡寫。']]},
+
+{w:'doze',pos:'v./n.',zh:'打瞌睡',lv:5,tags:[],
+ note:'doze off 是「不小心睡著」。',
+ ex:[['He dozed on the train.','他在火車上打瞌睡。'],
+     ['Two people dozed off in the afternoon session.','下午場有兩個人打瞌睡。']]},
+
+{w:'dramatize',pos:'v.',zh:'改編成戲劇・誇大',lv:5,tags:['biz'],
+ note:'美式拼法，英式寫 dramatise。第二個意思帶貶義：do not dramatize it（別小題大作）。',
+ fam:['drama'],
+ ex:[['The novel was dramatized for radio.','那本小說被改編成廣播劇。'],
+     ['There is no need to dramatize a one-day delay.','延誤一天沒必要說得那麼嚴重。']]},
+
+{w:'drastically',pos:'adv.',zh:'大幅地',lv:5,tags:['biz'],
+ fam:['drastic'],
+ ex:[['Prices fell drastically.','價格大幅下跌。'],
+     ['We drastically cut the number of forms.','我們大幅減少了表格的數量。']]},
+
+{w:'draught',pos:'n.',zh:'（英）穿堂風・生啤',lv:5,tags:['biz'],
+ note:'英式拼法，唸 draft。指「冷風從縫隙灌進來」，也指桶裝的 draught beer（生啤酒）。美式這兩個意思都寫 draft。',
+ forms:{s:'draughts'},
+ ex:[['There is a draught from the window.','窗戶那邊有風灌進來。'],
+     ['They serve four draught beers.','他們供應四種生啤酒。']]},
+
+{w:'dreary',pos:'adj.',zh:'沉悶乏味的',lv:5,tags:['biz'],
+ forms:{r:'drearier',t:'dreariest'},
+ ex:[['It was a dreary afternoon.','那是個沉悶的下午。'],
+     ['The training video is dreary.','那支訓練影片很無聊。']]},
+
+{w:'drinker',pos:'n.',zh:'喝酒的人',lv:5,tags:['biz'],
+ note:'常說 a heavy drinker（酒喝得很兇的人）。',
+ fam:['drink'],
+ ex:[['He is not a heavy drinker.','他酒喝得不多。'],
+     ['The bar caters for coffee drinkers too.','這家酒吧也照顧喝咖啡的客人。']]},
+
+{w:'drummer',pos:'n.',zh:'鼓手',lv:5,tags:[],
+ fam:['drum'],
+ ex:[['The drummer set the pace.','鼓手帶起了節奏。'],
+     ['The band is looking for a drummer.','這個樂團在找鼓手。']]},
+
+{w:'drunken',pos:'adj.',zh:'醉酒的',lv:5,tags:['biz'],
+ note:'只放在名詞前面（a drunken argument）；放 be 動詞後要用 drunk。',
+ fam:['drunk'],
+ ex:[['It ended in a drunken argument.','最後演變成一場酒後爭吵。'],
+     ['Drunken behaviour at the party is a dismissal issue.','派對上酒後失態可能構成解僱事由。']]},
+
+{w:'dryer',pos:'n.',zh:'烘乾機・吹風機',lv:5,tags:['biz'],
+ note:'也拼成 drier。a hair dryer 是吹風機，a tumble dryer 是滾筒烘衣機。',
+ fam:['dry'],
+ ex:[['The dryer takes an hour.','烘乾機要跑一小時。'],
+     ['Each room has a hair dryer.','每間房都有吹風機。']]},
+
+{w:'duchy',pos:'n.',zh:'公國・公爵領地',lv:5,tags:[],
+ forms:{s:'duchies'},
+ ex:[['The land belongs to the duchy.','這片土地屬於公爵領地。'],
+     ['The duchy runs several farms.','這個公爵領地經營著幾座農場。']]},
+
+{w:'dude',pos:'n.',zh:'（口語）老兄',lv:5,tags:[],
+ note:'美式口語，很隨便的稱呼，工作場合不要用。',
+ ex:[['Hey dude, over here.','嘿老兄，這邊。'],
+     ['Dude is far too casual for a client email.','寫給客戶的信裡用 dude 太隨便了。']]},
+
+{w:'dumpling',pos:'n.',zh:'餃子・湯圓',lv:5,tags:[],
+ note:'泛指各種「麵皮包餡」或麵團做的食物，中式的餃子、義式的 gnocchi 都算。',
+ ex:[['They ordered a plate of dumplings.','他們點了一盤餃子。'],
+     ['The stall sells dumplings all day.','這個攤子整天賣餃子。']]},
+
+{w:'duo',pos:'n.',zh:'二人組',lv:5,tags:['biz'],
+ note:'兩人是 duo，三人是 trio。',
+ ex:[['The duo played two sets.','那組二人組表演了兩段。'],
+     ['The founding duo still runs the firm.','兩位共同創辦人仍在經營公司。']]},
+
+{w:'duodenal',pos:'adj.',zh:'十二指腸的',lv:5,tags:[],
+ note:'醫學用字，名詞是 duodenum。',
+ ex:[['He had a duodenal ulcer.','他有十二指腸潰瘍。'],
+     ['The scan showed duodenal damage.','檢查顯示十二指腸有損傷。']]},
+
+{w:'dweller',pos:'n.',zh:'居民',lv:5,tags:[],
+ note:'多半當複合字的後半：city dwellers（都市居民）、cave dwellers。',
+ fam:['dwell'],
+ ex:[['City dwellers pay more for space.','都市居民為空間付出更多。'],
+     ['The survey covers rural dwellers.','這份調查涵蓋鄉村居民。']]},
+
+{w:'dysfunction',pos:'n.',zh:'功能失調',lv:5,tags:['biz'],
+ note:'醫學上的「機能障礙」；組織裡的 team dysfunction 是「團隊運作失靈」。',
+ ex:[['The test found no dysfunction.','檢查沒有發現功能異常。'],
+     ['The report names three sources of dysfunction.','報告點出三個失靈的來源。']]},
+
+{w:'earner',pos:'n.',zh:'賺錢的人・賺錢的項目',lv:5,tags:['biz'],
+ note:'英式口語 a nice little earner 是「一門好賺的小生意」。',
+ fam:['earn'],
+ ex:[['She is the main earner.','她是主要的收入來源。'],
+     ['That service is a nice little earner.','那項服務是一門好賺的小生意。']]},
+
+{w:'eastwards',pos:'adv.',zh:'向東',lv:5,tags:[],
+ note:'英式帶 s，美式多半寫 eastward。',
+ ex:[['The road runs eastwards.','這條路往東。'],
+     ['The front is moving eastwards.','鋒面正在往東移動。']]},
+
+{w:'eclectic',pos:'adj.',zh:'兼容並蓄的',lv:5,tags:['biz'],
+ note:'稱讚用字，指「從各處取材、風格多元」：an eclectic mix。',
+ ex:[['Her taste in music is eclectic.','她的音樂品味很多元。'],
+     ['The shop has an eclectic mix of stock.','這家店的商品組合相當多元。']]},
+
+{w:'ecologist',pos:'n.',zh:'生態學家',lv:5,tags:[],
+ fam:['ecology'],
+ ex:[['An ecologist surveyed the site.','一位生態學家勘查了那個地點。'],
+     ['The plan needs an ecologist\'s report.','這個計畫需要一份生態學家的報告。']]},
+
+{w:'edible',pos:'adj.',zh:'可食用的',lv:5,tags:['biz'],
+ note:'反義是 inedible。包裝上的 edible oil 是「食用油」。',
+ ex:[['The flowers are edible.','這些花可以吃。'],
+     ['The packaging is made from edible material.','這款包裝是可食用材料做的。']]},
+
+{w:'edwardian',pos:'adj.',zh:'愛德華時代的',lv:5,tags:[],
+ en:'relating to the reign of Edward VII of Britain, roughly 1901 to 1910',
+ note:'寫的時候要大寫。房仲廣告很愛用，指一九〇〇年代初期的建築風格。',
+ ex:[['They bought an Edwardian house.','他們買了一棟愛德華時代的房子。'],
+     ['The building has Edwardian features.','這棟建築帶有愛德華時代的特徵。']]},
+
+{w:'eel',pos:'n.',zh:'鰻魚',lv:5,tags:[],
+ ex:[['They serve smoked eel.','他們供應煙燻鰻魚。'],
+     ['Eel is expensive on the menu.','菜單上鰻魚很貴。']]},
+
+{w:'effluent',pos:'n.',zh:'廢水・排放物',lv:5,tags:['biz'],
+ note:'環保法規的用字，指工廠排出的液體廢棄物。',
+ ex:[['The plant treats its effluent.','這座廠會處理自己的廢水。'],
+     ['Effluent levels are reported monthly.','廢水排放量每月申報。']]},
+
+{w:'eject',pos:'v.',zh:'彈出・驅離',lv:5,tags:['biz'],
+ note:'裝置上的 eject 是「退出」；場地的 eject someone 是「請出去」。',
+ ex:[['Press the button to eject the disc.','按這個鍵退出光碟。'],
+     ['Two people were ejected from the venue.','有兩個人被請出場。']]},
+
+{w:'elasticity',pos:'n.',zh:'彈性',lv:5,tags:['biz'],
+ note:'經濟學的 price elasticity（價格彈性）是「漲價後需求掉多少」，定價的關鍵概念。',
+ fam:['elastic'],
+ ex:[['The band has lost its elasticity.','這條橡皮筋沒有彈性了。'],
+     ['Price elasticity tells us how far we can raise it.','價格彈性告訴我們能漲到什麼程度。']]},
+
+{w:'elector',pos:'n.',zh:'選舉人',lv:5,tags:[],
+ note:'指有投票權的個人；全體選民是 the electorate。',
+ fam:['elect'],
+ ex:[['Each elector gets one vote.','每位選舉人有一票。'],
+     ['Electors must register in advance.','選舉人必須事先登記。']]},
+
+{w:'electrician',pos:'n.',zh:'水電（電氣）技師',lv:5,tags:['biz'],
+ note:'唸 e-lec-TRISH-un。',
+ ex:[['We called an electrician.','我們叫了電氣技師。'],
+     ['Only a qualified electrician may open the panel.','只有合格技師才可以打開配電盤。']]},
+
+{w:'electrode',pos:'n.',zh:'電極',lv:5,tags:['biz'],
+ ex:[['The electrode carries the current.','電極負責導電。'],
+     ['Replace the electrode every six months.','電極每六個月更換一次。']]},
+
+{w:'electromagnetic',pos:'adj.',zh:'電磁的',lv:5,tags:['biz'],
+ note:'產品認證常見 electromagnetic compatibility（電磁相容性，縮寫 EMC）。',
+ ex:[['The device emits an electromagnetic field.','這個裝置會產生電磁場。'],
+     ['The product passed the electromagnetic tests.','這項產品通過了電磁測試。']]},
+
+{w:'elemental',pos:'adj.',zh:'基本的・原始的',lv:5,tags:[],
+ note:'別和 elementary（初級的）混。elemental 是「最根本、最原始的」。',
+ fam:['element'],
+ ex:[['There is an elemental force to the sea.','大海有一股原始的力量。'],
+     ['The need for trust is elemental.','對信任的需求是最根本的。']]},
+
+{w:'elude',pos:'v.',zh:'躲過・想不起來',lv:5,tags:['biz'],
+ note:'很好用的第二個意思：the name eludes me（我想不起那個名字）。',
+ fam:['elusive'],
+ ex:[['The name eludes me.','那個名字我一時想不起來。'],
+     ['A solution has eluded us for months.','好幾個月了我們都想不出解法。']]},
+
+{w:'emancipation',pos:'n.',zh:'解放',lv:5,tags:[],
+ ex:[['The museum covers emancipation.','這座博物館講述解放的歷史。'],
+     ['The date marks the emancipation of slaves.','這個日子紀念奴隸的解放。']]},
+
+{w:'emblem',pos:'n.',zh:'徽章・象徵',lv:5,tags:['biz'],
+ ex:[['The rose is the emblem of the club.','玫瑰是這個俱樂部的徽章。'],
+     ['The logo became an emblem of quality.','這個標誌成了品質的象徵。']]},
+
+{w:'embroidery',pos:'n.',zh:'刺繡',lv:5,tags:['biz'],
+ note:'制服與贈品業的常見字：embroidery on the chest（胸前繡字）。',
+ fam:['embroider'],
+ forms:{s:'embroideries'},
+ ex:[['The cloth has fine embroidery.','這塊布上有精緻的刺繡。'],
+     ['The shirts come with embroidery on the chest.','這款襯衫胸前有繡字。']]},
+
+{w:'empathy',pos:'n.',zh:'同理心',lv:5,tags:['biz'],
+ note:'和 sympathy 不同：sympathy 是「替你難過」，empathy 是「站在你的位置感受」。客服訓練的核心字。',
+ forms:{s:'empathies'},
+ ex:[['She listened with empathy.','她帶著同理心傾聽。'],
+     ['Empathy matters more than a script.','同理心比照本宣科重要。']]},
+
+{w:'empowerment',pos:'n.',zh:'賦權',lv:5,tags:['biz'],
+ fam:['empower'],
+ ex:[['The course is about empowerment.','這門課談的是賦權。'],
+     ['Empowerment means letting people decide.','賦權的意思是讓人自己做決定。']]},
+
+{w:'emptiness',pos:'n.',zh:'空虛・空無',lv:5,tags:[],
+ fam:['empty'],
+ ex:[['She felt a strange emptiness.','她感到一種奇怪的空虛。'],
+     ['The emptiness of the shop was striking.','店裡的空蕩令人吃驚。']]},
+
+{w:'enclave',pos:'n.',zh:'飛地・小聚落',lv:5,tags:['biz'],
+ note:'指「被包在別的區域裡、性質不同的一小塊」，也用在文化與族群。',
+ ex:[['The village is a small enclave.','那個村子是一塊小飛地。'],
+     ['The district became a tech enclave.','那一區成了科技業的聚落。']]},
+
+{w:'encyclopedia',pos:'n.',zh:'百科全書',lv:5,tags:[],
+ note:'英式也拼 encyclopaedia，兩種都對。形容人 a walking encyclopedia 是「活字典」。',
+ ex:[['He read the whole encyclopedia.','他把整套百科全書讀完了。'],
+     ['She is a walking encyclopedia on tax.','稅務的事她簡直是本活字典。']]},
+
+{w:'endlessly',pos:'adv.',zh:'沒完沒了地',lv:5,tags:['biz'],
+ fam:['endless'],
+ ex:[['He talks endlessly.','他講個沒完。'],
+     ['We debated it endlessly and decided nothing.','我們沒完沒了地辯論，什麼也沒決定。']]},
+
+{w:'endoscopic',pos:'adj.',zh:'內視鏡的',lv:5,tags:[],
+ ex:[['She had an endoscopic exam.','她做了內視鏡檢查。'],
+     ['The clinic offers endoscopic procedures.','這家診所提供內視鏡手術。']]},
+
+{w:'engender',pos:'v.',zh:'引發・產生（情感）',lv:5,tags:['biz'],
+ note:'產生的是感受或氛圍：engender trust（建立信任）。',
+ ex:[['The move engendered mistrust.','那個舉動引發了不信任。'],
+     ['Clear pricing engenders trust.','價格透明會建立信任。']]},
+
+{w:'engulf',pos:'v.',zh:'吞沒',lv:5,tags:['biz'],
+ note:'常用被動：be engulfed in flames（陷入火海）、engulfed by demand（被需求淹沒）。',
+ ex:[['Flames engulfed the building.','火焰吞沒了整棟建築。'],
+     ['The team was engulfed by requests.','團隊被各種需求淹沒。']]},
+
+{w:'enhancement',pos:'n.',zh:'強化・改良',lv:5,tags:['biz'],
+ note:'軟體開發把「新功能」叫 enhancement，和 bug fix（修錯）分開列。',
+ fam:['enhance'],
+ ex:[['The update is an enhancement, not a fix.','這次更新是功能改良，不是修錯。'],
+     ['Two enhancements ship next month.','兩項功能改良下個月上線。']]},
+
+{w:'enigmatic',pos:'adj.',zh:'謎樣的・費解的',lv:5,tags:[],
+ note:'常說 an enigmatic smile（意味不明的微笑）。',
+ ex:[['She gave an enigmatic smile.','她露出一個意味不明的微笑。'],
+     ['The reply was enigmatic and unhelpful.','那個回覆很費解，也幫不上忙。']]},
+
+{w:'enlighten',pos:'v.',zh:'啟發・說明白',lv:5,tags:['biz'],
+ note:'口語常帶點調侃：care to enlighten me?（可以說明白一點嗎？）',
+ fam:['enlightened'],
+ ex:[['Could you enlighten me?','可以請你說明白一點嗎？'],
+     ['The briefing enlightened everyone.','那場說明會讓大家豁然開朗。']]},
+
+{w:'enlightened',pos:'adj.',zh:'開明的',lv:5,tags:['biz'],
+ note:'稱讚政策或做法「想得比較遠、比較人性」：an enlightened employer。',
+ fam:['enlighten'],
+ ex:[['They have an enlightened leave policy.','他們的請假制度很開明。'],
+     ['An enlightened employer trains its own staff.','開明的雇主會自己培養人才。']]},
+
+{w:'enrol',pos:'v.',zh:'註冊・報名',lv:5,tags:['biz'],
+ note:'英式拼一個 l，美式寫 enroll；但兩邊的 enrolled、enrolling 都是雙 l。',
+ fam:['enrolment'],
+ forms:{p:'enrolled',d:'enrolled'},
+ ex:[['She enrolled on the course.','她報名了那門課。'],
+     ['Staff can enrol at any time.','員工隨時都可以報名。']]},
+
+{w:'enrolment',pos:'n.',zh:'註冊・報名人數',lv:5,tags:['biz'],
+ note:'英式拼一個 l，美式寫 enrollment。',
+ fam:['enrol'],
+ ex:[['Enrolment closes on Friday.','報名星期五截止。'],
+     ['Enrolment is up on last year.','報名人數比去年多。']]},
+
+{w:'enthusiastically',pos:'adv.',zh:'熱烈地',lv:5,tags:['biz'],
+ fam:['enthusiastic'],
+ ex:[['The idea was received enthusiastically.','這個想法受到熱烈歡迎。'],
+     ['She nodded enthusiastically.','她熱烈地點頭。']]},
+
+{w:'entice',pos:'v.',zh:'引誘・吸引',lv:5,tags:['biz'],
+ note:'行銷用字：entice customers with a discount（用折扣吸引顧客）。',
+ ex:[['The smell enticed us in.','那個香味把我們引了進去。'],
+     ['We enticed shoppers with a free sample.','我們用免費試用品吸引消費者。']]},
+
+{w:'entree',pos:'n.',zh:'主菜・入場資格',lv:5,tags:['biz'],
+ note:'英美意思剛好相反：美式的 entrée 是「主菜」，法式與部分英式的用法卻是「前菜」。點餐前先確認一下。',
+ ex:[['She chose the fish entree.','她選了魚類主菜。'],
+     ['In America the entree is the main course.','在美國，entree 指的是主菜。']]},
+
+{w:'entrepreneurial',pos:'adj.',zh:'創業精神的',lv:5,tags:['biz'],
+ note:'招募廣告的高頻字：an entrepreneurial mindset（有創業家思維）。',
+ fam:['entrepreneur'],
+ ex:[['She has an entrepreneurial streak.','她骨子裡有創業家的性格。'],
+     ['The role suits an entrepreneurial person.','這個職位適合有創業精神的人。']]},
+
+{w:'entrust',pos:'v.',zh:'託付',lv:5,tags:['biz'],
+ note:'固定用法 entrust someone with something。',
+ fam:['trust'],
+ ex:[['She entrusted him with the keys.','她把鑰匙託付給他。'],
+     ['We entrust the audit to an outside firm.','我們把稽核委託給外部公司。']]},
+
+{w:'envious',pos:'adj.',zh:'羨慕的・嫉妒的',lv:5,tags:[],
+ note:'後面接 of。語氣比 jealous 溫和一點。',
+ fam:['envy'],
+ ex:[['I am envious of your holiday.','我好羨慕你的假期。'],
+     ['Rivals are envious of our delivery times.','對手很羨慕我們的交貨速度。']]},
+
+{w:'envoy',pos:'n.',zh:'特使',lv:5,tags:['biz'],
+ note:'職級比大使低，多半是為了特定任務派出去的。',
+ ex:[['An envoy was sent to the talks.','一位特使被派去參加談判。'],
+     ['The envoy reported back within a week.','特使一週內回報。']]},
+
+{w:'epoch',pos:'n.',zh:'紀元・時代',lv:5,tags:[],
+ note:'英式唸 EE-pok、美式唸 EP-ok。形容詞 epoch-making 是「劃時代的」。',
+ ex:[['The find marks a new epoch.','這項發現標誌著一個新紀元。'],
+     ['The launch was an epoch-making moment.','那次上市是劃時代的一刻。']]},
+
+{w:'eqn',pos:'abbr.',zh:'equation（方程式）的縮寫',lv:5,tags:[],
+ en:'a written abbreviation for equation, used in technical papers',
+ note:'這是縮寫不是單字，只出現在技術論文裡，唸的時候要念 equation。',
+ ex:[['See eqn 3 on page two.','見第二頁的方程式三。'],
+     ['The paper refers to eqn 12.','這篇論文引用了方程式十二。']]},
+
+{w:'eraser',pos:'n.',zh:'橡皮擦',lv:5,tags:[],
+ note:'美式用字，英式說 rubber（但那個字在美式口語另有保險套的意思，所以美國人不會這樣說）。',
+ fam:['erase'],
+ ex:[['May I borrow your eraser?','可以借我橡皮擦嗎？'],
+     ['The stationery order includes erasers.','文具訂單裡有橡皮擦。']]},
+
+{w:'erection',pos:'n.',zh:'搭建・勃起',lv:5,tags:['biz'],
+ note:'工程上是「搭建、豎立」（the erection of scaffolding），但日常另有生理上的意思，所以在非工程場合用要看語境。',
+ fam:['erect'],
+ ex:[['The erection of the frame takes two days.','搭建骨架要兩天。'],
+     ['The permit covers the erection of a fence.','這張許可涵蓋圍籬的搭建。']]},
+
+{w:'erroneous',pos:'adj.',zh:'錯誤的',lv:5,tags:['biz'],
+ note:'正式用字，多用在資料與說法：an erroneous figure（錯誤的數字）。',
+ fam:['error'],
+ ex:[['The report contains an erroneous date.','報告裡有一個錯誤的日期。'],
+     ['An erroneous entry threw off the total.','一筆錯誤的輸入讓總數跑掉了。']]},
+
+{w:'espouse',pos:'v.',zh:'擁護・信奉',lv:5,tags:['biz'],
+ note:'唸 i-SPOWZ。擁護的是理念或立場，不是人。',
+ ex:[['The party espouses free trade.','那個政黨主張自由貿易。'],
+     ['The firm espouses openness but rarely practises it.','這家公司口口聲聲說開放，卻很少做到。']]},
+
+{w:'estrogen',pos:'n.',zh:'雌激素',lv:5,tags:[],
+ note:'美式拼法，英式寫 oestrogen（開頭多一個 o）。',
+ ex:[['The test measures estrogen levels.','這項檢驗測量雌激素濃度。'],
+     ['Estrogen falls after menopause.','雌激素在更年期後下降。']]},
+
+{w:'etch',pos:'v.',zh:'蝕刻・深深刻下',lv:5,tags:['biz'],
+ note:'比喻用法很常見：etched in my memory（深深刻在記憶裡）。',
+ forms:{s:'etches'},
+ ex:[['The design is etched into the glass.','這個圖案是蝕刻在玻璃上的。'],
+     ['That day is etched in everyone\'s memory.','那一天深深刻在每個人的記憶裡。']]},
+
+{w:'eternity',pos:'n.',zh:'永恆・漫長的等待',lv:5,tags:['biz'],
+ note:'口語誇張的 it took an eternity（等了有夠久）。',
+ fam:['eternal'],
+ forms:{s:'eternities'},
+ ex:[['The wait felt like an eternity.','那段等待像永遠一樣長。'],
+     ['Two weeks is an eternity in this market.','在這個市場，兩週已經是永恆了。']]},
+
+{w:'ethanol',pos:'n.',zh:'乙醇',lv:5,tags:['biz'],
+ note:'酒裡的那種酒精，也當燃料添加物。',
+ ex:[['The fuel contains ethanol.','這款燃料含乙醇。'],
+     ['Ethanol content is shown on the pump.','加油機上會標示乙醇含量。']]},
+
+{w:'etiquette',pos:'n.',zh:'禮節',lv:5,tags:['biz'],
+ note:'法文借字，唸 ET-i-ket。職場的 email etiquette 是「郵件禮節」。',
+ ex:[['She knows the etiquette.','她懂得那套禮節。'],
+     ['The guide covers email etiquette.','這份指南涵蓋電子郵件禮節。']]},
+
+{w:'evacuation',pos:'n.',zh:'疏散',lv:5,tags:['biz'],
+ note:'消防演習的正式用字：an evacuation drill。',
+ fam:['evacuate'],
+ ex:[['The evacuation took four minutes.','疏散花了四分鐘。'],
+     ['We run an evacuation drill twice a year.','我們一年做兩次疏散演習。']]},
+
+{w:'evergreen',pos:'n./adj.',zh:'常綠樹・歷久不衰的',lv:5,tags:['biz'],
+ note:'行銷的 evergreen content 是「放多久都不過時的內容」。',
+ ex:[['The hedge is evergreen.','這道樹籬是常綠的。'],
+     ['That guide is evergreen content.','那份指南是歷久不衰的內容。']]},
+
+{w:'evict',pos:'v.',zh:'驅逐（房客）',lv:5,tags:['biz'],
+ note:'法律用字，指依法把房客請出去。名詞 eviction。',
+ ex:[['They were evicted last month.','他們上個月被驅離了。'],
+     ['A landlord must follow the law to evict.','房東要驅離房客必須依法辦理。']]},
+
+{w:'exclamation',pos:'n.',zh:'驚呼・驚嘆號',lv:5,tags:['biz'],
+ note:'an exclamation mark 是驚嘆號；商務信裡少用為妙。',
+ fam:['exclaim'],
+ ex:[['He let out an exclamation.','他驚呼了一聲。'],
+     ['One exclamation mark is enough in an email.','一封郵件裡一個驚嘆號就夠了。']]},
+
+{w:'exemplary',pos:'adj.',zh:'模範的',lv:5,tags:['biz'],
+ note:'考績與推薦信的高頻字：exemplary service（表現堪為典範）。',
+ fam:['example'],
+ ex:[['His record is exemplary.','他的紀錄堪為典範。'],
+     ['The team gave exemplary service all year.','團隊整年的服務都堪為典範。']]},
+
+{w:'exodus',pos:'n.',zh:'大批出走',lv:5,tags:['biz'],
+ note:'人資新聞常說 an exodus of staff（人才大量出走）。',
+ ex:[['There was an exodus from the city.','出現了一波離開城市的人潮。'],
+     ['The pay freeze caused an exodus.','凍薪造成了一波離職潮。']]},
+
+{w:'explanatory',pos:'adj.',zh:'說明性的',lv:5,tags:['biz'],
+ note:'常說 self-explanatory（一看就懂，不用解釋）。',
+ fam:['explain'],
+ ex:[['The form is self-explanatory.','這份表格一看就懂。'],
+     ['An explanatory note is attached.','附上一份說明。']]},
+
+{w:'exponent',pos:'n.',zh:'倡導者・（數）指數',lv:5,tags:['biz'],
+ note:'兩個意思：某個做法的「代表人物」，以及數學的「指數」。',
+ ex:[['She is a leading exponent of the method.','她是這個方法的主要倡導者。'],
+     ['The exponent is written above the number.','指數寫在數字的右上方。']]},
+
+{w:'exporter',pos:'n.',zh:'出口商',lv:5,tags:['biz'],
+ note:'和 importer（進口商）成對。',
+ fam:['export'],
+ ex:[['The country is a major exporter.','這個國家是主要出口國。'],
+     ['Exporters must file the paperwork early.','出口商必須提早報關。']]},
+
+{w:'expulsion',pos:'n.',zh:'開除・驅逐',lv:5,tags:['biz'],
+ note:'學校的「退學」與組織的「除名」都用它。',
+ fam:['expel'],
+ ex:[['The expulsion was appealed.','那項退學處分被提出申訴。'],
+     ['Expulsion from the scheme is the last step.','從方案中除名是最後一步。']]},
+
+{w:'extinguish',pos:'v.',zh:'撲滅・熄滅',lv:5,tags:['biz'],
+ note:'滅火器 a fire extinguisher 就是從這個字來的。',
+ forms:{s:'extinguishes'},
+ ex:[['They extinguished the fire.','他們把火撲滅了。'],
+     ['Staff are trained to extinguish small fires.','員工受過撲滅小火的訓練。']]},
+
+{w:'extracurricular',pos:'adj.',zh:'課外的',lv:5,tags:[],
+ note:'履歷上的 extracurricular activities 是「課外活動」。',
+ ex:[['She joined two extracurricular clubs.','她參加了兩個課外社團。'],
+     ['List any extracurricular activities.','請列出任何課外活動。']]},
+
+{w:'eyelid',pos:'n.',zh:'眼皮',lv:5,tags:[],
+ note:'片語 not bat an eyelid 是「眉頭都不皺一下」。',
+ ex:[['His eyelid twitched.','他的眼皮跳了一下。'],
+     ['She did not bat an eyelid at the figure.','她看到那個數字連眉頭都沒皺一下。']]},
+
+{w:'eyesight',pos:'n.',zh:'視力',lv:5,tags:['biz'],
+ note:'不可數。職場的 eyesight test 是螢幕作業人員的定期檢查。',
+ ex:[['His eyesight is getting worse.','他的視力越來越差。'],
+     ['Staff get a free eyesight test each year.','員工每年可做一次免費視力檢查。']]},
+
+{w:'fable',pos:'n.',zh:'寓言',lv:5,tags:[],
+ note:'多半是動物當角色、結尾有教訓的短故事。',
+ ex:[['The book is a fable about greed.','這本書是關於貪婪的寓言。'],
+     ['He told the story as a fable.','他把那件事講成一則寓言。']]},
+
+{w:'faecal',pos:'adj.',zh:'糞便的',lv:5,tags:[],
+ note:'英式拼法，美式寫 fecal。水質與食安檢驗報告的用字。',
+ ex:[['The test looks for faecal bacteria.','這項檢驗要找的是糞便細菌。'],
+     ['Faecal contamination closed the beach.','糞便污染讓海灘關閉。']]},
+
+{w:'fairway',pos:'n.',zh:'（高爾夫）球道',lv:5,tags:[],
+ note:'球洞之間修剪過的草地；旁邊沒修的是 rough。',
+ ex:[['His ball landed on the fairway.','他的球落在球道上。'],
+     ['The fairway is closed for repairs.','球道整修中暫停開放。']]}
 
 ];
