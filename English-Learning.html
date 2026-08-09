@@ -22,6 +22,7 @@
   --blue-soft:    #ddf4ff;
   --purple:       #ce82ff;
   --purple-dark:  #a568cc;
+  --purple-soft:  #f3e3ff;
   --gold:         #ffc800;
   --gold-dark:    #e6a400;
   --red:          #ff4b4b;
@@ -69,6 +70,7 @@ html[data-theme="dark"] {
   --green-soft:   #24401a;
   --blue-soft:    #16333f;
   --red-soft:     #3d1f22;
+  --purple-soft:  #2f2340;
 }
 
 /* ---------- reset ---------- */
@@ -591,6 +593,12 @@ body.in-lesson { padding-bottom: 0; }
   margin-top: 8px; padding: 6px 10px; border-radius: 8px;
   background: var(--blue-soft); color: var(--blue-dark); font-size: .8rem; font-weight: 700;
 }
+/* 第二個候選（leaves 也可能是 leave）。刻意不用同一個藍底 ——
+   上面那行講的是「你現在看的是誰」，這行是「還有另一個答案」，兩件事。 */
+.lexvia.alt {
+  margin-top: 4px; background: var(--bg-alt); color: var(--text-soft);
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+}
 .lexzh { margin-top: 8px; font-weight: 700; }
 .lextags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
 .lextag {
@@ -907,6 +915,56 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
   font-size: .7rem; font-weight: 800; vertical-align: middle;
 }
 
+/* 三篇閱讀（Part 7 triple）。並排的規則跟雙篇一樣 —— 三份文件要同時看得見，
+   否則練到的只剩單篇。窄畫面在 responsive.css 裡改回一欄。 */
+.p7docs.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* ============ 長難句拆解 ============ */
+/* 句子本身就是作答介面：每一段都是一顆可點的鈕，點下去填進上面那兩個空格。
+   段與段之間只留一個字距，看起來仍要像一個句子 —— 切太開就看不出它原本很長。 */
+.parse-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 6px; }
+.parse-slot {
+  display: flex; flex-direction: column; gap: 2px; align-items: flex-start;
+  padding: 8px 12px; border: 2px dashed var(--border); border-radius: var(--radius);
+  background: var(--surface); text-align: left; min-width: 0;
+}
+.parse-slot.on { border-style: solid; border-color: var(--blue); background: var(--blue-soft); }
+.parse-slot.ok  { border-style: solid; border-color: var(--green-dark); background: var(--green-soft); }
+.parse-slot.bad { border-style: solid; border-color: var(--red-dark);   background: var(--red-soft); }
+.parse-slot-lab { font-size: .72rem; font-weight: 800; opacity: .75; }
+.parse-slot-val {
+  font-family: var(--font-en); font-weight: 700; font-size: .95rem;
+  overflow-wrap: break-word; max-width: 100%;
+}
+.parse-hint { margin-bottom: 10px; }
+
+.parse-sent {
+  font-family: var(--font-en); font-size: 1.05rem; line-height: 2.2;
+  overflow-wrap: break-word;
+}
+.seg {
+  display: inline; padding: 3px 5px; margin: 0 1px; border: 0;
+  border-bottom: 2px solid var(--border); border-radius: 5px;
+  background: transparent; font: inherit; color: inherit; cursor: pointer;
+}
+.seg:hover { background: var(--bg-alt); }
+.seg.sel-s { background: var(--blue-soft);   border-bottom-color: var(--blue); }
+.seg.sel-v { background: var(--purple-soft); border-bottom-color: var(--purple); }
+.seg-locked { cursor: default; }
+.seg-locked:hover { background: transparent; }
+.seg-core { background: var(--green-soft); border-bottom-color: var(--green-dark); }
+.seg-bad  { background: var(--red-soft);   border-bottom-color: var(--red-dark); }
+/* 批改後每一段掛上它的身分。用上標而不是另起一行：句子要維持原本的樣子，
+   標籤跳出來擠成一整段的話，就看不出哪個標籤在說哪一段了。 */
+.seg-lab {
+  font-family: var(--font); font-size: .62rem; font-weight: 800;
+  vertical-align: super; margin-left: 3px; opacity: .8; white-space: nowrap;
+}
+.parse-core {
+  background: var(--green-soft); border-radius: var(--radius);
+  padding: 10px 12px; margin-bottom: 4px;
+}
+
 </style>
 <style>
 /* ===== css/responsive.css ===== */
@@ -945,6 +1003,18 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
    並排到 780px 就撐不住了：Part 7 的文件本來就長，一欄剩不到 20 個字元寬。 */
 @media (max-width: 780px) {
   .p7docs { grid-template-columns: 1fr; }
+}
+
+/* 三篇的門檻要更早：三欄在 1024px 以下一欄不到 300px，比雙篇更早撐不住。
+   直接掉回一欄而不是兩欄 —— 兩欄會剩一份文件孤零零掉到第二排，
+   看起來像「另外那一份是附註」，可是三篇的重點正是三份地位相同。 */
+@media (max-width: 1024px) {
+  .p7docs.n3 { grid-template-columns: 1fr; }
+}
+
+/* 長難句拆解：窄畫面兩個空格擠在一行會被切成兩三行字，改成上下排 */
+@media (max-width: 560px) {
+  .parse-slots { grid-template-columns: 1fr; }
 }
 
 /* ---------- 桌機：導覽移到左側，內容置中 ---------- */
@@ -1020,7 +1090,7 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
 </style>
 </head>
 <body>
-<!-- 單檔打包版 build: 2026-08-08 15:39 -->
+<!-- 單檔打包版 build: 2026-08-08 19:32 -->
 
 <!-- ===== 頂部狀態列 ===== -->
 <header id="topbar" class="topbar">
@@ -1416,21 +1486,61 @@ window.DATA_CURRICULUM = {
   },
   {
     id: 's5', n: 5, name: '高分衝刺', icon: '🔥', color: 'red',
-    sub: '長難句・干擾選項・全真模考',
+    sub: '長難句・倒裝・干擾選項・全真模考',
     level: '約 TOEIC 880–950',
     desc: '這裡開始練的不是「懂不懂」，而是「快不快、穩不穩」。長難句拆解、辨識出題者設的陷阱、完整模考節奏。',
-    ready: false,
+    ready: true,
     units: [
-      { id:'s5u1', n:56, title:'長難句拆解法', icon:'🪚' },
-      { id:'s5u2', n:57, title:'Part 7 三篇閱讀', icon:'📚' },
-      { id:'s5u3', n:58, title:'干擾選項的五種套路', icon:'🎭' },
-      { id:'s5u4', n:59, title:'聽力預讀技巧', icon:'👀' },
-      { id:'s5u5', n:60, title:'全真模考 ①', icon:'🧪', boss:true },
-      { id:'s5u6', n:61, title:'低頻高階字彙', icon:'💠' },
-      { id:'s5u7', n:62, title:'口音適應：英/澳/加', icon:'🌏' },
-      { id:'s5u8', n:63, title:'推論題專攻', icon:'🧠' },
-      { id:'s5u9', n:64, title:'全真模考 ②', icon:'🧪' },
-      { id:'s5u10', n:65, title:'Stage 5 魔王測驗', icon:'👑', boss:true }
+      { id:'s5u1', n:56, title:'長難句拆解法', icon:'🪚',
+        goal:'一個句子只有一個主要動詞 —— 找到它，三十個字的句子就縮成五個字',
+        plan:[['intro',1],['flashcard',10],['parse',4],['recall',6],['listen',4],
+              ['grammar',8],['cloze',4],['build',3],['read',1]] },
+
+      { id:'s5u2', n:57, title:'Part 7 三篇閱讀', icon:'📚',
+        goal:'三份文件配五題 —— 線索被拆成三段，有一題要對到第三份才湊得出答案',
+        plan:[['part7',1],['recall',6],['cloze',3],['listen',3],['grammar',3]] },
+
+      { id:'s5u3', n:58, title:'干擾選項的五種套路', icon:'🎭',
+        goal:'錯的選項只有五種錯法 —— 認得出來，四選一就變成二選一',
+        plan:[['intro',1],['flashcard',10],['recall',7],['listen',4],['grammar',8],
+              ['cloze',3],['build',3],['read',1]] },
+
+      { id:'s5u4', n:59, title:'聽力預讀技巧', icon:'👀',
+        /* 這一關沒有自己的單字，所以配方不寫 flashcard —— 練的是聽之前那幾秒
+           要做什麼，不是再背十個字。 */
+        goal:'題目印在題本上，音檔開始前先讀完 —— 知道要找什麼才聽得出哪一句是答案',
+        plan:[['intro',1],['convo',2],['recall',6],['listen',4],['dictate',3],
+              ['grammar',5],['cloze',3]] },
+
+      { id:'s5u5', n:60, title:'全真模考 ①', icon:'🧪', boss:true,
+        goal:'Part 1 到 Part 7 全部混在一起跑一次，看自己在哪一段掉下來',
+        plan:[['photo',2],['respond',3],['convo',1],['part6',1],['part7',1],
+              ['grammar',5],['cloze',4],['recall',6],['listen',3],['read',1]] },
+
+      { id:'s5u6', n:61, title:'低頻高階字彙', icon:'💠',
+        goal:'詞頻排到一萬名外，但多益的商務語境天天用的那一批字',
+        plan:[['flashcard',14],['recall',9],['spell',4],['listen',5],['cloze',4],
+              ['build',3],['read',1]] },
+
+      { id:'s5u7', n:62, title:'倒裝與假設語氣進階', icon:'🔄',
+        goal:'句首放了否定副詞就要倒裝；if 可以省略，代價是把 had／were／should 提到最前面',
+        plan:[['intro',1],['flashcard',8],['parse',3],['recall',6],['listen',4],
+              ['grammar',8],['cloze',4],['build',3],['read',1]] },
+
+      { id:'s5u8', n:63, title:'推論題專攻', icon:'🧠',
+        goal:'問「可以推論出什麼」時答案不會照抄原文，但一定站在文章某一句話上',
+        plan:[['intro',1],['flashcard',10],['recall',7],['listen',4],['grammar',6],
+              ['cloze',3],['build',3],['read',2]] },
+
+      { id:'s5u9', n:64, title:'全真模考 ②', icon:'🧪',
+        goal:'第二次全科混考，這次加上聽寫 —— 聽得懂和寫得出來是兩件事',
+        plan:[['photo',2],['respond',3],['convo',1],['part6',1],['part7',1],
+              ['grammar',6],['cloze',5],['recall',8],['listen',4],['dictate',3],['read',1]] },
+
+      { id:'s5u10', n:65, title:'Stage 5 魔王測驗', icon:'👑', boss:true,
+        goal:'長難句、倒裝、假設語氣進階、干擾選項、推論題，加上 Part 6 與三篇閱讀全部混合',
+        plan:[['parse',3],['part6',1],['part7',1],['convo',1],['grammar',10],['cloze',6],
+              ['build',4],['listen',5],['dictate',4],['recall',10],['read',1]] }
     ]
   },
   {
@@ -3358,6 +3468,203 @@ window.DATA_VOCAB_S4 = [
 {id:'v4059',w:'outline',kk:'ˈaʊtˌlaɪn',pos:'v./n.',zh:'概述・大綱',ic:'🗒️',u:'s4u8',lure:['outcome','online'],
  ex:[['She outlined her plan in three minutes.','她三分鐘就把計畫講完了大綱。'],
      ['The email outlines the steps for claiming expenses.','那封信概述了申請費用的步驟。']]}
+
+];
+
+</script>
+<script>
+/* ===== data/vocab-s5.js ===== */
+/* ==========================================================================
+   vocab-s5.js — Stage 5 單字（Unit 56、58、61、62、63）
+
+   到 880 分以上，還會擋住人的字剩兩類：
+
+     **把句子拉長的那些字**（U56）  comprise、whereas、notwithstanding、thereafter。
+                    它們本身不難，難的是它們一出現，句子就多一層結構 ——
+                    長難句拆解那一關要拆的東西，有一半是這些字牽出來的。
+     **描述「話怎麼說」的字**（U58、U63）  discrepancy、plausible、infer、implication。
+                    Part 7 的選項與題幹講的不是內容，是「文章對這件事的態度」，
+                    看不懂題幹就算讀完文章也選不出來。
+
+   中間夾一關純粹的低頻高階字（U61）：ambiguous、meticulous、stringent 這一批
+   詞頻排到一萬名外，但多益的商務語境天天用。
+
+   U62（倒裝與假設語氣進階）的字刻意少而準 —— 那一關真正要練的是句構，
+   單字只是讓例句站得住。
+
+   **同義字不同收**：infer 與 deduce、scarcely 與 hardly 中文寫出來一模一樣，
+   湊進同一題會兩個選項都對（distractors() 只擋 zh 逐字相同，擋不掉「意思一樣但
+   中文寫法不同」）。所以每一組只收一個，另一個留給詞庫去查。
+
+   欄位同 vocab-s4：id / w / kk / pos / zh / ic / u / ex，外加 lure / col / rt。
+   ========================================================================== */
+window.DATA_VOCAB_S5 = [
+
+/* ===================== U56 長難句拆解法 ===================== */
+{id:'v5001',w:'comprise',kk:'kəmˈpraɪz',pos:'v.',zh:'由…組成',ic:'🧱',u:'s5u1',lure:['include','attach'],
+ ex:[['The set comprises four books and a map.','這一套包含四本書和一張地圖。'],
+     ['The committee comprises members from all five departments.','委員會由五個部門的成員組成。']]},
+{id:'v5002',w:'constitute',kk:'ˈkɑnstəˌtjut',pos:'v.',zh:'構成・算是',ic:'🏗️',u:'s5u1',lure:['comprise','replace'],
+ ex:[['Water constitutes most of the human body.','水構成人體的大部分。'],
+     ['Late payment constitutes a breach of the contract.','逾期付款即構成違約。']]},
+{id:'v5003',w:'stipulate',kk:'ˈstɪpjəˌlet',pos:'v.',zh:'明訂・規定',ic:'📜',u:'s5u1',lure:['suggest','request'],
+ ex:[['The rules stipulate that guests must sign in.','規定明訂訪客必須簽到。'],
+     ['The lease stipulates a two-month notice period.','租約明訂要提前兩個月通知。']]},
+{id:'v5004',w:'clause',kk:'klɔz',pos:'n.',zh:'條款・子句',ic:'📑',u:'s5u1',lure:['detail','cause'],
+ ex:[['Read the last clause before you sign.','簽名前先看最後一條條款。'],
+     ['A clause in the agreement covers early cancellation.','協議中有一條條款處理提前解約。']]},
+{id:'v5005',w:'respective',kk:'rɪˈspɛktɪv',pos:'adj.',zh:'各自的',ic:'👥',u:'s5u1',lure:['respectful','previous'],
+ ex:[['They went back to their respective rooms.','他們各自回到自己的房間。'],
+     ['The two teams presented their respective budgets.','兩個團隊各自提出了預算。']]},
+{id:'v5006',w:'subsequent',kk:'ˈsʌbsɪˌkwɛnt',pos:'adj.',zh:'隨後的',ic:'➡️',u:'s5u1',lure:['previous','current'],
+ ex:[['Subsequent visits will be shorter.','之後的幾次來訪會比較短。'],
+     ['All subsequent invoices should be sent to the new address.','之後所有的請款單都請寄到新地址。']]},
+{id:'v5007',w:'thereafter',kk:'ðɛrˈæftɚ',pos:'adv.',zh:'此後・從那時起',ic:'⏭️',u:'s5u1',lure:['therefore','recent'],
+ ex:[['She stayed for a week and left thereafter.','她待了一週，之後就離開了。'],
+     ['The trial period lasts 30 days; thereafter a monthly fee applies.','試用期三十天，此後開始收月費。']]},
+{id:'v5008',w:'whereas',kk:'hwɛrˈæz',pos:'conj.',zh:'然而・相對地',ic:'⚖️',u:'s5u1',lure:['whenever','because'],
+ ex:[['He likes tea, whereas I prefer coffee.','他喜歡茶，而我比較愛咖啡。'],
+     ['Sales rose in the north, whereas they fell in the south.','北區業績上升，南區反而下滑。']]},
+{id:'v5009',w:'notwithstanding',kk:'ˌnɑtwɪθˈstændɪŋ',pos:'prep.',zh:'儘管有…（後接名詞）',ic:'🧗',u:'s5u1',lure:['nonetheless','although'],
+ ex:[['Notwithstanding the rain, the match went ahead.','儘管下雨，比賽照常進行。'],
+     ['Notwithstanding the delay, the project stayed within budget.','儘管延誤了，這個案子仍在預算內。']]},
+{id:'v5010',w:'pertain',kk:'pɚˈten',pos:'v.',zh:'與…有關',ic:'🔗',u:'s5u1',lure:['obtain','include'],
+ ex:[['This rule does not pertain to visitors.','這條規定與訪客無關。'],
+     ['Documents pertaining to the merger are confidential.','與這樁併購有關的文件皆為機密。']]},
+
+/* ===================== U58 干擾選項的五種套路 ===================== */
+{id:'v5101',w:'discrepancy',kk:'dɪˈskrɛpənsɪ',pos:'n.',zh:'不一致・出入',ic:'🔍',u:'s5u3',lure:['detail','difference'],
+ ex:[['There is a discrepancy between the two lists.','兩份清單之間有出入。'],
+     ['Please explain the discrepancy in last month\'s figures.','請說明上個月數字的落差。']]},
+{id:'v5102',w:'plausible',kk:'ˈplɔzəbḷ',pos:'adj.',zh:'看似合理的',ic:'🎭',u:'s5u3',lure:['possible','reliable'],
+ ex:[['That sounds plausible, but I want proof.','聽起來說得通，但我要證據。'],
+     ['The report offers a plausible reason for the shortfall.','報告為短缺提出了一個看似合理的原因。']]},
+{id:'v5103',w:'distort',kk:'dɪsˈtɔrt',pos:'v.',zh:'扭曲・曲解',ic:'🌀',u:'s5u3',lure:['describe','reduce'],
+ ex:[['The mirror distorts your face.','那面鏡子把你的臉照歪了。'],
+     ['Leaving out the date distorts the whole story.','把日期略掉會讓整件事完全變樣。']]},
+{id:'v5104',w:'irrelevant',kk:'ɪˈrɛləvənt',pos:'adj.',zh:'不相干的',ic:'🚮',u:'s5u3',lure:['relevant','efficient'],
+ ex:[['His age is irrelevant here.','他幾歲在這裡不重要。'],
+     ['The final paragraph is interesting but irrelevant to the question.','最後一段很有趣，但和問題無關。']]},
+{id:'v5105',w:'contradict',kk:'ˌkɑntrəˈdɪkt',pos:'v.',zh:'與…矛盾・反駁',ic:'❌',u:'s5u3',lure:['confirm','predict'],
+ ex:[['Do not contradict yourself in the same letter.','別在同一封信裡自相矛盾。'],
+     ['The second table contradicts the figure given on page one.','第二張表和第一頁的數字互相矛盾。']]},
+{id:'v5106',w:'exaggerate',kk:'ɪɡˈzædʒəˌret',pos:'v.',zh:'誇大',ic:'🎈',u:'s5u3',lure:['estimate','increase'],
+ ex:[['He always exaggerates when he tells that story.','他講那個故事總是誇大。'],
+     ['The advertisement exaggerates how long the battery lasts.','廣告誇大了電池的續航力。']]},
+{id:'v5107',w:'misleading',kk:'mɪsˈlidɪŋ',pos:'adj.',zh:'誤導的',ic:'🚸',u:'s5u3',lure:['helpful','careful'],
+ ex:[['The sign was misleading, so we took the wrong road.','那個標誌會誤導人，所以我們走錯路了。'],
+     ['A chart without a scale is misleading.','沒有標示刻度的圖表會誤導人。']]},
+{id:'v5108',w:'subtle',kk:'ˈsʌtḷ',pos:'adj.',zh:'細微的・不易察覺的',ic:'🪶',u:'s5u3',lure:['explicit','obvious'],
+ ex:[['There is a subtle difference between the two words.','這兩個字之間有細微的差別。'],
+     ['The change in tone was subtle but deliberate.','語氣的轉變很細微，卻是刻意的。']]},
+{id:'v5109',w:'omit',kk:'oˈmɪt',pos:'v.',zh:'略去・漏掉',ic:'🕳️',u:'s5u3',lure:['admit','include'],
+ ex:[['You omitted the date on the form.','你漏填了表格上的日期。'],
+     ['The summary omits the cost of installation.','摘要略去了安裝費用。']]},
+{id:'v5110',w:'verbatim',kk:'vɚˈbetɪm',pos:'adv./adj.',zh:'逐字地・一字不改的',ic:'📝',u:'s5u3',lure:['exact','accurate'],
+ ex:[['She repeated my words verbatim.','她一字不差地重複了我的話。'],
+     ['A choice that copies the passage verbatim is usually the trap.','照抄原文的選項通常就是陷阱。']]},
+
+/* ===================== U61 低頻高階字彙 ===================== */
+{id:'v5201',w:'ambiguous',kk:'æmˈbɪɡjʊəs',pos:'adj.',zh:'模稜兩可的',ic:'🌫️',u:'s5u6',lure:['explicit','anonymous'],
+ ex:[['His answer was ambiguous, so I asked again.','他的回答模稜兩可，所以我又問了一次。'],
+     ['The wording of the clause is ambiguous and should be revised.','這一條的用字模稜兩可，應該修改。']]},
+{id:'v5202',w:'arbitrary',kk:'ˈɑrbəˌtrɛrɪ',pos:'adj.',zh:'隨意的・武斷的',ic:'🎲',u:'s5u6',lure:['ordinary','necessary'],
+ ex:[['The order of the names is arbitrary.','名字的順序是隨便排的。'],
+     ['Staff complained that the new rule seemed arbitrary.','員工抱怨新規定看起來很武斷。']]},
+{id:'v5203',w:'coherent',kk:'koˈhɪrənt',pos:'adj.',zh:'條理分明的',ic:'🧵',u:'s5u6',lure:['confident','current'],
+ ex:[['Give me one coherent reason.','給我一個說得通的理由。'],
+     ['The proposal needs a coherent plan for the first year.','這份提案需要一套條理分明的第一年計畫。']]},
+{id:'v5204',w:'discretion',kk:'dɪˈskrɛʃən',pos:'n.',zh:'自行斟酌・判斷力',ic:'🤫',u:'s5u6',lure:['decision','description'],
+ ex:[['I will leave it to your discretion.','這件事就由你自己判斷。'],
+     ['Refunds are given at the manager\'s discretion.','是否退款由經理自行斟酌。']]},
+{id:'v5205',w:'feasible',kk:'ˈfizəbḷ',pos:'adj.',zh:'可行的',ic:'✔️',u:'s5u6',lure:['possible','flexible'],
+ ex:[['Is it feasible to finish by Friday?','星期五前做完可行嗎？'],
+     ['The study concluded that the plan is technically feasible.','研究結論是這個計畫在技術上可行。']]},
+{id:'v5206',w:'inherent',kk:'ɪnˈhɪrənt',pos:'adj.',zh:'固有的・天生的',ic:'🧬',u:'s5u6',lure:['inhabit','current'],
+ ex:[['There is an inherent risk in every sport.','每一種運動都有其固有的風險。'],
+     ['Delay is inherent in a supply chain this long.','這麼長的供應鏈本來就會有延遲。']]},
+{id:'v5207',w:'lucrative',kk:'ˈlukrətɪv',pos:'adj.',zh:'賺錢的・獲利豐厚的',ic:'💰',u:'s5u6',lure:['expensive','creative'],
+ ex:[['Selling coffee turned out to be lucrative.','賣咖啡結果很賺錢。'],
+     ['The service contract is the most lucrative part of the deal.','服務合約是這筆交易中最賺錢的部分。']]},
+{id:'v5208',w:'meticulous',kk:'məˈtɪkjələs',pos:'adj.',zh:'一絲不苟的',ic:'🔬',u:'s5u6',lure:['careful','ridiculous'],
+ ex:[['She keeps meticulous notes.','她的筆記做得一絲不苟。'],
+     ['The audit requires meticulous record keeping.','查核需要極為嚴謹的紀錄。']]},
+{id:'v5209',w:'mitigate',kk:'ˈmɪtəˌɡet',pos:'v.',zh:'減輕・緩和',ic:'🛡️',u:'s5u6',lure:['reduce','imitate'],
+ ex:[['A hat will mitigate the heat a little.','戴帽子多少能緩解一點熱。'],
+     ['We keep extra stock to mitigate the risk of shortages.','我們多備庫存以降低缺貨的風險。']]},
+{id:'v5210',w:'prudent',kk:'ˈprudṇt',pos:'adj.',zh:'審慎的',ic:'🧭',u:'s5u6',lure:['careful','present'],
+ ex:[['It is prudent to keep the receipt.','留著收據比較保險。'],
+     ['A prudent forecast assumes slower growth.','審慎的預測會假設成長趨緩。']]},
+{id:'v5211',w:'redundant',kk:'rɪˈdʌndənt',pos:'adj.',zh:'多餘的・被裁撤的',ic:'♻️',u:'s5u6',lure:['reluctant','necessary'],
+ ex:[['The last sentence is redundant.','最後那一句是多餘的。'],
+     ['Two systems doing the same job are redundant.','兩套系統做同一件事就是重複。']]},
+{id:'v5212',w:'stringent',kk:'ˈstrɪndʒənt',pos:'adj.',zh:'嚴格的',ic:'🔒',u:'s5u6',lure:['strange','urgent'],
+ ex:[['The gym has stringent rules about shoes.','那間健身房對鞋子的規定很嚴。'],
+     ['Food exporters face stringent safety checks.','食品出口商要面對嚴格的安全檢查。']]},
+{id:'v5213',w:'oversight',kk:'ˈovɚˌsaɪt',pos:'n.',zh:'疏忽・沒注意到',ic:'🕳️',u:'s5u6',lure:['oversee','overall'],
+ ex:[['The missing name was an oversight.','漏掉那個名字是一時疏忽。'],
+     ['Two invoices went unpaid through an oversight in the filing.','因歸檔上的疏忽，有兩張請款單漏付了。']]},
+{id:'v5214',w:'unprecedented',kk:'ʌnˈprɛsəˌdɛntɪd',pos:'adj.',zh:'前所未有的',ic:'🚀',u:'s5u6',lure:['unexpected','recent'],
+ ex:[['We had an unprecedented number of visitors.','我們迎來前所未有的訪客人數。'],
+     ['Demand reached an unprecedented level last quarter.','上一季的需求達到前所未有的高點。']]},
+
+/* ===================== U62 倒裝與假設語氣進階 ===================== */
+{id:'v5301',w:'scarcely',kk:'ˈskɛrslɪ',pos:'adv.',zh:'幾乎沒有・才剛',ic:'🪫',u:'s5u7',lure:['seldom','clearly'],
+ ex:[['I had scarcely sat down when the phone rang.','我才剛坐下電話就響了。'],
+     ['Scarcely had the notice gone out when questions started arriving.','公告才剛發出去，問題就湧進來了。']]},
+{id:'v5302',w:'hypothetical',kk:'ˌhaɪpəˈθɛtɪkḷ',pos:'adj.',zh:'假設的',ic:'💭',u:'s5u7',lure:['practical','possible'],
+ ex:[['Let me give you a hypothetical example.','我舉一個假設的例子。'],
+     ['The question is hypothetical; no such order exists yet.','這個問題是假設性的，目前還沒有這樣的訂單。']]},
+{id:'v5303',w:'presume',kk:'prɪˈzum',pos:'v.',zh:'推測・料想',ic:'🤔',u:'s5u7',lure:['assume','resume'],
+ ex:[['I presume you have already eaten.','我猜你已經吃過了。'],
+     ['We presumed the shipment had left, but it was still here.','我們原以為貨已經出了，結果還在這裡。']]},
+{id:'v5304',w:'deem',kk:'dim',pos:'v.',zh:'認為・視為',ic:'⚖️',u:'s5u7',lure:['decide','seem'],
+ ex:[['The referee deemed the goal valid.','裁判認定那球有效。'],
+     ['Any application deemed incomplete will be returned.','任何被視為不完整的申請都會被退回。']]},
+{id:'v5305',w:'contrary',kk:'ˈkɑntrɛrɪ',pos:'n./adj.',zh:'相反・相反的',ic:'↔️',u:'s5u7',lure:['contract','current'],
+ ex:[['On the contrary, I liked it.','正好相反，我很喜歡。'],
+     ['Contrary to the forecast, sales held steady.','與預測相反，業績維持穩定。']]},
+{id:'v5306',w:'nonetheless',kk:'ˌnʌnðəˈlɛs',pos:'adv.',zh:'儘管如此（副詞）',ic:'🧱',u:'s5u7',lure:['notwithstanding','therefore'],
+ ex:[['It rained; nonetheless, we had fun.','雖然下雨，我們還是玩得很開心。'],
+     ['The costs rose; nonetheless the project finished on time.','成本上升，儘管如此案子仍準時完成。']]},
+{id:'v5307',w:'undoubtedly',kk:'ʌnˈdaʊtɪdlɪ',pos:'adv.',zh:'無疑地',ic:'💯',u:'s5u7',lure:['certainly','probably'],
+ ex:[['This is undoubtedly the best one.','這無疑是最好的一個。'],
+     ['The delay was undoubtedly caused by the port closure.','延誤無疑是港口關閉造成的。']]},
+{id:'v5308',w:'outset',kk:'ˈaʊtˌsɛt',pos:'n.',zh:'開端・一開始',ic:'🎬',u:'s5u7',lure:['outcome','output'],
+ ex:[['I said so at the outset.','我一開始就這麼說了。'],
+     ['Costs were underestimated from the outset.','成本從一開始就被低估了。']]},
+
+/* ===================== U63 推論題專攻 ===================== */
+{id:'v5401',w:'infer',kk:'ɪnˈfɝ',pos:'v.',zh:'推論・看出',ic:'🧠',u:'s5u8',lure:['imply','offer'],
+ ex:[['From her face I inferred that something was wrong.','從她的表情我看出事情不對勁。'],
+     ['What can be inferred about the writer\'s plan?','關於寫信者的計畫，可以推論出什麼？']]},
+{id:'v5402',w:'implication',kk:'ˌɪmpləˈkeʃən',pos:'n.',zh:'言外之意・影響',ic:'💬',u:'s5u8',lure:['application','explanation'],
+ ex:[['I did not like the implication of his question.','我不喜歡他那個問題的言外之意。'],
+     ['The change has cost implications for every branch.','這項變動對每一家分店都有成本上的影響。']]},
+{id:'v5403',w:'presumably',kk:'prɪˈzuməblɪ',pos:'adv.',zh:'想必・大概',ic:'🔮',u:'s5u8',lure:['certainly','previously'],
+ ex:[['He is not here, so presumably he missed the bus.','他不在，想必是錯過公車了。'],
+     ['The office is dark, so presumably everyone has gone home.','辦公室是暗的，大概大家都回家了。']]},
+{id:'v5404',w:'allude',kk:'əˈlud',pos:'v.',zh:'暗指・間接提到',ic:'👉',u:'s5u8',lure:['include','conclude'],
+ ex:[['She alluded to the problem without naming it.','她暗示了那個問題，卻沒有點名。'],
+     ['The letter alludes to an earlier complaint.','這封信間接提到了先前的一則客訴。']]},
+{id:'v5405',w:'context',kk:'ˈkɑntɛkst',pos:'n.',zh:'上下文・來龍去脈',ic:'🖼️',u:'s5u8',lure:['contact','content'],
+ ex:[['Read the whole line to get the context.','把整行讀完才看得出上下文。'],
+     ['Out of context, that sentence sounds rude.','脫離上下文，那句話聽起來很沒禮貌。']]},
+{id:'v5406',w:'compelling',kk:'kəmˈpɛlɪŋ',pos:'adj.',zh:'有說服力的・引人入勝的',ic:'🧲',u:'s5u8',lure:['complete','competing'],
+ ex:[['That is a compelling story.','那是個很吸引人的故事。'],
+     ['There is no compelling reason to change suppliers.','沒有強而有力的理由要換供應商。']]},
+{id:'v5407',w:'conclusive',kk:'kənˈklusɪv',pos:'adj.',zh:'確鑿的・決定性的',ic:'🔏',u:'s5u8',lure:['plausible','exclusive'],
+ ex:[['The test was not conclusive.','那項檢驗沒有得出確定的結果。'],
+     ['We need conclusive evidence before we act.','行動之前我們需要確鑿的證據。']]},
+{id:'v5408',w:'justify',kk:'ˈdʒʌstəˌfaɪ',pos:'v.',zh:'證明…正當・說明理由',ic:'🧾',u:'s5u8',lure:['explain','specify'],
+ ex:[['You must justify every expense.','每一筆支出你都要說明理由。'],
+     ['The saving does not justify the extra travel time.','省下的錢不足以合理化多出來的通勤時間。']]},
+{id:'v5409',w:'attribute',kk:'əˈtrɪbjut',pos:'v.',zh:'把…歸因於',ic:'🎯',u:'s5u8',lure:['refer','contribute'],
+ ex:[['She attributes her health to walking.','她把自己的健康歸功於走路。'],
+     ['The rise was attributed to a change in packaging.','這次成長被歸因於包裝的改變。']]},
+{id:'v5410',w:'explicit',kk:'ɪkˈsplɪsɪt',pos:'adj.',zh:'明確的・講明的',ic:'📌',u:'s5u8',lure:['implicit','expensive'],
+ ex:[['Give me explicit instructions.','給我明確的指示。'],
+     ['The notice is explicit about who may attend.','公告明確說明了誰可以參加。']]}
 
 ];
 
@@ -5767,6 +6074,761 @@ window.DATA_GRAMMAR_S4 = [
 
 </script>
 <script>
+/* ===== data/grammar-s5.js ===== */
+/* ==========================================================================
+   grammar-s5.js — Stage 5 文法點（Unit 56、58、59、62、63）
+
+   Stage 4 之前教的是「這個結構怎麼用」。這一階段有一半的內容換成
+   **「這個句子怎麼讀」**：
+
+     長難句骨架（U56）  一個句子只有一個主要動詞，其餘都被某個連接詞管著。
+                        找到它，句子就從三十個字縮成五個字。
+     後位修飾（U56）    英文的修飾語掛在名詞後面，一層接一層 ——
+                        中文全掛在前面，所以讀到後來會不知道在講誰。
+     干擾選項（U58）    出題者設陷阱的手法只有五種，認得出來就刪得掉。
+     聽力預讀（U59）    Part 3／4 的題目印在題本上，先讀題再聽是規則允許的。
+     倒裝（U62）        否定副詞或 only 開頭，助動詞要跑到主詞前面。
+     假設語氣進階（U62）省略 if 的倒裝、wish、混合條件句。
+     推論題（U63）      問「可以推論出什麼」時，答案一定有依據，只是沒寫在同一句。
+
+   技巧型的卡片（U58、U59、U63）跟文法卡走同一個資料結構，因為它們一樣要
+   進教學卡、一樣要出得了選擇題，也一樣會被 scaffoldOf() 當鷹架印在複習題上方。
+
+   teach.lead 每一點都要能單獨看懂 —— 複習與弱點怪獸沒有教學卡，只有這一句。
+   ========================================================================== */
+window.DATA_GRAMMAR_S5 = [
+
+/* ==================================================== U56 長難句骨架 */
+{
+  id:'g5601', u:'s5u1', title:'長難句的骨架',
+  teach:{
+    title:'一個句子只有一個主要動詞',
+    lead:'不管一句話有多長，主要子句永遠只有一組「主詞＋主要動詞」。其餘看起來像動詞的東西，都被某個連接詞、關係代名詞或分詞管著。先把那一組找出來，三十個字的句子就縮成五個字。',
+    sections:[
+      { formula:'主詞 ＋ 主要動詞 ＋ （受詞）',
+        formulaNote:'其餘全部是修飾語，第一遍讀可以整段跳過' },
+      { h:'哪一個才是主要動詞',
+        table:{ head:['看到的形式','是不是主要動詞','原因'],
+          rows:[['recommends / has approved / will cost','<b>是</b>','有時態，而且前面沒有連接詞'],
+                ['that the team submitted','否','that 帶頭，整段是子句'],
+                ['working at the branch','否','-ing 沒有時態'],
+                ['submitted after the deadline','否','這裡的 -ed 是分詞，不是過去式'],
+                ['to reduce costs','否','to ＋ 原形不能當主要動詞']] } },
+      { h:'三個一秒就能用的判斷法',
+        list:['<b>有 will／has／was／must 的地方</b>就是主要子句的時態所在 —— 助動詞不會出現在分詞片語裡。',
+              '<b>介系詞後面的名詞永遠不是主詞</b>：A copy <b>of the agreement</b> was sent. 主詞是 A copy。',
+              '<b>逗號成對出現</b>時，中間那一段通常整段可以抽掉，句子還是完整的。'],
+        ex:[['The proposal that the consultants submitted last month recommends three changes.','顧問上個月提出的那份提案建議三項改變。'],
+            ['A copy of the signed agreement was forwarded to the legal department.','簽署後的合約副本已送交法務部。']] },
+      { h:'找到骨架之後再回頭補細節',
+        list:['第一遍只讀骨架：<b>The proposal recommends three changes.</b>',
+              '第二遍才回去看「哪一份提案」「哪三項改變」—— 多益的題目有一半只需要骨架。'],
+        ex:[['What the survey revealed about customer expectations surprised the marketing team.','那份調查揭露的顧客期待讓行銷團隊大吃一驚。']] },
+      { warn:'最常見的誤判是<b>把修飾語裡的動詞當成主要動詞</b>。' +
+             'The report that the team <b>submitted</b> … <b>recommends</b> … —— submitted 屬於 that 子句，recommends 才是主句的。' }
+    ]
+  },
+  sents:[['The proposal recommends three changes to the process.','那份提案建議對流程做三項改變。'],
+         ['A copy of the agreement was sent to the legal department.','合約副本已送交法務部。'],
+         ['All employees working at the branch must complete the course.','所有在分公司上班的員工都必須完成課程。'],
+         ['The shipment arrived two days ahead of schedule.','那批貨比預定時程早兩天到。'],
+         ['Applications submitted after the deadline will not be considered.','逾期送出的申請不予受理。'],
+         ['The committee announced that the budget would be reduced.','委員會宣布預算將被刪減。'],
+         ['Replacing the old servers will cost more than expected.','汰換舊伺服器會比預期花更多錢。'],
+         ['The renovation of the lobby has been completed.','大廳整修已經完工。']],
+  qs:[
+    { k:'mc', q:'The report that the auditors prepared last spring ___ several errors in the filing system.',
+      opts:['revealing','to reveal','reveals','revealed by'], a:2,
+      zh:'稽核人員去年春天做的那份報告，揭露了歸檔系統的幾處錯誤。',
+      why:'主詞是 The report（單數），that 子句結束後就輪到主要動詞，要有時態且第三人稱單數 —— reveals。' },
+    { k:'mc', q:'In "Staff working at the Kaohsiung office must attend," which word is the main verb?',
+      opts:['working','must attend','Staff','office'], a:1,
+      zh:'在這句裡，哪一個是主要動詞？',
+      why:'working 是分詞，沒有時態。有助動詞 must 的那一組才是主要動詞。' },
+    { k:'mc', q:'In "A list of the items damaged in transit was attached," what is the subject?',
+      opts:['the items','transit','A list','damaged'], a:2,
+      zh:'在這句裡，主詞是什麼？',
+      why:'介系詞 of 後面的名詞不會是主詞。主詞是 A list，所以動詞用單數的 was。' },
+    { k:'mc', q:'The changes ___ at yesterday\'s meeting take effect on 1 March.',
+      opts:['approving','approved','approve','are approved'], a:1,
+      zh:'昨天會議上通過的那些改變將於三月一日生效。',
+      why:'主要動詞已經是 take，所以空格只能放分詞。改變是「被通過」的，用過去分詞 approved。' },
+    { k:'mc', q:'Which sentence has TWO main clauses?',
+      opts:['The lobby has been renovated, but the elevators remain closed.',
+            'The lobby that was renovated last year looks brighter.',
+            'Having renovated the lobby, the owner raised the rent.',
+            'The renovation of the lobby took four months.'], a:0,
+      zh:'哪一句有兩個主要子句？',
+      why:'but 連接兩個地位相同的完整句子。其餘三句都只有一組主詞＋主要動詞。' },
+    { k:'mc', q:'What the survey revealed ___ the entire team.',
+      opts:['surprising','surprised','to surprise','surprise'], a:1,
+      zh:'那份調查揭露的事讓整個團隊很意外。',
+      why:'What 開頭那一整段是主詞，裡面的 revealed 屬於子句。主要動詞還沒出現，空格就是它。' },
+    { k:'mc', q:'Which part of "Despite the delay, the shipment arrived early" can be removed and still leave a complete sentence?',
+      opts:['the shipment','arrived','Despite the delay','early'], a:2,
+      zh:'哪一段可以整段拿掉，句子仍然完整？',
+      why:'介系詞片語是修飾語，抽掉之後 The shipment arrived early. 仍然成立。' },
+    { k:'mc', q:'The equipment ___ by the technicians yesterday is now working properly.',
+      opts:['inspected','inspects','inspecting','was inspected'], a:0,
+      zh:'技師昨天檢查過的設備現在運作正常。',
+      why:'主要動詞是後面的 is working，所以空格是修飾 equipment 的過去分詞。' },
+    { k:'fix', q:'The invoices that were sent last week arriving today.',
+      a:'The invoices that were sent last week arrived today.',
+      zh:'上週寄出的那些請款單今天到了。', hint:'主要動詞有時態嗎？',
+      why:'arriving 沒有時態，當不了主要動詞。were sent 在 that 子句裡，主句還缺一個動詞。' },
+    { k:'fix', q:'A list of the missing parts were attached to the email.',
+      a:'A list of the missing parts was attached to the email.',
+      zh:'缺件清單附在那封信裡。', hint:'主詞是 list 還是 parts？',
+      why:'主詞是 A list（單數），of the missing parts 只是修飾語。' },
+    { k:'fix', q:'The manager who approving the request is on leave.',
+      a:'The manager who approved the request is on leave.',
+      zh:'核准那項申請的經理正在休假。', hint:'關係子句裡也要有時態',
+      why:'who 帶頭的關係子句需要一個有時態的動詞，approving 不行。' },
+    { k:'cloze', q:'The documents that the client ___ yesterday are already in the file. (send)', a:'sent',
+      zh:'客戶昨天寄來的文件已經歸檔了。', why:'that 子句裡的動詞，配 yesterday 用過去式。' },
+    { k:'cloze', q:'All staff working overtime this week ___ receive an allowance. (will)', a:'will',
+      zh:'本週加班的所有員工都會領到津貼。', why:'working 是分詞，主要動詞需要助動詞 will 帶時態。' },
+    { k:'cloze', q:'A summary of the findings ___ been posted on the intranet. (have)', a:'has',
+      zh:'調查結果的摘要已經公布在內部網站上。', why:'主詞是 A summary（單數），不是 the findings。' },
+    { k:'trans', zh:'我們上個月訂的設備明天會到。',
+      a:'The equipment we ordered last month will arrive tomorrow.',
+      alt:['The equipment that we ordered last month will arrive tomorrow.'],
+      why:'關係子句夾在主詞與主要動詞之間，主要動詞是 will arrive。' },
+    { k:'trans', zh:'附在這封信裡的報告需要您核准。',
+      a:'The report attached to this email needs your approval.',
+      alt:['The report attached to this email requires your approval.'],
+      why:'attached 是分詞修飾 report，needs 才是主要動詞。' }
+  ]
+},
+
+/* ==================================================== U56 後位修飾 */
+{
+  id:'g5602', u:'s5u1', title:'後位修飾',
+  teach:{
+    title:'英文的修飾語掛在名詞後面',
+    lead:'中文的修飾語全部擠在名詞前面（「顧問上個月提出的那份提案」），英文剛好相反 —— 名詞先出現，修飾語一層一層掛在後面。所以英文句子讀到一半會覺得「還沒講到重點」，那是正常的，重點在後面。',
+    sections:[
+      { formula:'名詞 ＋ 修飾語 ＋ 修飾語 …',
+        formulaNote:'愈後面的修飾語，離它修飾的名詞可能愈遠' },
+      { h:'四種掛在名詞後面的東西',
+        table:{ head:['形式','例子','中文怎麼說'],
+          rows:[['關係子句','the report <b>that we received</b>','我們收到<b>的</b>報告'],
+                ['現在分詞','the staff <b>working late</b>','加班<b>的</b>員工'],
+                ['過去分詞','the items <b>damaged in transit</b>','運送中受損<b>的</b>物品'],
+                ['介系詞片語','the office <b>on the third floor</b>','三樓<b>的</b>辦公室']] } },
+      { h:'關係代名詞常常被省略',
+        list:['受格的關係代名詞可以整個不見：the report <s>that</s> <b>we received</b> yesterday。',
+              '省略之後會出現「<b>名詞＋名詞＋動詞</b>」這種看起來很怪的排列 —— 那就是省略的痕跡。',
+              '主格不能省：the manager <b>who</b> approved it（who 不能拿掉）。'],
+        ex:[['The supplier we contacted last week has not replied.','我們上週聯絡的那家供應商還沒回覆。'],
+            ['The person who signed the form is no longer here.','簽那張表的人已經不在這裡了。']] },
+      { h:'-ing 還是 -ed，看名詞是做的還是被做的',
+        table:{ head:['名詞跟動作的關係','用哪一種','例子'],
+          rows:[['名詞自己做','現在分詞 -ing','the team <b>handling</b> the case'],
+                ['名詞被做','過去分詞 -ed','the case <b>handled</b> by the team']] } },
+      { h:'一層套一層才是真正的長難句',
+        list:['Ms. Okafor, <b>the regional director</b> <b>who joined in 2019</b>, will oversee the change.',
+              '同位語裡面又藏了一個關係子句 —— 兩層加起來，主詞跟動詞就隔了十個字。'],
+        ex:[['Documents pertaining to the merger are stored in the secure folder.','與這樁併購有關的文件存放在加密資料夾裡。']] },
+      { warn:'看到「名詞 ＋ 名詞 ＋ 動詞」不要慌，先假設中間省略了 that，' +
+             '把 that 補回去讀一遍：the report <b>(that)</b> we received arrived late.' }
+    ]
+  },
+  sents:[['The supplier we contacted last week has not replied.','我們上週聯絡的供應商還沒回覆。'],
+         ['The items damaged in transit will be replaced.','運送中受損的物品會被更換。'],
+         ['The team handling the case is based in Taipei.','負責這個案子的團隊在台北。'],
+         ['The office on the third floor is being renovated.','三樓的辦公室正在整修。'],
+         ['The person who signed the form is no longer here.','簽那張表的人已經不在這裡了。'],
+         ['Documents pertaining to the merger are confidential.','與併購有關的文件是機密。'],
+         ['The clause covering early cancellation is on page two.','處理提前解約的那一條在第二頁。'],
+         ['Everyone invited to the workshop received a reminder.','所有受邀參加工作坊的人都收到了提醒。']],
+  qs:[
+    { k:'mc', q:'The candidates ___ for the second round will be contacted by Friday.',
+      opts:['selecting','selected','select','selection'], a:1,
+      zh:'進入第二輪的候選人會在星期五前收到聯絡。',
+      why:'候選人是「被挑選」的，用過去分詞 selected 修飾前面的名詞。' },
+    { k:'mc', q:'The department ___ the new software reported fewer errors.',
+      opts:['used','using','use','is using'], a:1,
+      zh:'使用新軟體的那個部門回報的錯誤比較少。',
+      why:'部門是「自己使用」軟體，用現在分詞 using。主要動詞已經是 reported。' },
+    { k:'mc', q:'In "The supplier we contacted has not replied," what has been left out?',
+      opts:['a comma','the relative pronoun that','the auxiliary verb','the preposition'], a:1,
+      zh:'這句省略了什麼？',
+      why:'受格的關係代名詞 that／whom 可以省略，省略後就出現「名詞＋名詞＋動詞」。' },
+    { k:'mc', q:'The manager ___ approved the budget has left the company.',
+      opts:['whom','which','who','whose'], a:2,
+      zh:'核准這筆預算的經理已經離職了。',
+      why:'關係代名詞當子句的主詞，人用 who，而且主格不能省略。' },
+    { k:'mc', q:'Which noun does "damaged in transit" modify in "A list of the items damaged in transit was attached"?',
+      opts:['A list','the items','transit','nothing'], a:1,
+      zh:'damaged in transit 修飾的是哪個名詞？',
+      why:'後位修飾就近掛在前面那個名詞上 —— 受損的是 items，不是 list。' },
+    { k:'mc', q:'Ms. Okafor, ___ joined the company in 2019, will lead the project.',
+      opts:['she','who','which','whom'], a:1,
+      zh:'2019 年進公司的 Okafor 女士將主導這個案子。',
+      why:'兩個逗號中間是非限定的關係子句，代表人的主格用 who。' },
+    { k:'mc', q:'The training sessions ___ last month were rated highly.',
+      opts:['holding','held','hold','are held'], a:1,
+      zh:'上個月舉辦的訓練課程評價很高。',
+      why:'課程是被舉辦的，用過去分詞 held；主要動詞是 were rated。' },
+    { k:'mc', q:'Anyone ___ in the pilot programme should email the coordinator.',
+      opts:['interesting','interest','interested','interests'], a:2,
+      zh:'對試辦計畫有興趣的人請寫信給協調人。',
+      why:'人「感到」有興趣用 interested，掛在 Anyone 後面當後位修飾。' },
+    { k:'fix', q:'The report which we received it yesterday is incomplete.',
+      a:'The report which we received yesterday is incomplete.',
+      zh:'我們昨天收到的報告不完整。', hint:'關係代名詞已經是受詞了',
+      why:'which 本身就是 received 的受詞，後面不能再放一個 it。' },
+    { k:'fix', q:'The staff working late was given a taxi allowance.',
+      a:'The staff working late were given a taxi allowance.',
+      zh:'加班的員工拿到了計程車津貼。', hint:'主詞是複數還是單數？',
+      why:'這裡的 staff 指一群人，動詞用複數；working late 只是修飾語，不影響動詞。' },
+    { k:'fix', q:'The parts ordering last month have not arrived.',
+      a:'The parts ordered last month have not arrived.',
+      zh:'上個月訂的零件還沒到。', hint:'零件是自己訂還是被訂？',
+      why:'零件是「被訂」的，用過去分詞 ordered。' },
+    { k:'cloze', q:'The invoice ___ to this email covers both shipments. (attach)', a:'attached',
+      zh:'附在這封信裡的請款單涵蓋兩批貨。', why:'請款單是被附上的，用過去分詞後位修飾。' },
+    { k:'cloze', q:'Employees ___ in the survey will receive a voucher. (participate)', a:'participating',
+      zh:'參與問卷的員工會拿到一張抵用券。', why:'員工是自己參與，用現在分詞。' },
+    { k:'cloze', q:'The room ___ we booked for the interview is on the second floor. (that)', a:'that',
+      zh:'我們為面試訂的那間會議室在二樓。', why:'受格關係代名詞，可以寫 that／which，也可以省略。' },
+    { k:'trans', zh:'負責這個案子的團隊會在星期一回覆你。',
+      a:'The team handling this case will reply to you on Monday.',
+      alt:['The team that is handling this case will reply to you on Monday.'],
+      why:'現在分詞後位修飾 team，主要動詞是 will reply。' },
+    { k:'trans', zh:'運送中受損的物品可以免費更換。',
+      a:'Items damaged in transit can be replaced free of charge.',
+      alt:['The items damaged in transit can be replaced free of charge.'],
+      why:'過去分詞 damaged 後位修飾 items。' }
+  ]
+},
+
+/* ==================================================== U58 干擾選項的五種套路 */
+{
+  id:'g5801', u:'s5u3', title:'干擾選項的五種套路',
+  teach:{
+    title:'錯的選項只有五種錯法',
+    lead:'多益的干擾選項不是隨便寫的，它們用的手法就那五種：範圍講太滿、時間錯置、張冠李戴、照抄原文只改一個字、文章根本沒提。認得出套路，四選一就變成二選一。',
+    sections:[
+      { formula:'先找錯的，不要急著找對的',
+        formulaNote:'刪掉兩個明顯有套路的，剩下兩個再回文章對' },
+      { h:'五種套路',
+        table:{ head:['套路','長什麼樣','怎麼抓'],
+          rows:[['範圍擴大','原文 some，選項 all／every／always','看到絕對字眼先存疑'],
+                ['時間錯置','原文說「將要」，選項說「已經」','把時態圈出來對一次'],
+                ['張冠李戴','原文是 A 公司做的，選項寫成 B 做的','確認動作的主人'],
+                ['照抄原文','字面幾乎一樣，只改一個關鍵詞','回去找被改掉的那個字'],
+                ['無中生有','聽起來很合理，但文章沒寫','找不到出處就是錯的']] } },
+      { h:'絕對字眼清單',
+        list:['<b>all、every、always、never、only、must、the most</b> —— 出現這些字的選項，' +
+              '文章必須有同等強度的說法才選得下去。',
+              '相對地，<b>some、may、often、tend to</b> 這種留有餘地的說法比較常是答案 ——' +
+              '因為它們比較難被推翻。'],
+        ex:[['The notice says some items may be delayed.','公告說部分商品可能延遲。'],
+            ['A choice saying all items will be delayed is too strong.','寫「所有商品都會延遲」的選項就講得太滿了。']] },
+      { h:'「文章沒提」不等於「文章否定」',
+        list:['推論題問的是「根據文章可以知道什麼」。文章沒寫的事，就算現實中很合理，也不能選。',
+              '反過來，NOT／EXCEPT 題要找的正是<b>唯一沒有出處</b>的那一個 —— 其餘三個都找得到。'],
+        ex:[['The passage does not mention the price, so any choice about cost is out.','文章沒提到價格，所以任何講到費用的選項都出局。']] },
+      { warn:'最貴的一種錯是<b>選了自己覺得合理的答案</b>。多益只考文章寫了什麼，不考你知道什麼。' }
+    ]
+  },
+  sents:[['The notice says some items may be delayed.','公告說部分商品可能延遲。'],
+         ['The figures in the two reports contradict each other.','兩份報告的數字互相矛盾。'],
+         ['A choice that copies the passage verbatim is often a trap.','照抄原文的選項通常是陷阱。'],
+         ['The advertisement exaggerates how long the battery lasts.','廣告誇大了電池的續航力。'],
+         ['His age is irrelevant to the decision.','他的年齡與這個決定無關。'],
+         ['There is a discrepancy between the invoice and the order.','請款單與訂單之間有出入。'],
+         ['The change in tone was subtle but deliberate.','語氣的轉變很細微，卻是刻意的。'],
+         ['Do not overstate what the data proves.','別把這些數據能證明的事說得太滿。']],
+  qs:[
+    { k:'mc', q:'Passage: "Some evening classes may be cancelled in August." Which choice uses the "too strong" trap?',
+      opts:['A few classes could be cancelled.','All classes will be cancelled in August.',
+            'Evening classes may be affected.','Some classes might not run.'], a:1,
+      zh:'哪一個選項用了「範圍擴大」的套路？',
+      why:'原文是 some ＋ may，選項寫成 all ＋ will，兩個地方都被放大。' },
+    { k:'mc', q:'Passage: "The new system will be introduced next quarter." Which choice uses the "wrong time" trap?',
+      opts:['The system has already been introduced.','The system is not yet in use.',
+            'The system will start later this year.','A new system is planned.'], a:0,
+      zh:'哪一個選項用了「時間錯置」的套路？',
+      why:'原文是 will be introduced（還沒發生），選項寫成 has already been introduced。' },
+    { k:'mc', q:'Passage: "Ms. Diaz asked the supplier to send a sample." Which choice uses the "wrong person" trap?',
+      opts:['Ms. Diaz requested a sample.','A sample was requested.',
+            'The supplier asked Ms. Diaz for a sample.','Ms. Diaz contacted the supplier.'], a:2,
+      zh:'哪一個選項用了「張冠李戴」的套路？',
+      why:'原文是 Diaz 要求供應商，選項把兩個人的角色對調了。' },
+    { k:'mc', q:'Passage: "Refunds are issued within ten working days." Which choice changes only one key word?',
+      opts:['Refunds take up to two weeks.','Refunds are issued within ten calendar days.',
+            'A refund is possible.','Refunds are processed after inspection.'], a:1,
+      zh:'哪一個選項只改了一個關鍵字？',
+      why:'working days 被換成 calendar days，其餘一字不差 —— 這是照抄原文型的陷阱。' },
+    { k:'mc', q:'Passage: "The café on the ground floor reopens on Monday." Which choice is NOT supported?',
+      opts:['The café is on the ground floor.','The café has been closed.',
+            'The café serves breakfast.','The café will reopen on Monday.'], a:2,
+      zh:'哪一個選項在文章裡找不到根據？',
+      why:'供應早餐聽起來很合理，但文章一個字都沒提 —— 無中生有型。' },
+    { k:'mc', q:'Which wording in a choice should make you check the passage most carefully?',
+      opts:['may','often','every single','tend to'], a:2,
+      zh:'哪一種說法最該回頭去對文章？',
+      why:'every single 是絕對字眼，文章要有同等強度的說法才成立。' },
+    { k:'mc', q:'In a NOT/EXCEPT question, the correct answer is the choice that ___.',
+      opts:['appears first in the passage','cannot be found in the passage',
+            'repeats the passage exactly','contains a negative word'], a:1,
+      zh:'NOT／EXCEPT 題的正解是哪一種選項？',
+      why:'其餘三個都找得到出處，找不到的那一個才是答案。' },
+    { k:'mc', q:'Passage: "Parking permits are free for staff who cycle." Which choice is too strong?',
+      opts:['Some staff pay nothing for a permit.','Permits are free for all staff.',
+            'Cyclists can get a free permit.','A permit may cost nothing.'], a:1,
+      zh:'哪一個選項講得太滿？',
+      why:'免費只限騎自行車的員工，選項擴大成 all staff。' },
+    { k:'fix', q:'The passage say that some orders may be delayed.',
+      a:'The passage says that some orders may be delayed.',
+      zh:'文章說部分訂單可能延遲。', hint:'主詞是單數',
+      why:'The passage 是單數第三人稱，動詞加 s。' },
+    { k:'fix', q:'This choice is too strong because it use the word always.',
+      a:'This choice is too strong because it uses the word always.',
+      zh:'這個選項講得太滿，因為它用了 always 這個字。', hint:'it 後面的動詞',
+      why:'it 是第三人稱單數，動詞要加 s。' },
+    { k:'cloze', q:'The choice is wrong because the passage never ___ the price. (mention)', a:'mentions',
+      zh:'這個選項是錯的，因為文章從未提到價格。', why:'the passage 單數，用 mentions。' },
+    { k:'cloze', q:'Answers that copy the text ___ are usually traps. (verbatim)', a:'verbatim',
+      zh:'照抄原文的答案通常是陷阱。', why:'verbatim ＝ 一字不改地。' },
+    { k:'cloze', q:'There is a ___ between the two sets of figures. (discrepancy)', a:'discrepancy',
+      zh:'兩組數字之間有出入。', why:'discrepancy ＝ 對不起來的地方。' },
+    { k:'trans', zh:'這個選項聽起來合理，但文章沒有提到。',
+      a:'This choice sounds reasonable, but the passage does not mention it.',
+      alt:['This option sounds reasonable, but the passage does not mention it.'],
+      why:'無中生有型：合理與有根據是兩回事。' },
+    { k:'trans', zh:'原文說部分，選項卻說全部。',
+      a:'The passage says some, but the choice says all.',
+      alt:['The text says some, but the option says all.'],
+      why:'範圍擴大型的標準句。' }
+  ]
+},
+
+/* ==================================================== U59 聽力預讀技巧 */
+{
+  id:'g5901', u:'s5u4', title:'聽力預讀技巧',
+  teach:{
+    title:'先讀題目，再開始聽',
+    lead:'Part 3／4 的題目和選項印在題本上，音檔開始前有幾秒空檔。那幾秒不是休息，是拿來讀題的 —— 知道要找什麼，才聽得出哪一句是答案。沒預讀的人是把整段話都當成重點，那當然記不住。',
+    sections:[
+      { formula:'讀題 → 圈關鍵字 → 聽 → 當場作答',
+        formulaNote:'聽完才回頭想，前面兩題就已經忘光了' },
+      { h:'三題的答案照順序出現',
+        list:['Part 3／4 幾乎一定是<b>第一題的答案在前段、第三題在後段</b>。',
+              '所以聽到第一題的答案時，眼睛就要移到第二題去。',
+              '如果第一題到最後才聽到，很可能是<b>選錯了</b>而不是題目跳著出。'] },
+      { h:'題幹圈什麼',
+        table:{ head:['題型','圈的關鍵字','要聽什麼'],
+          rows:[['Where are the speakers?','Where','地點線索：櫃檯、月台、樓層'],
+                ['What is the problem?','problem','轉折語：but、unfortunately、the issue is'],
+                ['What will the man do next?','next / the man','未來式：I will、I am going to'],
+                ['What does the woman imply?','imply','語氣，不是字面 —— 這一題要聽弦外之音']] } },
+      { h:'轉折語就是答案的路標',
+        list:['<b>but、however、actually、unfortunately</b> —— 後面那一句幾乎都是考點。',
+              '<b>Let me check、One moment</b> 之後常常出現數字或日期的更正，' +
+              '而前面那個舊數字就是陷阱選項。'],
+        ex:[['The meeting was set for Tuesday, but it has been moved to Thursday.','會議原訂星期二，但已經改到星期四。'],
+            ['Let me check — actually the invoice is 4471, not 4417.','我查一下 —— 其實請款單號是 4471，不是 4417。']] },
+      { h:'聽到就選，不要等',
+        list:['當場選完，眼睛立刻移到下一題。聽力沒有回頭鍵，猶豫一題會連累後面兩題。',
+              '真的沒聽到就直接猜一個往下走 —— 停在那一題是這個部分最貴的錯誤。'] },
+      { warn:'選項裡出現的字在音檔裡「有聽到」不代表它就是答案。' +
+             '出題者最常做的事，就是把陷阱選項寫成音檔裡真的講過的那個詞。' }
+    ]
+  },
+  sents:[['The meeting has been moved to Thursday.','會議已經改到星期四。'],
+         ['Unfortunately, the technician cannot come until four.','很遺憾，技師四點才能到。'],
+         ['Let me check the order number for you.','我幫你查一下訂單號碼。'],
+         ['I will send the revised schedule this afternoon.','我下午會把修訂後的行程寄出。'],
+         ['Actually, the room on the second floor is available.','其實二樓那間空著。'],
+         ['The speakers are most likely in a hotel lobby.','說話者最可能在飯店大廳。'],
+         ['What will the woman do next?','女士接下來會做什麼？'],
+         ['The problem is that the parts have not arrived.','問題在於零件還沒到。']],
+  qs:[
+    { k:'mc', q:'In Part 3, the answers to the three questions usually appear ___.',
+      opts:['in random order','in the order the questions are printed',
+            'all in the last sentence','only in the first speaker\'s lines'], a:1,
+      zh:'Part 3 的三題答案通常以什麼順序出現？',
+      why:'照題目印出來的順序：第一題在前段，第三題在後段。' },
+    { k:'mc', q:'You hear: "The meeting was set for Tuesday, but it has been moved to Thursday." When is the meeting?',
+      opts:['Tuesday','Thursday','Both days','It was cancelled'], a:1,
+      zh:'會議是哪一天？',
+      why:'but 後面才是答案，Tuesday 是刻意留下的陷阱。' },
+    { k:'mc', q:'Which word in a question tells you to listen for a future action?',
+      opts:['Where','next','problem','imply'], a:1,
+      zh:'題幹裡哪個字告訴你要聽「接下來要做什麼」？',
+      why:'next 對應音檔裡的 I will／I am going to。' },
+    { k:'mc', q:'You hear: "Let me check — actually it is 4471, not 4417." Which number is correct?',
+      opts:['4417','4471','Both','Neither'], a:1,
+      zh:'哪一個號碼是對的？',
+      why:'actually 之後是更正，前面那個數字就是陷阱。' },
+    { k:'mc', q:'A choice contains a word you definitely heard in the recording. This means ___.',
+      opts:['it is certainly correct','it is certainly wrong','it still has to be checked','it is the main topic'], a:2,
+      zh:'某個選項裡有你確實聽到的字，這代表什麼？',
+      why:'聽到過的字最常被用來寫陷阱選項，還是要對整句意思。' },
+    { k:'mc', q:'What should you do if you miss the answer to question 2?',
+      opts:['Stop and think about it','Guess and move to question 3',
+            'Go back to question 1','Wait for the recording to repeat'], a:1,
+      zh:'第二題沒聽到答案時該怎麼辦？',
+      why:'音檔不會重播，停在那一題會把第三題也賠掉。' },
+    { k:'mc', q:'Which question asks you to listen for meaning rather than words?',
+      opts:['Where are the speakers?','What time is the flight?',
+            'What does the man imply?','How much is the fee?'], a:2,
+      zh:'哪一題考的是弦外之音而不是字面？',
+      why:'imply 這個字就是在說「他沒有直接講出來」。' },
+    { k:'mc', q:'You hear: "Unfortunately, the shipment will not arrive until Friday." What is the problem?',
+      opts:['The shipment is early','The shipment is late','The order was cancelled','The address is wrong'], a:1,
+      zh:'問題是什麼？',
+      why:'Unfortunately 是路標，後面那一句就是 problem 題的答案。' },
+    { k:'fix', q:'What the woman will do next?',
+      a:'What will the woman do next?',
+      zh:'女士接下來會做什麼？', hint:'疑問句的語序',
+      why:'疑問詞開頭的問句要把助動詞提到主詞前面。' },
+    { k:'fix', q:'The speakers is most likely in a hotel.',
+      a:'The speakers are most likely in a hotel.',
+      zh:'說話者最可能在飯店裡。', hint:'speakers 是複數',
+      why:'複數主詞配 are。' },
+    { k:'cloze', q:'___ , the technician cannot come until four. (unfortunate)', a:'Unfortunately',
+      zh:'很遺憾，技師四點才能到。', why:'句首的轉折語用副詞形。' },
+    { k:'cloze', q:'The meeting has been ___ to Thursday. (move)', a:'moved',
+      zh:'會議已經改到星期四。', why:'被動語態：has been ＋ 過去分詞。' },
+    { k:'cloze', q:'What will the man do ___ ? (next)', a:'next',
+      zh:'男士接下來會做什麼？', why:'next 是「接下來」，提示要聽未來的動作。' },
+    { k:'trans', zh:'開始聽之前先把三個題目讀過一遍。',
+      a:'Read the three questions before the recording starts.',
+      alt:['Read all three questions before the recording begins.'],
+      why:'預讀是這一關唯一要養成的習慣。' },
+    { k:'trans', zh:'轉折語後面那一句通常就是答案。',
+      a:'The sentence after the transition word is usually the answer.',
+      alt:['The sentence after but is usually the answer.'],
+      why:'but、however、actually 都是路標。' }
+  ]
+},
+
+/* ==================================================== U62 倒裝 */
+{
+  id:'g6201', u:'s5u7', title:'否定副詞倒裝',
+  tl:[{a:'past',t:'查核完成',hl:1},
+      {a:'past',b:'now',t:'董事會才核准'}],
+  teach:{
+    title:'否定的字放句首，主詞動詞要倒過來',
+    lead:'把 Never、Not until、Only after、Hardly 這類字挪到句首是為了強調，代價是後面的主詞和助動詞必須交換位置，變成疑問句的語序。沒有助動詞就借一個 do／does／did 來用。',
+    sections:[
+      { formula:'否定副詞 ＋ 助動詞 ＋ 主詞 ＋ 原形動詞',
+        formulaNote:'語序跟疑問句一模一樣，只是句尾是句號' },
+      { h:'哪些字放句首會造成倒裝',
+        table:{ speak:true, head:['句首的字','例子'],
+          rows:[['Never','<b>Never</b> have we seen such demand.'],
+                ['Not until','<b>Not until</b> the audit ended did the board approve it.'],
+                ['Only after','<b>Only after</b> three tests was the software released.'],
+                ['Hardly / Scarcely','<b>Hardly</b> had he arrived when the meeting started.'],
+                ['Not only','<b>Not only</b> did costs fall, but quality also improved.'],
+                ['Under no circumstances','<b>Under no circumstances</b> may staff share passwords.']] } },
+      { h:'倒裝之後動詞變回原形',
+        list:['時態全部由前面那個助動詞承擔：Only then <b>did</b> she <b>realize</b>（不是 realized）。',
+              '有 be 動詞或現成助動詞就直接把它提前，不必再借 do：' +
+              'Only after testing <b>was</b> the software released.'],
+        ex:[['Never have we received so many applications.','我們從來沒有收到這麼多申請。'],
+            ['Not until the audit was completed did the board approve the figures.','一直到查核完成，董事會才核准那些數字。']] },
+      { h:'Hardly／Scarcely／No sooner 的固定搭配',
+        table:{ head:['句首','後面接'],
+          rows:[['Hardly had ＋ 主詞 ＋ p.p.','<b>when</b> ～'],
+                ['Scarcely had ＋ 主詞 ＋ p.p.','<b>when</b> ～'],
+                ['No sooner had ＋ 主詞 ＋ p.p.','<b>than</b> ～']] } },
+      { h:'不是每個句首副詞都倒裝',
+        list:['只有<b>否定或帶限制意味</b>的字才倒裝。Yesterday、Fortunately、In my opinion 開頭都不倒裝。',
+              'Only 後面要接<b>副詞片語或子句</b>才倒裝：Only then did… ✅／Only Mary knows.（主詞是 Only Mary，不倒裝）'] },
+      { warn:'最常見的錯是<b>倒裝了還把動詞留成過去式</b>：' +
+             'Not until then <s>did she realized</s> ❌ → did she <b>realize</b> ✅。' }
+    ]
+  },
+  sents:[['Never have we received so many applications.','我們從沒收過這麼多申請。'],
+         ['Not until the audit ended did the board approve the figures.','直到查核結束，董事會才核准那些數字。'],
+         ['Only after three rounds of testing was the software released.','經過三輪測試後，軟體才釋出。'],
+         ['Hardly had the notice gone out when questions started arriving.','公告才發出去，問題就湧進來了。'],
+         ['Not only did costs fall, but quality also improved.','不只成本下降，品質也提升了。'],
+         ['Under no circumstances may staff share passwords.','員工在任何情況下都不得共用密碼。'],
+         ['Seldom does the manager leave before six.','經理很少六點前離開。'],
+         ['No sooner had we signed than the price changed.','我們才剛簽約，價格就變了。']],
+  qs:[
+    { k:'mc', q:'Not until the report was finished ___ the team leave the office.',
+      opts:['did','was','has','does'], a:0,
+      zh:'直到報告完成，團隊才離開辦公室。',
+      why:'Not until 開頭要倒裝，過去的事借助動詞 did，後面的 leave 用原形。' },
+    { k:'mc', q:'Never ___ such a large order from a single client.',
+      opts:['we have received','have we received','we received','received we'], a:1,
+      zh:'我們從來沒有收過單一客戶這麼大的訂單。',
+      why:'Never 開頭倒裝，現成的助動詞 have 提到主詞前面。' },
+    { k:'mc', q:'Only after the inspection ___ the factory allowed to reopen.',
+      opts:['it was','was','did','has'], a:1,
+      zh:'檢查之後工廠才獲准重新開工。',
+      why:'被動句有 be 動詞，直接把 was 提前，不必借 do。' },
+    { k:'mc', q:'Hardly had the meeting begun ___ the fire alarm went off.',
+      opts:['than','when','that','so'], a:1,
+      zh:'會議才剛開始，火警就響了。',
+      why:'Hardly had… 固定配 when；配 than 的是 No sooner。' },
+    { k:'mc', q:'Not only ___ the packaging reduce costs, but it also cut damage.',
+      opts:['did','was','has','does'], a:0,
+      zh:'新包裝不只降低成本，也減少了破損。',
+      why:'Not only 開頭倒裝，reduce 是原形，所以借過去式的 did。' },
+    { k:'mc', q:'Under no circumstances ___ this door be left open.',
+      opts:['should','it should','should it','can it'], a:0,
+      zh:'這扇門在任何情況下都不可以開著。',
+      why:'Under no circumstances 是否定副詞片語，助動詞 should 直接跟在後面。' },
+    { k:'mc', q:'Which sentence is NOT inverted?',
+      opts:['Seldom does he arrive late.','Only Mary knows the code.',
+            'Never have I seen that form.','Not until noon did they call.'], a:1,
+      zh:'哪一句沒有倒裝？',
+      why:'Only Mary 是主詞本身，不是副詞片語，所以不倒裝。' },
+    { k:'mc', q:'No sooner had the shipment arrived ___ the client changed the order.',
+      opts:['when','then','than','that'], a:2,
+      zh:'貨才剛到，客戶就改了訂單。',
+      why:'No sooner 固定配 than。' },
+    { k:'fix', q:'Not until then did she realized the mistake.',
+      a:'Not until then did she realize the mistake.',
+      zh:'直到那時她才發現錯誤。', hint:'did 後面用什麼形式？',
+      why:'倒裝借了 did 之後，主要動詞要回原形。' },
+    { k:'fix', q:'Never I have seen such a long queue.',
+      a:'Never have I seen such a long queue.',
+      zh:'我從沒見過這麼長的隊伍。', hint:'Never 開頭要倒裝',
+      why:'助動詞 have 要放到主詞 I 前面。' },
+    { k:'fix', q:'Only after the audit the board approved the figures.',
+      a:'Only after the audit did the board approve the figures.',
+      zh:'查核之後董事會才核准那些數字。', hint:'Only ＋ 片語開頭',
+      why:'Only ＋ 片語開頭要倒裝，借 did 並把動詞回原形。' },
+    { k:'cloze', q:'Seldom ___ the director attend the weekly meeting. (do)', a:'does',
+      zh:'總監很少出席週會。', why:'Seldom 開頭倒裝，主詞單數用 does。' },
+    { k:'cloze', q:'Not only ___ the price rise, but delivery also slowed. (do)', a:'did',
+      zh:'不只價格上漲，交貨也變慢了。', why:'講過去的事，借 did。' },
+    { k:'cloze', q:'Hardly ___ we started when the power went out. (have)', a:'had',
+      zh:'我們才剛開始就停電了。', why:'Hardly ＋ had ＋ 主詞 ＋ p.p. 是固定形式。' },
+    { k:'trans', zh:'我們從來沒有收到這麼多客訴。',
+      a:'Never have we received so many complaints.',
+      alt:['Never have we had so many complaints.'],
+      why:'Never 開頭倒裝，have 提到主詞前。' },
+    { k:'trans', zh:'直到收到款項，我們才會出貨。',
+      a:'Not until payment is received will we ship the order.',
+      alt:['Not until we receive payment will we ship the order.'],
+      why:'Not until 開頭，主要子句倒裝成 will we ship。' }
+  ]
+},
+
+/* ==================================================== U62 假設語氣進階 */
+{
+  id:'g6202', u:'s5u7', title:'假設語氣進階',
+  tl:[{a:'past',t:'供應商沒有早點通知'},
+      {a:'past',t:'我們就沒安排別的路線',hl:1},
+      {a:'now',t:'現在還在等貨'}],
+  teach:{
+    title:'省略 if 的倒裝、wish、混合條件',
+    lead:'Stage 4 教的三型是骨架，這裡補三件書面英文天天用的事：if 可以省略但要把 had／were／should 提到句首；wish 與 if only 表示「跟事實相反的希望」；條件和結果可以分屬不同時間，叫混合條件句。',
+    sections:[
+      { formula:'Had ／ Were ／ Should ＋ 主詞 …',
+        formulaNote:'＝ If ＋ 主詞 ＋ had／were／should …' },
+      { h:'省略 if 的三種倒裝',
+        table:{ speak:true, head:['原本的寫法','省略 if 之後'],
+          rows:[['If we <b>had known</b> earlier, …','<b>Had we known</b> earlier, …'],
+                ['If I <b>were</b> you, …','<b>Were I</b> you, …'],
+                ['If you <b>should</b> need help, …','<b>Should you</b> need help, …']] } },
+      { h:'看到句首的 Had／Were／Should 就把 if 補回去',
+        list:['這三個字開頭又沒有問號的句子，一定是省略 if 的條件句。',
+              '正式書信裡 <b>Should you have any questions…</b> 幾乎是固定句 —— 意思是「萬一您有任何問題」。'],
+        ex:[['Had the supplier notified us earlier, we would have arranged another route.','供應商若早點通知，我們就會安排別的路線了。'],
+            ['Should you have any questions, please contact me directly.','萬一您有任何問題，請直接與我聯絡。']] },
+      { h:'wish 與 if only：跟事實相反的希望',
+        table:{ head:['想講的時間','用什麼','例子'],
+          rows:[['跟現在事實相反','wish ＋ 過去式','I <b>wish</b> I <b>had</b> more time.'],
+                ['跟過去事實相反','wish ＋ had ＋ p.p.','I <b>wish</b> I <b>had booked</b> earlier.'],
+                ['希望對方改','wish ＋ would','I <b>wish</b> he <b>would</b> reply.']] } },
+      { h:'混合條件句：條件在過去，結果在現在',
+        list:['If we <b>had hired</b> more staff last year, we <b>would not be</b> so busy now.',
+              '前半是第三型（過去），後半是第二型（現在）—— 因為過去做的決定影響到的是現在。',
+              '判斷靠時間副詞：last year 對 now。'],
+        ex:[['If I had taken that job, I would be living in Tokyo now.','如果我當初接了那份工作，現在就住在東京了。']] },
+      { warn:'wish 後面用<b>過去式</b>講的是現在，不是過去 —— 和第二型一樣，' +
+             '「退一格」代表「不是真的」，不代表時間往回走。' }
+    ]
+  },
+  sents:[['Had we known earlier, we would have changed the plan.','早點知道的話，我們就會改計畫。'],
+         ['Should you have any questions, please contact me.','萬一您有任何問題，請與我聯絡。'],
+         ['Were I in charge, I would start with the budget.','如果我負責，我會從預算開始。'],
+         ['I wish I had more time to review the report.','真希望我有更多時間看這份報告。'],
+         ['I wish I had booked the tickets earlier.','真希望當初早點訂票。'],
+         ['If we had hired more staff, we would not be so busy now.','如果當初多請人，現在就不會這麼忙。'],
+         ['If only the supplier had called us.','要是供應商有打給我們就好了。'],
+         ['I wish the client would reply to my email.','真希望客戶會回我的信。']],
+  qs:[
+    { k:'mc', q:'___ the supplier notified us earlier, we would have found another route.',
+      opts:['If','Had','Have','Should'], a:1,
+      zh:'供應商若早點通知，我們就會找到別的路線了。',
+      why:'省略 if 的第三型倒裝：Had ＋ 主詞 ＋ p.p.。' },
+    { k:'mc', q:'___ you need further assistance, please call the help desk.',
+      opts:['Should','Would','Had','Were'], a:0,
+      zh:'萬一您需要進一步協助，請撥服務台。',
+      why:'Should ＋ 主詞 ＝ If ＋ 主詞 ＋ should，用於「萬一」。' },
+    { k:'mc', q:'I wish I ___ more time to check the figures.',
+      opts:['have','had','will have','had had'], a:1,
+      zh:'真希望我有多一點時間核對數字。',
+      why:'wish 講現在的相反事實，用過去式 had。' },
+    { k:'mc', q:'I wish we ___ the earlier flight; we would be there by now.',
+      opts:['take','took','had taken','have taken'], a:2,
+      zh:'真希望我們搭了早一班；現在早就到了。',
+      why:'講過去的後悔，wish ＋ had ＋ p.p.。' },
+    { k:'mc', q:'If the company had invested last year, it ___ ahead of its rivals now.',
+      opts:['would have been','would be','will be','had been'], a:1,
+      zh:'如果公司去年投資了，現在就會領先對手。',
+      why:'混合條件：條件在過去，結果在現在，主要子句用 would ＋ 原形。' },
+    { k:'mc', q:'___ I you, I would take the offer in writing.',
+      opts:['Was','Were','Had','Should'], a:1,
+      zh:'如果我是你，我會要求書面的提議。',
+      why:'Were I ＝ If I were，第二型的 be 一律用 were。' },
+    { k:'mc', q:'If only we ___ the deadline earlier.',
+      opts:['know','knew','had known','have known'], a:2,
+      zh:'要是我們早點知道期限就好了。',
+      why:'If only 講過去的後悔，用 had ＋ p.p.。' },
+    { k:'mc', q:'I wish the courier ___ text us before arriving.',
+      opts:['will','would','had','was'], a:1,
+      zh:'真希望快遞來之前會先傳個訊息。',
+      why:'希望別人改變行為，用 wish ＋ would。' },
+    { k:'fix', q:'Had I known about the discount, I would book earlier.',
+      a:'Had I known about the discount, I would have booked earlier.',
+      zh:'早知道有折扣，我就早點訂了。', hint:'條件在過去，結果也在過去',
+      why:'第三型的主要子句是 would have ＋ p.p.。' },
+    { k:'fix', q:'I wish I have more experience in this field.',
+      a:'I wish I had more experience in this field.',
+      zh:'真希望我在這個領域有更多經驗。', hint:'wish 後面要退一格',
+      why:'跟現在事實相反，用過去式 had。' },
+    { k:'fix', q:'Should you needed any help, please let me know.',
+      a:'Should you need any help, please let me know.',
+      zh:'萬一您需要幫忙，請告訴我。', hint:'Should 後面接什麼？',
+      why:'Should ＋ 主詞 ＋ 原形動詞。' },
+    { k:'cloze', q:'___ we known about the delay, we would have called you. (have)', a:'Had',
+      zh:'早知道會延誤，我們就會打給你了。', why:'省略 if 的第三型倒裝。' },
+    { k:'cloze', q:'I wish the meeting ___ shorter. (be)', a:'were',
+      zh:'真希望會議短一點。', why:'wish 跟現在相反，be 用 were。' },
+    { k:'cloze', q:'If they had left earlier, they ___ be stuck in traffic now. (will not)', a:'would not',
+      zh:'如果他們早點出發，現在就不會塞在路上。', why:'混合條件的結果在現在，用 would not ＋ 原形。' },
+    { k:'trans', zh:'萬一您有任何問題，請直接與我聯絡。',
+      a:'Should you have any questions, please contact me directly.',
+      alt:['If you should have any questions, please contact me directly.'],
+      why:'Should 開頭是正式書信的固定寫法。' },
+    { k:'trans', zh:'真希望我們當初早一點訂會議室。',
+      a:'I wish we had booked the meeting room earlier.',
+      alt:['I wish we had reserved the meeting room earlier.'],
+      why:'講過去的後悔，wish ＋ had ＋ p.p.。' }
+  ]
+},
+
+/* ==================================================== U63 推論題 */
+{
+  id:'g6301', u:'s5u8', title:'推論題專攻',
+  teach:{
+    title:'沒寫出來，但一定有依據',
+    lead:'題幹出現 infer、imply、suggest、most likely 時，答案不會有一句原文對得上。但推論不是猜 —— 正確選項一定站在文章某一句話上，只是中間隔了一步。找不到那一句，就不能選。',
+    sections:[
+      { formula:'文章寫了 A ＋ 常識一步 ＝ 選項 B',
+        formulaNote:'需要跳兩步以上的，就是無中生有' },
+      { h:'題幹長這樣就是推論題',
+        table:{ head:['題幹','在問什麼'],
+          rows:[['What is <b>implied</b> about …','文章暗示了什麼'],
+                ['What can be <b>inferred</b> …','從文章可以推出什麼'],
+                ['Who <b>most likely</b> is Ms. Lin?','她的身分沒寫，但線索有'],
+                ['Where do the speakers <b>most likely</b> work?','地點沒寫，但用字洩漏了']] } },
+      { h:'線索通常藏在這四種地方',
+        list:['<b>專業用語</b>：出現 boarding pass、gate 就是機場，不必等它寫 airport。',
+              '<b>對誰說話</b>：信裡寫 Dear valued customer 就代表收信的是顧客不是員工。',
+              '<b>時間與順序</b>：「附上上一季的報表」代表這一季還沒結束。',
+              '<b>語氣</b>：We were disappointed to find… 是客訴，不是稱讚。'],
+        ex:[['Please bring your badge to the loading dock.','請帶著識別證到裝卸區。'],
+            ['The speaker most likely works in a warehouse.','說話者最可能在倉庫工作。']] },
+      { h:'一步與兩步的差別',
+        table:{ head:['文章寫的','推一步（可以選）','推兩步（不能選）'],
+          rows:[['The store closes at 6.','You cannot shop there at 7.','The store is losing money.'],
+                ['She asked for a refund.','She was not satisfied.','She will never shop there again.']] } },
+      { h:'選項太肯定就要退一步',
+        list:['推論題的正解常常帶著 may、probably、is likely to —— 因為文章本來就沒把話說死。',
+              '寫得斬釘截鐵的選項（will never、is the only）在推論題裡幾乎都是陷阱。'] },
+      { warn:'推論 ≠ 想像。<b>「這在現實中很合理」不是依據</b>，' +
+             '要能指著文章某一句說「因為它寫了這個」才算數。' }
+    ]
+  },
+  sents:[['What can be inferred about the writer\'s plan?','關於寫信者的計畫可以推論出什麼？'],
+         ['The speaker most likely works in a warehouse.','說話者最可能在倉庫工作。'],
+         ['The letter implies that the order was late.','這封信暗示訂單延遲了。'],
+         ['Please bring your badge to the loading dock.','請帶著識別證到裝卸區。'],
+         ['She asked for a refund, so she was not satisfied.','她要求退款，所以她並不滿意。'],
+         ['The notice suggests that the office will be closed.','公告暗示辦公室將會關閉。'],
+         ['There is no conclusive evidence in the report.','報告裡沒有確鑿的證據。'],
+         ['The tone of the email is polite but firm.','這封信的語氣客氣但堅定。']],
+  qs:[
+    { k:'mc', q:'Passage: "Please present your boarding pass at gate 12." Where most likely is the speaker?',
+      opts:['At a train station','At an airport','In a hotel','At a bus stop'], a:1,
+      zh:'說話者最可能在哪裡？',
+      why:'boarding pass 與 gate 是機場的專業用語，推一步就到。' },
+    { k:'mc', q:'Passage: "Enclosed is our invoice for the work completed in June." What can be inferred?',
+      opts:['The work has not started.','The work is finished.','Payment has been received.','June is next month.'], a:1,
+      zh:'可以推論出什麼？',
+      why:'completed 代表已經做完；請款單通常在完工後才寄。' },
+    { k:'mc', q:'Passage: "We were disappointed to find two items missing from the box." What is implied?',
+      opts:['The writer is praising the seller.','The writer is complaining.',
+            'The writer works for the seller.','The box was never delivered.'], a:1,
+      zh:'這句暗示了什麼？',
+      why:'disappointed 是客訴的語氣；箱子有送到，只是缺件。' },
+    { k:'mc', q:'Passage: "The store closes at six." Which is a valid one-step inference?',
+      opts:['You cannot shop there at seven.','The store is unpopular.',
+            'The store opens at nine.','The store will close down.'], a:0,
+      zh:'哪一個是合理的一步推論？',
+      why:'其餘三個文章都沒有依據，屬於推太多步。' },
+    { k:'mc', q:'Passage: "Staff should submit last quarter\'s figures by Friday." What can be inferred?',
+      opts:['The quarter has ended.','The quarter has just begun.',
+            'Friday is a holiday.','The figures are already published.'], a:0,
+      zh:'可以推論出什麼？',
+      why:'last quarter 代表那一季已經結束，數字才交得出來。' },
+    { k:'mc', q:'Which choice is most likely correct in an inference question?',
+      opts:['The company will never expand again.','The company may open a second branch.',
+            'The company is the only one in the city.','The company has always been profitable.'], a:1,
+      zh:'推論題裡哪一種選項最可能是答案？',
+      why:'推論題的正解通常留有餘地；絕對字眼幾乎都是陷阱。' },
+    { k:'mc', q:'Passage: "Dear valued customer, your membership expires this month." Who is the reader?',
+      opts:['An employee','A supplier','A customer','A job applicant'], a:2,
+      zh:'讀信的人是誰？',
+      why:'稱謂就寫了 customer，membership 也只有顧客才有。' },
+    { k:'mc', q:'Passage: "Ms. Rivera will introduce the keynote speaker." Who most likely is Ms. Rivera?',
+      opts:['A guest in the audience','An event host','The keynote speaker','A hotel cleaner'], a:1,
+      zh:'Rivera 女士最可能是誰？',
+      why:'負責介紹講者的人是主持人；她本人不會是講者。' },
+    { k:'fix', q:'What can be infer from the notice?',
+      a:'What can be inferred from the notice?',
+      zh:'從公告可以推論出什麼？', hint:'被動語態',
+      why:'can be ＋ 過去分詞，infer 要變成 inferred。' },
+    { k:'fix', q:'The email imply that the order was delayed.',
+      a:'The email implies that the order was delayed.',
+      zh:'這封信暗示訂單延遲了。', hint:'主詞是單數',
+      why:'The email 第三人稱單數，動詞加 s。' },
+    { k:'cloze', q:'What can be ___ about the writer\'s job? (infer)', a:'inferred',
+      zh:'關於寫信者的工作可以推論出什麼？', why:'被動語態要用過去分詞。' },
+    { k:'cloze', q:'The speaker most ___ works at a hotel. (likely)', a:'likely',
+      zh:'說話者最可能在飯店工作。', why:'most likely ＝ 最可能，是推論題的固定說法。' },
+    { k:'cloze', q:'There is no ___ evidence that the delay was avoidable. (conclusive)', a:'conclusive',
+      zh:'沒有確鑿的證據顯示這次延誤是可以避免的。', why:'conclusive evidence ＝ 決定性的證據。' },
+    { k:'trans', zh:'從這封信可以推論出貨已經寄出了。',
+      a:'It can be inferred from the letter that the goods have been shipped.',
+      alt:['We can infer from the letter that the goods have been shipped.'],
+      why:'推論題的標準句型：It can be inferred that…。' },
+    { k:'trans', zh:'說話者最可能在一家旅行社工作。',
+      a:'The speaker most likely works at a travel agency.',
+      alt:['The speaker probably works at a travel agency.'],
+      why:'most likely 用來表示「有依據的推測」。' }
+  ]
+}
+
+];
+
+</script>
+<script>
 /* ===== data/reading-s0.js ===== */
 /* ==========================================================================
    reading-s0.js — Stage 0 短文（20–45 字，全部只用已學過的句型）
@@ -6718,6 +7780,178 @@ window.DATA_READING_S4 = [
 
 </script>
 <script>
+/* ===== data/reading-s5.js ===== */
+/* ==========================================================================
+   reading-s5.js — Stage 5 短文（180–230 字）
+
+   長度再往上推一級，但真正變難的是**句子**而不是篇幅：這一批文章刻意讓
+   主詞與主要動詞隔得很開，塞進關係子句、同位語與句首分詞 —— U56 教的拆解法
+   在這裡才有東西可拆。
+
+   小題的設計跟著 U58、U63 走：每一篇至少一題是推論題（題幹寫 imply／infer／
+   most likely），而且四個選項裡固定放一個「照抄原文只改一個字」的陷阱。
+   選項一律換句話說，不照抄。
+
+   體裁全部取自多益 Part 7 真的會出現的文件：董事會紀要、供應商評估、
+   保險公告、內部政策、租約異動、產業新聞稿。
+   ========================================================================== */
+window.DATA_READING_S5 = [
+
+/* ---------------- U56 長難句拆解法 ---------------- */
+{
+  id:'r5601', u:'s5u1', title:'Board Minutes: Supplier Review',
+  text:'Minutes of the quarterly board meeting held on 14 May\n\nPresent: six directors; apologies from Ms. Haruna Ito.\n\nThe review of packaging suppliers that the operations team began in February was presented by Mr. Okonjo. The report, which compares four vendors on price, lead time and defect rate, recommends that the contract now held by Trellis Packaging be moved to Verano Materials at the end of the current term.\n\nDirectors noted that Verano, a smaller firm based in Tainan, quotes a unit price nine percent above the current supplier. Offsetting this, the defect rate recorded during the three-month trial was less than a third of the rate seen in the same period last year, and the savings from fewer replacement shipments are expected to exceed the additional unit cost within two quarters.\n\nMs. Delacroix asked whether Verano could handle a sudden increase in volume. Mr. Okonjo replied that the trial had covered only routine orders and that a stress test would be arranged before any contract is signed.\n\nNo decision was taken. The board asked for the stress test results and a revised cost model by the July meeting.',
+  zh:'五月十四日季度董事會會議紀錄\n\n出席：六位董事；Haruna Ito 女士請假。\n\n營運團隊二月開始進行的包裝供應商評估，由 Okonjo 先生提出報告。該報告就價格、交期與不良率比較四家廠商，建議在現行合約期滿後，將目前由 Trellis Packaging 承接的合約轉給 Verano Materials。\n\n董事們注意到，Verano 是一家規模較小、位於台南的公司，報價的單價比現行供應商高出百分之九。相對地，三個月試用期間記錄到的不良率不到去年同期的三分之一，而減少補件出貨所省下的成本，預計在兩季內就會超過多出來的單價。\n\nDelacroix 女士詢問 Verano 是否應付得了突然增加的訂單量。Okonjo 先生回覆，試用只涵蓋一般訂單，簽約前會另行安排壓力測試。\n\n本次未做成決議。董事會要求在七月會議前提出壓力測試結果與修訂後的成本模型。',
+  qs:[
+    { q:'Who prepared the supplier review?', opts:['The board of directors','The operations team','Verano Materials','Ms. Delacroix'], a:1,
+      why:'The review … that the operations team began in February —— 關係子句裡才是動作的主人。' },
+    { q:'What is the main drawback of switching to Verano?', opts:['A longer lead time','A higher unit price','A worse defect rate','A distant location'], a:1,
+      why:'quotes a unit price nine percent above the current supplier。不良率反而是優點。' },
+    { q:'What does the report imply about replacement shipments?', opts:['They are currently free.','They currently cost money.','They will increase next year.','They are handled by Trellis.'], a:1,
+      why:'the savings from fewer replacement shipments —— 會省下錢，代表現在正在花錢。' },
+    { q:'What must happen before a contract is signed?', opts:['A price cut','A stress test','A board vote in May','A second trial of routine orders'], a:1,
+      why:'a stress test would be arranged before any contract is signed。' }
+  ]
+},
+
+/* ---------------- U58 干擾選項的五種套路 ---------------- */
+{
+  id:'r5801', u:'s5u3', title:'Notice: Cycle-to-Work Scheme',
+  text:'To all staff at the Songshan site\n\nFrom 1 October the company will extend its cycle-to-work scheme. Staff who cycle to the office at least three days a week may apply for a free parking permit for the covered bicycle area behind Building C. Permits are issued for twelve months and are not transferable.\n\nThe scheme is open to permanent employees and to contractors whose contracts run for six months or longer. Interns are not eligible this year, although the committee has said it will review that decision in the spring.\n\nApplicants should complete the online form and upload a photograph of the bicycle they intend to register. Applications are usually approved within five working days; a small number may take longer if the details do not match the staff record.\n\nSome maintenance services will also be offered. A mechanic will visit the site on the first Tuesday of each month, and basic adjustments will be free of charge. Repairs requiring parts will be invoiced to the employee at cost.\n\nPlease note that the covered area is monitored but not staffed. The company cannot accept responsibility for bicycles left overnight.',
+  zh:'致松山廠區全體同仁\n\n自十月一日起，公司將擴大自行車通勤方案。每週至少三天騎車上班的同仁，可申請 C 棟後方有頂棚自行車區的免費停車證。停車證效期十二個月，不得轉讓。\n\n本方案開放給正職員工，以及合約期六個月以上的約聘人員。實習生今年不符資格，但委員會表示明年春天會重新檢討這項決定。\n\n申請人請填寫線上表單，並上傳欲登記之自行車照片。申請通常於五個工作天內核准；若資料與人事紀錄不符，少數件可能需要較久。\n\n另將提供部分維修服務。技師將於每月第一個星期二到廠，基本調整免費。需要更換零件的維修將按成本向員工請款。\n\n請注意，該區域雖有監視但無人駐守。自行車若過夜停放，公司無法承擔責任。',
+  qs:[
+    { q:'Who may apply for a permit?', opts:['Anyone who works at the site','Interns on a summer placement','Contractors with a six-month contract','Visitors who arrive by bicycle'], a:2,
+      why:'contractors whose contracts run for six months or longer。「所有在廠區工作的人」是範圍擴大型陷阱。' },
+    { q:'How long is a permit valid?', opts:['Six months','Twelve months','Until the spring review','Five working days'], a:1,
+      why:'Permits are issued for twelve months。five working days 是核准時間，不是效期 —— 照抄原文型陷阱。' },
+    { q:'What is stated about repairs?', opts:['All repairs are free.','Basic adjustments are free.','Repairs are done every Tuesday.','Repairs are not available on site.'], a:1,
+      why:'basic adjustments will be free of charge，但換零件要付費，所以 all repairs are free 講得太滿。' },
+    { q:'What is implied about the bicycle area?', opts:['It is safer than the street.','It is not guarded at night.','It is open only in October.','It has room for every employee.'], a:1,
+      why:'monitored but not staffed 加上不負保管責任 —— 推一步就是夜間無人看守。' }
+  ]
+},
+
+/* ---------------- U60 全真模考 ① ---------------- */
+{
+  id:'r6001', u:'s5u5', title:'Press Release: Regional Rail Upgrade',
+  text:'FOR IMMEDIATE RELEASE\n\nNorthline Rail today announced that the signalling upgrade begun in 2022 has entered its final phase. The work, which has been carried out at night to limit disruption, is scheduled for completion in November.\n\nOnce the new system is live, trains on the coastal route will be able to run at four-minute intervals during peak hours, compared with the seven-minute intervals possible today. The company estimates that this will add capacity for roughly eleven thousand passengers each weekday morning.\n\nPassengers should expect some changes before then. Between 8 and 22 September, services after ten in the evening will be replaced by buses on the section between Ruifang and Yilan. Tickets already purchased for those services will be honoured on the replacement buses, and passengers who prefer not to travel by bus may claim a full refund.\n\n"We know that late-evening travellers will find this inconvenient," said operations director Aroha Whitiora. "Doing the work in a single block, rather than one weekend a month for a year, means the disruption ends sooner."\n\nA detailed timetable for the September period is available at every staffed station and on the company website.',
+  zh:'即時發布\n\nNorthline Rail 今日宣布，二〇二二年開始的號誌升級工程已進入最後階段。該工程為降低影響一律於夜間施作，預計十一月完工。\n\n新系統上線後，海線列車尖峰時段可縮短至四分鐘一班，目前則是七分鐘一班。公司估計此舉每個平日早晨可增加約一萬一千人次的運能。\n\n在此之前旅客仍會遇到一些變動。九月八日至二十二日間，瑞芳至宜蘭路段晚間十點以後的班次將改以公車接駁。已購買該時段車票者可持票搭乘接駁公車，不願搭乘公車的旅客亦可申請全額退費。\n\n「我們知道深夜出行的旅客會覺得不便，」營運總監 Aroha Whitiora 表示。「但集中在一個區間施作，而不是一年裡每月停一個週末，反而讓不便早點結束。」\n\n九月期間的詳細時刻表可於各有人站與公司網站取得。',
+  qs:[
+    { q:'What is the current peak-hour interval on the coastal route?', opts:['Four minutes','Seven minutes','Ten minutes','Eleven minutes'], a:1,
+      why:'compared with the seven-minute intervals possible today —— four minutes 是完工後的目標。' },
+    { q:'What happens to late-evening services in September?', opts:['They are cancelled with no alternative.','They are replaced by buses on one section.','They run more frequently.','They stop only at staffed stations.'], a:1,
+      why:'services after ten in the evening will be replaced by buses on the section between Ruifang and Yilan。' },
+    { q:'What can passengers with existing tickets do?', opts:['Only travel by bus','Only claim a refund','Use the bus or claim a refund','Exchange them for peak-hour tickets'], a:2,
+      why:'兩個選項都給了：Tickets … will be honoured 與 may claim a full refund。' },
+    { q:'Why was the work scheduled as a single block?', opts:['It is cheaper that way.','It ends the disruption sooner.','Buses are only available in September.','The new system requires it.'], a:1,
+      why:'means the disruption ends sooner —— 引述裡直接給了理由。' }
+  ]
+},
+
+/* ---------------- U61 低頻高階字彙 ---------------- */
+{
+  id:'r6101', u:'s5u6', title:'Policy: Expense Approval Thresholds',
+  text:'Finance Policy 12b — revised January\n\nThis policy sets out who may approve expenditure and the records that must be kept. It applies to all departments, including those operating under a separate cost centre.\n\nAny single item below 3,000 dollars may be approved by a line manager at the manager\'s discretion, provided the spend is within the department\'s annual budget. Items between 3,000 and 20,000 dollars require the approval of a department head, who must record a short written justification. Anything above 20,000 dollars goes to the finance committee, which meets fortnightly.\n\nSplitting a purchase into smaller amounts in order to stay below a threshold is prohibited. Where a purchase is clearly one project delivered in stages, the total value determines the threshold, not the value of each stage.\n\nStringent record keeping is expected. Receipts must be uploaded within ten working days; claims submitted later than thirty days may be refused. Meticulous coding of each entry is essential, because the year-end audit samples entries at random and an ambiguous description is treated as a missing record.\n\nWhere a supplier offers a discount that makes an urgent purchase more lucrative than waiting, managers should still obtain written approval before committing funds. Verbal approval is not sufficient.',
+  zh:'財務政策 12b —— 一月修訂\n\n本政策規範誰有權核准支出，以及必須保存哪些紀錄。適用於所有部門，包含以獨立成本中心運作者。\n\n單筆低於三千元的項目，只要在部門年度預算之內，可由直屬主管自行斟酌核准。三千至兩萬元之間的項目須經部門主管核准，並記錄一段簡短的理由說明。超過兩萬元者送財務委員會，該委員會每兩週開會一次。\n\n為了壓在門檻以下而把一筆採購拆成數筆是被禁止的。若一項採購明顯是同一個分階段交付的專案，則以總金額而非各階段金額認定門檻。\n\n紀錄必須嚴謹。收據須於十個工作天內上傳；逾三十天提出的申報可能不予受理。每一筆的分類編碼務必一絲不苟，因為年終查核是隨機抽樣，敘述含糊等同於沒有紀錄。\n\n若供應商提供折扣，使得立即採購比等待更划算，主管仍應在動用經費前取得書面核准。口頭同意不算數。',
+  qs:[
+    { q:'Who approves an item costing 15,000 dollars?', opts:['A line manager','A department head','The finance committee','No approval is needed'], a:1,
+      why:'Items between 3,000 and 20,000 dollars require the approval of a department head。' },
+    { q:'What is prohibited by the policy?', opts:['Buying from a single supplier','Dividing a purchase to stay under a limit','Using a separate cost centre','Claiming within ten days'], a:1,
+      why:'Splitting a purchase into smaller amounts in order to stay below a threshold is prohibited。' },
+    { q:'What does the policy say about an unclear description?', opts:['It will be corrected by finance.','It counts as no record at all.','It delays payment by ten days.','It is allowed for small items.'], a:1,
+      why:'an ambiguous description is treated as a missing record。' },
+    { q:'What can be inferred about verbal approval?', opts:['It is faster than written approval.','It carries no weight under this policy.','It is allowed for urgent discounts.','It must be recorded by the supplier.'], a:1,
+      why:'Verbal approval is not sufficient —— 連有折扣的急件都不例外，所以在這份政策下形同無效。' }
+  ]
+},
+
+/* ---------------- U62 倒裝與假設語氣進階 ---------------- */
+{
+  id:'r6201', u:'s5u7', title:'Letter: Lease Renewal Terms',
+  text:'Dear Mr. Vasquez,\n\nThank you for your letter of 3 April regarding the lease on Unit 7, Harbourgate Business Park.\n\nHad we received your notice before the end of March, the renewal would have been processed at the current rate. As the notice arrived on 3 April, the terms set out in clause 9 now apply, and the rate for the coming year will be adjusted in line with the published index.\n\nNever before have we applied this clause to a long-standing tenant, and we are conscious that the increase falls at a difficult time for your business. Should you wish to discuss a phased increase, we would be glad to arrange a meeting. Only after such a discussion could we put a revised figure in writing.\n\nWe would also draw your attention to the condition survey carried out in February. Not until the roof repairs identified in that survey are complete will the outdoor storage area be available again. Our contractor expects to finish in late May.\n\nWere the works to overrun, we would extend your storage credit accordingly. Please let us know by 20 April how you wish to proceed.\n\nYours sincerely,\nPriya Raghunathan, Estates Office',
+  zh:'親愛的 Vasquez 先生：\n\n感謝您四月三日關於 Harbourgate 商業園區 7 號單位租約的來信。\n\n若我們在三月底前收到您的通知，續約就會按現行費率辦理。由於通知於四月三日才送達，現在適用第九條所訂的條款，來年費率將依公布的指數調整。\n\n我們從未對長期承租戶適用過這一條，也明白這次調漲正逢貴公司的艱難時刻。若您希望討論分階段調漲，我們很樂意安排會面。唯有經過這樣的討論，我們才能以書面提出修訂後的數字。\n\n另請留意二月所做的建物狀況勘查。勘查中指出的屋頂修繕完成之前，戶外儲放區都無法使用。承包商預計五月下旬完工。\n\n萬一工程延宕，我們會相應延長您的儲放折抵。請於四月二十日前告知您的意向。\n\n敬祝商祺\n產業管理處　Priya Raghunathan',
+  qs:[
+    { q:'Why is the current rate NOT being applied?', opts:['The tenant refused it.','The notice arrived after March.','Clause 9 was removed.','The index has not been published.'], a:1,
+      why:'Had we received your notice before the end of March —— 省略 if 的第三型，表示事實上沒有在三月底前收到。' },
+    { q:'What is implied about clause 9?', opts:['It is used with every tenant.','It has rarely been used with this kind of tenant.','It was added this year.','It only applies to storage areas.'], a:1,
+      why:'Never before have we applied this clause to a long-standing tenant。' },
+    { q:'When will the outdoor storage area reopen?', opts:['On 20 April','After the roof repairs','In February','When the lease is renewed'], a:1,
+      why:'Not until the roof repairs … are complete will the outdoor storage area be available again。' },
+    { q:'What will happen if the works take longer than expected?', opts:['The lease will be cancelled.','The storage credit will be extended.','The rate will be reduced.','A new survey will be ordered.'], a:1,
+      why:'Were the works to overrun, we would extend your storage credit accordingly。' }
+  ]
+},
+
+/* ---------------- U63 推論題專攻 ---------------- */
+{
+  id:'r6301', u:'s5u8', title:'Email: Handover Notes',
+  text:'From: Bilal Ferhaoui\nTo: Team distribution list\nSubject: Handover — Thursday onwards\nDate: 12 August\n\nHi everyone,\n\nAs most of you know, Thursday is my last day on the accounts side before I move across to the projects group. Rana will be picking up the day-to-day work from Friday, so please copy her on anything that is still open.\n\nA few things worth flagging. The Kestrel account has a credit note outstanding from June; the paperwork is in the shared folder but it has not been signed off, and their finance contact chases it every fortnight. The Almeida renewal is due in September and they have already asked twice for a call — I have not booked one, so that is the first thing in Rana\'s diary.\n\nThe monthly reconciliation is fully automated now, which was the main thing I wanted to leave in better shape than I found it. The only manual step left is the currency check on the two European accounts.\n\nI will still be in the building, so do stop by if something looks odd. It has been a good three years on this desk.\n\nBilal',
+  zh:'寄件者：Bilal Ferhaoui\n收件者：團隊群組\n主旨：交接 —— 星期四之後\n日期：八月十二日\n\n各位好：\n\n如同大家所知，星期四是我在帳務這邊的最後一天，之後我會轉到專案組。Rana 會從星期五起接手日常工作，還沒結案的事情請把她加進副本。\n\n有幾件事想特別提醒。Kestrel 這個客戶有一張六月的折讓單還沒處理；文件放在共用資料夾，但一直沒有簽核，他們的財務窗口每兩週就來催一次。Almeida 的續約在九月到期，他們已經兩次要求通話 —— 我還沒有安排，所以那是 Rana 行事曆上的第一件事。\n\n每月對帳現在已經全自動化，那是我最想讓它比我接手時更好的一件事。唯一剩下的人工步驟是兩個歐洲帳戶的匯率確認。\n\n我還會在同一棟樓，覺得哪裡怪就過來找我。在這個位子上的三年很值得。\n\nBilal',
+  qs:[
+    { q:'What can be inferred about Bilal?', opts:['He is leaving the company.','He is changing roles within the company.','He is retiring on Thursday.','He is joining the finance team at Kestrel.'], a:1,
+      why:'move across to the projects group 加上 I will still be in the building —— 換組不是離職。' },
+    { q:'What is implied about the Kestrel credit note?', opts:['It has been paid.','It is causing repeated contact from the client.','It was cancelled in June.','Rana has already signed it.'], a:1,
+      why:'their finance contact chases it every fortnight —— 沒簽核所以對方一直催。' },
+    { q:'What should Rana most likely do first?', opts:['Sign the reconciliation','Arrange a call with Almeida','Move the files out of the shared folder','Automate the currency check'], a:1,
+      why:'that is the first thing in Rana\'s diary，指的是那通還沒安排的電話。' },
+    { q:'What is suggested about the monthly reconciliation?', opts:['It used to take more manual work.','It has never been automated.','It is done by the European offices.','It will be handed to a new system.'], a:0,
+      why:'leave in better shape than I found it 加上 fully automated now —— 推一步就是以前要手動做。' }
+  ]
+},
+{
+  id:'r6302', u:'s5u8', title:'Web Notice: Membership Changes',
+  text:'Changes to membership from 1 January — Harbourside Fitness\n\nWe are writing to let members know about three changes to the way memberships work next year.\n\nFirst, the off-peak category will be extended. Off-peak access currently ends at four in the afternoon; from January it will end at five, at no extra cost to existing off-peak members. Members who upgraded to full access last year purely to use the hour between four and five may wish to review their plan.\n\nSecond, the swimming pool will close for resurfacing between 6 and 27 February. During that period all members may use the pool at our Riverbend site, which is a twenty-minute walk away. No credit will be issued for the closure, as an alternative is being provided.\n\nThird, the guest policy is changing. Each member may currently bring one guest per month free of charge. From January guests will be charged 200 dollars, although members on the family plan will keep two free guest visits a month.\n\nMembers who wish to cancel rather than accept these changes may do so without the usual thirty days\' notice, provided they write to us before 15 December.',
+  zh:'一月一日起會籍異動 —— Harbourside Fitness\n\n謹此告知會員明年會籍運作方式的三項變動。\n\n第一，離峰時段將延長。離峰使用權目前到下午四點結束，一月起延長至五點，現有離峰會員無須加價。去年單純為了使用四點到五點這一小時而升級為全時段的會員，或許可以重新檢視自己的方案。\n\n第二，游泳池將於二月六日至二十七日進行整修。該期間所有會員可改用步行二十分鐘可達的 Riverbend 館。因已提供替代方案，此次休館不另行折抵。\n\n第三，訪客規定將調整。目前每位會員每月可免費攜帶一位訪客。一月起訪客將收費兩百元，惟家庭方案會員仍保有每月兩次免費訪客名額。\n\n不願接受上述異動而希望終止會籍的會員，只要在十二月十五日前來函，即可免除平時三十天的通知期。',
+  qs:[
+    { q:'Who might want to review their plan?', opts:['Family plan members','Members who upgraded for the 4–5 pm hour','Members who never swim','New members joining in January'], a:1,
+      why:'Members who upgraded to full access last year purely to use the hour between four and five。' },
+    { q:'Why will no credit be given for the pool closure?', opts:['The closure is short.','Another pool is available.','Members were told in advance.','The work is free of charge.'], a:1,
+      why:'No credit will be issued …, as an alternative is being provided。' },
+    { q:'What is implied about family plan members?', opts:['They pay more from January.','They are less affected by the guest change.','They cannot use the Riverbend site.','They must cancel before December.'], a:1,
+      why:'其他人每次訪客要兩百元，家庭方案仍有兩次免費 —— 推一步就是受影響較小。' },
+    { q:'What is offered to members who do not accept the changes?', opts:['A refund of last year\'s fees','Cancellation without the usual notice','A free upgrade to full access','Two extra guest visits'], a:1,
+      why:'may do so without the usual thirty days\' notice, provided they write before 15 December。' }
+  ]
+},
+
+/* ---------------- U64 全真模考 ② ---------------- */
+{
+  id:'r6401', u:'s5u9', title:'Report Extract: Remote Working Survey',
+  text:'Extract from the annual staff survey, section 4\n\nOf the 1,240 employees invited to take part, 812 responded, a rate slightly higher than last year. The questions on remote working were answered by everyone who responded, whereas the section on office facilities was optional and drew 604 answers.\n\nStaff who work remotely at least two days a week reported higher satisfaction with their working hours than those who attend the office every day. The gap, eleven percentage points, was the largest single difference in the survey. Satisfaction with communication, however, ran the other way: office-based staff rated it seven points higher.\n\nWritten comments pointed repeatedly to meetings. Several respondents noted that a meeting with one remote participant often works less well than a meeting where everyone is remote, because the person on the screen is easily forgotten. Two teams have already adopted a rule that if one person joins remotely, everyone joins remotely.\n\nThe committee will not recommend a company-wide policy this year. It suggests instead that each department agree its own meeting practice by the end of the quarter, and that the question be asked again in next year\'s survey.',
+  zh:'年度員工問卷摘錄，第四節\n\n受邀填答的一千兩百四十位員工中有八百一十二位回覆，回覆率略高於去年。關於遠距工作的題目所有回覆者都作答，而辦公環境那一節屬選填，收到六百零四份回答。\n\n每週至少遠距工作兩天的員工，對工作時間的滿意度高於每天進辦公室的員工，兩者相差十一個百分點，是本次問卷中最大的單一差距。不過溝通面向剛好相反：辦公室工作者的評分高出七分。\n\n文字意見一再指向會議。多位受訪者提到，只有一位遠距參與者的會議，往往比全體都遠距的會議更不順利，因為螢幕上的那個人很容易被忘記。已有兩個團隊採行「只要有一人遠距，全員都遠距」的規則。\n\n委員會今年不會建議全公司統一政策，而是建議各部門於本季結束前議定自己的會議做法，並在明年問卷中再問一次這個問題。',
+  qs:[
+    { q:'How many people answered the section on office facilities?', opts:['1,240','812','604','Everyone who responded'], a:2,
+      why:'the section on office facilities was optional and drew 604 answers。812 是總回覆數，是照抄原文型陷阱。' },
+    { q:'On which point did office-based staff score higher?', opts:['Working hours','Communication','Meeting length','Overall satisfaction'], a:1,
+      why:'Satisfaction with communication … office-based staff rated it seven points higher。' },
+    { q:'What problem did written comments identify?', opts:['Meetings run too long.','A single remote participant is easily overlooked.','Remote staff miss too many meetings.','Office rooms are too small.'], a:1,
+      why:'the person on the screen is easily forgotten。' },
+    { q:'What does the committee recommend?', opts:['A company-wide policy this year','Department-level agreements','Ending remote work','Repeating the survey next quarter'], a:1,
+      why:'each department agree its own meeting practice by the end of the quarter。' }
+  ]
+},
+
+/* ---------------- U65 Stage 5 魔王測驗 ---------------- */
+{
+  id:'r6501', u:'s5u10', title:'Announcement: Warehouse Automation Trial',
+  text:'To all distribution centre staff\n\nFrom Monday 4 November the north aisle of the Taoyuan centre will be used for a three-month automation trial. Two picking robots, supplied by a firm that already runs similar systems in Osaka and Rotterdam, will operate alongside the existing team.\n\nNot until the trial is complete will any decision be made about wider use. Nothing in this trial changes anyone\'s role, and no reduction in staff numbers is planned for this site.\n\nDuring the trial the north aisle will be marked with yellow floor tape. Staff who are not part of the trial team should not enter the taped area while the robots are moving, even to retrieve an item that has fallen. A supervisor can stop the system in under five seconds.\n\nThe trial team, comprising four pickers and one supervisor from each shift, will meet the engineers every Friday. Anyone interested in joining should speak to their shift leader this week; places are limited, and preference will be given to staff who have worked in the north aisle before.\n\nHad the equipment arrived on schedule, the trial would have begun in October. The delay means the review will now fall in February rather than January.',
+  zh:'致配送中心全體同仁\n\n自十一月四日星期一起，桃園中心的北側走道將用於為期三個月的自動化試驗。兩台揀貨機器人由一家已在大阪與鹿特丹運行類似系統的廠商提供，將與現有團隊一同作業。\n\n試驗結束前不會做出任何擴大使用的決定。本次試驗不會改變任何人的職務，本廠區也沒有裁減人力的計畫。\n\n試驗期間北側走道將以黃色地貼標示。非試驗團隊的同仁在機器人移動時請勿進入標示區域，即使是為了撿拾掉落的物品也一樣。主管可在五秒內停止系統。\n\n試驗團隊由每個班別的四位揀貨員與一位主管組成，每週五與工程師開會。有興趣參加者請於本週向班長反映；名額有限，曾在北側走道工作過的同仁將優先錄取。\n\n設備若準時到貨，試驗十月就會開始。這次延遲代表檢討時間將從一月改到二月。',
+  qs:[
+    { q:'What is the main purpose of the announcement?', opts:['To announce job cuts','To describe a limited trial','To close the north aisle permanently','To introduce a new shift pattern'], a:1,
+      why:'a three-month automation trial，而且明說 no reduction in staff numbers is planned。' },
+    { q:'What must staff outside the trial team NOT do?', opts:['Speak to their shift leader','Walk past the yellow tape while robots move','Attend the Friday meetings','Report fallen items'], a:1,
+      why:'should not enter the taped area while the robots are moving, even to retrieve an item。' },
+    { q:'Who will be preferred for a place on the trial team?', opts:['Staff with the longest service','Staff who have worked in the north aisle','Supervisors only','Staff from the Osaka site'], a:1,
+      why:'preference will be given to staff who have worked in the north aisle before。' },
+    { q:'Why will the review take place in February?', opts:['The trial was extended.','The equipment arrived late.','February is the end of the quarter.','The engineers are unavailable in January.'], a:1,
+      why:'Had the equipment arrived on schedule, the trial would have begun in October —— 省略 if 的倒裝，表示設備其實遲到了。' }
+  ]
+}
+
+];
+
+</script>
+<script>
 /* ===== data/toeic-p1-s2.js ===== */
 /* ==========================================================================
    toeic-p1-s2.js — 多益 Part 1：看圖聽描述（Stage 2）
@@ -7552,6 +8786,111 @@ window.DATA_CONVO_S3 = [
 
 </script>
 <script>
+/* ===== data/toeic-p34-s5.js ===== */
+/* ==========================================================================
+   toeic-p34-s5.js — 多益 Part 3／4（Unit 59、64）
+   id 前綴 c，與 Stage 3 的長對話同一個資料集
+
+   Stage 3 那六段練的是「聽得懂」。這一階段換成練 U59 教的**預讀**，
+   所以題目刻意做成「不先看題就抓不到」的樣子：
+
+     · 每一段都有一個**被更正的數字或日期**（原本的那個一定會變成選項）
+     · 每一段都有一題問**弦外之音**（imply／suggest），字面上找不到答案
+     · 三人對話（第三個說話者在中途才出現）—— 換人靠音高，多一個人就更需要
+       先知道要聽誰。真機聽不聽得出分界，是 TODO 裡還沒驗過的那一項。
+
+   三題仍照對話順序出現：第一題的線索在前段、第三題在後段。這是多益的實際
+   出題習慣，也是預讀技巧站得住的前提。
+   ========================================================================== */
+window.DATA_CONVO_S5 = [
+
+{
+  id:'c5901', u:'s5u4', kind:'convo', title:'展場攤位改期',
+  lines:[
+    ['W','Marco, the organisers just called about our stand at the trade fair. They want to move us from row C to row F.'],
+    ['M','Row F is the far corner, isn\'t it? Did they say why?'],
+    ['W','A sponsor took the whole of row C. They are offering us two extra square metres and a listing in the printed guide to make up for it.'],
+    ['M','Two metres is not nothing. But the guide closes on the fifteenth — no, sorry, they moved that to the eighteenth.'],
+    ['W','Either way we would need the artwork done by then. Priya, you have the files, haven\'t you?'],
+    ['F','I do, but the large format version was never finished. Give me until Friday and I can have it ready.']
+  ],
+  zh:'女：Marco，主辦單位剛打來說我們在商展的攤位，他們想把我們從 C 排移到 F 排。\n男：F 排是最角落那邊吧？有說原因嗎？\n女：有個贊助商把整個 C 排包下來了。他們願意多給我們兩平方公尺，還會在紙本手冊上列名作為補償。\n男：兩平方公尺不算少。不過手冊十五號截稿 —— 不對，抱歉，他們改到十八號了。\n女：不管哪一天，我們都得在那之前把美術稿弄好。Priya，檔案在你那裡對吧？\n女2：在我這裡，但大尺寸那版一直沒做完。給我到星期五，我可以弄好。',
+  qs:[
+    { q:'What are the speakers mainly discussing?', opts:['A cancelled trade fair','A change to their stand location','A new sponsor contract','A printing error in the guide'], a:1,
+      why:'第一句就說 They want to move us from row C to row F。' },
+    { q:'What is the deadline for the printed guide?', opts:['The fifteenth','The eighteenth','Friday','The end of the month'], a:1,
+      why:'男士自己更正：no, sorry, they moved that to the eighteenth —— 十五號是被更正掉的那個數字。' },
+    { q:'What does the man imply about the offer?', opts:['It is not worth considering.','It has some value.','It was made too late.','It should be refused.'], a:1,
+      why:'Two metres is not nothing 是雙重否定 —— 字面沒說「不錯」，意思就是「還可以」。' }
+  ]
+},
+
+{
+  id:'c5902', u:'s5u4', kind:'convo', title:'系統上線前的最後檢查',
+  lines:[
+    ['M','Before we sign off on Monday\'s launch, is the data migration finished?'],
+    ['W','Ninety-four percent. The last batch is the archived orders, and those are the ones nobody looks at.'],
+    ['M','Nobody looks at them until an auditor does. Can it be done by Sunday?'],
+    ['W','Technically yes. Whether I want to be running a migration the night before we go live is another question.'],
+    ['M','Fair enough. Karim, what did support say about the extra cover?'],
+    ['N','Two people on the phones from seven, and one of them stays until eight in the evening. I asked for nine, but the budget only stretched to eight.']
+  ],
+  zh:'男：星期一上線前我們簽核之前，資料轉移完成了嗎？\n女：百分之九十四。最後一批是封存的訂單，那些平常沒有人會看。\n男：沒有人會看，直到查核人員來看。星期日前弄得完嗎？\n女：技術上可以。至於我想不想在上線前一晚跑資料轉移，那是另一回事。\n男：說得也是。Karim，客服那邊對加班人力怎麼說？\n男2：早上七點起兩個人接電話，其中一位留到晚上八點。我本來要求九點，但預算只夠到八點。',
+  qs:[
+    { q:'What is the main topic of the conversation?', opts:['A budget cut','Final checks before a launch','A customer complaint','A recruitment plan'], a:1,
+      why:'開場 Before we sign off on Monday\'s launch，整段都在確認上線前的事。' },
+    { q:'Until what time will support cover be available?', opts:['Seven','Eight','Nine','Ten'], a:1,
+      why:'I asked for nine, but the budget only stretched to eight —— nine 是被否定掉的那個數字。' },
+    { q:'What does the woman imply about finishing the migration on Sunday?', opts:['It is impossible.','She would rather not.','It has already been done.','Someone else should do it.'], a:1,
+      why:'Whether I want to … is another question —— 技術上做得到，但她不願意，屬於婉轉的反對。' }
+  ]
+},
+
+{
+  id:'c5903', u:'s5u4', kind:'talk', title:'公司廣播：停車場整修',
+  lines:[
+    ['Announcer','Good morning. This is a reminder about the car park resurfacing, which begins next Monday and not next Wednesday as the first notice said.'],
+    ['Announcer','Levels two and three will be closed for the first fortnight, and level one for the second. At no point will the whole car park be shut.'],
+    ['Announcer','Staff with a reserved bay on level two have been allocated a temporary bay on level four. You do not need to apply; the new bay number is on the card in your pigeonhole.'],
+    ['Announcer','We have also arranged an extra shuttle from the station at ten past eight. Those of you who normally drive in may find that easier than circling for a space.'],
+    ['Announcer','Finally, the contractor asks that nobody leave a vehicle overnight during the works. Cars left after seven in the evening may be towed to the overflow area at the owner\'s expense.']
+  ],
+  zh:'各位早安。提醒大家停車場重鋪工程將於下週一開始，而非第一次通知所寫的下週三。\n二樓與三樓將於前兩週關閉，一樓則於後兩週關閉。任何時候都不會整座停車場都關。\n在二樓有固定車位的同仁，已在四樓分配到臨時車位。不需另外申請，新的車位號碼放在您的信件格裡。\n我們也加開了一班八點十分從車站出發的接駁車。平常開車來的同仁或許會覺得這比繞著找位子輕鬆。\n最後，承包商要求施工期間不要有車輛過夜。晚上七點以後仍停放的車輛可能被拖到臨時區，費用由車主自付。',
+  qs:[
+    { q:'When does the work begin?', opts:['Next Monday','Next Wednesday','In a fortnight','After seven in the evening'], a:0,
+      why:'begins next Monday and not next Wednesday as the first notice said —— Wednesday 是被更正的舊資訊。' },
+    { q:'What must staff with a reserved bay on level two do?', opts:['Apply for a new bay','Nothing — a bay has been allocated','Park at the station','Use the shuttle instead'], a:1,
+      why:'You do not need to apply; the new bay number is on the card in your pigeonhole。' },
+    { q:'What is implied about parking during the works?', opts:['It will be free of charge.','Spaces will be harder to find.','Level four will also close.','Only visitors may park.'], a:1,
+      why:'easier than circling for a space —— 講到「繞圈找位子」就代表車位會變得難找。' }
+  ]
+},
+
+{
+  id:'c6401', u:'s5u9', kind:'convo', title:'客戶提前驗收',
+  lines:[
+    ['W','Daniel, the client wants to bring the site inspection forward to the twelfth.'],
+    ['M','The twelfth? We agreed the twenty-second. The second coat of paint will not even be dry.'],
+    ['W','I know. They say their director is only in the country that week.'],
+    ['M','Then let them come and look at an unfinished building. I would rather they saw it honestly than we rushed the finish.'],
+    ['W','That is more or less what I told them. Su-yin, could you check whether the electrical certificate will be issued by then?'],
+    ['F','It was submitted last Tuesday. The office says ten working days, so the twelfth is tight but possible — the twenty-second would be certain.']
+  ],
+  zh:'女：Daniel，客戶想把現場驗收提前到十二號。\n男：十二號？我們談好的是二十二號。第二層漆那時候連乾都還沒乾。\n女：我知道。他們說他們的總監那一週才會在國內。\n男：那就讓他們來看一棟還沒完工的房子。我寧可他們看到真實的樣子，也不要我們趕工收尾。\n女：我跟他們講的差不多就是這個意思。Su-yin，你能不能確認一下電氣證明那時候發得下來？\n女2：上週二送件的。主管機關說十個工作天，所以十二號很趕但有機會 —— 二十二號就一定沒問題。',
+  qs:[
+    { q:'What change does the client want?', opts:['A different site','An earlier inspection','A cheaper contract','A new director'], a:1,
+      why:'the client wants to bring the site inspection forward to the twelfth。' },
+    { q:'What does the man suggest doing?', opts:['Refusing the visit','Letting the client see unfinished work','Rushing the second coat','Postponing to next month'], a:1,
+      why:'let them come and look at an unfinished building。' },
+    { q:'What does the third speaker imply about the certificate?', opts:['It has been refused.','The later date is safer.','It was never submitted.','It arrives on the twelfth.'], a:1,
+      why:'the twelfth is tight but possible — the twenty-second would be certain，字面沒說「建議延後」，意思很清楚。' }
+  ]
+}
+
+];
+
+</script>
+<script>
 /* ===== data/toeic-p6-s4.js ===== */
 /* ==========================================================================
    toeic-p6-s4.js — 多益 Part 6：段落填空（Unit 50、55）
@@ -7634,6 +8973,64 @@ window.DATA_PART6_S4 = [
       why:'先行詞是 two guest passes（東西不是人），所以用 which；who 只能接人。' },
     { opts:['Should','Unless','Despite','Whether'], a:0,
       why:'Should 開頭是 If you should 的倒裝，正式書信常用。Unless 意思相反（除非不續約就還鑰匙，講不通）。' }
+  ]
+}
+
+];
+
+</script>
+<script>
+/* ===== data/toeic-p6-s5.js ===== */
+/* ==========================================================================
+   toeic-p6-s5.js — 多益 Part 6：段落填空（Unit 60、64）
+   id 前綴 x，與 Stage 4 的段落填空同一個資料集
+
+   兩篇都排在模考關，難度比 Stage 4 那三篇再往上一階：**每一篇至少有兩格的
+   線索跨到別的段落**（Stage 4 大多只跨一句）。這正是 Part 6 唯一的訓練目標 ——
+   把句子抽出來單獨問，它就降級成 Part 5。
+
+   欄位與 toeic-p6-s4.js 完全相同：text 用 ___1___ 標空格、標號連號，
+   blanks[i] 給 opts／a／why，其中一格 kind:'sentence' 是整句插入題。
+   ========================================================================== */
+window.DATA_PART6_S5 = [
+
+{
+  id:'x6001', u:'s5u5', title:'Letter: Insurance Renewal',
+  text:'Dear Ms. Aliyeva,\n\nYour commercial property policy expires on 31 July. We have reviewed the cover and are pleased to say that the premium ___1___ unchanged for a second year.\n\nOne detail has been amended. Following the alarm system you installed in March, the excess on theft claims falls from 20,000 dollars to 12,000. ___2___\n\nNo action is needed if you are happy with the terms; the policy renews automatically and the first payment will be taken on 1 August. ___3___ you wish to change the cover, please reply before 20 July so that revised documents can be issued in time.\n\nWe have also enclosed a summary of the claims made over the past three years. Two of the three were settled within a month, ___4___ the third took longer because the contractor\'s report was delayed.',
+  zh:'親愛的 Aliyeva 女士：\n\n您的商業財產保單將於七月三十一日到期。我們已檢視保障內容，很高興通知您保費連續第二年維持不變。\n\n有一項細節做了修改。因為您三月安裝了警報系統，竊盜理賠的自負額由兩萬元降為一萬兩千元。這項調整已反映在隨附的保單明細上。\n\n若您接受這些條件則無需任何動作；保單將自動續保，首期保費於八月一日扣款。若您希望變更保障內容，請於七月二十日前回覆，以便及時開立修訂後的文件。\n\n我們另附上過去三年的理賠摘要。三件中有兩件於一個月內結案，第三件則因承包商的報告延遲而花了較久的時間。',
+  blanks:[
+    { opts:['remains','remained','will have remained','is remaining'], a:0,
+      why:'線索在同一句的 for a second year 與下一段的 renews automatically —— 講的是這一次續保「現在」的狀態，用現在式。' },
+    { kind:'sentence',
+      opts:['This adjustment is reflected in the enclosed schedule.',
+            'The alarm system carries a five-year guarantee.',
+            'Theft claims must be reported to the police within 24 hours.',
+            'Your previous policy expired in March.'], a:0,
+      why:'前一句剛講完自負額改了多少，後一段開頭是「若您接受這些條件」—— 中間要一句把這項修改收尾。B、C 換了話題，D 與第一段的七月三十一日矛盾。' },
+    { opts:['If','Unless','Although','Whether'], a:0,
+      why:'前一句說「不接受就不用做事」，這一句講的是相反的情況 —— 想改就要在期限前回覆，用 If。' },
+    { opts:['whereas','because','therefore','so that'], a:0,
+      why:'兩件一個月內結案、第三件比較久 —— 前後對比，用 whereas。線索是同一句裡的 Two … the third。' }
+  ]
+},
+
+{
+  id:'x6401', u:'s5u9', title:'Notice: Canteen Supplier Change',
+  text:'To all staff\n\nFrom 1 September the staff canteen will be run by a new supplier, Greenfold Catering. The current supplier\'s contract ends in August after nine years, and we ___1___ them for their service.\n\nGreenfold has agreed to keep the existing prices until the end of the year. ___2___ the range will change: there will be two hot dishes at lunch instead of three, but a larger salad counter and a hot breakfast from seven.\n\n___3___\n\nStaff who have money left on a canteen card should spend it before 29 August. Balances cannot be transferred to the new system, ___4___ any amount above 100 dollars will be refunded through payroll in September.',
+  zh:'致全體同仁\n\n自九月一日起，員工餐廳將改由新的供應商 Greenfold Catering 經營。現行供應商的合約在服務九年後於八月結束，我們感謝他們一路以來的付出。\n\nGreenfold 已同意價格維持到年底不變。不過品項會有調整：午餐熱食由三道改為兩道，但沙拉吧變大，並自七點起供應熱食早餐。\n\n下週三中午十二點半將於大禮堂舉辦試吃會。\n\n餐卡內尚有餘額的同仁請於八月二十九日前使用完畢。餘額無法轉入新系統，不過超過一百元的部分將於九月透過薪資退還。',
+  blanks:[
+    { opts:['thank','thanked','are thanking','will have thanked'], a:0,
+      why:'合約八月才結束，公告此刻就在道謝 —— 用現在式。線索是同一句的 ends in August（還沒發生）。' },
+    { opts:['However','Therefore','In addition','For example'], a:0,
+      why:'前一句是好消息（價格不變），這一句是「品項會變」—— 語氣轉折，用 However。' },
+    { kind:'sentence',
+      opts:['A tasting session will be held in the main hall next Wednesday at 12:30.',
+            'The canteen will close permanently at the end of August.',
+            'Greenfold also operates the car park at this site.',
+            'Prices will rise by five percent in September.'], a:0,
+      why:'B 與第一段矛盾（是換供應商不是關閉），D 與前一段的「價格維持到年底」矛盾，C 換了話題 —— 只有試吃會接得上「品項會變」這條線。' },
+    { opts:['but','so','because','unless'], a:0,
+      why:'「不能轉移」與「超過一百元會退」是相反的兩件事，用 but。線索是後半句的 refunded。' }
   ]
 }
 
@@ -7724,6 +9121,310 @@ window.DATA_PART7_S4 = [
       opts:['Yes, 160 dollars','No, on two separate grounds','Yes, because the boots were used','Only if the model is discontinued'], a:1,
       why:'政策免運有兩個條件：瑕疵品，或訂單滿兩千元。信裡兩個都符合 —— 鞋底脫膠是瑕疵，訂單三千一百五十元。' }
   ]
+}
+
+];
+
+</script>
+<script>
+/* ===== data/toeic-p7-s5.js ===== */
+/* ==========================================================================
+   toeic-p7-s5.js — 多益 Part 7：三篇閱讀（Unit 57、65）
+   id 前綴 d，與雙篇同一個資料集（Ex.part7 的 docs 本來就是陣列）
+
+   三篇和雙篇的差別不是「多一份文件」，是**線索被拆成三段**：
+   規則在公告、這個人的情況在信裡、最後的結果在第三份（回覆、發票、時刻表）。
+   雙篇的跨篇題只要對兩處，三篇常常要對三處才湊得出一個答案。
+
+   所以這裡的 both:true 至少要有一題**真的用到第三份文件** ——
+   只在前兩份之間對照的話，第三份就只是裝飾，這一關等於還在練雙篇。
+
+   docs[i]／qs[i] 的欄位與 toeic-p7-s4.js 完全相同，畫面差別只有欄數。
+   ========================================================================== */
+window.DATA_PART7_S5 = [
+
+{
+  id:'d5701', u:'s5u2', title:'研討會議程、報名信與確認回覆',
+  docs:[
+    { label:'Programme', title:'Pacific Supply Chain Forum — 3 October',
+      text:'All sessions take place at the Meridian Conference Centre.\n\n  09:00-10:15  S1  Port Congestion in 2026        Hall A\n  10:45-12:00  S2  Contract Clauses That Fail      Room 4\n  13:00-14:15  S3  Warehouse Automation            Hall A\n  14:45-16:00  S4  Supplier Risk Scoring           Room 4\n\nStandard registration is 3,600 dollars and covers all four sessions, lunch and materials.\n\nMembers of the Pacific Trade Association pay 2,700 dollars. Anyone booking four or more places from the same organisation pays the member rate regardless of membership.\n\nSessions in Room 4 are capped at forty seats and are allocated in the order payment is received. Delegates who cannot attend a Room 4 session they booked will be moved to the Hall A session running at the same time.\n\nThe deadline for name changes is 26 September.',
+      zh:'所有場次皆於 Meridian 會議中心舉行。\n\n  09:00-10:15  S1  2026 年的港口壅塞      A 廳\n  10:45-12:00  S2  失效的合約條款        4 號室\n  13:00-14:15  S3  倉儲自動化            A 廳\n  14:45-16:00  S4  供應商風險評分        4 號室\n\n一般報名費三千六百元，涵蓋四個場次、午餐與教材。\n\n太平洋貿易協會會員為兩千七百元。同一機構報名四位以上者，不論是否為會員，一律適用會員價。\n\n4 號室的場次限四十席，依收到款項的先後順序分配。已報名 4 號室場次卻無法入場的與會者，將改排到同時段的 A 廳場次。\n\n更改與會者姓名的截止日為九月二十六日。' },
+    { label:'Email', title:'Registration — Calderwood Logistics',
+      text:'From: Nuria Bastida, Operations\nTo: forum@meridiancentre.example\nDate: 18 September\n\nGood morning,\n\nPlease register five people from Calderwood Logistics. We are not association members.\n\nFour of us — myself, Tomás Iriarte, Wen-hsin Chao and Adaeze Nnamdi — want the full day. Our fifth colleague, Rafael Boaventura, can only join after lunch.\n\nThe two afternoon sessions are the priority for everyone. If Room 4 is already full for the afternoon session, please tell me before you take payment; we would rather send fewer people than split the group across two rooms.\n\nOne more thing: Adaeze may be replaced by a colleague if her site visit is confirmed. She should know by the 24th.\n\nCould you send the invoice today so that our finance team can pay this week?\n\nBest regards,\nNuria',
+      zh:'寄件者：Nuria Bastida，營運部\n收件者：forum@meridiancentre.example\n日期：九月十八日\n\n早安：\n\n請為 Calderwood Logistics 的五位同仁報名。我們不是協會會員。\n\n其中四位 —— 我本人、Tomás Iriarte、趙文歆與 Adaeze Nnamdi —— 要參加全天。第五位同事 Rafael Boaventura 只能在午餐後加入。\n\n下午的兩個場次是所有人的優先選項。若下午的 4 號室場次已額滿，請在收款前先告訴我；我們寧可少去幾個人，也不想讓整組人被拆到兩個房間。\n\n另外一件事：如果 Adaeze 的廠區訪視確定了，可能會由另一位同事替補。她二十四日前會知道。\n\n可以請您今天就開發票，讓我們財務本週付款嗎？\n\n謹此\nNuria' },
+    { label:'Reply', title:'Re: Registration — Calderwood Logistics',
+      text:'From: Meridian Conference Centre\nTo: Nuria Bastida\nDate: 18 September\n\nDear Ms. Bastida,\n\nThank you. Five places are held under your organisation\'s name and the invoice is attached.\n\nRoom 4 has eleven seats left for the afternoon session, so all five of your colleagues are confirmed there. Payment reached us this morning for two other organisations, so I would not delay.\n\nPlease note that four of your delegates are booked for the whole day and one from 13:00. The invoice reflects this: the afternoon-only place is charged at half the applicable rate.\n\nName changes can be made free of charge up to the published deadline. After that a 400-dollar administration fee applies to each change.\n\nKind regards,\nJoachim Petrescu, Delegate Services',
+      zh:'寄件者：Meridian 會議中心\n收件者：Nuria Bastida\n日期：九月十八日\n\n親愛的 Bastida 女士：\n\n感謝來信。已以貴機構名義保留五個名額，發票如附件。\n\n4 號室下午場次尚餘十一席，貴公司五位同仁均已確認入座。今天早上另有兩家機構完成付款，建議不要拖延。\n\n請注意，貴公司有四位報名全天、一位自十三時起。發票已反映此點：僅參加下午者按適用費率的半價計收。\n\n更改姓名於公告截止日前免費。截止日之後每次更改酌收四百元行政費。\n\n順頌時祺\n與會服務組　Joachim Petrescu' }
+  ],
+  qs:[
+    { q:'Which two sessions take place in Room 4?',
+      opts:['S1 and S2','S2 and S4','S3 and S4','S1 and S3'], a:1,
+      why:'議程表上 Room 4 的是 S2（10:45）與 S4（14:45）。' },
+    { q:'What does Ms. Bastida ask the centre to do before taking payment?',
+      opts:['Confirm the lunch menu','Warn her if the afternoon Room 4 session is full','Move everyone to Hall A','Delay the invoice until October'], a:1,
+      why:'If Room 4 is already full for the afternoon session, please tell me before you take payment。' },
+    { both:true,
+      q:'Which rate applies to Calderwood Logistics?',
+      opts:['3,600 dollars, as they are not members','2,700 dollars, because they booked five places','3,600 dollars for four and 2,700 for one','A rate agreed by email'], a:1,
+      why:'信裡說不是會員、但報名五位；議程說同機構四位以上一律適用會員價 —— 兩篇合起來才選得出 2,700。' },
+    { both:true,
+      q:'What can be concluded about Mr. Boaventura\'s place?',
+      opts:['It was cancelled.','It is charged at half the member rate.','It covers all four sessions.','It is on the waiting list.'], a:1,
+      why:'要三篇：信說他只到下午，回覆說 the afternoon-only place is charged at half the applicable rate，而適用費率由議程的「四位以上」規則定為會員價。' },
+    { both:true,
+      q:'If Adaeze Nnamdi is replaced on 28 September, what will happen?',
+      opts:['The change will be free.','A 400-dollar fee will apply.','The place will be cancelled.','She will be moved to Hall A.'], a:1,
+      why:'議程說改名截止日是九月二十六日，回覆說截止後每次改名收四百元 —— 日期在一篇、金額在另一篇。' }
+  ]
+},
+
+{
+  id:'d6501', u:'s5u10', title:'徵才啟事、應徵信與面試安排',
+  docs:[
+    { label:'Job posting', title:'Inventory Analyst — Halvard Distribution',
+      text:'Location: Taichung distribution centre\nContract: permanent, full time\n\nThe inventory analyst reports to the planning manager and is responsible for stock accuracy across three warehouses.\n\nEssential:\n  - at least three years in a stock control or planning role\n  - advanced spreadsheet skills, including pivot tables\n  - experience of at least one warehouse management system\n\nDesirable:\n  - a second language, particularly Japanese or Vietnamese\n  - experience of a stock count in a live warehouse\n\nApplications close on 30 April. Candidates who are shortlisted will be asked to complete a two-hour data exercise before any interview; the exercise is sent by email and must be returned within four days.\n\nInterviews will be held during the week of 19 May at the Taichung site. We are unable to reimburse travel for first interviews.',
+      zh:'地點：台中配送中心\n職務性質：正職，全職\n\n庫存分析師向規劃經理呈報，負責三座倉庫的庫存準確度。\n\n必要條件：\n  - 庫存管理或規劃職務三年以上經驗\n  - 進階試算表能力，包含樞紐分析表\n  - 至少一套倉儲管理系統的使用經驗\n\n加分條件：\n  - 第二外語，尤以日文或越南文為佳\n  - 在營運中的倉庫執行過盤點\n\n應徵於四月三十日截止。進入複選的應徵者需先完成兩小時的資料測驗，測驗以電子郵件寄出，須於四天內繳回。\n\n面試將於五月十九日該週於台中廠區舉行。首次面試恕不補助交通費。' },
+    { label:'Email', title:'Application — Inventory Analyst',
+      text:'From: Sithembile Dlamini\nTo: careers@halvard.example\nDate: 27 April\n\nDear Hiring Team,\n\nI am applying for the inventory analyst position advertised on your site.\n\nI have spent four years as a stock controller at a food importer in Kaohsiung, where I ran the weekly cycle counts and rebuilt our reorder points after we changed warehouse systems in 2024. I have used two such systems and am comfortable building pivot tables and lookup formulas.\n\nI have not taken part in a full stock count while a warehouse was operating — our counts were always done on a closed Sunday — but I have planned them.\n\nI should mention that I will be out of the country from 6 to 12 May with limited email access. If anything needs to reach me in that window, my mobile number is below.\n\nI can relocate to Taichung and could start with four weeks\' notice.\n\nSincerely,\nSithembile Dlamini',
+      zh:'寄件者：Sithembile Dlamini\n收件者：careers@halvard.example\n日期：四月二十七日\n\n敬啟者：\n\n我想應徵貴公司網站上刊登的庫存分析師職缺。\n\n我在高雄一家食品進口商擔任庫存管理員四年，負責每週循環盤點，並在二〇二四年更換倉儲系統後重建了再訂購點。我使用過兩套這類系統，也能熟練建立樞紐分析表與查表公式。\n\n我沒有在倉庫營運中參與過完整盤點 —— 我們的盤點一律安排在週日休館日 —— 但我規劃過。\n\n另需說明，五月六日至十二日我人在國外，收信不便。若那段期間有事需要聯繫，我的手機號碼列於下方。\n\n我可以搬到台中，並可在四週通知期後到職。\n\n此致\nSithembile Dlamini' },
+    { label:'Email', title:'Next steps',
+      text:'From: Halvard Distribution, Recruitment\nTo: Sithembile Dlamini\nDate: 2 May\n\nDear Ms. Dlamini,\n\nThank you for your application, which has been shortlisted.\n\nThe data exercise is attached to this message. Please note the standard return window given in the advertisement. If that is difficult, reply today and we will reissue it on 13 May instead.\n\nAssuming the exercise is returned, we would like to see you on Wednesday 21 May at 10:00. The session lasts about ninety minutes and includes a short tour of the warehouse floor, so please wear flat shoes.\n\nYou mentioned relocation. Successful candidates are offered a relocation allowance, but this is confirmed only at offer stage and is not discussed at interview.\n\nRegards,\nMarguerite Achterberg, Recruitment',
+      zh:'寄件者：Halvard Distribution 招募組\n收件者：Sithembile Dlamini\n日期：五月二日\n\n親愛的 Dlamini 女士：\n\n感謝您的應徵，您已進入複選。\n\n資料測驗附於本信。請留意徵才啟事中所載的標準繳回期限。若有困難，請於今日回覆，我們改在五月十三日重新寄出。\n\n若測驗如期繳回，我們希望於五月二十一日星期三上午十點與您見面。面談約九十分鐘，含倉庫現場的簡短參觀，請穿平底鞋。\n\n您提到搬遷。錄取者可獲搬遷津貼，惟此事僅於發出錄取通知階段確認，面試時不予討論。\n\n謹此\n招募組　Marguerite Achterberg' }
+  ],
+  qs:[
+    { q:'What is listed as a desirable rather than essential requirement?',
+      opts:['Three years in stock control','Advanced spreadsheet skills','A second language','Experience of a warehouse system'], a:2,
+      why:'第二外語列在 Desirable 那一段。' },
+    { q:'What does Ms. Dlamini say about her availability in May?',
+      opts:['She can start immediately.','She is abroad from 6 to 12 May.','She cannot travel to Taichung.','She is unavailable all month.'], a:1,
+      why:'I will be out of the country from 6 to 12 May。' },
+    { both:true,
+      q:'Why does the recruiter offer to reissue the exercise on 13 May?',
+      opts:['The exercise is being rewritten.','The four-day window falls while she is away.','Interviews were postponed.','She asked for more time.'], a:1,
+      why:'啟事說測驗四天內繳回，測驗五月二日寄出；信裡說她六到十二日在國外 —— 兩篇相加才看得出時間撞在一起。' },
+    { both:true,
+      q:'Which requirement does Ms. Dlamini NOT fully meet?',
+      opts:['Years of experience','Spreadsheet skills','A stock count in a live warehouse','Use of a warehouse system'], a:2,
+      why:'啟事把 a stock count in a live warehouse 列為加分條件；她信裡明說盤點都在休館日做。' },
+    { both:true,
+      q:'What will Ms. Dlamini most likely have to pay for herself?',
+      opts:['The data exercise','Travel to the 21 May interview','The warehouse tour','Her relocation to Taichung'], a:1,
+      why:'啟事說首次面試不補助交通，第三封信確認面試就是五月二十一日的第一次見面 —— 搬遷津貼則是錄取後才談，不是自付。' }
+  ]
+}
+
+];
+
+</script>
+<script>
+/* ===== data/parse-s5.js ===== */
+/* ==========================================================================
+   parse-s5.js — 長難句拆解（Unit 56、62）
+   id 前綴 b（break down，與 v/g/r/i/p/q/m/c/x/d 互斥）
+
+   Stage 5 的閱讀卡住的地方不是生字，是**主詞和主要動詞被拆開了**。
+   Part 7 的長句常常長成這樣：主詞後面接一串關係子句或分詞，讀到動詞時
+   已經忘了主詞是誰，於是把修飾語裡的動詞當成主要動詞，整句就理解反了。
+
+   所以這一題型只問兩件事：**哪一段是主詞、哪一段是主要動詞**。
+   其餘各段在批改後才標出它們的身分 —— 先讓他自己找骨架，再告訴他那些
+   卡住他的東西各叫什麼名字。
+
+   seg[i] = [這一段的字, 角色]
+     角色 'S' 主詞、'V' 主要動詞、'O' 受詞／補語，
+     其他一律當修飾語，字串本身就是要印出來的中文名字（'關係子句'、'分詞片語'…）。
+     空字串代表連接詞之類沒有名字的零件，批改後不標。
+
+   **各段照原句順序寫，用一個空格接起來就要還原成完整句子**（標點跟著前一段），
+   test-logic.js 會把 seg 接回來跟 full 逐字比對 —— 少一個逗號都會被抓出來。
+
+   core 是抽掉全部修飾語之後剩下的骨架，[英文, 中文]。骨架要能單獨成句：
+   拆解的目的就是「先看懂這一句在講什麼」，骨架讀起來不通順就等於沒拆出來。
+   ========================================================================== */
+window.DATA_PARSE_S5 = [
+
+/* ============================================ U56 長難句拆解法 */
+{
+  id:'b5601', u:'s5u1', title:'主詞後面夾了一段關係子句',
+  seg:[
+    ['The proposal','S'],
+    ['that the consultants submitted last month','關係子句'],
+    ['recommends','V'],
+    ['three changes to the approval process.','O']
+  ],
+  full:'The proposal that the consultants submitted last month recommends three changes to the approval process.',
+  zh:'顧問上個月提出的那份提案，建議對核准流程做三項改變。',
+  core:['The proposal recommends three changes.','那份提案建議三項改變。'],
+  why:'submitted 在關係子句裡，主詞是 the consultants，不是 the proposal。真正的主要動詞是 recommends —— 它前面那個 -s 就是跟單數主詞 The proposal 對上的。'
+},
+{
+  id:'b5602', u:'s5u1', title:'分詞片語插在主詞與動詞之間',
+  seg:[
+    ['All employees','S'],
+    ['working at the Kaohsiung branch,','分詞片語'],
+    ['including part-time staff,','插入語'],
+    ['must complete','V'],
+    ['the safety course before 30 June.','O']
+  ],
+  full:'All employees working at the Kaohsiung branch, including part-time staff, must complete the safety course before 30 June.',
+  zh:'所有在高雄分公司上班的員工，包含兼職人員，都必須在六月三十日前完成安全課程。',
+  core:['All employees must complete the safety course.','所有員工都必須完成安全課程。'],
+  why:'working 沒有主詞也沒有時態，它不可能是主要動詞 —— 只是在說明「哪一群員工」。兩個逗號中間的 including… 整段抽掉句子照樣成立，這是插入語最好認的特徵。'
+},
+{
+  id:'b5603', u:'s5u1', title:'句首一長串介系詞片語',
+  seg:[
+    ['Despite the delay caused by the port closure in February,','介系詞片語'],
+    ['the shipment','S'],
+    ['arrived','V'],
+    ['two days ahead of the revised schedule.','副詞片語']
+  ],
+  full:'Despite the delay caused by the port closure in February, the shipment arrived two days ahead of the revised schedule.',
+  zh:'儘管二月的港口關閉造成延誤，那批貨仍比修訂後的時程提早兩天抵達。',
+  core:['The shipment arrived.','貨到了。'],
+  why:'句首到逗號為止全是背景說明，主詞在逗號之後才出現。caused 是 the delay 的分詞修飾，不是主要動詞 —— 主要動詞是 arrived。'
+},
+{
+  id:'b5604', u:'s5u1', title:'主詞是一個名詞子句',
+  seg:[
+    ['What the survey revealed about customer expectations','S'],
+    ['surprised','V'],
+    ['the entire marketing team.','O']
+  ],
+  full:'What the survey revealed about customer expectations surprised the entire marketing team.',
+  zh:'那份調查揭露的顧客期待，讓整個行銷團隊大吃一驚。',
+  core:['What the survey revealed surprised the team.','調查揭露的事讓團隊很意外。'],
+  why:'What 開頭的一整段就是主詞，裡面自帶一組主詞動詞（the survey revealed）—— 這是最容易誤判的一種，因為 revealed 看起來很像主要動詞。真正的主要動詞是後面那個 surprised。'
+},
+{
+  id:'b5605', u:'s5u1', title:'被動語態把主詞推得很遠',
+  seg:[
+    ['Applications submitted after the posted deadline','S'],
+    ['will not be considered','V'],
+    ['unless a written explanation is attached.','副詞子句']
+  ],
+  full:'Applications submitted after the posted deadline will not be considered unless a written explanation is attached.',
+  zh:'公告期限之後才送出的申請不予受理，除非附上書面說明。',
+  core:['Applications will not be considered.','申請不予受理。'],
+  why:'submitted 是分詞（申請「被」送出），不是主要動詞。主要動詞是 will not be considered —— 助動詞 will 出現的地方才是主要子句的時態所在。'
+},
+{
+  id:'b5606', u:'s5u1', title:'同位語把主詞解釋了一遍',
+  seg:[
+    ['Ms. Okafor,','S'],
+    ['the regional director who joined the company in 2019,','同位語'],
+    ['will oversee','V'],
+    ['the transition to the new supplier.','O']
+  ],
+  full:'Ms. Okafor, the regional director who joined the company in 2019, will oversee the transition to the new supplier.',
+  zh:'2019 年進公司的區域總監 Okafor 女士，將負責監督更換供應商的過程。',
+  core:['Ms. Okafor will oversee the transition.','Okafor 女士將監督這次轉換。'],
+  why:'兩個逗號中間那一整段只是在說「她是誰」，抽掉句子還是完整的。同位語裡面還藏了一個關係子句（who joined…），所以看起來特別長。'
+},
+{
+  id:'b5607', u:'s5u1', title:'兩個對等子句，各有各的骨架',
+  seg:[
+    ['The renovation of the lobby','S'],
+    ['has been completed,','V'],
+    ['but','連接詞'],
+    ['the elevators on the east side remain out of service until Monday.','對等子句']
+  ],
+  full:'The renovation of the lobby has been completed, but the elevators on the east side remain out of service until Monday.',
+  zh:'大廳整修已經完工，但東側的電梯要到星期一才會恢復使用。',
+  core:['The renovation has been completed.','整修已經完工。'],
+  why:'but 前後是兩個對等的完整句子。這一題只問前半的骨架 —— 遇到 and／but／so 就先把它當成句號，一次拆一半，是長難句最省力的讀法。'
+},
+{
+  id:'b5608', u:'s5u1', title:'主詞很短，修飾語全掛在後面',
+  seg:[
+    ['A copy of the signed agreement','S'],
+    ['was forwarded','V'],
+    ['to the legal department','介系詞片語'],
+    ['for review before the funds were released.','介系詞片語']
+  ],
+  full:'A copy of the signed agreement was forwarded to the legal department for review before the funds were released.',
+  zh:'簽署後的合約副本已送交法務部審閱，之後才撥款。',
+  core:['A copy was forwarded to the legal department.','一份副本送交法務部。'],
+  why:'主詞是 A copy，不是 the signed agreement —— of 後面那一段只是在說「什麼的副本」。介系詞後面的名詞永遠不會是主詞，這一條可以省掉很多猶豫。'
+},
+{
+  id:'b5609', u:'s5u1', title:'that 子句當受詞，裡面又有一組主詞動詞',
+  seg:[
+    ['The finance committee','S'],
+    ['announced','V'],
+    ['that the budget for overseas travel would be reduced by fifteen percent.','O']
+  ],
+  full:'The finance committee announced that the budget for overseas travel would be reduced by fifteen percent.',
+  zh:'財務委員會宣布，海外差旅的預算將刪減百分之十五。',
+  core:['The committee announced a reduction.','委員會宣布刪減。'],
+  why:'that 後面整段是 announced 的受詞，裡面的 would be reduced 是子句的動詞。一個句子只有一個主要動詞，其餘的都被某個連接詞管著。'
+},
+{
+  id:'b5610', u:'s5u1', title:'主詞是動名詞',
+  seg:[
+    ['Replacing the aging servers in all three offices','S'],
+    ['will cost','V'],
+    ['more than the department budgeted for this year.','O']
+  ],
+  full:'Replacing the aging servers in all three offices will cost more than the department budgeted for this year.',
+  zh:'把三個辦公室的老舊伺服器全部汰換，花費將超過該部門今年編列的預算。',
+  core:['Replacing the servers will cost more.','汰換伺服器會花更多錢。'],
+  why:'Replacing 是動名詞，整段當主詞用 —— 它不是主要動詞，因為它沒有時態。有 will 的那個才是。'
+},
+
+/* ============================================ U62 倒裝與假設語氣進階 */
+{
+  id:'b6201', u:'s5u7', title:'否定副詞開頭，主詞動詞倒過來',
+  seg:[
+    ['Not until the audit was completed','副詞子句'],
+    ['did','V'],
+    ['the board','S'],
+    ['approve the revised figures.','O']
+  ],
+  full:'Not until the audit was completed did the board approve the revised figures.',
+  zh:'一直到查核完成，董事會才核准修訂後的數字。',
+  core:['The board approved the figures.','董事會核准了那些數字。'],
+  why:'Not until 開頭就要倒裝，助動詞 did 被拉到主詞前面。倒裝之後 approve 變回原形 —— 時態全部由 did 承擔，這是倒裝句唯一會動到的地方。'
+},
+{
+  id:'b6202', u:'s5u7', title:'省略 if 的倒裝',
+  seg:[
+    ['Had the supplier notified us earlier,','副詞子句'],
+    ['we','S'],
+    ['would have arranged','V'],
+    ['an alternative delivery route.','O']
+  ],
+  full:'Had the supplier notified us earlier, we would have arranged an alternative delivery route.',
+  zh:'供應商若早點通知我們，我們就會安排別的送貨路線了。',
+  core:['We would have arranged another route.','我們就會安排別條路線。'],
+  why:'Had 開頭 ＝ If the supplier had notified us。if 被省略之後 had 補到句首，這是書面英文很常見的寫法，看到句首的 Had／Were／Should 就把 if 補回去。'
+},
+{
+  id:'b6203', u:'s5u7', title:'Only 片語開頭的倒裝',
+  seg:[
+    ['Only after three rounds of testing','介系詞片語'],
+    ['was','V'],
+    ['the software','S'],
+    ['released to customers.','被動的過去分詞']
+  ],
+  full:'Only after three rounds of testing was the software released to customers.',
+  zh:'經過三輪測試之後，這套軟體才對外釋出。',
+  core:['The software was released.','軟體釋出了。'],
+  why:'Only ＋ 時間片語開頭要倒裝，be 動詞跑到主詞 the software 前面。released 是被動語態的過去分詞，跟著 was 一起算主要動詞的一部分。'
+},
+{
+  id:'b6204', u:'s5u7', title:'not only 開頭，兩半都要看',
+  seg:[
+    ['Not only','否定副詞'],
+    ['did','V'],
+    ['the new packaging','S'],
+    ['reduce shipping costs,','O'],
+    ['but it also cut the damage rate by half.','對等子句']
+  ],
+  full:'Not only did the new packaging reduce shipping costs, but it also cut the damage rate by half.',
+  zh:'新包裝不只降低了運費，還把破損率砍了一半。',
+  core:['The new packaging reduced shipping costs.','新包裝降低了運費。'],
+  why:'Not only 開頭一樣倒裝出一個 did，後半用 but also 接。前半倒裝、後半不倒裝 —— 只有句首那個否定詞會造成倒裝。'
 }
 
 ];
@@ -11881,7 +13582,13 @@ window.DATA_LEXICON_CORE = [
 {w:'MRT',kk:'ˌɛmɑrˈti',pos:'n.',zh:'捷運',lv:2,tags:[],
  note:'mass rapid transit 的縮寫，台灣與新加坡這樣說；其他地方多說 subway、metro 或 underground。',
  ex:[['I take the MRT to work.','我搭捷運上班。'],
-     ['The office is a five-minute walk from the MRT station.','辦公室離捷運站走路五分鐘。']]}
+     ['The office is a five-minute walk from the MRT station.','辦公室離捷運站走路五分鐘。']]},
+
+{w:'toner',kk:'ˈtonɚ',pos:'n.',zh:'碳粉',lv:3,tags:['biz'],
+ note:'雷射印表機用的碳粉，噴墨用的則是 ink。多益的辦公室對話很愛用 run out of toner 當成「請某人去補貨」的開場。',
+ fam:['tone'],
+ ex:[['The printer needs a new toner cartridge.','印表機該換一支碳粉匣了。'],
+     ['We ran out of toner just before the presentation.','簡報前碳粉剛好用完了。']]}
 
 ];
 
@@ -23361,16 +25068,18 @@ window.DATA_LEXICON_6 = [
   var VOCAB   = cat(global.DATA_VOCAB_S0,
                     global.DATA_VOCAB_S1A, global.DATA_VOCAB_S1B, global.DATA_VOCAB_S1C,
                     global.DATA_VOCAB_S2, global.DATA_VOCAB_S2B, global.DATA_VOCAB_S3,
-                    global.DATA_VOCAB_S4);
+                    global.DATA_VOCAB_S4, global.DATA_VOCAB_S5);
   var GRAMMAR = cat(global.DATA_GRAMMAR_S0, global.DATA_GRAMMAR_S1, global.DATA_GRAMMAR_S2,
-                    global.DATA_GRAMMAR_S3, global.DATA_GRAMMAR_S4);
+                    global.DATA_GRAMMAR_S3, global.DATA_GRAMMAR_S4, global.DATA_GRAMMAR_S5);
   var READING = cat(global.DATA_READING_S0, global.DATA_READING_S1, global.DATA_READING_S2,
-                    global.DATA_READING_S3, global.DATA_READING_S4);
+                    global.DATA_READING_S3, global.DATA_READING_S4, global.DATA_READING_S5);
   var PHOTO   = cat(global.DATA_PHOTO_S2);      // 多益 Part 1：看圖聽描述
   var RESPOND = cat(global.DATA_RESPOND_S2);    // 多益 Part 2：應答問題
-  var CONVO   = cat(global.DATA_CONVO_S3);      // 多益 Part 3／4：長對話與獨白
-  var PART6   = cat(global.DATA_PART6_S4);      // 多益 Part 6：段落填空
-  var PART7   = cat(global.DATA_PART7_S4);      // 多益 Part 7：雙篇閱讀
+  var CONVO   = cat(global.DATA_CONVO_S3, global.DATA_CONVO_S5);   // 多益 Part 3／4：長對話與獨白
+  var PART6   = cat(global.DATA_PART6_S4, global.DATA_PART6_S5);   // 多益 Part 6：段落填空
+  // 雙篇與三篇同一個資料集：Ex.part7 的 docs 本來就是陣列，差別只在畫面排幾欄
+  var PART7   = cat(global.DATA_PART7_S4, global.DATA_PART7_S5);
+  var PARSE   = cat(global.DATA_PARSE_S5);      // 長難句拆解
   var MINPAIR = cat(global.DATA_MINPAIR);          // 最小音對：發音關唯一考得回來的題型
   var PHONICS = global.DATA_PHONICS || {};
   var IRREG   = global.DATA_IRREGULAR || [];
@@ -23379,7 +25088,7 @@ window.DATA_LEXICON_6 = [
   /* ---------- 索引 ---------- */
   var byId = {}, byWord = {}, vocabByUnit = {}, grammarByUnit = {}, readingByUnit = {};
   var photoByUnit = {}, respondByUnit = {}, minPairByUnit = {}, convoByUnit = {};
-  var part6ByUnit = {}, part7ByUnit = {};
+  var part6ByUnit = {}, part7ByUnit = {}, parseByUnit = {};
   var unitById = {}, stageOfUnit = {}, unitOrder = [];
 
   VOCAB.forEach(function (v) {
@@ -23422,6 +25131,10 @@ window.DATA_LEXICON_6 = [
     byId[d.id] = d;
     (part7ByUnit[d.u] = part7ByUnit[d.u] || []).push(d);
   });
+  PARSE.forEach(function (b) {
+    byId[b.id] = b;
+    (parseByUnit[b.u] = parseByUnit[b.u] || []).push(b);
+  });
   // 不規則動詞不綁關卡，但要能用 id 查回來（弱點怪獸需要）
   IRREG.forEach(function (iv) { byId[iv.id] = iv; });
 
@@ -23448,6 +25161,7 @@ window.DATA_LEXICON_6 = [
   function convoOf(uid)  { return convoByUnit[uid] || []; }
   function part6Of(uid)  { return part6ByUnit[uid] || []; }
   function part7Of(uid)  { return part7ByUnit[uid] || []; }
+  function parseOf(uid)  { return parseByUnit[uid] || []; }
   function phonics(key)  { return PHONICS[key] || null; }
   function irregulars()  { return IRREG; }
   function allVocab()    { return VOCAB; }
@@ -23483,6 +25197,7 @@ window.DATA_LEXICON_6 = [
   function respondUpTo(uid) { return upTo(respondByUnit, RESPOND, uid); }
   function part6UpTo(uid)   { return upTo(part6ByUnit, PART6, uid); }
   function part7UpTo(uid)   { return upTo(part7ByUnit, PART7, uid); }
+  function parseUpTo(uid)   { return upTo(parseByUnit, PARSE, uid); }
 
   /* ---------- 關卡順序與解鎖 ---------- */
   function orderedUnitIds() { return unitOrder.slice(); }
@@ -23513,7 +25228,8 @@ window.DATA_LEXICON_6 = [
     if (!st || !st.ready || !u.plan || !u.plan.length) return false;
     // 有任何一種自己的內容就算數：純聽力關卡（Part 1／Part 2）沒有單字也沒有文法，
     // 魔王關則相反 —— 題目全往前借，只有自己的短文。
-    // 九種都要算：Part 6 那一關只有段落填空，雙篇閱讀那一關只有兩份文件。
+    // 十種都要算：Part 6 那一關只有段落填空，雙篇閱讀那一關只有兩份文件，
+    // 而長難句拆解也可能是一關唯一的內容。
     var hasContent = (vocabByUnit[uid] && vocabByUnit[uid].length) ||
                      (grammarByUnit[uid] && grammarByUnit[uid].length) ||
                      (readingByUnit[uid] && readingByUnit[uid].length) ||
@@ -23522,7 +25238,8 @@ window.DATA_LEXICON_6 = [
                      (minPairByUnit[uid] && minPairByUnit[uid].length) ||
                      (convoByUnit[uid] && convoByUnit[uid].length) ||
                      (part6ByUnit[uid] && part6ByUnit[uid].length) ||
-                     (part7ByUnit[uid] && part7ByUnit[uid].length);
+                     (part7ByUnit[uid] && part7ByUnit[uid].length) ||
+                     (parseByUnit[uid] && parseByUnit[uid].length);
     return !!hasContent;
   }
 
@@ -23665,6 +25382,7 @@ window.DATA_LEXICON_6 = [
       convo: CONVO.length,
       part6: PART6.length,
       part7: PART7.length,
+      parse: PARSE.length,
       units: unitOrder.filter(isReady).length,
       unitsAll: unitOrder.length
     };
@@ -23674,10 +25392,11 @@ window.DATA_LEXICON_6 = [
     unit: unit, stageOf: stageOf, stages: stages, rules: rules, item: item,
     vocabOf: vocabOf, grammarOf: grammarOf, readingOf: readingOf,
     photoOf: photoOf, respondOf: respondOf, minPairsOf: minPairsOf, convoOf: convoOf,
-    part6Of: part6Of, part7Of: part7Of,
+    part6Of: part6Of, part7Of: part7Of, parseOf: parseOf,
     vocabUpTo: vocabUpTo, grammarUpTo: grammarUpTo, allVocab: allVocab,
     photoUpTo: photoUpTo, respondUpTo: respondUpTo, minPairsUpTo: minPairsUpTo,
     convoUpTo: convoUpTo, part6UpTo: part6UpTo, part7UpTo: part7UpTo,
+    parseUpTo: parseUpTo,
     phonics: phonics, irregulars: irregulars,
     orderedUnitIds: orderedUnitIds, prevUnitId: prevUnitId, planOf: planOf,
     isReady: isReady, isUnlocked: isUnlocked, currentUnitId: currentUnitId,
@@ -24679,6 +26398,11 @@ window.DATA_LEXICON_6 = [
   /* ---------- 索引 ---------- */
   var byWord = null;     // 小寫字 → entry
   var byForm = null;     // 變化形 → 原形字（原形本身不列入）
+  /* 同一個變化形被兩個字搶走時的第二名。leaves 是 leaf 的複數，也是 leave 的
+     第三人稱；lives、halves、shelves、calves 全是同一回事（-f 名詞的複數剛好
+     等於 -ve 動詞的第三人稱）。兩邊都是對的字，所以不是挑一個丟一個，
+     而是查詢卡上兩筆都列出來，讓使用者自己認。 */
+  var byFormAlt = null;
   var ordered = null;    // 依級數、字母排好的全部 entry
 
   function makeAuto(rec, lv) {
@@ -24719,11 +26443,18 @@ window.DATA_LEXICON_6 = [
   /* 不規則複數推不出來，但它是一個封閉的小集合，寫死就寫死。
      不規則動詞有 data/irregular-verbs.js —— 那是課程要教的內容，有 A／B／C 三型；
      這幾個名詞沒有人要教，純粹是查不查得到的問題，所以放在規則旁邊而不是 data/。
-     刻意不收 life／leaf／shelf 那組 -f→-ves：lives 與 leaves 同時是 live 與 leave
-     的第三人稱，收進來等於跟動詞搶同一個鍵，而動詞天天出現、名詞複數難得一見。 */
+     -f／-fe → -ves 那組也收進來。自動層的 ECDICT 給得出 leaves、knives，
+     但 half、shelf、wife 是課程單字（src 'vocab'，沒有 forms 欄），規則推出來的
+     halfs／shelfs 沒有人會查，真正會被點到的 shelves 反而整個查不到。
+     **只能寫成封閉清單，不能寫成規則**：-f 結尾的字大多是加 s（roof、chief、
+     belief），推成 believes 會跑去跟 believe 的第三人稱擠同一個鍵，
+     然後在卡片上騙人說「believes 也可能是 belief 的複數」。 */
   var IRREGULAR_PLURAL = {
     child: 'children', man: 'men', woman: 'women', person: 'people',
-    tooth: 'teeth', foot: 'feet', goose: 'geese', mouse: 'mice', ox: 'oxen'
+    tooth: 'teeth', foot: 'feet', goose: 'geese', mouse: 'mice', ox: 'oxen',
+    half: 'halves', shelf: 'shelves', wife: 'wives', knife: 'knives',
+    life: 'lives', leaf: 'leaves', wolf: 'wolves', thief: 'thieves',
+    loaf: 'loaves', calf: 'calves', self: 'selves', scarf: 'scarves'
   };
 
   /* 規則變化：手寫層與課程單字都沒有 ECDICT 的 exchange 欄，只能照拼字規則推。
@@ -24767,6 +26498,7 @@ window.DATA_LEXICON_6 = [
   function build() {
     byWord = {};
     byForm = {};
+    byFormAlt = {};
     ordered = [];
 
     function put(e) {
@@ -24847,7 +26579,13 @@ window.DATA_LEXICON_6 = [
     function form(f, base) {
       if (!f) return;
       f = f.toLowerCase();
-      if (byWord[f] || byForm[f]) return;   // 本身就是詞條，或已經有人認領
+      if (byWord[f]) return;                // 本身就是詞條，變化形搶不走
+      if (byForm[f]) {
+        // 已經有人認領：不搶，但把第二個候選記下來（leaves 既是 leaf 也是 leave）。
+        // 只留一個 —— 第三個候選在真實資料裡不存在，留著只會讓卡片變成清單。
+        if (byForm[f] !== base && !byFormAlt[f]) byFormAlt[f] = base;
+        return;
+      }
       byForm[f] = base;
     }
     ordered.forEach(function (e) {
@@ -24935,19 +26673,27 @@ window.DATA_LEXICON_6 = [
 
     var base = byForm[k] || byForm[poss];
     if (base && byWord[base]) {
-      var e = byWord[base], via = '變化形';
-      for (var f in e.forms) {
-        if (Object.prototype.hasOwnProperty.call(e.forms, f) &&
-            String(e.forms[f]).toLowerCase() === k) { via = FORM_LABEL[f] || via; break; }
+      var altBase = byFormAlt[k] || byFormAlt[poss];
+      var hit = { entry: byWord[base], via: viaOf(byWord[base], k) };
+      // 第二個候選也是一個對的答案，不是備胎 —— 卡片上要看得到，而且點得過去
+      if (altBase && byWord[altBase]) {
+        hit.alt = { w: byWord[altBase].w, via: viaOf(byWord[altBase], k) };
       }
-      if (via === '變化形') {
-        if (/ing$/.test(k)) via = '現在分詞';
-        else if (/ied$|ed$/.test(k)) via = '過去式／過去分詞';
-        else if (/ies$|es$|s$/.test(k)) via = '複數／第三人稱';
-      }
-      return { entry: e, via: via };
+      return hit;
     }
     return null;
+  }
+
+  /** 「你點的這個字是它的哪一種變化」。資料有寫就用資料的，沒寫才看字尾猜。 */
+  function viaOf(e, k) {
+    for (var f in e.forms) {
+      if (Object.prototype.hasOwnProperty.call(e.forms, f) &&
+          String(e.forms[f]).toLowerCase() === k) return FORM_LABEL[f] || '變化形';
+    }
+    if (/ing$/.test(k)) return '現在分詞';
+    if (/ied$|ed$/.test(k)) return '過去式／過去分詞';
+    if (/ies$|es$|s$/.test(k)) return '複數／第三人稱';
+    return '變化形';
   }
 
   function item(id) {
@@ -25124,6 +26870,10 @@ window.DATA_LEXICON_6 = [
       '</div>' +
       (hit.via ? '<div class="lexvia">你點的是 <b>' + esc(hit.word || '') + '</b>　' +
         esc(e.w) + ' 的' + esc(hit.via) + '</div>' : '') +
+      // 同一個變化形被兩個字共用時（leaves ＝ leaf 的複數，也是 leave 的第三人稱），
+      // 兩筆都列出來。挑一邊顯示的話，另一邊那個意思在這個 App 裡就永遠查不到。
+      (hit.alt ? '<div class="lexvia alt">也可能是 ' + wordChip(hit.alt.w) +
+        ' 的' + esc(hit.alt.via) + '</div>' : '') +
       '<div class="lexzh"><span class="word-pos">' + esc(e.pos || '') + '</span>' + esc(e.zh) + '</div>' +
       (tagHtml ? '<div class="lextags">' + tagHtml + '</div>' : '') +
       extendHTML(e) +
@@ -25546,6 +27296,17 @@ window.DATA_LEXICON_6 = [
       });
     }
 
+    /* --- 9.6 長難句拆解：夾在一般題目之間，不進收尾 --- */
+    // 一句話拆完只要半分鐘，和閱讀那幾種不同重量，放進 body 交錯出現比較不悶。
+    // 魔王關自己沒有句子，往前把學過的都借過來。
+    if (plan.parse) {
+      var bs = Content.parseOf(unitId);
+      if (!bs.length) bs = Content.parseUpTo(unitId);
+      SAMPLE(bs, plan.parse).forEach(function (b) {
+        body.push({ type: 'parse', ref: b, unitId: unitId });
+      });
+    }
+
     /* --- 9.7 多益 Part 6／Part 7：和閱讀一樣重，一律放到收尾 --- */
     // Part 6 一篇要填四格、Part 7 雙篇要讀兩份文件再答五題，
     // 夾在單字題中間會把節奏切斷，所以跟閱讀與 Part 3／4 一起排在最後。
@@ -25754,9 +27515,15 @@ window.DATA_LEXICON_6 = [
       return { type: 'part6', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
-    // Part 7 雙篇同理：兩份文件一起重讀，五小題全對才算消滅
+    // Part 7 雙篇／三篇同理：所有文件一起重讀，五小題全對才算消滅
     if (w.t === 'part7') {
       return { type: 'part7', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
+    // 長難句記的是整句。同一句再拆一次是對的 —— 拆錯的人記得的是「這句我拆錯過」，
+    // 換一句只會變成再猜一次，看不出他到底學會了沒有。
+    if (w.t === 'parse') {
+      return { type: 'parse', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
     return null;
@@ -28243,13 +30010,16 @@ window.DATA_LEXICON_6 = [
 <script>
 /* ===== js/exercises/part7.js ===== */
 /* ==========================================================================
-   exercises/part7.js — 多益 Part 7：雙篇閱讀
-     Ex.part7   兩份文件配五題，其中至少一題要兩篇合起來看
+   exercises/part7.js — 多益 Part 7：雙篇與三篇閱讀
+     Ex.part7   兩到三份文件配五題，其中至少一題要跨篇合起來看
 
    這一題型唯一的訓練目標是**跨篇對照**：規則寫在公告裡，這個人的情況寫在
-   信裡，兩邊各有一半答案。所以畫面上**兩份文件一定要同時看得見** ——
+   信裡，兩邊各有一半答案。所以畫面上**所有文件一定要同時看得見** ——
    做成分頁或一次顯示一篇，練到的就只剩單篇閱讀，這一關等於不存在。
    寬畫面並排、窄畫面上下疊，但都不折疊、不隱藏。
+
+   三篇（Stage 5）走的是同一支程式：docs 本來就是陣列，多的那一份自己會排進去，
+   只有寬螢幕的欄數與說明文字要跟著 docs.length 換。
 
    需要跨篇的題目掛 both:true，畫面上標一個「跨篇」的記號。標出來不是提示，
    是告訴他「找不到答案是正常的，因為你只看了一篇」—— 真實測驗不標，
@@ -28285,16 +30055,21 @@ window.DATA_LEXICON_6 = [
       var wordCount = docs.reduce(function (n, d) {
         return n + String(d.text || '').split(/\s+/).filter(Boolean).length;
       }, 0);
+      // 多益的 Part 7 有雙篇也有三篇，資料的 docs 本來就是陣列 ——
+      // 差別只在畫面要排幾欄，以及題目說明講「兩份」還是「三份」。
+      var many = docs.length >= 3;
+      var kind = many ? '三篇' : '雙篇';
 
-      ExUtil.prompt(host, '讀完兩份文件，回答下面的問題',
-        'Part 7 雙篇：標著「跨篇」的題目，答案要兩份合起來才找得到');
+      ExUtil.prompt(host, '讀完' + (many ? '三' : '兩') + '份文件，回答下面的問題',
+        'Part 7 ' + kind + '：標著「跨篇」的題目，答案要' +
+        (many ? '不只一份' : '兩份') + '合起來才找得到');
 
       host.insertAdjacentHTML('beforeend',
         '<div class="row-between">' +
-          '<div class="tag blue">雙篇 ・ ' + wordCount + ' 字</div>' +
+          '<div class="tag blue">' + kind + ' ・ ' + wordCount + ' 字</div>' +
           '<div class="readtimer" id="p7timer">00:00</div>' +
         '</div>' +
-        '<div class="p7docs mt8">' + docs.map(docHTML).join('') + '</div>' +
+        '<div class="p7docs' + (many ? ' n3' : '') + ' mt8">' + docs.map(docHTML).join('') + '</div>' +
         '<div class="row" style="gap:8px">' +
           '<span class="small muted">點文件裡任何一個字可以查意思</span>' +
         '</div>' +
@@ -28380,6 +30155,176 @@ window.DATA_LEXICON_6 = [
               : '')
         });
       });
+    }
+  };
+})(window);
+
+</script>
+<script>
+/* ===== js/exercises/parse.js ===== */
+/* ==========================================================================
+   exercises/parse.js — 長難句拆解
+     Ex.parse   把一個長句切成幾段，點出「主詞」與「主要動詞」
+
+   Stage 5 的閱讀不是敗在生字。Part 7 的長句常常把主詞和主要動詞拆得很開，
+   中間塞一串關係子句或分詞，讀到動詞時已經忘了主詞是誰 —— 於是把修飾語裡
+   那個動詞當成主要動詞，整句就理解反了。
+
+   所以這一題只問兩件事：**哪一段是主詞、哪一段是主要動詞**。其餘各段的身分
+   （關係子句、同位語、分詞片語…）批改後才標出來 —— 先讓他自己找骨架，
+   再告訴他剛剛卡住他的那幾段各叫什麼名字。
+
+   **句子本身不包 markup()**：整句都是可點的字塊，再讓每個字也能點開查，
+   兩層點擊會打架。查字的機會留在批改後的骨架與解析那一段。
+
+   兩個空格（主詞／主要動詞）刻意做成可以回頭改的：拆句本來就是猜一次、
+   看看讀不讀得通、再改一次的過程，鎖死第一個選擇等於在考反應而不是理解。
+   ========================================================================== */
+(function (global) {
+  'use strict';
+
+  var esc = UI.esc;
+
+  /* 角色代號 → 畫面上的名字。其餘角色字串本身就是名字（資料直接寫中文）。 */
+  var ROLE = { S: '主詞', V: '主要動詞', O: '受詞／補語' };
+  var SLOTS = [
+    { key: 'S', name: '主詞',     hint: '這句在講「誰／什麼」' },
+    { key: 'V', name: '主要動詞', hint: '有時態的那一個，不在任何子句裡' }
+  ];
+
+  function roleName(r) { return ROLE[r] || r || ''; }
+
+  Ex.parse = {
+    scored: true,
+    render: function (q, host, api) {
+      var a = q.ref;
+      var seg = a.seg || [];
+      var answer = { S: -1, V: -1 };
+      seg.forEach(function (s, i) {
+        if (s[1] === 'S' && answer.S < 0) answer.S = i;
+        if (s[1] === 'V' && answer.V < 0) answer.V = i;
+      });
+
+      ExUtil.prompt(host, '先點出主詞，再點出主要動詞',
+        a.title ? esc(a.title) : '整句先不用看懂，找到骨架就會通了');
+      ExUtil.scaffold(host, q.scaffold);
+
+      host.insertAdjacentHTML('beforeend',
+        '<div class="parse-slots">' +
+          SLOTS.map(function (s, i) {
+            return '<button class="parse-slot" type="button" data-slot="' + i + '">' +
+              '<span class="parse-slot-lab">' + s.name + '</span>' +
+              '<span class="parse-slot-val muted">點下面的句段</span>' +
+            '</button>';
+          }).join('') +
+        '</div>' +
+        '<div class="parse-hint muted small" id="parse-hint">' + esc(SLOTS[0].hint) + '</div>' +
+        '<div class="parse-sent" id="parse-sent">' +
+          seg.map(function (s, i) {
+            return '<button class="seg" type="button" data-seg="' + i + '">' + esc(s[0]) + '</button>';
+          }).join(' ') +
+        '</div>');
+
+      var slotEls = UI.$$('.parse-slot', host);
+      var segEls = UI.$$('.seg', host);
+      var hintEl = UI.$('#parse-hint', host);
+      var picks = { S: -1, V: -1 };
+      var active = 0;
+      var locked = false;
+
+      function paint() {
+        slotEls.forEach(function (el, i) {
+          var key = SLOTS[i].key;
+          el.classList.toggle('on', !locked && i === active);
+          var val = el.querySelector('.parse-slot-val');
+          if (picks[key] >= 0) {
+            val.textContent = seg[picks[key]][0];
+            val.classList.remove('muted');
+          } else {
+            val.textContent = '點下面的句段';
+            val.classList.add('muted');
+          }
+        });
+        segEls.forEach(function (el, i) {
+          el.classList.toggle('sel-s', picks.S === i);
+          el.classList.toggle('sel-v', picks.V === i);
+        });
+        if (!locked) hintEl.textContent = SLOTS[active].hint;
+      }
+
+      slotEls.forEach(function (el, i) {
+        el.addEventListener('click', function () {
+          if (locked) return;
+          active = i;
+          Sfx.play('click');
+          paint();
+        });
+      });
+
+      segEls.forEach(function (el, i) {
+        el.addEventListener('click', function () {
+          if (locked) return;
+          var key = SLOTS[active].key;
+          var other = SLOTS[1 - active].key;
+          // 同一段不能既是主詞又是主要動詞：改點到對方那一格上就把對方清掉，
+          // 否則兩格顯示同一段，使用者會以為自己兩題都答了
+          if (picks[other] === i) picks[other] = -1;
+          picks[key] = i;
+          Sfx.play('click');
+          // 剛填好主詞就自動跳到主要動詞那一格，少一次點擊
+          if (active === 0 && picks.V < 0) active = 1;
+          paint();
+          api.enableCheck(picks.S >= 0 && picks.V >= 0);
+        });
+      });
+
+      paint();
+      api.enableCheck(false);
+
+      api.ready(function () {
+        locked = true;
+        var okS = picks.S === answer.S;
+        var okV = picks.V === answer.V;
+        var ok = okS && okV;
+
+        segEls.forEach(function (el, i) {
+          el.classList.add('seg-locked');
+          el.classList.remove('sel-s', 'sel-v');
+          var role = seg[i][1];
+          if (i === answer.S || i === answer.V) el.classList.add('seg-core');
+          if ((i === picks.S && !okS) || (i === picks.V && !okV)) el.classList.add('seg-bad');
+          if (role) {
+            el.insertAdjacentHTML('beforeend',
+              '<span class="seg-lab">' + esc(roleName(role)) + '</span>');
+          }
+        });
+        slotEls.forEach(function (el, i) {
+          el.classList.remove('on');
+          el.classList.add(SLOTS[i].key === 'S' ? (okS ? 'ok' : 'bad') : (okV ? 'ok' : 'bad'));
+        });
+
+        // 型別寫成字面值：scheduler.weakQuestion 的對映檢查是掃字串跑的
+        if (ok) SRS.clearWeak('parse', a.id);
+        else SRS.addWeak('parse', a.id, q.unitId || a.u);
+
+        api.result(ok, {
+          title: ok ? '骨架抓對了！' : (okS ? '主詞對了，主要動詞不是那一段' :
+                       okV ? '主要動詞對了，主詞不是那一段' : '再看一次：誰做了什麼'),
+          detail:
+            '<div class="parse-core">' +
+              '<div class="small muted">抽掉修飾語之後</div>' +
+              '<div class="sentence-en">' + Lexicon.markup(a.core[0]) + '</div>' +
+              '<div class="sentence-zh">' + esc(a.core[1]) + '</div>' +
+            '</div>' +
+            (a.why ? '<div class="check-detail mt8">' + esc(a.why) + '</div>' : '') +
+            '<details class="mt8"><summary class="bold" style="cursor:pointer">看整句翻譯</summary>' +
+              '<div class="sentence-en mt8">' + Lexicon.markup(a.full) + '</div>' +
+              '<div class="sentence-zh">' + esc(a.zh || '') + '</div>' +
+            '</details>'
+        });
+      });
+
+      api.onCleanup(function () { Lexicon.close(); });
     }
   };
 })(window);
@@ -29304,7 +31249,8 @@ window.DATA_LEXICON_6 = [
   var WEAK_LABEL = {
     vocab: '單字', grammar: '文法', reading: '閱讀', irregular: '動詞三態',
     photo: 'Part 1 看圖', respond: 'Part 2 應答', phoneme: '最小音對',
-    convo: 'Part 3／4 對話', part6: 'Part 6 填空', part7: 'Part 7 雙篇'
+    convo: 'Part 3／4 對話', part6: 'Part 6 填空', part7: 'Part 7 多篇閱讀',
+    parse: '長難句拆解'
   };
 
   var tab = 'due';
@@ -29414,7 +31360,7 @@ window.DATA_LEXICON_6 = [
         ? (it.v ? it.v + ' → ' + it.p + ' → ' + it.pp
                 : (it.zh || (it.title ? '閱讀理解' : '文法題')))
         : '';
-      // 八種怪獸都要有中文名字 —— 對不到的話畫面上會直接印出 part6 這種內部代號
+      // 每一種怪獸都要有中文名字 —— 對不到的話畫面上會直接印出 part6 這種內部代號
       var typeTag = WEAK_LABEL[w.t] || w.t;
       return '<div class="list-row">' +
         (word ? Speech.btn(word) : '<span style="font-size:1.4rem">👾</span>') +

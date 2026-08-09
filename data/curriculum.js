@@ -336,21 +336,61 @@ window.DATA_CURRICULUM = {
   },
   {
     id: 's5', n: 5, name: '高分衝刺', icon: '🔥', color: 'red',
-    sub: '長難句・干擾選項・全真模考',
+    sub: '長難句・倒裝・干擾選項・全真模考',
     level: '約 TOEIC 880–950',
     desc: '這裡開始練的不是「懂不懂」，而是「快不快、穩不穩」。長難句拆解、辨識出題者設的陷阱、完整模考節奏。',
-    ready: false,
+    ready: true,
     units: [
-      { id:'s5u1', n:56, title:'長難句拆解法', icon:'🪚' },
-      { id:'s5u2', n:57, title:'Part 7 三篇閱讀', icon:'📚' },
-      { id:'s5u3', n:58, title:'干擾選項的五種套路', icon:'🎭' },
-      { id:'s5u4', n:59, title:'聽力預讀技巧', icon:'👀' },
-      { id:'s5u5', n:60, title:'全真模考 ①', icon:'🧪', boss:true },
-      { id:'s5u6', n:61, title:'低頻高階字彙', icon:'💠' },
-      { id:'s5u7', n:62, title:'口音適應：英/澳/加', icon:'🌏' },
-      { id:'s5u8', n:63, title:'推論題專攻', icon:'🧠' },
-      { id:'s5u9', n:64, title:'全真模考 ②', icon:'🧪' },
-      { id:'s5u10', n:65, title:'Stage 5 魔王測驗', icon:'👑', boss:true }
+      { id:'s5u1', n:56, title:'長難句拆解法', icon:'🪚',
+        goal:'一個句子只有一個主要動詞 —— 找到它，三十個字的句子就縮成五個字',
+        plan:[['intro',1],['flashcard',10],['parse',4],['recall',6],['listen',4],
+              ['grammar',8],['cloze',4],['build',3],['read',1]] },
+
+      { id:'s5u2', n:57, title:'Part 7 三篇閱讀', icon:'📚',
+        goal:'三份文件配五題 —— 線索被拆成三段，有一題要對到第三份才湊得出答案',
+        plan:[['part7',1],['recall',6],['cloze',3],['listen',3],['grammar',3]] },
+
+      { id:'s5u3', n:58, title:'干擾選項的五種套路', icon:'🎭',
+        goal:'錯的選項只有五種錯法 —— 認得出來，四選一就變成二選一',
+        plan:[['intro',1],['flashcard',10],['recall',7],['listen',4],['grammar',8],
+              ['cloze',3],['build',3],['read',1]] },
+
+      { id:'s5u4', n:59, title:'聽力預讀技巧', icon:'👀',
+        /* 這一關沒有自己的單字，所以配方不寫 flashcard —— 練的是聽之前那幾秒
+           要做什麼，不是再背十個字。 */
+        goal:'題目印在題本上，音檔開始前先讀完 —— 知道要找什麼才聽得出哪一句是答案',
+        plan:[['intro',1],['convo',2],['recall',6],['listen',4],['dictate',3],
+              ['grammar',5],['cloze',3]] },
+
+      { id:'s5u5', n:60, title:'全真模考 ①', icon:'🧪', boss:true,
+        goal:'Part 1 到 Part 7 全部混在一起跑一次，看自己在哪一段掉下來',
+        plan:[['photo',2],['respond',3],['convo',1],['part6',1],['part7',1],
+              ['grammar',5],['cloze',4],['recall',6],['listen',3],['read',1]] },
+
+      { id:'s5u6', n:61, title:'低頻高階字彙', icon:'💠',
+        goal:'詞頻排到一萬名外，但多益的商務語境天天用的那一批字',
+        plan:[['flashcard',14],['recall',9],['spell',4],['listen',5],['cloze',4],
+              ['build',3],['read',1]] },
+
+      { id:'s5u7', n:62, title:'倒裝與假設語氣進階', icon:'🔄',
+        goal:'句首放了否定副詞就要倒裝；if 可以省略，代價是把 had／were／should 提到最前面',
+        plan:[['intro',1],['flashcard',8],['parse',3],['recall',6],['listen',4],
+              ['grammar',8],['cloze',4],['build',3],['read',1]] },
+
+      { id:'s5u8', n:63, title:'推論題專攻', icon:'🧠',
+        goal:'問「可以推論出什麼」時答案不會照抄原文，但一定站在文章某一句話上',
+        plan:[['intro',1],['flashcard',10],['recall',7],['listen',4],['grammar',6],
+              ['cloze',3],['build',3],['read',2]] },
+
+      { id:'s5u9', n:64, title:'全真模考 ②', icon:'🧪',
+        goal:'第二次全科混考，這次加上聽寫 —— 聽得懂和寫得出來是兩件事',
+        plan:[['photo',2],['respond',3],['convo',1],['part6',1],['part7',1],
+              ['grammar',6],['cloze',5],['recall',8],['listen',4],['dictate',3],['read',1]] },
+
+      { id:'s5u10', n:65, title:'Stage 5 魔王測驗', icon:'👑', boss:true,
+        goal:'長難句、倒裝、假設語氣進階、干擾選項、推論題，加上 Part 6 與三篇閱讀全部混合',
+        plan:[['parse',3],['part6',1],['part7',1],['convo',1],['grammar',10],['cloze',6],
+              ['build',4],['listen',5],['dictate',4],['recall',10],['read',1]] }
     ]
   },
   {

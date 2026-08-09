@@ -4049,6 +4049,12 @@ window.DATA_LEXICON_CORE = [
 {w:'MRT',kk:'ˌɛmɑrˈti',pos:'n.',zh:'捷運',lv:2,tags:[],
  note:'mass rapid transit 的縮寫，台灣與新加坡這樣說；其他地方多說 subway、metro 或 underground。',
  ex:[['I take the MRT to work.','我搭捷運上班。'],
-     ['The office is a five-minute walk from the MRT station.','辦公室離捷運站走路五分鐘。']]}
+     ['The office is a five-minute walk from the MRT station.','辦公室離捷運站走路五分鐘。']]},
+
+{w:'toner',kk:'ˈtonɚ',pos:'n.',zh:'碳粉',lv:3,tags:['biz'],
+ note:'雷射印表機用的碳粉，噴墨用的則是 ink。多益的辦公室對話很愛用 run out of toner 當成「請某人去補貨」的開場。',
+ fam:['tone'],
+ ex:[['The printer needs a new toner cartridge.','印表機該換一支碳粉匣了。'],
+     ['We ran out of toner just before the presentation.','簡報前碳粉剛好用完了。']]}
 
 ];

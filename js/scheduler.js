@@ -302,6 +302,17 @@
       });
     }
 
+    /* --- 9.6 長難句拆解：夾在一般題目之間，不進收尾 --- */
+    // 一句話拆完只要半分鐘，和閱讀那幾種不同重量，放進 body 交錯出現比較不悶。
+    // 魔王關自己沒有句子，往前把學過的都借過來。
+    if (plan.parse) {
+      var bs = Content.parseOf(unitId);
+      if (!bs.length) bs = Content.parseUpTo(unitId);
+      SAMPLE(bs, plan.parse).forEach(function (b) {
+        body.push({ type: 'parse', ref: b, unitId: unitId });
+      });
+    }
+
     /* --- 9.7 多益 Part 6／Part 7：和閱讀一樣重，一律放到收尾 --- */
     // Part 6 一篇要填四格、Part 7 雙篇要讀兩份文件再答五題，
     // 夾在單字題中間會把節奏切斷，所以跟閱讀與 Part 3／4 一起排在最後。
@@ -510,9 +521,15 @@
       return { type: 'part6', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
-    // Part 7 雙篇同理：兩份文件一起重讀，五小題全對才算消滅
+    // Part 7 雙篇／三篇同理：所有文件一起重讀，五小題全對才算消滅
     if (w.t === 'part7') {
       return { type: 'part7', ref: it, unitId: w.u || it.u, weak: w.k };
+    }
+
+    // 長難句記的是整句。同一句再拆一次是對的 —— 拆錯的人記得的是「這句我拆錯過」，
+    // 換一句只會變成再猜一次，看不出他到底學會了沒有。
+    if (w.t === 'parse') {
+      return { type: 'parse', ref: it, unitId: w.u || it.u, weak: w.k };
     }
 
     return null;

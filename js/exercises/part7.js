@@ -1,11 +1,14 @@
 /* ==========================================================================
-   exercises/part7.js — 多益 Part 7：雙篇閱讀
-     Ex.part7   兩份文件配五題，其中至少一題要兩篇合起來看
+   exercises/part7.js — 多益 Part 7：雙篇與三篇閱讀
+     Ex.part7   兩到三份文件配五題，其中至少一題要跨篇合起來看
 
    這一題型唯一的訓練目標是**跨篇對照**：規則寫在公告裡，這個人的情況寫在
-   信裡，兩邊各有一半答案。所以畫面上**兩份文件一定要同時看得見** ——
+   信裡，兩邊各有一半答案。所以畫面上**所有文件一定要同時看得見** ——
    做成分頁或一次顯示一篇，練到的就只剩單篇閱讀，這一關等於不存在。
    寬畫面並排、窄畫面上下疊，但都不折疊、不隱藏。
+
+   三篇（Stage 5）走的是同一支程式：docs 本來就是陣列，多的那一份自己會排進去，
+   只有寬螢幕的欄數與說明文字要跟著 docs.length 換。
 
    需要跨篇的題目掛 both:true，畫面上標一個「跨篇」的記號。標出來不是提示，
    是告訴他「找不到答案是正常的，因為你只看了一篇」—— 真實測驗不標，
@@ -41,16 +44,21 @@
       var wordCount = docs.reduce(function (n, d) {
         return n + String(d.text || '').split(/\s+/).filter(Boolean).length;
       }, 0);
+      // 多益的 Part 7 有雙篇也有三篇，資料的 docs 本來就是陣列 ——
+      // 差別只在畫面要排幾欄，以及題目說明講「兩份」還是「三份」。
+      var many = docs.length >= 3;
+      var kind = many ? '三篇' : '雙篇';
 
-      ExUtil.prompt(host, '讀完兩份文件，回答下面的問題',
-        'Part 7 雙篇：標著「跨篇」的題目，答案要兩份合起來才找得到');
+      ExUtil.prompt(host, '讀完' + (many ? '三' : '兩') + '份文件，回答下面的問題',
+        'Part 7 ' + kind + '：標著「跨篇」的題目，答案要' +
+        (many ? '不只一份' : '兩份') + '合起來才找得到');
 
       host.insertAdjacentHTML('beforeend',
         '<div class="row-between">' +
-          '<div class="tag blue">雙篇 ・ ' + wordCount + ' 字</div>' +
+          '<div class="tag blue">' + kind + ' ・ ' + wordCount + ' 字</div>' +
           '<div class="readtimer" id="p7timer">00:00</div>' +
         '</div>' +
-        '<div class="p7docs mt8">' + docs.map(docHTML).join('') + '</div>' +
+        '<div class="p7docs' + (many ? ' n3' : '') + ' mt8">' + docs.map(docHTML).join('') + '</div>' +
         '<div class="row" style="gap:8px">' +
           '<span class="small muted">點文件裡任何一個字可以查意思</span>' +
         '</div>' +

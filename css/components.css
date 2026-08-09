@@ -396,6 +396,12 @@ body.in-lesson { padding-bottom: 0; }
   margin-top: 8px; padding: 6px 10px; border-radius: 8px;
   background: var(--blue-soft); color: var(--blue-dark); font-size: .8rem; font-weight: 700;
 }
+/* 第二個候選（leaves 也可能是 leave）。刻意不用同一個藍底 ——
+   上面那行講的是「你現在看的是誰」，這行是「還有另一個答案」，兩件事。 */
+.lexvia.alt {
+  margin-top: 4px; background: var(--bg-alt); color: var(--text-soft);
+  display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+}
 .lexzh { margin-top: 8px; font-weight: 700; }
 .lextags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
 .lextag {
@@ -710,4 +716,54 @@ html[data-theme="dark"] .tag.gold { background: #3a3115; }
   display: inline-block; padding: 1px 8px; border-radius: 999px;
   background: var(--blue-soft); color: var(--blue-dark);
   font-size: .7rem; font-weight: 800; vertical-align: middle;
+}
+
+/* 三篇閱讀（Part 7 triple）。並排的規則跟雙篇一樣 —— 三份文件要同時看得見，
+   否則練到的只剩單篇。窄畫面在 responsive.css 裡改回一欄。 */
+.p7docs.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* ============ 長難句拆解 ============ */
+/* 句子本身就是作答介面：每一段都是一顆可點的鈕，點下去填進上面那兩個空格。
+   段與段之間只留一個字距，看起來仍要像一個句子 —— 切太開就看不出它原本很長。 */
+.parse-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 6px; }
+.parse-slot {
+  display: flex; flex-direction: column; gap: 2px; align-items: flex-start;
+  padding: 8px 12px; border: 2px dashed var(--border); border-radius: var(--radius);
+  background: var(--surface); text-align: left; min-width: 0;
+}
+.parse-slot.on { border-style: solid; border-color: var(--blue); background: var(--blue-soft); }
+.parse-slot.ok  { border-style: solid; border-color: var(--green-dark); background: var(--green-soft); }
+.parse-slot.bad { border-style: solid; border-color: var(--red-dark);   background: var(--red-soft); }
+.parse-slot-lab { font-size: .72rem; font-weight: 800; opacity: .75; }
+.parse-slot-val {
+  font-family: var(--font-en); font-weight: 700; font-size: .95rem;
+  overflow-wrap: break-word; max-width: 100%;
+}
+.parse-hint { margin-bottom: 10px; }
+
+.parse-sent {
+  font-family: var(--font-en); font-size: 1.05rem; line-height: 2.2;
+  overflow-wrap: break-word;
+}
+.seg {
+  display: inline; padding: 3px 5px; margin: 0 1px; border: 0;
+  border-bottom: 2px solid var(--border); border-radius: 5px;
+  background: transparent; font: inherit; color: inherit; cursor: pointer;
+}
+.seg:hover { background: var(--bg-alt); }
+.seg.sel-s { background: var(--blue-soft);   border-bottom-color: var(--blue); }
+.seg.sel-v { background: var(--purple-soft); border-bottom-color: var(--purple); }
+.seg-locked { cursor: default; }
+.seg-locked:hover { background: transparent; }
+.seg-core { background: var(--green-soft); border-bottom-color: var(--green-dark); }
+.seg-bad  { background: var(--red-soft);   border-bottom-color: var(--red-dark); }
+/* 批改後每一段掛上它的身分。用上標而不是另起一行：句子要維持原本的樣子，
+   標籤跳出來擠成一整段的話，就看不出哪個標籤在說哪一段了。 */
+.seg-lab {
+  font-family: var(--font); font-size: .62rem; font-weight: 800;
+  vertical-align: super; margin-left: 3px; opacity: .8; white-space: nowrap;
+}
+.parse-core {
+  background: var(--green-soft); border-radius: var(--radius);
+  padding: 10px 12px; margin-bottom: 4px;
 }
