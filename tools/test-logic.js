@@ -874,6 +874,20 @@ lexAll.forEach(function (e) {
 ok(lexBad.length === 0, '每筆都有英文與中文，欄位沒有錯位' +
    (lexBad.length ? '：' + lexBad.slice(0, 5).join('、') : ''));
 
+/* 詞庫特訓答錯時，存進弱點怪獸的是這一筆的 id。手寫層的資料裡沒有 id 欄
+   （課程單字才有 v0001 這種），adopt() 忘了補的話存進去的是 undefined ——
+   那隻怪獸從此出不了題也消不掉，而且畫面上完全看不出來。
+   自動層在 makeAuto() 就配好了，所以只有手寫層會踩到，
+   而測試又只從 byLevel() 抽前幾個，抽到自動層那筆就會假綠 —— 這裡直接掃全部。 */
+var noId = lexAll.filter(function (e) { return !e.id; });
+ok(noId.length === 0, '詞庫每一筆都有 id（弱點怪獸靠它才消得掉）' +
+   (noId.length ? '，還缺 ' + noId.length + '：' + noId.slice(0, 5).map(function (e) {
+     return e.w + '（' + e.src + '）';
+   }).join('、') : ''));
+var coreId = Lexicon.lookup('surveyor');
+ok(coreId && Lexicon.item(coreId.entry.id) === coreId.entry,
+   '手寫層的字用自己的 id 查得回同一筆（surveyor → ' + (coreId ? coreId.entry.id : '?') + '）');
+
 var lexDup = {}, dupWord = [];
 lexAll.forEach(function (e) {
   var k = e.w.toLowerCase();
