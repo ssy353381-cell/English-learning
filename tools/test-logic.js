@@ -1000,9 +1000,13 @@ ok(bizDry.length === 0, '商務標籤的字都給得出例句（' + Lexicon.byTa
 
 /* 補完一級就在這裡釘一級。第 1 級是詞頻最高的那一批（interest、case、power 這種
    一字多義的字沒有例句，詞義欄裡並排的三四個意思就分不出哪個常用在哪裡）；
-   第 2 級是「看得懂、講不出來」的那一層；第 3 級再往外一圈，多半連看都不一定看得懂。
-   補完的級數只會往下加，不會往回退。 */
-[1, 2, 3].forEach(function (lv) {
+   第 2 級是「看得懂、講不出來」的那一層；第 3 級再往外一圈，多半連看都不一定看得懂；
+   第 4 級的字綁在特定領域上（醫療、法律、軍事、學科名），一篇文章裡卡住一個就讀不下去；
+   第 5 級再往外一圈，連那個領域的人也不是天天用；第 6 級是最雜的一級，
+   除了冷僻詞還混著縮寫、人名地名與根本不該當普通名詞教的東西 —— 它們照樣查得到，
+   所以照樣要寫，只是 note 得先講明它是什麼。
+   六級全部補完，這份清單不會再長了。 */
+[1, 2, 3, 4, 5, 6].forEach(function (lv) {
   var dry = [];
   Lexicon.byLevel(lv).forEach(function (e) {
     var has = (e.ex || []).some(function (p) { return p && p[0]; }) || e.use;
@@ -1157,6 +1161,17 @@ var deadReal = Object.keys(deadClicks).filter(function (w) {
 });
 ok(deadReal.length === 0, '手寫例句裡的一般字沒有一個點開是空的' +
    (deadReal.length ? '，還缺 ' + deadReal.length + '：' + deadReal.slice(0, 10).join('、') : ''));
+
+/* 「同家族」那一排是按鈕，點下去就查那個字 —— 和例句裡的可點字是同一件事，
+   只是它不經過 markup()，所以上面那項掃不到。手寫層寫 fam 時很容易順手寫出
+   一個詞庫根本沒收的衍生字（bookkeeper、liquidate、February），卡片上照樣
+   印成按鈕，點開卻是空的。 */
+var famDead = [];
+(app.DATA_LEXICON_CORE || []).forEach(function (v) {
+  (v.fam || []).forEach(function (w) { if (!Lexicon.lookup(w)) famDead.push(v.w + ' → ' + w); });
+});
+ok(famDead.length === 0, '手寫層的「同家族」每一個字都查得到' +
+   (famDead.length ? '，還缺 ' + famDead.length + '：' + famDead.slice(0, 8).join('、') : ''));
 
 /* ==========================================================================
    Stage 4：Part 6 段落填空與 Part 7 雙篇閱讀
